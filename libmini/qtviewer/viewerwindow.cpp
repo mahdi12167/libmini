@@ -500,6 +500,8 @@ ministring ViewerWindow::loadURL(ministring url)
       // check tileset extensions
       else if (url.endswith(".ini"))
          success = loadMap(url);
+      else if (url.endswith(".sav"))
+         success = loadMap(url);
       // check qtv extension
       else if (url.endswith(".qtv"))
          success = load_list(url);
@@ -541,7 +543,8 @@ BOOLINT ViewerWindow::loadMap(ministring url)
    if (!Object::is_absolute_path(url))
       url = repository_path+url;
 
-   if (url.endswith(".ini"))
+   if (url.endswith(".ini") ||
+       url.endswith(".sav"))
    {
       unsigned int lio, lio0;
 
