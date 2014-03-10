@@ -54,10 +54,10 @@ BOOLINT minipath::read_trk_format(ministrings trk)
                time=line.prefix(",").value();
                line=line.tail(")");
 
-               if (!line.empty()) return(FALSE);
-
                append(minicoord(miniv4d(lon*3600,lat*3600,elev,time),minicoord::MINICOORD_LLH));
                }
+
+            if (!line.empty()) return(FALSE);
             }
 
          return(TRUE);
