@@ -13,8 +13,12 @@ class minipath : public minicurve
       : minicurve(start,stop)
       {}
 
-   BOOLINT load(const char *filename);
-   BOOLINT save(const char *filename);
+   BOOLINT load(ministring filename);
+   void save(ministring filename);
+
+   protected:
+
+   BOOLINT read_trk_format(ministrings trk);
    };
 
 #endif
