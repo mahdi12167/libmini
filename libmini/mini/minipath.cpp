@@ -40,7 +40,24 @@ BOOLINT minipath::read_trk_format(ministrings trk)
             {
             ministring line=trk[i];
 
-            //!! line example: (43.15496826171875,17.2485294342041,2.0,1375593946) = (lat,lon,elev,time)
+            if (line.startswith("("))
+               {
+               double lat,lon,elev,time;
+
+               line=line.tail("(");
+               lat=line.prefix(",").value();
+               line=line.tail(",");
+               lon=line.prefix(",").value();
+               line=line.tail(",");
+               elev=line.prefix(",").value();
+               line=line.tail(",");
+               time=line.prefix(",").value();
+               line=line.tail(")");
+
+               if (!line.empty()) return(FALSE);
+
+               append(minicoord(miniv4d(lon*3600,lat*3600,elev,time),minicoord::MINICOORD_LLH));
+               }
             }
 
          return(TRUE);
