@@ -18,6 +18,7 @@ class minipath : public minicurve
 
    protected:
 
+   BOOLINT read_curve_format(ministrings curve);
    BOOLINT read_trk_format(ministrings trk);
    };
 
