@@ -6,7 +6,8 @@ HEADERS += \
    minidyna.h minisort.h \
    minikeyval.h minikdtree.h \
    ministring.h minilog.h \
-   miniref.h mininode.h mininodes.h mininode_geom.h mininode_teapot.h \
+   miniref.h mininode.h mininodes.h\
+   mininode_geom.h mininode_teapot.h\
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h \
    minimath.h minicomplex.h glslmath.h \
    mininoise.h minimpfp.h \
