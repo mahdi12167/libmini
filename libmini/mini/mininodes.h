@@ -1665,18 +1665,18 @@ class mininode_coord_animation: public mininode_coord
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
-      ministrings strs;
+      ministrings infos;
 
       if (info.startswith("mininode_coord_animation("))
          {
          info=info.tail("mininode_coord_animation(");
          info=info.head(")");
 
-         strs.from_string(info);
+         infos.from_string(info);
 
-         curve.from_strings(strs);
+         curve.from_strings(infos);
 
-         return(strs.empty());
+         return(infos.empty());
          }
 
       return(FALSE);

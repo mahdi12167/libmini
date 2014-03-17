@@ -13,6 +13,7 @@ ministrings minipath::to_csv() const
 // deserialization
 void minipath::from_csv(ministrings &info)
    {
+   //!!
    }
 
 BOOLINT minipath::load(ministring filename)
@@ -20,13 +21,17 @@ BOOLINT minipath::load(ministring filename)
    BOOLINT success;
 
    ministrings path;
+   ministring info;
 
    path.load(filename);
 
    if (path.empty()) return(FALSE);
 
-   if (path[0].startswith("minicurve")) success=read_curve_format(path);
-   else if (path[0]=="[track]") success=read_trk_format(path);
+   info=path[0];
+
+   if (info.startswith("minicurve")) success=read_curve_format(path);
+   else if (info.startswith("\"")) success=read_csv_format(path);
+   else if (info=="[track]") success=read_trk_format(path);
    else success=FALSE;
 
    return(success);
@@ -44,7 +49,9 @@ BOOLINT minipath::read_curve_format(ministrings curve)
 
 BOOLINT minipath::read_csv_format(ministrings csv)
    {
-   return(FALSE); //!!
+   from_csv(csv);
+
+   return(csv.empty());
    }
 
 BOOLINT minipath::read_trk_format(ministrings trk)
