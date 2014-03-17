@@ -344,11 +344,11 @@ class minikeyval
       {
       unsigned int i;
 
-      ministrings strs;
+      ministrings infos;
 
       sort();
 
-      strs.append("minikeyval");
+      infos.append("minikeyval");
 
       for (i=0; i<pairs.getsize(); i++)
          {
@@ -358,14 +358,14 @@ class minikeyval
          str += "'"+pairs[i].val.to_string()+"','";
          str += pairs[i].tags.to_string(";")+"'";
 
-         strs.append(str);
+         infos.append(str);
          }
 
-      return(strs);
+      return(infos);
       }
 
    //! deconcatenate pair list (deserialization)
-   void from_strings(ministrings &strs)
+   void from_strings(ministrings &infos)
       {
       unsigned int line;
 
@@ -374,15 +374,15 @@ class minikeyval
       ministring key,val;
       ministrings tags;
 
-      if (!strs.empty())
+      if (!infos.empty())
          {
-         if (strs[0]!="minikeyval") return;
+         if (infos[0]!="minikeyval") return;
 
          line=1;
 
-         while (line<strs.size())
+         while (line<infos.getsize())
             {
-            info=strs[line];
+            info=infos[line];
 
             info=info.tail("'");
             key=info.prefix("','");
@@ -394,10 +394,10 @@ class minikeyval
 
             add(key,val,tags);
 
-            strs[line].clear();
+            infos[line].clear();
             }
 
-         strs.clear();
+         infos.clear();
          }
       }
 

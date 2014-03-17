@@ -253,6 +253,12 @@ class mininode: public minidyna< miniref<mininode> >
          }
       }
 
+   //! serialize node to string
+   virtual ministring to_string() const = 0;
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info) = 0;
+
    //! traverse graph and serialize nodes to string list
    ministrings to_strings(int level=0) const
       {
@@ -275,10 +281,7 @@ class mininode: public minidyna< miniref<mininode> >
       return(infos);
       }
 
-   //! serialize node to string
-   virtual ministring to_string() const = 0;
-
-   //! deserialize from string list
+   //! deserialize graph from string list
    miniref<mininode> from_strings(const ministrings &infos,unsigned int &line) const
       {
       miniref<mininode> ref;
@@ -310,9 +313,6 @@ class mininode: public minidyna< miniref<mininode> >
 
       return(ref);
       }
-
-   //! deserialize node from string
-   virtual BOOLINT from_string(ministring &info) = 0;
 
    //! create node from string
    miniref<mininode> create_from_string(ministring &info) const

@@ -307,7 +307,7 @@ ministrings minicurve::to_strings() const
    }
 
 // deserialization
-void minicurve::from_strings(ministrings &strs)
+void minicurve::from_strings(ministrings &infos)
    {
    unsigned int line;
 
@@ -315,7 +315,7 @@ void minicurve::from_strings(ministrings &strs)
 
    if (!empty())
       {
-      info=strs[0];
+      info=infos[0];
 
       if (info.startswith("minicurve"))
          {
@@ -338,23 +338,23 @@ void minicurve::from_strings(ministrings &strs)
 
          line=1;
 
-         while (line<strs.size())
+         while (line<infos.getsize())
             {
             minicoord coord;
 
-            info=strs[line];
+            info=infos[line];
             coord.from_string(info);
 
             if (!info.empty()) return;
 
             append(coord);
 
-            strs[line].clear();
+            infos[line].clear();
             }
 
          valid=FALSE;
 
-         strs.clear();
+         infos.clear();
          }
       }
    }
