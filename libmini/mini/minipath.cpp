@@ -2,6 +2,19 @@
 
 #include "minipath.h"
 
+// serialization
+ministrings minipath::to_csv() const
+   {
+   ministrings csv;
+
+   return(csv); //!!
+   }
+
+// deserialization
+void minipath::from_csv(ministrings &info)
+   {
+   }
+
 BOOLINT minipath::load(ministring filename)
    {
    BOOLINT success;
@@ -20,15 +33,18 @@ BOOLINT minipath::load(ministring filename)
    }
 
 void minipath::save(ministring filename)
-   {writeministring(filename.c_str(),to_string());}
+   {to_strings().save(filename);}
 
 BOOLINT minipath::read_curve_format(ministrings curve)
    {
-   if (curve.size()!=1) return(FALSE);
+   from_strings(curve);
 
-   from_string(curve[0]);
+   return(curve.empty());
+   }
 
-   return(TRUE);
+BOOLINT minipath::read_csv_format(ministrings csv)
+   {
+   return(FALSE); //!!
    }
 
 BOOLINT minipath::read_trk_format(ministrings trk)
@@ -64,4 +80,9 @@ BOOLINT minipath::read_trk_format(ministrings trk)
          }
 
    return(FALSE);
+   }
+
+BOOLINT minipath::read_gpx_format(ministrings gpx)
+   {
+   return(FALSE); //!!
    }

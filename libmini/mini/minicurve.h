@@ -65,10 +65,10 @@ class minicurve : public minidyna<minicoord>
    void resample(double dt);
 
    //! serialization
-   ministring to_string() const;
+   ministrings to_strings() const;
 
    //! deserialization
-   void from_string(ministring &info);
+   void from_strings(ministrings &info);
 
    private:
 

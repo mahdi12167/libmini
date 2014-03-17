@@ -1656,7 +1656,7 @@ class mininode_coord_animation: public mininode_coord
       ministring info("mininode_coord_animation");
 
       info.append("(");
-      info.append(curve.to_string());
+      info.append(curve.to_strings().to_string());
       info.append(")");
 
       return(info);
@@ -1665,15 +1665,18 @@ class mininode_coord_animation: public mininode_coord
    //! deserialize node from string
    virtual BOOLINT from_string(ministring &info)
       {
+      ministrings strs;
+
       if (info.startswith("mininode_coord_animation("))
          {
          info=info.tail("mininode_coord_animation(");
+         info=info.head(")");
 
-         curve.from_string(info);
+         strs.from_string(info);
 
-         info=info.tail(")");
+         curve.from_strings(strs);
 
-         return(TRUE);
+         return(strs.empty());
          }
 
       return(FALSE);

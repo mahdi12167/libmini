@@ -16,10 +16,18 @@ class minipath : public minicurve
    BOOLINT load(ministring filename);
    void save(ministring filename);
 
+   //! serialization
+   ministrings to_csv() const;
+
+   //! deserialization
+   void from_csv(ministrings &info);
+
    protected:
 
    BOOLINT read_curve_format(ministrings curve);
+   BOOLINT read_csv_format(ministrings csv);
    BOOLINT read_trk_format(ministrings trk);
+   BOOLINT read_gpx_format(ministrings gpx);
    };
 
 #endif

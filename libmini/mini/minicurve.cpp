@@ -274,9 +274,11 @@ void minicurve::resample(double dt)
    }
 
 // serialization
-ministring minicurve::to_string() const
+ministrings minicurve::to_strings() const
    {
    unsigned int i;
+
+   ministrings curve;
 
    ministring info("minicurve");
 
@@ -293,51 +295,66 @@ ministring minicurve::to_string() const
    info.append_double(curve_repeat_start);
    info.append(",");
    info.append_double(curve_repeat_stop);
-   info.append(",");
-
-   for (i=0; i<getsize(); i++)
-      {
-      info.append(get(i).to_string());
-      if (i+1<getsize()) info.append(",");
-      }
 
    info.append(")");
 
-   return(info);
+   curve.append(info);
+
+   for (i=0; i<getsize(); i++)
+      curve.append(get(i).to_string());
+
+   return(curve);
    }
 
 // deserialization
-void minicurve::from_string(ministring &info)
+void minicurve::from_strings(ministrings &strs)
    {
-   if (info.startswith("minicurve"))
+   unsigned int line;
+
+   ministring info;
+
+   if (!empty())
       {
-      info=info.tail("minicurve(");
+      info=strs[0];
 
-      curve_start=info.prefix(",").value();
-      info=info.tail(",");
-      curve_stop=info.prefix(",").value();
-      info=info.tail(",");
-      curve_map_start=info.prefix(",").value();
-      info=info.tail(",");
-      curve_map_stop=info.prefix(",").value();
-      info=info.tail(",");
-      curve_repeat_start=info.prefix(",").value();
-      info=info.tail(",");
-      curve_repeat_stop=info.prefix(",").value();
-      info=info.tail(",");
-
-      while (!info.startswith(")"))
+      if (info.startswith("minicurve"))
          {
-         minicoord coord;
-         coord.from_string(info);
+         info=info.tail("minicurve(");
 
-         if (info.startswith(",")) info=info.tail(",");
+         curve_start=info.prefix(",").value();
+         info=info.tail(",");
+         curve_stop=info.prefix(",").value();
+         info=info.tail(",");
+         curve_map_start=info.prefix(",").value();
+         info=info.tail(",");
+         curve_map_stop=info.prefix(",").value();
+         info=info.tail(",");
+         curve_repeat_start=info.prefix(",").value();
+         info=info.tail(",");
+         curve_repeat_stop=info.prefix(",").value();
+         info=info.tail(")");
 
-         append(coord);
+         if (!info.empty()) return;
+
+         line=1;
+
+         while (line<strs.size())
+            {
+            minicoord coord;
+
+            info=strs[line];
+            coord.from_string(info);
+
+            if (!info.empty()) return;
+
+            append(coord);
+
+            strs[line].clear();
+            }
+
+         valid=FALSE;
+
+         strs.clear();
          }
-
-      info=info.tail(")");
-
-      valid=FALSE;
       }
    }

@@ -901,25 +901,17 @@ class ministrings: public minidyna<ministring>
          }
       }
 
-   //! serialize string list
-   ministring serialize() const
-      {return(to_string("\n"));}
-
-   //! deserialize string list
-   void deserialize(const ministring &str)
-      {from_string(str,"\n");}
-
    //! save to file
    void save(ministring filename) const
-      {writeministring(filename.c_str(),serialize());}
+      {writeministring(filename.c_str(),to_string("\n"));}
 
    //! load from file
    void load(ministring filename)
-      {deserialize(readministring(filename.c_str()));}
+      {from_string(readministring(filename.c_str()),"\n");}
 
    //! unique checksum
    ministring checksum(unsigned int length=4) const
-      {return(serialize().checksum(length));}
+      {return(to_string("\n").checksum(length));}
 
    //! check for contained sub-string
    BOOLINT contains(const ministring &sub) const

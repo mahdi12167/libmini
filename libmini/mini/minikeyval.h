@@ -340,77 +340,66 @@ class minikeyval
       {return(get_tags(to_key(idx)));}
 
    //! concatenate pair list (serialization)
-   ministring to_string(ministring separator="/")
+   ministrings to_strings()
       {
       unsigned int i;
 
-      ministring str;
+      ministrings strs;
 
       sort();
 
+      strs.append("minikeyval");
+
       for (i=0; i<pairs.getsize(); i++)
          {
+         ministring str;
+
          str += "'"+pairs[i].key+"',";
          str += "'"+pairs[i].val.to_string()+"','";
          str += pairs[i].tags.to_string(";")+"'";
 
-         if (i<pairs.getsize()-1) str += separator;
+         strs.append(str);
          }
 
-      return(str);
+      return(strs);
       }
 
    //! deconcatenate pair list (deserialization)
-   void from_string(const ministring &str,ministring separator="/")
+   void from_strings(ministrings &strs)
       {
-      unsigned int left,right;
-      ministring sub;
+      unsigned int line;
+
+      ministring info;
 
       ministring key,val;
       ministrings tags;
 
-      left=0;
-
-      while (str.find(separator,right,left))
+      if (!strs.empty())
          {
-         sub=str.range(left,right-1);
+         if (strs[0]!="minikeyval") return;
 
-         sub=sub.tail("'");
-         key=sub.prefix("','");
-         sub=sub.tail("','");
-         val=sub.prefix("','");
-         sub=sub.tail("','");
-         sub=sub.head("'");
-         tags.from_string(sub,";");
+         line=1;
 
-         add(key,val,tags);
+         while (line<strs.size())
+            {
+            info=strs[line];
 
-         left=right+separator.length();
-         }
+            info=info.tail("'");
+            key=info.prefix("','");
+            info=info.tail("','");
+            val=info.prefix("','");
+            info=info.tail("','");
+            info=info.head("'");
+            tags.from_string(info,";");
 
-      if (left<str.length())
-         {
-         sub=str.range(left,str.length()-1);
+            add(key,val,tags);
 
-         sub=sub.tail("'");
-         key=sub.prefix("','");
-         sub=sub.tail("','");
-         val=sub.prefix("','");
-         sub=sub.tail("','");
-         sub=sub.head("'");
-         tags.from_string(sub,";");
+            strs[line].clear();
+            }
 
-         add(key,val,tags);
+         strs.clear();
          }
       }
-
-   //! serialize pair list
-   ministring serialize() const
-      {return(to_string("\n"));}
-
-   //! deserialize pair list
-   void deserialize(const ministring &str)
-      {from_string(str,"\n");}
 
    protected:
 
