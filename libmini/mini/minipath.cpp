@@ -19,27 +19,27 @@ ministrings minipath::to_csv() const
    for (i=0; i<getsize(); i++)
       {
       ministring line;
-      minicoord coord;
+      minimeas meas;
 
-      coord=get(i);
-      coord.convert2llh();
+      meas=get(i);
+      meas.convert2llh();
 
       // segment
       line.append("\"1\"");
 
       // lat
       line.append(",\"");
-      line.append_double(coord.vec.y/3600);
+      line.append_double(meas.vec.y/3600);
       line.append("\"");
 
       // lon
       line.append(",\"");
-      line.append_double(coord.vec.x/3600);
+      line.append_double(meas.vec.x/3600);
       line.append("\"");
 
       // height
       line.append(",\"");
-      line.append_double(coord.vec.z);
+      line.append_double(meas.vec.z);
       line.append("\"");
 
       // heading
@@ -53,7 +53,7 @@ ministrings minipath::to_csv() const
 
       // time
       line.append(",\"");
-      line.append_double(coord.vec.w);
+      line.append_double(meas.vec.w);
       line.append("\"");
 
       csv.append(line);
@@ -93,7 +93,7 @@ void minipath::from_csv(ministrings &csv)
    for (i++; i<csv.getsize(); i++)
       if (!csv[i].empty())
          {
-         minicoord coord;
+         minimeas meas;
 
          values.from_string(csv[i],",");
 
@@ -102,9 +102,9 @@ void minipath::from_csv(ministrings &csv)
          for (j=0; j<values.getsize(); j++)
             values[j]=values[j].tail("\"").head("\"");
 
-         coord.set_llh(values[1].value(),values[2].value(),values[3].value(),values[7].value());
+         meas.set_llh(values[1].value(),values[2].value(),values[3].value(),values[7].value());
 
-         append(coord);
+         append(meas);
 
          csv[i].clear();
          }
@@ -177,7 +177,16 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
                time=line.prefix(",").value();
                line=line.tail(")");
 
-               append(minicoord(miniv4d(lon*3600,lat*3600,elev,time),minicoord::MINICOORD_LLH));
+               minimeas meas(miniv4d(lon*3600,lat*3600,elev,time),minicoord::MINICOORD_LLH);
+
+               if (line.startswith(";"))
+                  {
+                  line=line.tail(";");
+                  meas.set_description(line);
+                  line.clear();
+                  }
+
+               append(meas);
                }
 
             if (!line.empty()) return(FALSE);

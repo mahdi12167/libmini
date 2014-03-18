@@ -7,6 +7,11 @@ ministring minimeas::to_string() const
    {
    ministring info("minimeas");
 
+   ministring desc;
+
+   desc=get_description();
+   desc.substitute("\"","");
+
    info.append("(");
    info.append(minicoord::to_string());
    info.append(",");
@@ -15,6 +20,8 @@ ministring minimeas::to_string() const
    info.append_double(velocity);
    info.append(",");
    info.append_double(heading);
+   info.append(",");
+   info.append("\""+desc+"\"");
    info.append(")");
 
    return(info);
@@ -23,6 +30,8 @@ ministring minimeas::to_string() const
 // deserialization
 void minimeas::from_string(ministring &info)
    {
+   ministring desc;
+
    if (info.startswith("minimeas"))
       {
       info=info.tail("minimeas(");
@@ -33,6 +42,10 @@ void minimeas::from_string(ministring &info)
       velocity=info.prefix(",").value();
       info=info.tail(",");
       heading=info.prefix(")").value();
-      info=info.tail(")");
+      info=info.tail(",\"");
+      desc=info.prefix("\")");
+      info=info.tail("\")");
+
+      set_description(desc);
       }
    }

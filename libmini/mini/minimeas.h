@@ -12,20 +12,64 @@ class minimeas: public minicoord
 
    //! default constructor
    minimeas()
-      : minicoord(), accuracy(0.0), velocity(0.0), heading(0.0)
+      : minicoord(),
+        accuracy(0.0), velocity(0.0), heading(0.0),
+        description(NULL)
       {}
 
    //! constructor
    minimeas(const minicoord &c,
             double a=0.0,double v=0.0,double h=0.0)
-      : minicoord(c), accuracy(a), velocity(v), heading(h)
+      : minicoord(c),
+        accuracy(a), velocity(v), heading(h),
+        description(NULL)
       {
       if (heading<-180.0) heading+=360.0;
       else if (heading>180.0) heading-=360.0;
       }
 
+   //! copy constructor
+   minimeas(const minimeas &m)
+      : minicoord((const minicoord &)m),
+        accuracy(0.0), velocity(0.0), heading(0.0)
+      {
+      if (m.description) description=new ministring(*m.description);
+      else description=NULL;
+      }
+
    //! destructor
-   ~minimeas() {}
+   ~minimeas()
+      {
+      if (description)
+         delete description;
+      }
+
+   //! set description
+   void set_description(const ministring &desc)
+      {
+      if (description)
+         {
+         delete description;
+         description=NULL;
+         }
+
+      if (!desc.empty())
+         {
+         description=new ministring(desc);
+
+         description->remove_leading_white_space();
+         description->remove_trailing_white_space();
+         }
+      }
+
+   //! get description
+   ministring get_description() const
+      {
+      if (description)
+         return(*description);
+
+      return("");
+      }
 
    //! serialization
    ministring to_string() const;
@@ -36,6 +80,10 @@ class minimeas: public minicoord
    double accuracy;
    double velocity;
    double heading;
+
+   protected:
+
+   ministring *description;
    };
 
 // arithmetic inline operators
