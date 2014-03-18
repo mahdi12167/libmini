@@ -152,9 +152,7 @@ BOOLINT minipath::read_csv_format(ministrings &csv)
    }
 
 BOOLINT minipath::read_gpx_format(ministrings &gpx)
-   {
-   return(FALSE); //!!
-   }
+   {return(FALSE);}
 
 BOOLINT minipath::read_trk_format(ministrings &trk)
    {
