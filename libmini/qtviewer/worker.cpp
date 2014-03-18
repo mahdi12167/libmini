@@ -15,7 +15,7 @@ void WorkerThread::run_job(Job *job)
 {
    MINILOG("running job: "+job->get_id());
    MINILOG("job details:");
-   MINILOG(job->to_string("\n"));
+   MINILOG(job->to_strings().to_string("\n"));
 
    grid_worker::run_job(job);
 }
@@ -64,7 +64,7 @@ void WorkerThread::job_success(Job *job)
 {
    MINILOG("finished job: "+job->get_id());
    MINILOG("job details:");
-   MINILOG(job->to_string("\n"));
+   MINILOG(job->to_strings().to_string("\n"));
 
    emit finishedJob(job->get_id(), job->get_all());
 }
@@ -73,7 +73,7 @@ void WorkerThread::job_failure(Job *job, int errorcode)
 {
    MINILOG("failed job: "+job->get_id());
    MINILOG("job details:");
-   MINILOG(job->to_string("\n"));
+   MINILOG(job->to_strings().to_string("\n"));
 
    emit failedJob(job->get_id(), job->get_all(), errorcode);
 }
