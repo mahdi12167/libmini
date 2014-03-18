@@ -112,11 +112,11 @@ void minipath::from_csv(ministrings &csv)
 
          meas.set_llh(values[1].value(),values[2].value(),values[3].value(),values[7].value());
 
-         meas.segment=values[0].value_uint();
-
          meas.accuracy=values[5].value();
          meas.velocity=values[6].value();
          meas.heading=values[4].value();
+
+         meas.segment=values[0].value_uint();
 
          append(meas);
 
@@ -176,6 +176,8 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
    {
    unsigned int i,j;
 
+   unsigned int segment=1;
+
    if (trk.empty()) return(FALSE);
 
    if (trk[0]=="[track]")
@@ -200,14 +202,22 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
                   time=line.prefix(",").value();
                   line=line.tail(")");
 
-                  minimeas meas(miniv4d(lon*3600,lat*3600,elev,time),minicoord::MINICOORD_LLH);
+                  minicoord coord(miniv4d(lon*3600,lat*3600,elev,time),minicoord::MINICOORD_LLH);
+
+                  ministring desc;
 
                   if (line.startswith(";"))
                      {
                      line=line.tail(";");
-                     meas.set_description(line);
+
+                     if (line=="#CMDNewSegment") segment++;
+                     else desc=line;
+
                      line.clear();
                      }
+
+                  minimeas meas(coord,0.0,0.0,0.0,segment);
+                  meas.set_description(desc);
 
                   append(meas);
                   }

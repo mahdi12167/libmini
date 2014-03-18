@@ -13,17 +13,18 @@ class minimeas: public minicoord
    //! default constructor
    minimeas()
       : minicoord(),
-        segment(0),
         accuracy(0.0), velocity(0.0), heading(0.0),
+        segment(0),
         description(NULL)
       {}
 
    //! constructor
    minimeas(const minicoord &c,
-            double a=0.0,double v=0.0,double h=0.0)
+            double a=0.0,double v=0.0,double h=0.0,
+            unsigned int s=0)
       : minicoord(c),
-        segment(0),
         accuracy(a), velocity(v), heading(h),
+        segment(s),
         description(NULL)
       {
       if (heading<-180.0) heading+=360.0;
@@ -33,8 +34,8 @@ class minimeas: public minicoord
    //! copy constructor
    minimeas(const minimeas &m)
       : minicoord((const minicoord &)m),
-        segment(m.segment),
-        accuracy(m.accuracy), velocity(m.velocity), heading(m.heading)
+        accuracy(m.accuracy), velocity(m.velocity), heading(m.heading),
+        segment(m.segment)
       {
       if (m.description) description=new ministring(*m.description);
       else description=NULL;
@@ -80,11 +81,11 @@ class minimeas: public minicoord
    //! deserialization
    void from_string(ministring &info);
 
-   unsigned int segment;
-
    double accuracy;
    double velocity;
    double heading;
+
+   unsigned int segment;
 
    protected:
 
@@ -104,31 +105,36 @@ inline int operator < (const minimeas &a,const minimeas &b);
 inline minimeas operator + (const minimeas &a,const minimeas &b)
    {
    return(minimeas(minicoord(a.vec+b.vec,a.type,a.crs_zone,a.crs_datum),
-                   a.accuracy+b.accuracy,a.velocity+b.velocity,a.heading+b.heading));
+                   a.accuracy+b.accuracy,a.velocity+b.velocity,a.heading+b.heading,
+                   a.segment));
    }
 
 inline minimeas operator - (const minimeas &a,const minimeas &b)
    {
    return(minimeas(minicoord(a.vec-b.vec,a.type,a.crs_zone,a.crs_datum),
-                   a.accuracy+b.accuracy,a.velocity+b.velocity,a.heading-b.heading));
+                   a.accuracy+b.accuracy,a.velocity+b.velocity,a.heading-b.heading,
+                   a.segment));
    }
 
 inline minimeas operator * (const double a,const minimeas &b)
    {
    return(minimeas(minicoord(a*b.vec,b.type,b.crs_zone,b.crs_datum),
-                   a*b.accuracy,a*b.velocity,a*b.heading));
+                   a*b.accuracy,a*b.velocity,a*b.heading,
+                   b.segment));
    }
 
 inline minimeas operator * (const minimeas &a,const double b)
    {
    return(minimeas(minicoord(a.vec*b,a.type,a.crs_zone,a.crs_datum),
-                   a.accuracy*b,a.velocity*b,a.heading*b));
+                   a.accuracy*b,a.velocity*b,a.heading*b,
+                   a.segment));
    }
 
 inline minimeas operator / (const minimeas &a,const double b)
    {
    return(minimeas(minicoord(a.vec/b,a.type,a.crs_zone,a.crs_datum),
-                   a.accuracy/b,a.velocity/b,a.heading/b));
+                   a.accuracy/b,a.velocity/b,a.heading/b,
+                   a.segment));
    }
 
 inline int operator < (const minimeas &a,const minimeas &b)
