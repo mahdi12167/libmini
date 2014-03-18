@@ -15,6 +15,8 @@ ministring minimeas::to_string() const
    info.append("(");
    info.append(minicoord::to_string());
    info.append(",");
+   info.append_uint(segment);
+   info.append(",");
    info.append_double(accuracy);
    info.append(",");
    info.append_double(velocity);
@@ -36,6 +38,8 @@ void minimeas::from_string(ministring &info)
       {
       info=info.tail("minimeas(");
       minicoord::from_string(info);
+      info=info.tail(",");
+      segment=info.prefix(",").value_uint();
       info=info.tail(",");
       accuracy=info.prefix(",").value();
       info=info.tail(",");

@@ -37,7 +37,7 @@ class minicurve : public minidyna<minimeas>
       append_sector(p1,p2,n);
       }
 
-   void append(const minicoord &p);
+   void append(const minimeas &p);
 
    void append_sector(const minicoord &p1,const minicoord &p2,
                       unsigned int n=0);
@@ -51,8 +51,8 @@ class minicurve : public minidyna<minimeas>
    void set_time_mapping(double map_start,double map_stop);
    void set_time_repeat(double repeat_start,double repeat_stop);
 
-   minicoord interpolate(double t);
-   minicoord interpolate_cubic(double t);
+   minimeas interpolate(double t);
+   minimeas interpolate_cubic(double t);
 
    double get_time_start();
    double get_time_stop();

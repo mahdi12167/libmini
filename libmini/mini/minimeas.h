@@ -13,6 +13,7 @@ class minimeas: public minicoord
    //! default constructor
    minimeas()
       : minicoord(),
+        segment(0),
         accuracy(0.0), velocity(0.0), heading(0.0),
         description(NULL)
       {}
@@ -21,6 +22,7 @@ class minimeas: public minicoord
    minimeas(const minicoord &c,
             double a=0.0,double v=0.0,double h=0.0)
       : minicoord(c),
+        segment(0),
         accuracy(a), velocity(v), heading(h),
         description(NULL)
       {
@@ -31,6 +33,7 @@ class minimeas: public minicoord
    //! copy constructor
    minimeas(const minimeas &m)
       : minicoord((const minicoord &)m),
+        segment(m.segment),
         accuracy(m.accuracy), velocity(m.velocity), heading(m.heading)
       {
       if (m.description) description=new ministring(*m.description);
@@ -76,6 +79,8 @@ class minimeas: public minicoord
 
    //! deserialization
    void from_string(ministring &info);
+
+   unsigned int segment;
 
    double accuracy;
    double velocity;

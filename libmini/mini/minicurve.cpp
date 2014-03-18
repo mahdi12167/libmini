@@ -7,12 +7,12 @@
 
 #include "minicurve.h"
 
-void minicurve::append(const minicoord &p)
+void minicurve::append(const minimeas &p)
    {
-   minicoord c=p;
+   minimeas m=p;
 
-   c.convert2ecef();
-   minidyna<minimeas>::append(c);
+   m.convert2ecef();
+   minidyna<minimeas>::append(m);
 
    valid=FALSE;
    }
@@ -122,10 +122,10 @@ void minicurve::set_time_repeat(double repeat_start,double repeat_stop)
    curve_repeat_stop=repeat_stop;
    }
 
-minicoord minicurve::interpolate(double t)
+minimeas minicurve::interpolate(double t)
    {return(interpolate_cubic(t));}
 
-minicoord minicurve::interpolate_cubic(double t)
+minimeas minicurve::interpolate_cubic(double t)
    {
    double tt;
 
@@ -340,14 +340,14 @@ void minicurve::from_strings(ministrings &infos)
 
          while (line<infos.getsize())
             {
-            minicoord coord;
+            minimeas meas;
 
             info=infos[line];
-            coord.from_string(info);
+            meas.from_string(info);
 
             if (!info.empty()) return;
 
-            append(coord);
+            append(meas);
 
             infos[line].clear();
             }

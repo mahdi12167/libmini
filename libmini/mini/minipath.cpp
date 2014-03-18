@@ -25,7 +25,9 @@ ministrings minipath::to_csv() const
       meas.convert2llh();
 
       // segment
-      line.append("\"1\"");
+      line.append("\"");
+      line.append_uint(meas.segment);
+      line.append("\"");
 
       // lat
       line.append(",\"");
@@ -109,6 +111,8 @@ void minipath::from_csv(ministrings &csv)
             values[j]=values[j].tail("\"").head("\"");
 
          meas.set_llh(values[1].value(),values[2].value(),values[3].value(),values[7].value());
+
+         meas.segment=values[0].value_uint();
 
          meas.accuracy=values[5].value();
          meas.velocity=values[6].value();
