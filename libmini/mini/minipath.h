@@ -11,14 +11,14 @@ class minipath : public minicurve
 
    minipath(double start=0.0,double stop=1.0)
       : minicurve(start,stop),
-      name("path"), activity("walking"), description("created by libmini")
+      name("path"), activity("none"), description("created by libmini")
       {}
 
    BOOLINT load(ministring filename);
    void save(ministring filename);
 
    //! serialization
-   ministrings to_csv() const;
+   ministrings to_csv();
 
    //! deserialization
    void from_csv(ministrings &csv);

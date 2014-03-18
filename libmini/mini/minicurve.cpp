@@ -17,6 +17,16 @@ void minicurve::append(const minimeas &p)
    valid=FALSE;
    }
 
+void minicurve::append(minicurve &c)
+   {
+   validate();
+   c.validate();
+
+   minidyna<minimeas>::append(c);
+
+   valid=FALSE;
+   }
+
 void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
                               unsigned int n)
    {
@@ -107,6 +117,8 @@ void minicurve::validate()
       else
          for (i=0; i+1<getsize(); i++)
             if (get(i).vec.w==get(i+1).vec.w) dispose(i+1);
+
+      if (!empty()) ref(0).start=TRUE;
       }
    }
 
@@ -274,7 +286,7 @@ void minicurve::resample(double dt)
    }
 
 // serialization
-ministrings minicurve::to_strings() const
+ministrings minicurve::to_strings()
    {
    unsigned int i;
 
@@ -299,6 +311,8 @@ ministrings minicurve::to_strings() const
    info.append(")");
 
    curve.append(info);
+
+   validate();
 
    for (i=0; i<getsize(); i++)
       curve.append(get(i).to_string());

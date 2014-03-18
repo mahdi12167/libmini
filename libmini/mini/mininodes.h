@@ -1651,7 +1651,7 @@ class mininode_coord_animation: public mininode_coord
    mininode_coord_animation(minicurve &c);
 
    //! serialize node to string
-   virtual ministring to_string() const
+   virtual ministring to_string()
       {
       ministring info("mininode_coord_animation");
 

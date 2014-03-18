@@ -38,6 +38,7 @@ class minicurve : public minidyna<minimeas>
       }
 
    void append(const minimeas &p);
+   void append(minicurve &c);
 
    void append_sector(const minicoord &p1,const minicoord &p2,
                       unsigned int n=0);
@@ -65,12 +66,12 @@ class minicurve : public minidyna<minimeas>
    void resample(double dt);
 
    //! serialization
-   ministrings to_strings() const;
+   ministrings to_strings();
 
    //! deserialization
    void from_strings(ministrings &info);
 
-   private:
+   protected:
 
    BOOLINT valid;
 

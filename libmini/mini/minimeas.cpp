@@ -7,10 +7,12 @@ ministring minimeas::to_string() const
    {
    ministring info("minimeas");
 
-   ministring desc;
+   ministring desc,meta;
 
    desc=get_description();
    desc.substitute("\"","");
+
+   meta=get_metadata();
 
    info.append("(");
    info.append(minicoord::to_string());
@@ -21,9 +23,11 @@ ministring minimeas::to_string() const
    info.append(",");
    info.append_double(heading);
    info.append(",");
-   info.append_uint(segment);
+   info.append_uint(start);
    info.append(",");
    info.append("\""+desc+"\"");
+   info.append(",");
+   info.append("\""+meta+"\"");
    info.append(")");
 
    return(info);
@@ -32,7 +36,7 @@ ministring minimeas::to_string() const
 // deserialization
 void minimeas::from_string(ministring &info)
    {
-   ministring desc;
+   ministring desc,meta;
 
    if (info.startswith("minimeas"))
       {
@@ -45,11 +49,14 @@ void minimeas::from_string(ministring &info)
       info=info.tail(",");
       heading=info.prefix(",").value();
       info=info.tail(",");
-      segment=info.prefix(",").value_uint();
+      start=info.prefix(",").value_uint();
       info=info.tail(",\"");
-      desc=info.prefix("\")");
+      desc=info.prefix("\",");
+      info=info.tail(",\"");
+      meta=info.prefix("\")");
       info=info.tail("\")");
 
       set_description(desc);
+      set_metadata(meta);
       }
    }

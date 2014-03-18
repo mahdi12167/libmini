@@ -3,11 +3,15 @@
 #include "minipath.h"
 
 // serialization
-ministrings minipath::to_csv() const
+ministrings minipath::to_csv()
    {
    unsigned int i;
 
    ministrings csv;
+
+   unsigned int segment=0;
+
+   validate();
 
    csv.append("\"name\",\"activity\",\"description\"");
    csv.append("\""+name+"\",\""+activity+"\",\""+description+"\"");
@@ -24,9 +28,11 @@ ministrings minipath::to_csv() const
       meas=get(i);
       meas.convert2llh();
 
+      if (meas.start) segment++;
+
       // segment
       line.append("\"");
-      line.append_uint(meas.segment);
+      line.append_uint(segment);
       line.append("\"");
 
       // point
@@ -82,6 +88,8 @@ void minipath::from_csv(ministrings &csv)
 
    ministrings values;
 
+   unsigned int segment=0,nextseg;
+
    if (csv.getsize()<2) return;
 
    values.from_string(csv[0],",");
@@ -121,7 +129,9 @@ void minipath::from_csv(ministrings &csv)
          meas.velocity=values[7].value();
          meas.heading=values[5].value();
 
-         meas.segment=values[0].value_uint();
+         nextseg=values[0].value_uint();
+         if (nextseg!=segment) meas.start=TRUE;
+         segment=nextseg;
 
          append(meas);
 
@@ -181,8 +191,6 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
    {
    unsigned int i,j;
 
-   unsigned int segment=1;
-
    if (trk.empty()) return(FALSE);
 
    if (trk[0]=="[track]")
@@ -209,19 +217,20 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
 
                   minicoord coord(miniv4d(lon*3600,lat*3600,elev,time),minicoord::MINICOORD_LLH);
 
+                  BOOLINT start=FALSE;
                   ministring desc;
 
                   if (line.startswith(";"))
                      {
                      line=line.tail(";");
 
-                     if (line=="#CMDNewSegment") segment++;
+                     if (line=="#CMDNewSegment") start=TRUE;
                      else desc=line;
 
                      line.clear();
                      }
 
-                  minimeas meas(coord,0.0,0.0,0.0,segment);
+                  minimeas meas(coord,0.0,0.0,0.0,start);
                   meas.set_description(desc);
 
                   append(meas);

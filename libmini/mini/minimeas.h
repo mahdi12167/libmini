@@ -13,19 +13,19 @@ class minimeas: public minicoord
    //! default constructor
    minimeas()
       : minicoord(),
-        accuracy(0.0), velocity(0.0), heading(0.0),
-        segment(0),
-        description(NULL)
+        accuracy(0.0f), velocity(0.0f), heading(0.0f),
+        start(FALSE),
+        description(NULL), metadata(NULL)
       {}
 
    //! constructor
    minimeas(const minicoord &c,
-            double a=0.0,double v=0.0,double h=0.0,
-            unsigned int s=0)
+            float a=0.0f,float v=0.0f,float h=0.0f,
+            BOOLINT s=FALSE)
       : minicoord(c),
         accuracy(a), velocity(v), heading(h),
-        segment(s),
-        description(NULL)
+        start(s),
+        description(NULL), metadata(NULL)
       {
       if (heading<-180.0) heading+=360.0;
       else if (heading>180.0) heading-=360.0;
@@ -35,10 +35,13 @@ class minimeas: public minicoord
    minimeas(const minimeas &m)
       : minicoord((const minicoord &)m),
         accuracy(m.accuracy), velocity(m.velocity), heading(m.heading),
-        segment(m.segment)
+        start(m.start)
       {
       if (m.description) description=new ministring(*m.description);
       else description=NULL;
+
+      if (m.metadata) metadata=new ministring(*m.metadata);
+      else metadata=NULL;
       }
 
    //! destructor
@@ -46,6 +49,9 @@ class minimeas: public minicoord
       {
       if (description)
          delete description;
+
+      if (metadata)
+         delete metadata;
       }
 
    //! set description
@@ -75,21 +81,49 @@ class minimeas: public minicoord
       return("");
       }
 
+   //! set metadata
+   void set_metadata(const ministring &meta)
+      {
+      if (metadata)
+         {
+         delete metadata;
+         metadata=NULL;
+         }
+
+      if (!meta.empty())
+         {
+         metadata=new ministring(meta);
+
+         metadata->remove_leading_white_space();
+         metadata->remove_trailing_white_space();
+         }
+      }
+
+   //! get metadata
+   ministring get_metadata() const
+      {
+      if (metadata)
+         return(*metadata);
+
+      return("");
+      }
+
    //! serialization
    ministring to_string() const;
 
    //! deserialization
    void from_string(ministring &info);
 
-   double accuracy;
-   double velocity;
-   double heading;
+   float accuracy;
+   float velocity;
+   float heading;
 
-   unsigned int segment;
+   BOOLINT start;
 
    protected:
 
    ministring *description;
+   ministring *metadata;
    };
 
 // arithmetic inline operators
@@ -106,35 +140,35 @@ inline minimeas operator + (const minimeas &a,const minimeas &b)
    {
    return(minimeas(minicoord(a.vec+b.vec,a.type,a.crs_zone,a.crs_datum),
                    a.accuracy+b.accuracy,a.velocity+b.velocity,a.heading+b.heading,
-                   a.segment));
+                   a.start));
    }
 
 inline minimeas operator - (const minimeas &a,const minimeas &b)
    {
    return(minimeas(minicoord(a.vec-b.vec,a.type,a.crs_zone,a.crs_datum),
                    a.accuracy+b.accuracy,a.velocity+b.velocity,a.heading-b.heading,
-                   a.segment));
+                   a.start));
    }
 
 inline minimeas operator * (const double a,const minimeas &b)
    {
    return(minimeas(minicoord(a*b.vec,b.type,b.crs_zone,b.crs_datum),
                    a*b.accuracy,a*b.velocity,a*b.heading,
-                   b.segment));
+                   b.start));
    }
 
 inline minimeas operator * (const minimeas &a,const double b)
    {
    return(minimeas(minicoord(a.vec*b,a.type,a.crs_zone,a.crs_datum),
                    a.accuracy*b,a.velocity*b,a.heading*b,
-                   a.segment));
+                   a.start));
    }
 
 inline minimeas operator / (const minimeas &a,const double b)
    {
    return(minimeas(minicoord(a.vec/b,a.type,a.crs_zone,a.crs_datum),
                    a.accuracy/b,a.velocity/b,a.heading/b,
-                   a.segment));
+                   a.start));
    }
 
 inline int operator < (const minimeas &a,const minimeas &b)
