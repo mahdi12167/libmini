@@ -502,23 +502,23 @@ class ministring: public ministring_base
       }
 
    //! extract char array
-   void extract_array(char *array,unsigned int n) const
+   void extract_array(char *array,unsigned int n,unsigned int pos=0) const
       {
       unsigned int i;
 
-      for (i=0; i<n; i++) array[i]=get(i);
+      for (i=0; i<n; i++) array[i]=get(pos+i);
       }
 
    //! extract uchar array
-   void extract_array(unsigned char *array,unsigned int n) const
+   void extract_array(unsigned char *array,unsigned int n,unsigned int pos=0) const
       {
       unsigned int i;
 
-      for (i=0; i<n; i++) array[i]=(unsigned char)get(i);
+      for (i=0; i<n; i++) array[i]=(unsigned char)get(pos+i);
       }
 
    //! extract float array
-   void extract_array(float *array,unsigned int n) const
+   void extract_array(float *array,unsigned int n,unsigned int pos=0) const
       {
       unsigned int i;
 
@@ -539,20 +539,20 @@ class ministring: public ministring_base
       if (int16.uchar[0]!=0)
          for (i=0; i<n; i++)
             {
-            float32.uchar[3]=get(4*i);
-            float32.uchar[2]=get(4*i+1);
-            float32.uchar[1]=get(4*i+2);
-            float32.uchar[0]=get(4*i+3);
+            float32.uchar[3]=get(pos+4*i);
+            float32.uchar[2]=get(pos+4*i+1);
+            float32.uchar[1]=get(pos+4*i+2);
+            float32.uchar[0]=get(pos+4*i+3);
 
             array[i]=float32.float32;
             }
       else
          for (i=0; i<n; i++)
             {
-            float32.uchar[0]=get(4*i);
-            float32.uchar[1]=get(4*i+1);
-            float32.uchar[2]=get(4*i+2);
-            float32.uchar[3]=get(4*i+3);
+            float32.uchar[0]=get(pos+4*i);
+            float32.uchar[1]=get(pos+4*i+1);
+            float32.uchar[2]=get(pos+4*i+2);
+            float32.uchar[3]=get(pos+4*i+3);
 
             array[i]=float32.float32;
             }

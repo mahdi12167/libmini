@@ -125,6 +125,8 @@ void writeministring(const char *filename,const ministring &str)
    unsigned char *text;
    unsigned int size;
 
+   if (str.empty()) ERRORMSG();
+
    size=str.getsize();
 
    if ((text=(unsigned char *)malloc(size))==NULL) MEMERROR();
@@ -138,6 +140,13 @@ void writeministring(const char *filename,const ministring &str)
 
 void writeministring(ministring filename,const ministring &str)
    {writeministring(filename.c_str(),str);}
+
+// write ministrings as RAW file
+void writeministrings(const char *filename,const ministrings &strs)
+   {writeministring(filename,strs.to_string("\n"));}
+
+void writeministrings(ministring filename,const ministrings &strs)
+   {writeministrings(filename.c_str(),strs);}
 
 // read a RAW file as string
 char *readstring(const char *filename)
@@ -176,6 +185,19 @@ ministring readministring(const char *filename)
 
 ministring readministring(ministring filename)
    {return(readministring(filename.c_str()));}
+
+// read a RAW file as ministrings
+ministrings readministrings(const char *filename)
+   {
+   ministrings strs;
+
+   strs.from_string(readministring(filename),"\n");
+
+   return(strs);
+   }
+
+ministrings readministrings(ministring filename)
+   {return(readministrings(filename.c_str()));}
 
 // read a RAW file and compute signature
 unsigned int signature(const char *filename)

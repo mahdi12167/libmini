@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 class ministring;
+class ministrings;
 
 namespace miniio {
 
@@ -32,12 +33,20 @@ void writestring(const char *filename,const char *cstr);
 void writeministring(const char *filename,const ministring &str);
 void writeministring(ministring filename,const ministring &str);
 
+//! write ministrings as RAW file
+void writeministrings(const char *filename,const ministrings &strs);
+void writeministrings(ministring filename,const ministrings &strs);
+
 //! read a RAW file as string
 char *readstring(const char *filename);
 
 //! read a RAW file as ministring
 ministring readministring(const char *filename);
 ministring readministring(ministring filename);
+
+//! read a RAW file as ministrings
+ministrings readministrings(const char *filename);
+ministrings readministrings(ministring filename);
 
 //! read a RAW file and compute signature
 unsigned int signature(const char *filename);
