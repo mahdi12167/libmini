@@ -352,9 +352,9 @@ void minicurve::from_strings(ministrings &infos)
             infos[line].clear();
             }
 
-         valid=FALSE;
-
          infos.clear();
+
+         valid=FALSE;
          }
       }
    }

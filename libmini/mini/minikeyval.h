@@ -376,7 +376,9 @@ class minikeyval
 
       if (!infos.empty())
          {
-         if (infos[0]!="minikeyval") return;
+         info=infos[0];
+
+         if (info!="minikeyval") return;
 
          line=1;
 
