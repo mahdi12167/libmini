@@ -10,7 +10,8 @@ class minipath : public minicurve
    public:
 
    minipath(double start=0.0,double stop=1.0)
-      : minicurve(start,stop)
+      : minicurve(start,stop),
+      name("path"), activity("walking"), description("created by libmini")
       {}
 
    BOOLINT load(ministring filename);
@@ -20,14 +21,18 @@ class minipath : public minicurve
    ministrings to_csv() const;
 
    //! deserialization
-   void from_csv(ministrings &info);
+   void from_csv(ministrings &csv);
+
+   ministring name;
+   ministring activity;
+   ministring description;
 
    protected:
 
-   BOOLINT read_curve_format(ministrings curve);
-   BOOLINT read_csv_format(ministrings csv);
-   BOOLINT read_trk_format(ministrings trk);
-   BOOLINT read_gpx_format(ministrings gpx);
+   BOOLINT read_curve_format(ministrings &curve);
+   BOOLINT read_csv_format(ministrings &csv);
+   BOOLINT read_gpx_format(ministrings &gpx);
+   BOOLINT read_trk_format(ministrings &trk);
    };
 
 #endif

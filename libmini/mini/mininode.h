@@ -266,16 +266,18 @@ class mininode: public minidyna< miniref<mininode> >
 
       unsigned int s=get_links();
 
-      infos.append(ministring(' ',level)+"["+to_string()+"]");
+      ministring indent(' ',level);
+
+      infos.append(indent+"["+to_string()+"]");
 
       if (s>0)
          {
-         infos.append(ministring(' ',level)+"{");
+         infos.append(indent+"{");
 
          for (unsigned int i=0; i<s; i++)
             infos.append(get_link(i)->to_strings(level+1));
 
-         infos.append(ministring(' ',level)+"}");
+         infos.append(indent+"}");
          }
 
       return(infos);

@@ -5,15 +5,111 @@
 // serialization
 ministrings minipath::to_csv() const
    {
+   unsigned int i;
+
    ministrings csv;
 
-   return(csv); //!!
+   csv.append("\"name\",\"activity\",\"description\"");
+   csv.append("\""+name+"\",\""+activity+"\",\""+description+"\"");
+
+   csv.append("");
+
+   csv.append("\"segment\",\"lat\",\"lon\",\"height\",\"heading\",\"accuracy\",\"velocity\",\"time\"");
+
+   for (i=0; i<getsize(); i++)
+      {
+      ministring line;
+      minicoord coord;
+
+      coord=get(i);
+      coord.convert2llh();
+
+      // segment
+      line.append("\"1\"");
+
+      // lat
+      line.append(",\"");
+      line.append_double(coord.vec.y/3600);
+      line.append("\"");
+
+      // lon
+      line.append(",\"");
+      line.append_double(coord.vec.x/3600);
+      line.append("\"");
+
+      // height
+      line.append(",\"");
+      line.append_double(coord.vec.z);
+      line.append("\"");
+
+      // heading
+      line.append(",\"0\"");
+
+      // accuracy
+      line.append(",\"0\"");
+
+      // velocity
+      line.append(",\"0\"");
+
+      // time
+      line.append(",\"");
+      line.append_double(coord.vec.w);
+      line.append("\"");
+
+      csv.append(line);
+      }
+
+   return(csv);
    }
 
 // deserialization
-void minipath::from_csv(ministrings &info)
+void minipath::from_csv(ministrings &csv)
    {
-   //!!
+   unsigned int i,j;
+
+   ministrings values;
+
+   if (csv.getsize()<2) return;
+
+   values.from_string(csv[0],",");
+
+   if (values.getsize()<3) return;
+
+   values.from_string(csv[1],",");
+
+   if (values.getsize()<3) return;
+
+   name=values[0].tail("\"").head("\"");
+   activity=values[1].tail("\"").head("\"");
+   description=values[2].tail("\"").head("\"");
+
+   for (i=2; i<csv.getsize(); i++)
+      if (!csv[i].empty()) break;
+
+   values.from_string(csv[i],",");
+
+   if (values.getsize()<8) return;
+
+   for (i++; i<csv.getsize(); i++)
+      if (!csv[i].empty())
+         {
+         minicoord coord;
+
+         values.from_string(csv[i],",");
+
+         if (values.getsize()<8) return;
+
+         for (j=0; j<values.getsize(); j++)
+            values[j]=values[j].tail("\"").head("\"");
+
+         coord.set_llh(values[1].value(),values[2].value(),values[3].value(),values[7].value());
+
+         append(coord);
+
+         csv[i].clear();
+         }
+
+   csv.clear();
    }
 
 BOOLINT minipath::load(ministring filename)
@@ -31,6 +127,7 @@ BOOLINT minipath::load(ministring filename)
 
    if (info.startswith("minicurve")) success=read_curve_format(path);
    else if (info.startswith("\"")) success=read_csv_format(path);
+   else if (info.startswith("<?xml")) success=read_gpx_format(path);
    else if (info=="[track]") success=read_trk_format(path);
    else success=FALSE;
 
@@ -40,21 +137,26 @@ BOOLINT minipath::load(ministring filename)
 void minipath::save(ministring filename)
    {to_strings().save(filename);}
 
-BOOLINT minipath::read_curve_format(ministrings curve)
+BOOLINT minipath::read_curve_format(ministrings &curve)
    {
    from_strings(curve);
 
    return(curve.empty());
    }
 
-BOOLINT minipath::read_csv_format(ministrings csv)
+BOOLINT minipath::read_csv_format(ministrings &csv)
    {
    from_csv(csv);
 
    return(csv.empty());
    }
 
-BOOLINT minipath::read_trk_format(ministrings trk)
+BOOLINT minipath::read_gpx_format(ministrings &gpx)
+   {
+   return(FALSE); //!!
+   }
+
+BOOLINT minipath::read_trk_format(ministrings &trk)
    {
    if (trk.size()>4)
       if (trk[0]=="[track]" && trk[3]=="--start--")
@@ -87,9 +189,4 @@ BOOLINT minipath::read_trk_format(ministrings trk)
          }
 
    return(FALSE);
-   }
-
-BOOLINT minipath::read_gpx_format(ministrings gpx)
-   {
-   return(FALSE); //!!
    }
