@@ -63,6 +63,8 @@ class minicurve : public minidyna<minimeas>
    double get_time_step_max();
    double get_time_step_avg();
 
+   double get_length();
+
    void resample(double dt);
 
    //! serialization

@@ -242,6 +242,25 @@ double minicurve::get_time_step_avg()
    return(sdt/(getsize()-1));
    }
 
+double minicurve::get_length()
+   {
+   unsigned int i;
+
+   double length;
+
+   validate();
+
+   if (getsize()<2) return(0.0);
+
+   length=0.0;
+
+   for (i=0; i<getsize()-1; i++)
+      if (!get(i+1).start)
+         length+=(miniv3d(get(i+1).vec)-miniv3d(get(i).vec)).getlength();
+
+   return(length);
+   }
+
 void minicurve::resample(double dt)
    {
    double t,rt;
