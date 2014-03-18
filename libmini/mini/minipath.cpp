@@ -43,13 +43,19 @@ ministrings minipath::to_csv() const
       line.append("\"");
 
       // heading
-      line.append(",\"0\"");
+      line.append(",\"");
+      line.append_double(meas.heading);
+      line.append("\"");
 
       // accuracy
-      line.append(",\"0\"");
+      line.append(",\"");
+      line.append_double(meas.accuracy);
+      line.append("\"");
 
       // velocity
-      line.append(",\"0\"");
+      line.append(",\"");
+      line.append_double(meas.velocity);
+      line.append("\"");
 
       // time
       line.append(",\"");
@@ -103,6 +109,10 @@ void minipath::from_csv(ministrings &csv)
             values[j]=values[j].tail("\"").head("\"");
 
          meas.set_llh(values[1].value(),values[2].value(),values[3].value(),values[7].value());
+
+         meas.accuracy=values[5].value();
+         meas.velocity=values[6].value();
+         meas.heading=values[4].value();
 
          append(meas);
 

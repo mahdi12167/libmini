@@ -31,7 +31,7 @@ class minimeas: public minicoord
    //! copy constructor
    minimeas(const minimeas &m)
       : minicoord((const minicoord &)m),
-        accuracy(0.0), velocity(0.0), heading(0.0)
+        accuracy(m.accuracy), velocity(m.velocity), heading(m.heading)
       {
       if (m.description) description=new ministring(*m.description);
       else description=NULL;
