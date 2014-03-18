@@ -152,48 +152,57 @@ BOOLINT minipath::read_csv_format(ministrings &csv)
    }
 
 BOOLINT minipath::read_gpx_format(ministrings &gpx)
-   {return(FALSE);}
+   {
+   if (gpx.empty()) return(FALSE);
+
+   return(FALSE);
+   }
 
 BOOLINT minipath::read_trk_format(ministrings &trk)
    {
-   if (trk.size()>4)
-      if (trk[0]=="[track]" && trk[3]=="--start--")
-         {
-         for (unsigned int i=4; i<trk.size(); i++)
+   unsigned int i,j;
+
+   if (trk.empty()) return(FALSE);
+
+   if (trk[0]=="[track]")
+      for (i=1; i<trk.getsize(); i++)
+         if (trk[i]=="--start--")
             {
-            ministring line=trk[i];
-
-            if (line.startswith("("))
+            for (j=i+1; j<trk.getsize(); j++)
                {
-               double lat,lon,elev,time;
+               ministring line=trk[j];
 
-               line=line.tail("(");
-               lat=line.prefix(",").value();
-               line=line.tail(",");
-               lon=line.prefix(",").value();
-               line=line.tail(",");
-               elev=line.prefix(",").value();
-               line=line.tail(",");
-               time=line.prefix(",").value();
-               line=line.tail(")");
-
-               minimeas meas(miniv4d(lon*3600,lat*3600,elev,time),minicoord::MINICOORD_LLH);
-
-               if (line.startswith(";"))
+               if (line.startswith("("))
                   {
-                  line=line.tail(";");
-                  meas.set_description(line);
-                  line.clear();
+                  double lat,lon,elev,time;
+
+                  line=line.tail("(");
+                  lat=line.prefix(",").value();
+                  line=line.tail(",");
+                  lon=line.prefix(",").value();
+                  line=line.tail(",");
+                  elev=line.prefix(",").value();
+                  line=line.tail(",");
+                  time=line.prefix(",").value();
+                  line=line.tail(")");
+
+                  minimeas meas(miniv4d(lon*3600,lat*3600,elev,time),minicoord::MINICOORD_LLH);
+
+                  if (line.startswith(";"))
+                     {
+                     line=line.tail(";");
+                     meas.set_description(line);
+                     line.clear();
+                     }
+
+                  append(meas);
                   }
 
-               append(meas);
+               if (!line.empty()) return(FALSE);
                }
 
-            if (!line.empty()) return(FALSE);
+            return(TRUE);
             }
-
-         return(TRUE);
-         }
 
    return(FALSE);
    }
