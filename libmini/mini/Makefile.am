@@ -24,7 +24,7 @@ MODS	= mini miniOGL\
 	  minitime minirgb minicrs\
 	  miniio minidir minidds\
 	  ministub minitile miniload\
-	  minicoord minicurve minipath\
+	  minicoord minimeas minicurve minipath\
 	  miniwarp minicam\
 	  minilayer miniterrain miniearth\
 	  minicache minishader\

@@ -42,7 +42,7 @@ void miniv3d::from_string(ministring &info)
       info=info.tail(",");
       y=info.prefix(",").value();
       info=info.tail(",");
-      z=info.prefix(",").value();
+      z=info.prefix(")").value();
       info=info.tail(")");
       }
    }

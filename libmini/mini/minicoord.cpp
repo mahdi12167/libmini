@@ -798,7 +798,7 @@ void minicoord::from_string(ministring &info)
       info=info.tail(",");
       crs_datum=(minicoord::MINICOORD_DATUM)info.prefix(",").value_int();
       info=info.tail(",");
-      crs_orb=info.prefix(",").value_int();
+      crs_orb=info.prefix(")").value_int();
       info=info.tail(")");
       }
    }

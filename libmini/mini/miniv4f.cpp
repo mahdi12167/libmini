@@ -48,7 +48,7 @@ void miniv4f::from_string(ministring &info)
       info=info.tail(",");
       z=info.prefix(",").value();
       info=info.tail(",");
-      w=info.prefix(",").value();
+      w=info.prefix(")").value();
       info=info.tail(")");
       }
    }

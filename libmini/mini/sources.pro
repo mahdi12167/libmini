@@ -14,7 +14,8 @@ HEADERS += \
    minitime.h minirgb.h minicrs.h \
    miniio.h minidir.h minidds.h \
    ministub.h minitile.h miniload.h \
-   minicoord.h minicurve.h miniwarp.h minicam.h \
+   minicoord.h minimeas.h minicurve.h minipath.h \
+   miniwarp.h minicam.h \
    minilayer.h miniterrain.h miniearth.h \
    minicache.h minishader.h \
    miniray.h ministrip.h \
@@ -41,7 +42,8 @@ SOURCES += \
    minitime.cpp minirgb.cpp minicrs.cpp \
    miniio.cpp minidir.cpp minidds.cpp \
    ministub.cpp minitile.cpp miniload.cpp \
-   minicoord.cpp minicurve.cpp miniwarp.cpp minicam.cpp \
+   minicoord.cpp minimeas.cpp minicurve.cpp minipath.cpp \
+   miniwarp.cpp minicam.cpp \
    minilayer.cpp miniterrain.cpp miniearth.cpp \
    minicache.cpp minishader.cpp \
    miniray.cpp ministrip.cpp \

@@ -4,14 +4,14 @@
 #define MINICURVE_H
 
 #include "minidyna.h"
-#include "minicoord.h"
+#include "minimeas.h"
 
-class minicurve : public minidyna<minicoord>
+class minicurve : public minidyna<minimeas>
    {
    public:
 
    minicurve(double start=0.0,double stop=1.0)
-      : minidyna<minicoord>()
+      : minidyna<minimeas>()
       {
       curve_start=start;
       curve_stop=stop;
@@ -24,7 +24,7 @@ class minicurve : public minidyna<minicoord>
 
    minicurve(const minicoord &p1,const minicoord &p2,
              unsigned int n=0)
-      : minidyna<minicoord>()
+      : minidyna<minimeas>()
       {
       curve_start=0.0;
       curve_stop=1.0;

@@ -1764,7 +1764,7 @@ class mininode_animation_rotate: public mininode_animation
          {
          info=info.tail("mininode_animation_rotate(");
 
-         m_omega=info.tail(",").value();
+         m_omega=info.prefix(",").value();
          info=info.tail(",");
          m_axis.from_string(info);
 

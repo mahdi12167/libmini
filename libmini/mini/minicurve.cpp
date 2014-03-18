@@ -12,7 +12,7 @@ void minicurve::append(const minicoord &p)
    minicoord c=p;
 
    c.convert2ecef();
-   minidyna<minicoord>::append(c);
+   minidyna<minimeas>::append(c);
 
    valid=FALSE;
    }
@@ -84,7 +84,7 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
    }
 
 void minicurve::sort()
-   {shellsort<minicoord>(*this);}
+   {shellsort<minimeas>(*this);}
 
 void minicurve::validate()
    {
@@ -146,7 +146,7 @@ minicoord minicurve::interpolate_cubic(double t)
 
    tt=(t-get_time_start())/(get_time_stop()-get_time_start());
 
-   return(minidyna<minicoord>::interpolate_cubic(tt));
+   return(minidyna<minimeas>::interpolate_cubic_directional(tt));
    }
 
 double minicurve::get_time_start()
@@ -250,7 +250,7 @@ void minicurve::resample(double dt)
    t=t0;
    idx=1;
 
-   curve.append(minidyna<minicoord>::interpolate_cubic(0.0));
+   curve.append(minidyna<minimeas>::interpolate_cubic_directional(0.0));
 
    do
       {
@@ -264,7 +264,7 @@ void minicurve::resample(double dt)
 
       rt=(idx-1+(t-ta)/(tb-ta))/(getsize()-1);
 
-      curve.append(minidyna<minicoord>::interpolate_cubic(rt));
+      curve.append(minidyna<minimeas>::interpolate_cubic_directional(rt));
       }
    while (t<t1-0.5*dt);
 
@@ -331,7 +331,7 @@ void minicurve::from_strings(ministrings &infos)
          info=info.tail(",");
          curve_repeat_start=info.prefix(",").value();
          info=info.tail(",");
-         curve_repeat_stop=info.prefix(",").value();
+         curve_repeat_stop=info.prefix(")").value();
          info=info.tail(")");
 
          if (!info.empty()) return;
