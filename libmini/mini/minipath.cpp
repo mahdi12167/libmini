@@ -14,7 +14,7 @@ ministrings minipath::to_csv() const
 
    csv.append("");
 
-   csv.append("\"segment\",\"lat\",\"lon\",\"height\",\"heading\",\"accuracy\",\"velocity\",\"time\"");
+   csv.append("\"segment\",\"point\",\"lat\",\"lon\",\"height\",\"heading\",\"accuracy\",\"velocity\",\"time\"");
 
    for (i=0; i<getsize(); i++)
       {
@@ -27,6 +27,11 @@ ministrings minipath::to_csv() const
       // segment
       line.append("\"");
       line.append_uint(meas.segment);
+      line.append("\"");
+
+      // point
+      line.append("\"");
+      line.append_uint(i);
       line.append("\"");
 
       // lat
@@ -96,7 +101,7 @@ void minipath::from_csv(ministrings &csv)
 
    values.from_string(csv[i],",");
 
-   if (values.getsize()<8) return;
+   if (values.getsize()<9) return;
 
    for (i++; i<csv.getsize(); i++)
       if (!csv[i].empty())
@@ -105,16 +110,16 @@ void minipath::from_csv(ministrings &csv)
 
          values.from_string(csv[i],",");
 
-         if (values.getsize()<8) return;
+         if (values.getsize()<9) return;
 
          for (j=0; j<values.getsize(); j++)
             values[j]=values[j].tail("\"").head("\"");
 
-         meas.set_llh(values[1].value(),values[2].value(),values[3].value(),values[7].value());
+         meas.set_llh(values[2].value(),values[3].value(),values[4].value(),values[8].value());
 
-         meas.accuracy=values[5].value();
-         meas.velocity=values[6].value();
-         meas.heading=values[4].value();
+         meas.accuracy=values[6].value();
+         meas.velocity=values[7].value();
+         meas.heading=values[5].value();
 
          meas.segment=values[0].value_uint();
 
