@@ -59,6 +59,12 @@ class minimeas: public minicoord
       {
       *(minicoord *)this=(minicoord)m;
 
+      accuracy=m.accuracy;
+      velocity=m.velocity;
+      heading=m.heading;
+
+      start=m.start;
+
       if (m.description) description=new ministring(*m.description);
       else description=NULL;
 

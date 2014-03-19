@@ -10,6 +10,7 @@ ministrings minipath::to_csv()
    ministrings csv;
 
    unsigned int segment=0;
+   unsigned int point=0;
 
    validate();
 
@@ -28,7 +29,11 @@ ministrings minipath::to_csv()
       meas=get(i);
       meas.convert2llh();
 
-      if (meas.start) segment++;
+      if (meas.start)
+         {
+         segment++;
+         point=1;
+         }
 
       // segment
       line.append("\"");
@@ -36,8 +41,8 @@ ministrings minipath::to_csv()
       line.append("\"");
 
       // point
-      line.append("\"");
-      line.append_uint(i);
+      line.append(",\"");
+      line.append_uint(point++);
       line.append("\"");
 
       // lat
@@ -96,6 +101,7 @@ void minipath::from_csv(ministrings &csv)
 
    if (values.getsize()<3) return;
 
+   values.clear();
    values.from_string(csv[1],",");
 
    if (values.getsize()<3) return;
@@ -107,6 +113,7 @@ void minipath::from_csv(ministrings &csv)
    for (i=2; i<csv.getsize(); i++)
       if (!csv[i].empty()) break;
 
+   values.clear();
    values.from_string(csv[i],",");
 
    if (values.getsize()<9) return;
@@ -116,6 +123,7 @@ void minipath::from_csv(ministrings &csv)
          {
          minimeas meas;
 
+         values.clear();
          values.from_string(csv[i],",");
 
          if (values.getsize()<9) return;

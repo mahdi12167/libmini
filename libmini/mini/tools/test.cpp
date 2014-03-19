@@ -15,6 +15,8 @@
 #include <mini/ministrip.h>
 #include <mini/glslmath.h>
 
+#include <mini/minipath.h> //!!
+
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
@@ -221,6 +223,12 @@ int main(int argc,char *argv[])
    if (test_glslmath()==0) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
+
+   //!!
+   minipath path;
+   path.load("/Users/roettger/Desktop/13_03_2014 11_33 Schennaer Waalweg.csv");
+   std::cout << path.get_length() << std::endl;
+   std::cout << path.to_csv().to_string("\n").c_str();
 
    // end of test code
 

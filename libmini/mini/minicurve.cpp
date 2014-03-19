@@ -98,15 +98,22 @@ void minicurve::sort()
 
 void minicurve::validate()
    {
-   unsigned int i;
+   unsigned int i,j;
 
    double t;
 
    if (!valid)
       {
+      // check for missing time
+      for (i=0; i<getsize();)
+         if (isNAN(get(i).vec.w)) dispose(i);
+         else i++;
+
+      // sort by time
       sort();
       valid=TRUE;
 
+      // check for missing time step
       if (get_time_step_max()==0.0)
          for (i=0; i<getsize(); i++)
             {
@@ -115,10 +122,40 @@ void minicurve::validate()
             ref(i).vec.w=t;
             }
       else
-         for (i=0; i+1<getsize(); i++)
+         // check for double time step
+         for (i=0; i+1<getsize();)
             if (get(i).vec.w==get(i+1).vec.w) dispose(i+1);
+            else i++;
 
+      // check for missing points
+      for (i=0; i<getsize();)
+         if (isNAN(get(i).vec.x) || isNAN(get(i).vec.y)) dispose(i);
+         else i++;
+
+      // mark first time step
       if (!empty()) ref(0).start=TRUE;
+
+      // check for missing height
+      for (i=0; i<getsize(); i++)
+         if (isNAN(get(i).vec.z))
+            {
+            // reduplicate height from following points
+            for (j=i+1; j<getsize(); j++)
+               if (!isNAN(get(j).vec.z))
+                  {
+                  ref(i).vec.z=get(j).vec.z;
+                  break;
+                  }
+
+            // reduplicate height from previous points
+            if (isNAN(get(i).vec.z))
+               for (j=i; j>0;)
+                  if (!isNAN(get(--j).vec.z))
+                     {
+                     ref(i).vec.z=get(j).vec.z;
+                     break;
+                     }
+            }
       }
    }
 
@@ -255,8 +292,16 @@ double minicurve::get_length()
    length=0.0;
 
    for (i=0; i<getsize()-1; i++)
-      if (!get(i+1).start)
-         length+=(miniv3d(get(i+1).vec)-miniv3d(get(i).vec)).getlength();
+      {
+      minimeas a=get(i);
+      minimeas b=get(i+1);
+
+      if (!b.start)
+         {
+         if (isNAN(a.vec.z) || isNAN(b.vec.z)) a.vec.z=b.vec.z=0.0;
+         length+=(miniv3d(a.vec)-miniv3d(b.vec)).getlength();
+         }
+      }
 
    return(length);
    }
