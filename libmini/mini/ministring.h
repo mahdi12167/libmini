@@ -924,6 +924,27 @@ class ministrings: public minidyna<ministring>
       return(FALSE);
       }
 
+   //! check for existing sub-string and return first occurring line and index
+   BOOLINT find(const ministring_base &sub,
+                unsigned int &line,unsigned int &idx,
+                unsigned int linestart=0,unsigned int start=0) const
+      {
+      unsigned int i;
+
+      for (i=linestart; i<getsize(); i++)
+         {
+         if (get(i).find(sub,idx,start))
+            {
+            line=i;
+            return(TRUE);
+            }
+
+         start=0;
+         }
+
+      return(FALSE);
+      }
+
    //! search for strings containing a sub-string
    ministrings search(const ministring &sub) const
       {
@@ -935,6 +956,17 @@ class ministrings: public minidyna<ministring>
          if (get(i).contains(sub)) strs.append(get(i));
 
       return(strs);
+      }
+
+   //! substitute sub-strings
+   ministrings& substitute(const ministring &sub,const ministring &with)
+      {
+      unsigned int i;
+
+      for (i=0; i<getsize(); i++)
+         ref(i).substitute(sub,with);
+
+      return(*this);
       }
 
    //! remove white space

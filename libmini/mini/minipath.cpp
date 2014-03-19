@@ -152,6 +152,9 @@ BOOLINT minipath::load(ministring filename)
 
    if (path.empty()) return(FALSE);
 
+   path.remove_leading_white_space();
+   path.remove_trailing_white_space();
+
    info=path[0];
 
    if (info.startswith("minicurve")) success=read_curve_format(path);
