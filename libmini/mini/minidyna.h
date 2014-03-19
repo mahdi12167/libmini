@@ -54,7 +54,8 @@ class minidyna
       }
 
    //! destructor
-   ~minidyna() {setsize(0);}
+   ~minidyna()
+      {if (ARRAY!=NULL) delete[] ARRAY;}
 
    //! get array size
    unsigned int getsize() const {return(SIZE);}
