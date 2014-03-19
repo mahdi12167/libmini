@@ -313,6 +313,8 @@ ministrings minicurve::to_strings()
 
    ministring info("minicurve");
 
+   validate();
+
    info.append("(");
 
    info.append_double(curve_start);
@@ -330,8 +332,6 @@ ministrings minicurve::to_strings()
    info.append(")");
 
    curve.append(info);
-
-   validate();
 
    for (i=0; i<getsize(); i++)
       curve.append(get(i).to_string());

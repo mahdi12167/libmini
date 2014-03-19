@@ -134,6 +134,9 @@ inline minimeas operator * (const minimeas &a,const double b);
 inline minimeas operator / (const minimeas &a,const double b);
 inline int operator < (const minimeas &a,const minimeas &b);
 
+// output stream operator
+inline std::ostream& operator << (std::ostream &out,const minimeas &m);
+
 // implementation of inline operators:
 
 inline minimeas operator + (const minimeas &a,const minimeas &b)
@@ -173,5 +176,8 @@ inline minimeas operator / (const minimeas &a,const double b)
 
 inline int operator < (const minimeas &a,const minimeas &b)
    {return(a.vec.w<b.vec.w);}
+
+inline std::ostream& operator << (std::ostream &out,const minimeas &m)
+   {return(out << m.to_string().c_str());}
 
 #endif
