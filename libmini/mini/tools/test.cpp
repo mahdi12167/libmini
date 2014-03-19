@@ -5,6 +5,7 @@
 #define MINICOORD_TEST // enable this to perform a test of the minicoord class
 #define MINISTRING_TEST // enable this to perform a test of the ministring class
 #define MINISTRIP_TEST // enable this to perform a test of the ministrip class
+#define MINITIME_TEST // enable this to perform a test of the minitime module
 #define GLSLMATH_TEST // enable this to perform a test of the glslmath module
 
 #include <mini/minibase.h>
@@ -13,6 +14,7 @@
 #include <mini/minicoord.h>
 #include <mini/ministring.h>
 #include <mini/ministrip.h>
+#include <mini/minitime.h>
 #include <mini/glslmath.h>
 
 #include <mini/minipath.h> //!!
@@ -219,6 +221,20 @@ int main(int argc,char *argv[])
       std::cout << "FAILURE" << std::endl;
 #endif
 
+#ifdef MINITIME_TEST
+   double s1971=utc2minitime(1971,7,2,14,34,0,0);
+   double s1970=utc2minitime(1970,1,1,0,0,0,0);
+   double s1969=utc2minitime(1969,7,1,0,0,0,700);
+   double s2014=utc2minitime(2014,3,19,15,18,14,0);
+   if ((long long)(s1971+0.5)==0 &&
+       (long long)(s1970+0.5)==-47313239 &&
+       (long long)(s1969+0.5)==-63210838 &&
+       (long long)(s2014+0.5)==1346978654)
+      std::cout << "SUCCESS" << std::endl;
+   else
+      std::cout << "FAILURE" << std::endl;
+#endif
+
 #ifdef GLSLMATH_TEST
    if (test_glslmath()==0) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
@@ -228,7 +244,6 @@ int main(int argc,char *argv[])
    minipath path;
    path.load("/Users/roettger/Desktop/13_03_2014 11_33 Schennaer Waalweg.csv");
    std::cout << path.get_length() << std::endl;
-   std::cout << path.to_csv().to_string("\n").c_str();
 
    // end of test code
 

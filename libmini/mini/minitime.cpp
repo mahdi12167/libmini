@@ -51,9 +51,50 @@ unsigned int daysofmonth(unsigned int month,int year)
       case 1: case 3: case 5: case 7: case 8: case 10: case 12: return(31);
       case 2: return(is_leapyear(year)?29:28);
       case 4: case 6: case 9: case 11: return(30); break;
+      default: ERRORMSG();
       }
 
    return(0);
+   }
+
+unsigned int daysofyear(int year)
+   {return(is_leapyear(year)?366:365);}
+
+double utc2unixtime(int year,unsigned int month,unsigned int day,
+                    unsigned int hour,unsigned int minute,unsigned int second,
+                    double milliseconds)
+   {
+   int i;
+
+   double s;
+
+   s=milliseconds/1000;
+
+   s+=second;
+   s+=minute*60;
+   s+=hour*60*60;
+   s+=(day-1)*24*60*60;
+
+   for (i=month; i>1; i--)
+      s+=daysofmonth(i-1,year)*24*60*60;
+
+   if (year>=1970)
+      for (i=year; i>1970; i--)
+         s+=daysofyear(year-1)*24*60*60;
+   else
+      for (i=year; i<1970; i++)
+         s-=daysofyear(year)*24*60*60;
+
+   return(s);
+   }
+
+double utc2minitime(int year,unsigned int month,unsigned int day,
+                    unsigned int hour,unsigned int minute,unsigned int second,
+                    double milliseconds)
+   {
+   return(utc2unixtime(year,month,day,
+                       hour,minute,second,
+                       milliseconds)-47313240);
    }
 
 }
