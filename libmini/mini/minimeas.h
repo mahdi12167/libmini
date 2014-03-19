@@ -33,7 +33,7 @@ class minimeas: public minicoord
 
    //! copy constructor
    minimeas(const minimeas &m)
-      : minicoord((const minicoord &)m),
+      : minicoord((minicoord)m),
         accuracy(m.accuracy), velocity(m.velocity), heading(m.heading),
         start(m.start)
       {
@@ -52,6 +52,20 @@ class minimeas: public minicoord
 
       if (metadata)
          delete metadata;
+      }
+
+   //! assignment operator
+   minimeas& operator = (const minimeas &m)
+      {
+      (minicoord)(*this)=(minicoord)m;
+
+      if (m.description) description=new ministring(*m.description);
+      else description=NULL;
+
+      if (m.metadata) metadata=new ministring(*m.metadata);
+      else metadata=NULL;
+
+      return(*this);
       }
 
    //! set description
