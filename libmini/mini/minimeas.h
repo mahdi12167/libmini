@@ -57,7 +57,7 @@ class minimeas: public minicoord
    //! assignment operator
    minimeas& operator = (const minimeas &m)
       {
-      (minicoord)(*this)=(minicoord)m;
+      *(minicoord *)this=(minicoord)m;
 
       if (m.description) description=new ministring(*m.description);
       else description=NULL;
