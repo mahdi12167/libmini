@@ -27,6 +27,17 @@ void minicurve::append(minicurve &c)
    valid=FALSE;
    }
 
+void minicurve::merge(minicurve &c)
+   {
+   unsigned int i;
+
+   minidyna<minimeas>::append(c);
+
+   for (i=0; i<getsize(); i++) ref(i).start=0;
+
+   valid=FALSE;
+   }
+
 void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
                               unsigned int n)
    {

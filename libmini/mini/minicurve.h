@@ -38,7 +38,9 @@ class minicurve : public minidyna<minimeas>
       }
 
    void append(const minimeas &p);
+
    void append(minicurve &c);
+   void merge(minicurve &c);
 
    void append_sector(const minicoord &p1,const minicoord &p2,
                       unsigned int n=0);
