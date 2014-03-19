@@ -680,12 +680,6 @@ class ministring: public ministring_base
          }
       }
 
-   //! convert from utc to unix time
-   double utc2unixtime() const
-      {
-      return(0);
-      }
-
    //! concatenate string (serialization)
    ministring to_string() const
       {return(*this);}
@@ -1209,6 +1203,36 @@ inline ministrings get_cmdline_opts(unsigned int argc,char *argv[])
          }
 
    return(opts);
+   }
+
+//! convert from utc to unix time
+inline double utc2unixtime(ministring utc)
+   {
+   if (utc.contains("T") && utc.endswith("Z"))
+      {
+      utc.substitute("T",":");
+      utc.substitute("Z","");
+      utc.substitute("-",":");
+
+      ministrings time;
+
+      time.from_string(utc,":");
+
+      if (time.getsize()!=6) return(NAN);
+
+      unsigned int year=time[0].value_uint();
+      unsigned int month=time[1].value_uint();
+      unsigned int day=time[2].value_uint();
+
+      unsigned int hour=time[3].value_uint();
+      unsigned int minute=time[4].value_uint();
+      double second=time[5].value();
+
+      return(utc2unixtime(year,month,day,
+                          hour,minute,(unsigned int)floor(second),
+                          (second-floor(second))*1000));
+      }
+   else return(utc.value());
    }
 
 #endif

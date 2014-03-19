@@ -192,7 +192,7 @@ void minicoord::set_time(int year,unsigned int month,unsigned int day,
 
 // set time from utc string
 void minicoord::set_time(const ministring &utc)
-   {set_time(utc.utc2unixtime());}
+   {set_time(utc2unixtime(utc));}
 
 // orb to orb scaling
 void minicoord::scale2(int orb)

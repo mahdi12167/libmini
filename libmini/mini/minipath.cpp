@@ -131,7 +131,7 @@ void minipath::from_csv(ministrings &csv)
          for (j=0; j<values.getsize(); j++)
             values[j]=values[j].tail("\"").head("\"");
 
-         meas.set_llh(values[2].value(),values[3].value(),values[4].value(),values[8].utc2unixtime());
+         meas.set_llh(values[2].value(),values[3].value(),values[4].value(),utc2unixtime(values[8]));
 
          meas.accuracy=values[6].value();
          meas.velocity=values[7].value();
@@ -194,6 +194,9 @@ BOOLINT minipath::read_csv_format(ministrings &csv)
 BOOLINT minipath::read_gpx_format(ministrings &gpx)
    {
    if (gpx.empty()) return(FALSE);
+
+   if (gpx[0].startswith("<?xml"))
+      CODEERROR();
 
    return(FALSE);
    }

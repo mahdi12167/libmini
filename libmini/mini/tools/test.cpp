@@ -17,8 +17,6 @@
 #include <mini/minitime.h>
 #include <mini/glslmath.h>
 
-#include <mini/minipath.h> //!!
-
 #ifndef __APPLE__
 #include <GL/glut.h>
 #else
@@ -226,10 +224,14 @@ int main(int argc,char *argv[])
    double s1970=utc2minitime(1970,1,1,0,0,0,0);
    double s1969=utc2minitime(1969,7,1,0,0,0,700);
    double s2014=utc2minitime(2014,3,19,15,18,14,0);
+   ministring utc("2014-03-13T10:33:09.876Z");
+   double sutc=utc2unixtime(2014,3,13,10,33,9,876);
+   double utcd=utc2unixtime(utc)-sutc;
    if ((long long)(s1971+0.5)==0 &&
        (long long)(s1970+0.5)==-47313239 &&
        (long long)(s1969+0.5)==-63210838 &&
-       (long long)(s2014+0.5)==1346978654)
+       (long long)(s2014+0.5)==1346978654 &&
+       utcd==0.0)
       std::cout << "SUCCESS" << std::endl;
    else
       std::cout << "FAILURE" << std::endl;
@@ -239,11 +241,6 @@ int main(int argc,char *argv[])
    if (test_glslmath()==0) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
-
-   //!!
-   minipath path;
-   path.load("/Users/roettger/Desktop/13_03_2014 11_33 Schennaer Waalweg.csv");
-   std::cout << path.get_length() << std::endl;
 
    // end of test code
 

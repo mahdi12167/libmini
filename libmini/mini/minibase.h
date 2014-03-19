@@ -20,7 +20,8 @@ enum MINI_ERROR
    MINI_ERROR_NONFATAL=0,
    MINI_ERROR_FATAL=1,
    MINI_ERROR_MEM=2,
-   MINI_ERROR_IO=3
+   MINI_ERROR_IO=3,
+   MINI_ERROR_CODE=4
    };
 
 extern void (*minierrorhandler)(const char *file,int line,int fatal,const char *msg);
@@ -28,6 +29,7 @@ extern void (*minierrorhandler)(const char *file,int line,int fatal,const char *
 #define ERRORMSG() minierrormsg(__FILE__,__LINE__,MINI_ERROR_FATAL)
 #define MEMERROR() minierrormsg(__FILE__,__LINE__,MINI_ERROR_MEM)
 #define IOERROR() minierrormsg(__FILE__,__LINE__,MINI_ERROR_IO)
+#define CODEERROR() minierrormsg(__FILE__,__LINE__,MINI_ERROR_CODE)
 #define WARNMSG(msg) minierrormsg(__FILE__,__LINE__,MINI_ERROR_NONFATAL,msg)
 
 #ifdef LIBMINI_DEBUG
@@ -43,6 +45,7 @@ inline void minierrormsg(const char *file,int line,int fatal,const char *msg=NUL
       if (fatal==MINI_ERROR_NONFATAL) fprintf(stderr,"warning");
       else if (fatal==MINI_ERROR_MEM) fprintf(stderr,"insufficient memory");
       else if (fatal==MINI_ERROR_IO) fprintf(stderr,"io error");
+      else if (fatal==MINI_ERROR_CODE) fprintf(stderr,"unimplemented code");
       else fprintf(stderr,"fatal error");
       fprintf(stderr," in <%s> at line %d!\n",file,line);
       if (msg!=NULL) fprintf(stderr,"description: %s\n",msg);
