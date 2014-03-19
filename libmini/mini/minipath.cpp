@@ -131,7 +131,7 @@ void minipath::from_csv(ministrings &csv)
          for (j=0; j<values.getsize(); j++)
             values[j]=values[j].tail("\"").head("\"");
 
-         meas.set_llh(values[2].value(),values[3].value(),values[4].value(),values[8].value());
+         meas.set_llh(values[2].value(),values[3].value(),values[4].value(),values[8].utc2unixtime());
 
          meas.accuracy=values[6].value();
          meas.velocity=values[7].value();

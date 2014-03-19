@@ -119,6 +119,9 @@ class minicoord
                  unsigned int hour=0,unsigned int minute=0,unsigned int second=0,
                  double milliseconds=0.0);
 
+   //! set time from utc string
+   void set_time(const ministring &utc);
+
    //! convert from 1 coordinate system 2 another
    void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE,int orb=MINICOORD_ORB_NONE);
 

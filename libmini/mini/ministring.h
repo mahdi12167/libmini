@@ -8,6 +8,7 @@
 #include "minisort.h"
 
 #include "miniio.h"
+#include "minitime.h"
 
 //! string base class
 typedef minidyna<char,16> ministring_base;
@@ -677,6 +678,12 @@ class ministring: public ministring_base
          if (c==' ' || c=='\n' || c=='\r' || c=='\t') dispose(i);
          else break;
          }
+      }
+
+   //! convert from utc to unix time
+   double utc2unixtime() const
+      {
+      return(0);
       }
 
    //! concatenate string (serialization)
