@@ -4,9 +4,10 @@
 #define MININODE_PATH_H
 
 #include "mininode_geom.h"
+#include "minipath.h"
 
 //! a geometry node that implements C-LOD for line strips
-class mininode_geometry_path: public mininode_geom
+class mininode_geometry_path: public mininode_geom, minipath
    {
    public:
 

@@ -3,7 +3,7 @@
 #include "mininode_path.h"
 
 mininode_geometry_path::mininode_geometry_path()
-   : mininode_geom()
+   : mininode_geom(), minipath()
    {}
 
 void mininode_geometry_path::rendergeo(int /*wocolor*/,int /*wonrm*/,int /*wotex*/)
