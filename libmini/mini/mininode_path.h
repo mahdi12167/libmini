@@ -15,7 +15,6 @@ class mininode_geometry_path: public mininode_geom, minipath
    virtual ~mininode_geometry_path();
 
    virtual void rendergeo(int wocolor=0,int wonrm=0,int wotex=0);
-   virtual void getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const;
 
    virtual double shoot(const miniv3d &o,const miniv3d &d,double mindist=0.0) const
       {

@@ -14,9 +14,3 @@ void mininode_geometry_path::rendergeo(int /*wocolor*/,int /*wonrm*/,int /*wotex
 
 #endif
    }
-
-void mininode_geometry_path::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
-   {
-   bboxmin=miniv3d(0,0,0);
-   bboxmax=miniv3d(0,0,0);
-   }
