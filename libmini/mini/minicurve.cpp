@@ -167,6 +167,25 @@ void minicurve::validate()
                      break;
                      }
             }
+
+      // initialize bbox
+      bboxmin=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
+      bboxmax=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
+
+      // compute bbox
+      for (i=0; i<getsize(); i++)
+         {
+         miniv3d p=get(i).vec;
+
+         if (p.x<bboxmin.x) bboxmin.x=p.x;
+         if (p.x>bboxmax.x) bboxmax.x=p.x;
+
+         if (p.y<bboxmin.y) bboxmin.y=p.y;
+         if (p.y>bboxmax.y) bboxmax.y=p.y;
+
+         if (p.z<bboxmin.z) bboxmin.z=p.z;
+         if (p.z>bboxmax.z) bboxmax.z=p.z;
+         }
       }
    }
 
@@ -358,6 +377,13 @@ void minicurve::resample(double dt)
    *this=curve;
 
    valid=TRUE;
+   }
+
+// get bounding box
+void minicurve::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
+   {
+   bboxmin=this->bboxmin;
+   bboxmax=this->bboxmax;
    }
 
 // serialization

@@ -19,6 +19,9 @@ class minicurve : public minidyna<minimeas>
       curve_map_start=curve_map_stop=0.0;
       curve_repeat_start=curve_repeat_stop=0.0;
 
+      bboxmin=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
+      bboxmax=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
+
       valid=FALSE;
       }
 
@@ -31,6 +34,9 @@ class minicurve : public minidyna<minimeas>
 
       curve_map_start=curve_map_stop=0.0;
       curve_repeat_start=curve_repeat_stop=0.0;
+
+      bboxmin=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
+      bboxmax=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
 
       valid=FALSE;
 
@@ -69,6 +75,9 @@ class minicurve : public minidyna<minimeas>
 
    void resample(double dt);
 
+   //! get bounding box
+   void getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const;
+
    //! serialization
    ministrings to_strings();
 
@@ -82,6 +91,8 @@ class minicurve : public minidyna<minimeas>
    double curve_start,curve_stop;
    double curve_map_start,curve_map_stop;
    double curve_repeat_start,curve_repeat_stop;
+
+   miniv3d bboxmin,bboxmax;
 
    void bisect(const minicoord &p1,const minicoord &p2,
                int level,int maxlevel);
