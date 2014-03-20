@@ -6,8 +6,8 @@ HEADERS += \
    minidyna.h minisort.h \
    minikeyval.h minikdtree.h \
    ministring.h minilog.h \
-   miniref.h mininode.h mininodes.h\
-   mininode_geom.h mininode_teapot.h\
+   miniref.h mininode.h mininodes.h \
+   mininode_geom.h mininode_teapot.h mininode_path.h \
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h \
    minimath.h minicomplex.h glslmath.h \
    mininoise.h minimpfp.h \
@@ -50,7 +50,7 @@ SOURCES += \
    minipoint.cpp minitext.cpp minisky.cpp miniglobe.cpp \
    minitree.cpp minibrick.cpp minilod.cpp \
    minimesh.cpp minibspt.cpp miniproj.cpp \
-   mininodes.cpp mininode_teapot.cpp \
+   mininodes.cpp mininode_teapot.cpp mininode_path.cpp \
    minilog.cpp \
    pnmbase.cpp pnmsample.cpp \
    rawbase.cpp rekbase.cpp \

@@ -32,7 +32,7 @@ MODS	= mini miniOGL\
 	  minipoint minitext minisky miniglobe\
 	  minitree minibrick minilod\
 	  minimesh minibspt miniproj\
-	  mininodes mininode_teapot\
+	  mininodes mininode_teapot mininode_path\
 	  minilog\
 	  pnmbase pnmsample\
 	  rawbase rekbase\
