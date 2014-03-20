@@ -6,6 +6,7 @@
 #define MINISTRING_TEST // enable this to perform a test of the ministring class
 #define MINISTRIP_TEST // enable this to perform a test of the ministrip class
 #define MINITIME_TEST // enable this to perform a test of the minitime module
+#define MINIPATH_TEST // enable this to perform a test of the minipath module
 #define GLSLMATH_TEST // enable this to perform a test of the glslmath module
 
 #include <mini/minibase.h>
@@ -15,6 +16,7 @@
 #include <mini/ministring.h>
 #include <mini/ministrip.h>
 #include <mini/minitime.h>
+#include <mini/minipath.h>
 #include <mini/glslmath.h>
 
 #ifndef __APPLE__
@@ -125,6 +127,7 @@ int main(int argc,char *argv[])
    // ...
 
 #ifdef OPENGL_TEST
+   std::cout << "miniOGL:" << std::endl;
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
    if (get_unsupported_glexts()==0) std::cout << "OPENGL SUCCESS" << std::endl;
@@ -132,6 +135,7 @@ int main(int argc,char *argv[])
 #endif
 
 #ifdef MINICRS_TEST
+   std::cout << "minicrs:" << std::endl;
    int z0=4;
    double lon=minicrs::UTMZ2L(z0);
    std::cout << z0 << " -> " << lon/3600 << std::endl;
@@ -141,6 +145,7 @@ int main(int argc,char *argv[])
 #endif
 
 #ifdef MINICOORD_TEST
+   std::cout << "minicoord:" << std::endl;
    minicoord c1(miniv4d(11*3600,49*3600,0),minicoord::MINICOORD_LLH,0,minicoord::MINICOORD_DATUM_WGS84);
    std::cout << c1 << std::endl;
    minicoord c2=c1;
@@ -159,6 +164,7 @@ int main(int argc,char *argv[])
    if (c3==c1) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 
+   std::cout << "minicoord:" << std::endl;
    minicoord u(miniv4d(500000,0,0),minicoord::MINICOORD_UTM,4,minicoord::MINICOORD_DATUM_WGS84);
    std::cout << u << std::endl;
    u.convert2(minicoord::MINICOORD_LLH);
@@ -170,6 +176,7 @@ int main(int argc,char *argv[])
 #endif
 
 #ifdef MINISTRING_TEST
+   std::cout << "ministring:" << std::endl;
    ministring test1("this is a simple test string");
    ministring test2("this is a s1mple test string");
    ministring check1=test1.checksum(4);
@@ -225,6 +232,8 @@ int main(int argc,char *argv[])
    double s1969=utc2minitime(1969,7,1,0,0,0,700);
    double s2014=utc2minitime(2014,3,19,15,18,14,0);
    ministring utc("2014-03-13T10:33:09.876Z");
+   std::cout << "minitime: s1971=" << s1971 << std::endl;
+   std::cout << "minitime: s1970=" << s1970 << std::endl;
    double sutc=utc2unixtime(2014,3,13,10,33,9,876);
    double utcd=utc2unixtime(utc)-sutc;
    if ((long long)(s1971+0.5)==0 &&
@@ -237,7 +246,20 @@ int main(int argc,char *argv[])
       std::cout << "FAILURE" << std::endl;
 #endif
 
+#ifdef MINIPATH_TEST
+   minicoord point1(miniv4d(11*3600,49*3600,0),minicoord::MINICOORD_LLH,0,minicoord::MINICOORD_DATUM_WGS84);
+   minicoord point2(miniv4d(500000,0,0),minicoord::MINICOORD_UTM,4,minicoord::MINICOORD_DATUM_WGS84);
+   minipath path;
+   path.append(point1);
+   path.append(point2);
+   double length=path.get_length();
+   std::cout << "minipath: length=" << length << std::endl;
+   if (dabs(length-1.15704e+07)<1E1) std::cout << "SUCCESS" << std::endl;
+   else std::cout << "FAILURE" << std::endl;
+#endif
+
 #ifdef GLSLMATH_TEST
+   std::cout << "glslmath:" << std::endl;
    if (test_glslmath()==0) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif

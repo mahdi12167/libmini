@@ -15,7 +15,9 @@ class minipath : public minicurve
       {}
 
    BOOLINT load(ministring filename);
+
    void save(ministring filename);
+   void save2csv(ministring filename);
 
    //! serialization
    ministrings to_csv();

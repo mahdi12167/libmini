@@ -177,6 +177,9 @@ BOOLINT minipath::load(ministring filename)
 void minipath::save(ministring filename)
    {to_strings().save(filename);}
 
+void minipath::save2csv(ministring filename)
+   {to_csv().save(filename);}
+
 BOOLINT minipath::read_curve_format(ministrings &curve)
    {
    from_strings(curve);
