@@ -782,12 +782,62 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       }
    }
 
+mininode_geometry_band::mininode_geometry_band(const minicurve &curve,double width)
+   {
+   minicoord ecef;
+   minidyna<miniv3d> pos;
+
+   miniv3d n;
+   minidyna<miniv3d> nrm;
+
+   if (curve.getsize()<2) return;
+
+   for (unsigned int i=0; i<curve.getsize(); i++)
+      {
+      ecef=curve[i];
+      ecef.convert2ecef();
+      pos.append(ecef.vec);
+
+      n=ecef.vec;
+      n.normalize();
+      nrm.append(n);
+      }
+
+   *this=mininode_geometry_band(pos,nrm,width);
+   }
+
+mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const minidyna<double> &width)
+   {
+   minicoord ecef;
+   minidyna<miniv3d> pos;
+
+   miniv3d n;
+   minidyna<miniv3d> nrm;
+
+   if (curve.getsize()<2) return;
+
+   for (unsigned int i=0; i<curve.getsize(); i++)
+      {
+      ecef=curve[i];
+      ecef.convert2ecef();
+      pos.append(ecef.vec);
+
+      n=ecef.vec;
+      n.normalize();
+      nrm.append(n);
+      }
+
+   *this=mininode_geometry_band(pos,nrm,width);
+   }
+
 mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,double width)
    {
    minicoord ecef;
    minidyna<miniv3d> pos;
 
-   for (unsigned int i=0; i<curve.getsize()-1; i++)
+   if (curve.getsize()<2) return;
+
+   for (unsigned int i=0; i<curve.getsize(); i++)
       {
       ecef=curve[i];
       ecef.convert2ecef();
@@ -802,7 +852,9 @@ mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const mini
    minicoord ecef;
    minidyna<miniv3d> pos;
 
-   for (unsigned int i=0; i<curve.getsize()-1; i++)
+   if (curve.getsize()<2) return;
+
+   for (unsigned int i=0; i<curve.getsize(); i++)
       {
       ecef=curve[i];
       ecef.convert2ecef();
@@ -886,7 +938,9 @@ mininode_geometry_tube::mininode_geometry_tube(const minicurve &curve,double rad
    minicoord ecef;
    minidyna<miniv3d> pos;
 
-   for (unsigned int i=0; i<curve.getsize()-1; i++)
+   if (curve.getsize()<2) return;
+
+   for (unsigned int i=0; i<curve.getsize(); i++)
       {
       ecef=curve[i];
       ecef.convert2ecef();
@@ -903,7 +957,9 @@ mininode_geometry_tube::mininode_geometry_tube(const minicurve &curve,const mini
    minicoord ecef;
    minidyna<miniv3d> pos;
 
-   for (unsigned int i=0; i<curve.getsize()-1; i++)
+   if (curve.getsize()<2) return;
+
+   for (unsigned int i=0; i<curve.getsize(); i++)
       {
       ecef=curve[i];
       ecef.convert2ecef();

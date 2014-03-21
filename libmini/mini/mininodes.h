@@ -2296,6 +2296,8 @@ class mininode_geometry_band: public mininode_geometry
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
 
    //! constructors from curve
+   mininode_geometry_band(const minicurve &curve,double width);
+   mininode_geometry_band(const minicurve &curve,const minidyna<double> &width);
    mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,double width);
    mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
    };

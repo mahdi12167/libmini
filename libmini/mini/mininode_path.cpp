@@ -2,15 +2,15 @@
 
 #include "mininode_path.h"
 
+// default constructor
 mininode_geometry_path::mininode_geometry_path()
-   : mininode_geom(), minipath()
+   : mininode_geometry(0,3,0), minipath()
    {}
 
-void mininode_geometry_path::rendergeo(int /*wocolor*/,int /*wonrm*/,int /*wotex*/)
-   {
-#ifndef NOOGL
+// destructor
+mininode_geometry_path::~mininode_geometry_path()
+   {}
 
-   CODEERROR();
-
-#endif
-   }
+// recreate geometry from actual view point
+void mininode_geometry_path::recreate(double width)
+   {*(mininode_geometry *)this=mininode_geometry_band(*this,width);}
