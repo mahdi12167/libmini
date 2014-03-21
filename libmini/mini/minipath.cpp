@@ -149,6 +149,7 @@ void minipath::from_csv(ministrings &csv)
    csv.clear();
    }
 
+// load path from file
 BOOLINT minipath::load(ministring filename)
    {
    BOOLINT success;
@@ -174,12 +175,15 @@ BOOLINT minipath::load(ministring filename)
    return(success);
    }
 
+// save path to file
 void minipath::save(ministring filename)
    {to_strings().save(filename);}
 
+// save path to file in csv format
 void minipath::save2csv(ministring filename)
    {to_csv().save(filename);}
 
+// read internal format
 BOOLINT minipath::read_curve_format(ministrings &curve)
    {
    from_strings(curve);
@@ -187,6 +191,7 @@ BOOLINT minipath::read_curve_format(ministrings &curve)
    return(curve.empty());
    }
 
+// read csv format
 BOOLINT minipath::read_csv_format(ministrings &csv)
    {
    from_csv(csv);
@@ -194,6 +199,7 @@ BOOLINT minipath::read_csv_format(ministrings &csv)
    return(csv.empty());
    }
 
+// read gpx format
 BOOLINT minipath::read_gpx_format(ministrings &gpx)
    {
    if (gpx.empty()) return(FALSE);
@@ -204,6 +210,7 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
    return(FALSE);
    }
 
+// read trk format
 BOOLINT minipath::read_trk_format(ministrings &trk)
    {
    unsigned int i,j;

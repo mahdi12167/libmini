@@ -14,6 +14,9 @@ class mininode_geometry_path: public mininode_geometry, minipath
    //! default constructor
    mininode_geometry_path();
 
+   //! constructor
+   mininode_geometry_path(ministring filename,double width=10.0);
+
    //! destructor
    virtual ~mininode_geometry_path();
 
