@@ -651,7 +651,7 @@ ministring Object_path::get_info()
           "\n\nrepo = "+repository+"\n"+
           "file = "+filename+"\n\n"+
           "length = "+path_node->getpath()->get_length()/1000+"km\n"+
-          "duration = "+path_node->getpath()->get_time_period()/60+"h";
+          "duration = "+path_node->getpath()->get_time_period()/3600+"h";
 
    return(info);
    }
