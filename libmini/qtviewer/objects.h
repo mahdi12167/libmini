@@ -32,8 +32,8 @@ class Object_tileset: public Object_extents
    {
    public:
 
-   Object_tileset(const ministring &name="",const ministring &repo="",
-                  Viewer *viewer=NULL);
+   Object_tileset(Viewer *v=NULL,
+                  const ministring &name="",const ministring &repo="");
 
    virtual ~Object_tileset();
 
@@ -47,14 +47,14 @@ class Object_tileset: public Object_extents
 
    virtual void focus();
 
-   virtual ministring serialize();
+   virtual ministring to_string();
+   virtual void from_string(ministring &info);
 
    //! get grid-centered extents
    virtual grid_extent get_extent();
 
    protected:
 
-   Viewer *tileset_viewer;
    minilayer *tileset_layer;
 
    BOOLINT shown;
@@ -65,8 +65,8 @@ class Object_image: public Object_extents
    {
    public:
 
-   Object_image(const ministring &name="",const ministring &repo="",
-                Viewer *viewer=NULL);
+   Object_image(Viewer *v=NULL,
+                const ministring &name="",const ministring &repo="");
 
    virtual ~Object_image();
 
@@ -81,7 +81,8 @@ class Object_image: public Object_extents
 
    virtual void focus();
 
-   virtual ministring serialize();
+   virtual ministring to_string();
+   virtual void from_string(ministring &info);
 
    //! tell if image is imagery (cell centered)
    BOOLINT is_imagery() const
@@ -124,8 +125,6 @@ class Object_image: public Object_extents
    double spacing;
    double spacing_ds,spacing_dt;
 
-   Viewer *image_viewer;
-
    mininode_ref ecef_node;
    mininode_lod *lod_node;
    mininode_geometry *image_node;
@@ -143,9 +142,9 @@ class Object_extent: public Object_extents
    {
    public:
 
-   Object_extent(const ministring &name,
-                 const grid_extent &extent,
-                 Viewer *viewer=NULL);
+   Object_extent(Viewer *v=NULL,
+                 const ministring &name="",const ministring &repo="",
+                 const grid_extent &extent=grid_extent());
 
    virtual ~Object_extent();
 
@@ -161,8 +160,8 @@ class Object_extent: public Object_extents
 
    virtual void updateGFX();
 
-   virtual ministring serialize();
-   static Object_extent *deserialize(ministring key,ministring info,Viewer *viewer);
+   virtual ministring to_string();
+   virtual void from_string(ministring &info);
 
    //! get extents
    grid_extent get_extent()
@@ -185,8 +184,6 @@ class Object_extent: public Object_extents
    virtual void scale_dt(const minicoord &pos0,const minicoord &pos1);
 
    protected:
-
-   Viewer *extent_viewer;
 
    mininode_ecef *ecef_node;
    mininode_geometry *extent_node;

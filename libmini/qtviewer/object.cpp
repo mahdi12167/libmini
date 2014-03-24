@@ -2,6 +2,8 @@
 
 #include <mini/miniio.h>
 
+#include "viewer.h"
+
 #include "object.h"
 
 // Object:
@@ -119,18 +121,30 @@ ministring Object::get_info()
 void Object::show(BOOLINT /*yes*/) {}
 BOOLINT Object::is_shown() const {return(TRUE);}
 
+void Object::mark(BOOLINT /*yes*/) {}
+BOOLINT Object::is_marked() const {return(FALSE);}
+
 void Object::focus() {}
 
 void Object::updateGFX() {}
 
+// Object_serializable:
+
+Object_serializable::Object_serializable(Viewer *v,
+                                         const ministring &name,const ministring &repo)
+   : Object(name,repo), viewer(v)
+   {}
+
+Object_serializable::~Object_serializable()
+   {}
+
 // Object_extents:
+
+grid_extent Object_extents::get_extent()
+   {return(extent);}
 
 void Object_extents::set_extent(const grid_extent &ext)
    {
    extent=ext;
    set_center(extent.get_center(),extent.get_radius());
    }
-
-void Object_extents::mark(BOOLINT /*yes*/) {}
-BOOLINT Object_extents::is_marked() const {return(FALSE);}
-

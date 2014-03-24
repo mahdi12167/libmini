@@ -553,7 +553,7 @@ BOOLINT ViewerWindow::loadMap(ministring url)
       url.truncate(lio);
    }
 
-   Object_tileset *tileset = new Object_tileset(url, repository_path, viewer);
+   Object_tileset *tileset = new Object_tileset(viewer, url, repository_path);
    if (tileset == NULL) MEMERROR();
 
    errorcode = addObject(url, tileset, "tileset");
@@ -584,7 +584,7 @@ BOOLINT ViewerWindow::loadImage(ministring url)
    if (!Object::is_absolute_path(url))
       url = repository_path+url;
 
-   Object_image *image = new Object_image(url, repository_path, viewer);
+   Object_image *image = new Object_image(viewer, url, repository_path);
 
    if (image == NULL) MEMERROR();
 
@@ -1807,7 +1807,7 @@ void ViewerWindow::create_extent(ministring key, double dh)
       key_sym.substitute("\\", "_");
       key_sym.substitute(":", "_");
       ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key_sym;
-      Object_extent *obj_ext = new Object_extent(key_ext, ext, viewer);
+      Object_extent *obj_ext = new Object_extent(viewer, key_ext, ext);
       if (obj_ext == NULL) MEMERROR();
 
       errorcode = addObject(key_ext, obj_ext, "extent");
@@ -2348,10 +2348,16 @@ void ViewerWindow::save_list(ministrings keys, ministring filename)
    for (i=0; i<keys.size(); i++)
    {
       ministring key = keys[i];
-      ministring info = key + " = [" + getObject(keys[i])->serialize() + "]";
-      info += "[" + getTags(keys[i])->to_string(",") + "]";
 
-      qtv.append(info);
+      Object_serializable *obj=dynamic_cast<Object_serializable *>(getObject(key));
+
+      if (obj)
+         {
+         ministring info = key + " = [" + obj->to_string() + "]";
+         info += "[" + getTags(key)->to_string(",") + "]";
+
+         qtv.append(info);
+         }
    }
 
    if (filename=="")
@@ -2450,7 +2456,12 @@ BOOLINT ViewerWindow::load_list(ministring filename)
             Object *obj = NULL;
 
             if (taglist[0] == "extent")
-               obj = Object_extent::deserialize(key, info, viewer);
+               {
+               Object_extent *obj_ext =  new Object_extent(viewer, key);
+               obj_ext->from_string(info);
+
+               obj = obj_ext;
+               }
 
             if (obj != NULL)
                {

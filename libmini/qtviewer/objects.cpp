@@ -9,11 +9,10 @@
 
 // Object_tileset:
 
-Object_tileset::Object_tileset(const ministring &name,const ministring &repo,
-                               Viewer *viewer)
-   : Object_extents(name,repo)
+Object_tileset::Object_tileset(Viewer *v,
+                               const ministring &name,const ministring &repo)
+   : Object_extents(v,name,repo)
    {
-   tileset_viewer=viewer;
    tileset_layer=NULL;
 
    shown=TRUE;
@@ -26,10 +25,12 @@ ministring Object_tileset::get_info()
    {
    ministring info;
 
+   if (tileset_layer==NULL) return("");
+
    miniv3d ext = tileset_layer->getextent();
    minicoord center = tileset_layer->get()->offsetDAT;
 
-   int lts = tileset_viewer->getearth()->getterrain()->getLTSnum(tileset_layer);
+   int lts = viewer->getearth()->getterrain()->getLTSnum(tileset_layer);
 
    info = ministring("Tileset")+
           "\n\nrepo = "+repository+"\n"+
@@ -47,10 +48,10 @@ ministring Object_tileset::get_info()
 
 int Object_tileset::initGFX()
    {
-   if (tileset_viewer!=NULL)
+   if (viewer!=NULL)
       if (tileset_layer==NULL)
          {
-         tileset_layer=tileset_viewer->loadMap(get_full_name());
+         tileset_layer=viewer->loadMap(get_full_name());
 
          if (tileset_layer!=NULL)
             {
@@ -69,10 +70,10 @@ int Object_tileset::initGFX()
 
 void Object_tileset::exitGFX()
    {
-   if (tileset_viewer!=NULL)
+   if (viewer!=NULL)
       if (tileset_layer!=NULL)
          {
-         tileset_viewer->removeMap(tileset_layer);
+         viewer->removeMap(tileset_layer);
          tileset_layer=NULL;
          }
    }
@@ -81,12 +82,12 @@ void Object_tileset::show(BOOLINT yes)
    {
    shown=yes;
 
-   if (tileset_viewer!=NULL)
+   if (viewer!=NULL)
       if (tileset_layer!=NULL)
          {
-         miniterrain *terrain=tileset_viewer->getearth()->getterrain();
+         miniterrain *terrain=viewer->getearth()->getterrain();
          terrain->display(terrain->getnum(tileset_layer),yes);
-         tileset_viewer->getCamera()->startIdling();
+         viewer->getCamera()->startIdling();
          }
    }
 
@@ -95,13 +96,27 @@ BOOLINT Object_tileset::is_shown() const
 
 void Object_tileset::focus()
    {
-   if (tileset_viewer!=NULL)
+   if (viewer!=NULL)
       if (tileset_layer!=NULL)
-         tileset_viewer->getCamera()->focusOnMap(tileset_layer);
+         viewer->getCamera()->focusOnMap(tileset_layer);
    }
 
-ministring Object_tileset::serialize()
+ministring Object_tileset::to_string()
    {return("Object_tileset["+repository+","+filename+"]");}
+
+void Object_tileset::from_string(ministring &info)
+   {
+   if (info.startswith("Object_tileset"))
+      {
+      info=info.tail("Object_tileset[");
+      ministring repo=info.prefix(",");
+      info=info.tail(",");
+      ministring name=info.prefix("]");
+      info=info.tail("]");
+
+      *this=Object_tileset(viewer,name,repo);
+      }
+   }
 
 grid_extent Object_tileset::get_extent()
    {
@@ -109,12 +124,13 @@ grid_extent Object_tileset::get_extent()
    minicoord center;
 
    if (!extent.check())
-      {
-      ext=tileset_layer->getgeoextent();
-      center=tileset_layer->getgeocenter();
+      if (tileset_layer!=NULL)
+         {
+         ext=tileset_layer->getgeoextent();
+         center=tileset_layer->getgeocenter();
 
-      extent.set(center,ext.x,ext.y);
-      }
+         extent.set(center,ext.x,ext.y);
+         }
 
    return(extent);
    }
@@ -125,9 +141,9 @@ mininode *Object_image::image_groupnode=NULL;
 mininode *Object_image::deferred_groupnode1=NULL;
 mininode *Object_image::deferred_groupnode2=NULL;
 
-Object_image::Object_image(const ministring &name,const ministring &repo,
-                           Viewer *viewer)
-   : Object_extents(name,repo)
+Object_image::Object_image(Viewer *v,
+                           const ministring &name,const ministring &repo)
+   : Object_extents(v,name,repo)
    {
    is_imagery_resp_elevation=TRUE;
    is_geolocated=FALSE;
@@ -138,8 +154,6 @@ Object_image::Object_image(const ministring &name,const ministring &repo,
    size_ds=size_dt=0.0;
    spacing=0.0;
    spacing_ds=spacing_dt=0.0;
-
-   image_viewer=viewer;
 
    ecef_node=NULL;
    lod_node=NULL;
@@ -208,9 +222,9 @@ int Object_image::initGFX()
    {
    int errorcode=OBJECT_FAILURE;
 
-   if (image_viewer!=NULL)
+   if (viewer!=NULL)
       {
-      mininode_root *root=image_viewer->getRoot();
+      mininode_root *root=viewer->getRoot();
 
       if (image_groupnode==NULL)
          image_groupnode=root->append_child(new mininode_color(miniv3d(1,1,1)));
@@ -306,11 +320,11 @@ int Object_image::initGFX()
 
 void Object_image::exitGFX()
    {
-   if (image_viewer!=NULL)
+   if (viewer!=NULL)
       if (image_node!=NULL)
          {
-         image_viewer->getRoot()->remove_subgraph(ecef_node);
-         image_viewer->getCamera()->startIdling();
+         viewer->getRoot()->remove_subgraph(ecef_node);
+         viewer->getCamera()->startIdling();
          }
    }
 
@@ -318,11 +332,11 @@ void Object_image::show(BOOLINT yes)
    {
    shown=yes;
 
-   if (image_viewer!=NULL)
+   if (viewer!=NULL)
       if (image_node!=NULL)
          {
          image_node->show(yes);
-         image_viewer->getCamera()->startIdling();
+         viewer->getCamera()->startIdling();
          }
    }
 
@@ -331,12 +345,26 @@ BOOLINT Object_image::is_shown() const
 
 void Object_image::focus()
    {
-   if (image_viewer!=NULL)
-      image_viewer->getCamera()->focusOnObject(this);
+   if (viewer!=NULL)
+      viewer->getCamera()->focusOnObject(this);
    }
 
-ministring Object_image::serialize()
+ministring Object_image::to_string()
    {return("Object_image["+repository+","+filename+"]");}
+
+void Object_image::from_string(ministring &info)
+   {
+   if (info.startswith("Object_image"))
+      {
+      info=info.tail("Object_image[");
+      ministring repo=info.prefix(",");
+      info=info.tail(",");
+      ministring name=info.prefix("]");
+      info=info.tail("]");
+
+      *this=Object_image(viewer,name,repo);
+      }
+   }
 
 void Object_image::mark(BOOLINT yes)
    {
@@ -347,7 +375,7 @@ void Object_image::mark(BOOLINT yes)
       image_node->set_color(miniv4d(1,0,0,0.5));
       image_node->enable_color(yes);
 
-      image_viewer->getCamera()->startIdling();
+      viewer->getCamera()->startIdling();
       }
    }
 
@@ -367,7 +395,7 @@ void Object_image::set_thumb(const databuf *buf)
 
    lod_node->append_child(tex2d_node);
 
-   mininode_ref graph=image_viewer->getRoot()->remove_subgraph(ecef_node);
+   mininode_ref graph=viewer->getRoot()->remove_subgraph(ecef_node);
    if (graph==NULL) ERRORMSG();
 
    if (is_imagery_resp_elevation) deferred_groupnode2->append_child(lod_node);
@@ -375,7 +403,7 @@ void Object_image::set_thumb(const databuf *buf)
    tex2d_node->append_child(graph);
    tex2d_node->load(buf);
 
-   image_viewer->getCamera()->startIdling();
+   viewer->getCamera()->startIdling();
    }
 
 void Object_image::set_fullres(const databuf *buf)
@@ -392,21 +420,19 @@ void Object_image::set_fullres(const databuf *buf)
    tex2d_node->append_child(ecef_node);
    tex2d_node->load(buf);
 
-   image_viewer->getCamera()->startIdling();
+   viewer->getCamera()->startIdling();
    }
 
 // Object_extent:
 
 mininode *Object_extent::extent_groupnode=NULL;
 
-Object_extent::Object_extent(const ministring &name,
-                             const grid_extent &extent,
-                             Viewer *viewer)
-   : Object_extents(name)
+Object_extent::Object_extent(Viewer *v,
+                             const ministring &name,const ministring &repo,
+                             const grid_extent &extent)
+   : Object_extents(v,name,repo)
    {
    this->extent=extent;
-
-   extent_viewer=viewer;
 
    ecef_node=NULL;
    extent_node=NULL;
@@ -449,9 +475,9 @@ int Object_extent::initGFX()
 
    int errorcode=OBJECT_FAILURE;
 
-   if (extent_viewer!=NULL)
+   if (viewer!=NULL)
       {
-      mininode_root *root=extent_viewer->getRoot();
+      mininode_root *root=viewer->getRoot();
 
       if (extent_groupnode==NULL)
          {
@@ -493,11 +519,11 @@ int Object_extent::initGFX()
 
 void Object_extent::exitGFX()
    {
-   if (extent_viewer!=NULL)
+   if (viewer!=NULL)
       if (extent_node!=NULL)
          {
-         extent_viewer->getRoot()->remove_subgraph(ecef_node);
-         extent_viewer->getCamera()->startIdling();
+         viewer->getRoot()->remove_subgraph(ecef_node);
+         viewer->getCamera()->startIdling();
          }
    }
 
@@ -505,11 +531,11 @@ void Object_extent::show(BOOLINT yes)
    {
    shown=yes;
 
-   if (extent_viewer!=NULL)
+   if (viewer!=NULL)
       if (extent_node!=NULL)
          {
          extent_node->show(yes);
-         extent_viewer->getCamera()->startIdling();
+         viewer->getCamera()->startIdling();
          }
    }
 
@@ -518,8 +544,8 @@ BOOLINT Object_extent::is_shown() const
 
 void Object_extent::focus()
    {
-   if (extent_viewer!=NULL)
-      extent_viewer->getCamera()->focusOnObject(this);
+   if (viewer!=NULL)
+      viewer->getCamera()->focusOnObject(this);
    }
 
 void Object_extent::updateGFX()
@@ -531,7 +557,7 @@ void Object_extent::updateGFX()
    mark(marked);
    }
 
-ministring Object_extent::serialize()
+ministring Object_extent::to_string()
    {
    ministring info("Object_extent");
 
@@ -542,11 +568,9 @@ ministring Object_extent::serialize()
    return(info);
    }
 
-Object_extent *Object_extent::deserialize(ministring key,ministring info,Viewer *viewer)
+void Object_extent::from_string(ministring &info)
    {
    grid_extent ext;
-
-   Object_extent *obj=NULL;
 
    if (info.startswith("Object_extent"))
       {
@@ -554,10 +578,8 @@ Object_extent *Object_extent::deserialize(ministring key,ministring info,Viewer 
       ext.from_string(info);
       info=info.tail("]");
 
-      obj=new Object_extent(key,ext,viewer);
+      *this=Object_extent(viewer,filename,repository,ext);
       }
-
-   return(obj);
    }
 
 void Object_extent::mark(BOOLINT yes)
@@ -569,7 +591,7 @@ void Object_extent::mark(BOOLINT yes)
       extent_node->set_color(miniv4d(1,0,0,0.5));
       extent_node->enable_color(yes);
 
-      extent_viewer->getCamera()->startIdling();
+      viewer->getCamera()->startIdling();
       }
    }
 

@@ -8,6 +8,8 @@
 
 #include <grid/grid_extent.h>
 
+class Viewer;
+
 //! object (base class)
 class Object
    {
@@ -81,14 +83,17 @@ class Object
    //! tell if object is shown
    virtual BOOLINT is_shown() const;
 
+   //! mark object
+   virtual void mark(BOOLINT yes=TRUE);
+
+   //! tell if object is marked
+   virtual BOOLINT is_marked() const;
+
    //! focus camera on object
    virtual void focus();
 
    //! update graphic representation
    virtual void updateGFX();
-
-   //! serialize object
-   virtual ministring serialize() = 0;
 
    protected:
 
@@ -96,14 +101,38 @@ class Object
    double radius; // object radius
    };
 
-//! extent (base class)
-class Object_extents: public Object
+//! serializable object (base class)
+class Object_serializable: public Object
    {
    public:
 
    //! default constructor
-   Object_extents(const ministring &name="",const ministring &repo="")
-      : Object(name,repo)
+   Object_serializable(Viewer *v=NULL,
+                       const ministring &name="",const ministring &repo="");
+
+   //! destructor
+   virtual ~Object_serializable();
+
+   //! serialize object
+   virtual ministring to_string() = 0;
+
+   //! deserialize object
+   virtual void from_string(ministring &info) = 0;
+
+   protected:
+
+   Viewer *viewer;
+   };
+
+//! extent (base class)
+class Object_extents: public Object_serializable
+   {
+   public:
+
+   //! default constructor
+   Object_extents(Viewer *v=NULL,
+                  const ministring &name="",const ministring &repo="")
+      : Object_serializable(v,name,repo)
       {}
 
    //! destructor
@@ -111,16 +140,10 @@ class Object_extents: public Object
       {}
 
    //! get extents
-   virtual grid_extent get_extent() {return(extent);}
+   virtual grid_extent get_extent();
 
    //! set new extents
    virtual void set_extent(const grid_extent &ext);
-
-   //! mark object
-   virtual void mark(BOOLINT yes=TRUE);
-
-   //! tell if object is marked
-   virtual BOOLINT is_marked() const;
 
    //! move object (via two handles)
    virtual void move(const minicoord &/*pos0*/,const minicoord &/*pos1*/) {}
