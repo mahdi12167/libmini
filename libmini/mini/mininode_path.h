@@ -24,7 +24,7 @@ class mininode_geometry_path: public mininode_geometry
    void recreate(double width);
 
    //! get path
-   const minipath *getpath()
+   minipath *getpath()
       {return(&path);}
 
    protected:
