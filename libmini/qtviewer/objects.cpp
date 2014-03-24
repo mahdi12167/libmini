@@ -650,8 +650,8 @@ ministring Object_path::get_info()
    info = ministring("Path")+
           "\n\nrepo = "+repository+"\n"+
           "file = "+filename+"\n\n"+
-          "length = "+path_node->get_length()/1000+"km\n"+
-          "duration = "+path_node->get_time_period()/60+"h";
+          "length = "+path_node->getpath()->get_length()/1000+"km\n"+
+          "duration = "+path_node->getpath()->get_time_period()/60+"h";
 
    return(info);
    }
@@ -673,9 +673,9 @@ int Object_path::initGFX()
       path_node=new mininode_geometry_path(get_full_name());
       if (path_node==NULL) MEMERROR();
 
-      if (!((minipath *)path_node)->empty())
+      if (!path_node->getpath()->empty())
          {
-         set_center(((minipath *)path_node)->first(),path_node->get_length());
+         set_center(path_node->getpath()->first(),path_node->getpath()->get_length());
 
          // link path node
          path_groupnode->append_child(ecef_node)->append_child(path_node);
