@@ -625,3 +625,132 @@ void Object_extent::scale_dt(const minicoord &pos0,const minicoord &pos1)
    ext.metric_scale_dt(pos0,pos1);
    set_extent(ext);
    }
+
+// Object_path:
+
+mininode *Object_path::path_groupnode=NULL;
+
+Object_path::Object_path(Viewer *v,
+                         const ministring &name,const ministring &repo)
+   : Object_serializable(v,name,repo)
+   {
+   shown=TRUE;
+   marked=FALSE;
+   }
+
+Object_path::~Object_path()
+   {}
+
+ministring Object_path::get_info()
+   {
+   ministring info;
+
+   if (path_node==NULL) return("");
+
+   info = ministring("Path")+
+          "\n\nrepo = "+repository+"\n"+
+          "file = "+filename+"\n\n"+
+          "length = "+path_node->get_length()/1000+"km\n"+
+          "duration = "+path_node->get_time_period()/60+"h";
+
+   return(info);
+   }
+
+int Object_path::initGFX()
+   {
+   int errorcode=OBJECT_FAILURE;
+
+   if (viewer!=NULL)
+      {
+      mininode_root *root=viewer->getRoot();
+
+      if (path_groupnode==NULL)
+         path_groupnode=root->append_child(new mininode_color(miniv3d(1,1,1)));
+
+      ecef_node=new mininode_ecef();
+      if (ecef_node==NULL) MEMERROR();
+
+      path_node=new mininode_geometry_path(get_full_name());
+      if (path_node==NULL) MEMERROR();
+
+      if (!((minipath *)path_node)->empty())
+         {
+         set_center(((minipath *)path_node)->first(),path_node->get_length());
+
+         // link path node
+         path_groupnode->append_child(ecef_node)->append_child(path_node);
+
+         // pass object key to image node
+         path_node->set_name(get_full_name());
+
+         // update dirty scene graph
+         root->check_dirty();
+         }
+      }
+
+   return(errorcode);
+   }
+
+void Object_path::exitGFX()
+   {
+   if (viewer!=NULL)
+      if (path_node!=NULL)
+         {
+         viewer->getRoot()->remove_subgraph(ecef_node);
+         viewer->getCamera()->startIdling();
+         }
+   }
+
+void Object_path::show(BOOLINT yes)
+   {
+   shown=yes;
+
+   if (viewer!=NULL)
+      if (path_node!=NULL)
+         {
+         path_node->show(yes);
+         viewer->getCamera()->startIdling();
+         }
+   }
+
+BOOLINT Object_path::is_shown() const
+   {return(shown);}
+
+void Object_path::focus()
+   {
+   if (viewer!=NULL)
+      viewer->getCamera()->focusOnObject(this);
+   }
+
+ministring Object_path::to_string()
+   {return("Object_path["+repository+","+filename+"]");}
+
+void Object_path::from_string(ministring &info)
+   {
+   if (info.startswith("Object_path"))
+      {
+      info=info.tail("Object_path[");
+      ministring repo=info.prefix(",");
+      info=info.tail(",");
+      ministring name=info.prefix("]");
+      info=info.tail("]");
+
+      *this=Object_path(viewer,name,repo);
+      }
+   }
+
+void Object_path::mark(BOOLINT yes)
+   {
+   marked=yes;
+
+   if (path_node!=NULL)
+      {
+      path_node->set_color(miniv4d(1,0,0));
+      path_node->enable_color(yes);
+
+      viewer->getCamera()->startIdling();
+      }
+   }
+
+BOOLINT Object_path::is_marked() const
+   {return(marked);}

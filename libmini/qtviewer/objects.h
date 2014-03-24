@@ -42,11 +42,14 @@ class Object_tileset: public Object_extents
    virtual int initGFX();
    virtual void exitGFX();
 
+   //! show tileset
    virtual void show(BOOLINT yes=TRUE);
    virtual BOOLINT is_shown() const;
 
+   //! focus on tileset
    virtual void focus();
 
+   //! serialize tileset
    virtual ministring to_string();
    virtual void from_string(ministring &info);
 
@@ -76,11 +79,14 @@ class Object_image: public Object_extents
    virtual int initGFX();
    virtual void exitGFX();
 
+   //! show image
    virtual void show(BOOLINT yes=TRUE);
    virtual BOOLINT is_shown() const;
 
+   //! focus on image
    virtual void focus();
 
+   //! serialize image
    virtual ministring to_string();
    virtual void from_string(ministring &info);
 
@@ -104,7 +110,7 @@ class Object_image: public Object_extents
    virtual grid_extent get_geo_extent()
       {return(extent_geo);}
 
-   //! mark object
+   //! mark image
    virtual void mark(BOOLINT yes=TRUE);
    virtual BOOLINT is_marked() const;
 
@@ -153,34 +159,34 @@ class Object_extent: public Object_extents
    virtual int initGFX();
    virtual void exitGFX();
 
+   //! show extent
    virtual void show(BOOLINT yes=TRUE);
    virtual BOOLINT is_shown() const;
 
+   //! focus on extent
    virtual void focus();
 
+   //! update extent
    virtual void updateGFX();
 
+   //! serialize extent
    virtual ministring to_string();
    virtual void from_string(ministring &info);
 
-   //! get extents
-   grid_extent get_extent()
-      {return(extent);}
-
-   //! mark object
+   //! mark extent
    virtual void mark(BOOLINT yes=TRUE);
    virtual BOOLINT is_marked() const;
 
-   //! move object (via two handles)
+   //! move extent (via two handles)
    virtual void move(const minicoord &pos0,const minicoord &pos1);
 
-   //! rotate object (via two handles)
+   //! rotate extent (via two handles)
    virtual void rotate(const minicoord &pos0,const minicoord &pos1);
 
-   //! scale object horizontally (via two handles)
+   //! scale extent horizontally (via two handles)
    virtual void scale_ds(const minicoord &pos0,const minicoord &pos1);
 
-   //! scale object vertically (via two handles)
+   //! scale extent vertically (via two handles)
    virtual void scale_dt(const minicoord &pos0,const minicoord &pos1);
 
    protected:
@@ -189,6 +195,47 @@ class Object_extent: public Object_extents
    mininode_geometry *extent_node;
 
    static mininode *extent_groupnode;
+
+   BOOLINT shown;
+   BOOLINT marked;
+   };
+
+//! path object
+class Object_path: public Object_serializable
+   {
+   public:
+
+   Object_path(Viewer *v=NULL,
+               const ministring &name="",const ministring &repo="");
+
+   virtual ~Object_path();
+
+   virtual ministring get_info();
+
+   virtual int initGFX();
+   virtual void exitGFX();
+
+   //! show path
+   virtual void show(BOOLINT yes=TRUE);
+   virtual BOOLINT is_shown() const;
+
+   //! focus on path
+   virtual void focus();
+
+   //! serialize path
+   virtual ministring to_string();
+   virtual void from_string(ministring &info);
+
+   //! mark path
+   virtual void mark(BOOLINT yes=TRUE);
+   virtual BOOLINT is_marked() const;
+
+   protected:
+
+   mininode_ref ecef_node;
+   mininode_geometry_path *path_node;
+
+   static mininode *path_groupnode;
 
    BOOLINT shown;
    BOOLINT marked;
