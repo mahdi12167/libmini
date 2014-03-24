@@ -627,6 +627,8 @@ ministrip& ministrip::operator = (const ministrip &strip)
 
    COLAMIN=strip.COLAMIN;
    COLAMAX=strip.COLAMAX;
+
+   return(*this);
    }
 
 // init strip
