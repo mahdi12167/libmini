@@ -7,7 +7,7 @@
 #include "minipath.h"
 
 //! a geometry node that implements C-LOD for geo-referenced paths
-class mininode_geometry_path: public mininode_geometry, minipath
+class mininode_geometry_path: public mininode_geometry, public minipath
    {
    public:
 
