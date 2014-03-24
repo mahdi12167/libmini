@@ -502,6 +502,10 @@ ministring ViewerWindow::loadURL(ministring url)
          success = loadMap(url);
       else if (url.endswith(".sav"))
          success = loadMap(url);
+      // check path extensions
+      else if (url.endswith(".csv") ||
+               url.endswith(".trk"))
+         success = loadPath(url);
       // check qtv extension
       else if (url.endswith(".qtv"))
          success = load_list(url);
@@ -634,6 +638,41 @@ BOOLINT ViewerWindow::loadImage(ministring url)
 void ViewerWindow::clearImages()
 {
    removeObjects(listObjects("image"));
+}
+
+BOOLINT ViewerWindow::loadPath(ministring url)
+{
+   int errorcode;
+
+   url = Object::normalize_file(url);
+
+   if (!Object::is_absolute_path(url))
+      url = repository_path+url;
+
+   Object_path *path = new Object_path(viewer, url, repository_path);
+
+   if (path == NULL) MEMERROR();
+
+   errorcode = addObject(url, path, "path");
+
+   if (errorcode == OBJECT_SUCCESS)
+   {
+      path->focus();
+   }
+   else
+   {
+      delete path;
+   }
+
+   if (errorcode == OBJECT_NOT_REFERENCED)
+      notify(TR("Unable to geo-reference the path properly"));
+
+   return(errorcode == OBJECT_SUCCESS);
+}
+
+void ViewerWindow::clearPaths()
+{
+   removeObjects(listObjects("path"));
 }
 
 int ViewerWindow::addObject(ministring key, Object *obj, ministring tag)

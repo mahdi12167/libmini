@@ -63,6 +63,9 @@ public:
    BOOLINT loadImage(ministring url);
    void clearImages();
 
+   BOOLINT loadPath(ministring url);
+   void clearPaths();
+
    int addObject(ministring key, Object *obj, ministring tag);
    int addObject(ministring key, Object *obj, ministrings tags);
    Object *getObject(ministring key);
