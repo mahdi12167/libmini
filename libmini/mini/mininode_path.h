@@ -7,7 +7,7 @@
 #include "minipath.h"
 
 //! a geometry node that implements C-LOD for geo-referenced paths
-class mininode_geometry_path: public mininode_geometry, public minipath
+class mininode_geometry_path: public mininode_geometry
    {
    public:
 
@@ -22,6 +22,14 @@ class mininode_geometry_path: public mininode_geometry, public minipath
 
    //! recreate geometry from actual view point
    void recreate(double width);
+
+   //! get path
+   const minipath *getpath()
+      {return(&path);}
+
+   protected:
+
+   minipath path;
    };
 
 #endif
