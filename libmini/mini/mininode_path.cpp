@@ -10,7 +10,10 @@ mininode_geometry_path::mininode_geometry_path()
 // constructor
 mininode_geometry_path::mininode_geometry_path(ministring filename,double width)
    : mininode_geometry(0,3,0)
-   {recreate(width);}
+   {
+   path.load(filename);
+   recreate(width);
+   }
 
 // destructor
 mininode_geometry_path::~mininode_geometry_path()
