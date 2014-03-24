@@ -58,6 +58,9 @@ class ministrip
    //! destructor
    virtual ~ministrip();
 
+   //! assignment operator
+   ministrip& operator = (const ministrip &strip);
+
    //! clear strip
    void clear();
 

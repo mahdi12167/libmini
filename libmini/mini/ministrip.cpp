@@ -601,6 +601,34 @@ ministrip::~ministrip()
       }
    }
 
+// assignment operator
+ministrip& ministrip::operator = (const ministrip &strip)
+   {
+   clear();
+
+   init(strip.COLCOMPS,strip.NRMCOMPS,strip.TEXCOMPS,MAXSIZE);
+
+   SIZE=strip.SIZE;
+
+   memcpy(ENDARRAY,strip.ENDARRAY,SIZE*sizeof(BOOLINT));
+   memcpy(VTXARRAY,strip.VTXARRAY,3*SIZE*sizeof(float));
+
+   if (COLARRAY!=NULL)
+      memcpy(COLARRAY,strip.COLARRAY,COLCOMPS*SIZE*sizeof(float));
+
+   if (NRMARRAY!=NULL)
+      memcpy(NRMARRAY,strip.NRMARRAY,NRMCOMPS*SIZE*sizeof(float));
+
+   if (TEXARRAY!=NULL)
+      memcpy(TEXARRAY,strip.TEXARRAY,TEXCOMPS*SIZE*sizeof(float));
+
+   BBOXMIN=strip.BBOXMIN;
+   BBOXMAX=strip.BBOXMAX;
+
+   COLAMIN=strip.COLAMIN;
+   COLAMAX=strip.COLAMAX;
+   }
+
 // init strip
 void ministrip::init(int colcomps,int nrmcomps,int texcomps,unsigned int maxsize)
    {
