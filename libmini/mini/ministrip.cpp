@@ -506,7 +506,7 @@ ministrip::ministrip(int colcomps,int nrmcomps,int texcomps)
 // copy constructor
 ministrip::ministrip(const ministrip &strip)
    {
-   init(strip.COLCOMPS,strip.NRMCOMPS,strip.TEXCOMPS,MAXSIZE);
+   init(strip.COLCOMPS,strip.NRMCOMPS,strip.TEXCOMPS,strip.MAXSIZE);
 
    SIZE=strip.SIZE;
 
@@ -606,7 +606,7 @@ ministrip& ministrip::operator = (const ministrip &strip)
    {
    clear();
 
-   init(strip.COLCOMPS,strip.NRMCOMPS,strip.TEXCOMPS,MAXSIZE);
+   init(strip.COLCOMPS,strip.NRMCOMPS,strip.TEXCOMPS,strip.MAXSIZE);
 
    SIZE=strip.SIZE;
 
