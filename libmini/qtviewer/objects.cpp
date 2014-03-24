@@ -685,6 +685,8 @@ int Object_path::initGFX()
 
          // update dirty scene graph
          root->check_dirty();
+
+         errorcode=OBJECT_SUCCESS;
          }
       }
 
