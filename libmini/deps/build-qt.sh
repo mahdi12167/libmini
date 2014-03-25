@@ -12,5 +12,5 @@ wget $qt
 tar zxf qt-*.tar.gz
 cd qt-*/
 ./configure -nomake examples -nomake demos -nomake tests -opengl -opensource -confirm-license
-make
+make -j 2
 sudo make install
