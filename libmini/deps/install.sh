@@ -16,18 +16,22 @@ echo "installing to $prefix"
 
 # zlib
 if (-e zlib) then
-   echo BUILDING ZLIB
-   (cd zlib;\
-    ./configure --prefix=$prefix/zlib;\
-    make -j 2; make install)
+   if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip zlib on MacOS X
+      echo BUILDING ZLIB
+      (cd zlib;\
+       ./configure --prefix=$prefix/zlib;\
+       make -j 2; make install)
+   endif
 endif
 
 # libjpeg
 if (-e libjpeg) then
-   echo BUILDING LIBJPEG
-   (cd libjpeg;\
-    ./configure --prefix=$prefix/libjpeg --enable-static --disable-shared;\
-    make -j 2; make install)
+   if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip libjpeg on MacOS X
+      echo BUILDING LIBJPEG
+      (cd libjpeg;\
+       ./configure --prefix=$prefix/libjpeg --enable-static --disable-shared;\
+       make -j 2; make install)
+   endif
 endif
 
 # libpng
