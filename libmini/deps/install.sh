@@ -88,7 +88,7 @@ endif
 if (-e libiconv) then
    echo BUILDING LIBICONV
    (cd libiconv;\
-    ./configure --prefix=$prefix/libiconv --enable-static --disable-shared;\
+    ./configure --prefix=$prefix/libiconv --without-libiconv-prefix --enable-static --disable-shared;\
     make -j 2; make install)
 endif
 
