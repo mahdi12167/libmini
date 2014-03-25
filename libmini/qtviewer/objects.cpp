@@ -675,7 +675,12 @@ int Object_path::initGFX()
 
       if (!path_node->getpath()->empty())
          {
-         set_center(path_node->getpath()->first(),path_node->getpath()->get_length());
+         miniv3d center;
+         double radius2;
+
+         // get bounding sphere
+         path_node->getpath()->getbsphere(center,radius2);
+         set_center(center,sqrt(radius2));
 
          // link path node
          path_groupnode->append_child(ecef_node)->append_child(path_node);
