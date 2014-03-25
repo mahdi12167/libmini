@@ -11,6 +11,6 @@ set qt=$qt4
 wget $qt
 tar zxf qt-*.tar.gz
 cd qt-*/
-./configure -opensource
+./configure -nomake examples -nomake demos -nomake tests -opengl -opensource -confirm-license
 make
 sudo make install
