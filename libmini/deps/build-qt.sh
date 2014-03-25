@@ -11,6 +11,6 @@ set qt=$qt4
 #wget $qt
 #tar zxf qt-*.tar.gz
 cd qt-*/
-./configure -no-phonon -nomake examples -nomake demos -nomake tests -opengl -opensource -confirm-license
+./configure -no-phonon -nomake examples -nomake demos -nomake tests -opengl -release -opensource -confirm-license
 make -j 2
 sudo make install
