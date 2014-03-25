@@ -948,7 +948,7 @@ mininode_geometry_band::mininode_geometry_band(const minipath &path,double width
 
       v=path[i].velocity;
 
-      hue=(v-minv)/(maxv-minv)*360.0;
+      hue=(1.0-(v-minv)/(maxv-minv))*360.0;
       if (hue<0.0) hue=0.0;
       else if (hue>360.0) hue=360.0;
 
@@ -985,7 +985,7 @@ mininode_geometry_band::mininode_geometry_band(const minipath &path,const minidy
 
       v=path[i].velocity;
 
-      hue=(v-minv)/(maxv-minv)*360.0;
+      hue=(1.0-(v-minv)/(maxv-minv))*360.0;
       if (hue<0.0) hue=0.0;
       else if (hue>360.0) hue=360.0;
 
