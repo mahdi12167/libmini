@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
+#include "minirgb.h"
+
 #include "mininodes.h"
 
 // mininode_group:
@@ -782,6 +784,59 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       }
    }
 
+mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,double width)
+   : mininode_geometry(3,3,0)
+   {
+   if (pos.getsize()<2) return;
+   if (pos.getsize()!=nrm.getsize()) return;
+   if (pos.getsize()!=col.getsize()) return;
+
+   for (unsigned int i=0; i<pos.getsize(); i++)
+      {
+      miniv3d dir;
+
+      if (i==0) dir=pos[i+1]-pos[i];
+      else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
+      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
+      dir.normalize();
+
+      miniv3d right=dir/nrm[i];
+      right.normalize();
+
+      setnrm(nrm[i]);
+      setcol(col[i]);
+      addvtx(pos[i]-right*width/2);
+      addvtx(pos[i]+right*width/2);
+      }
+   }
+
+mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,const minidyna<double> &width)
+   : mininode_geometry(3,3,0)
+   {
+   if (pos.getsize()<2) return;
+   if (pos.getsize()!=nrm.getsize()) return;
+   if (pos.getsize()!=col.getsize()) return;
+   if (pos.getsize()!=width.getsize()) return;
+
+   for (unsigned int i=0; i<pos.getsize(); i++)
+      {
+      miniv3d dir;
+
+      if (i==0) dir=pos[i+1]-pos[i];
+      else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
+      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
+      dir.normalize();
+
+      miniv3d right=dir/nrm[i];
+      right.normalize();
+
+      setnrm(nrm[i]);
+      setcol(col[i]);
+      addvtx(pos[i]-right*width[i]/2);
+      addvtx(pos[i]+right*width[i]/2);
+      }
+   }
+
 mininode_geometry_band::mininode_geometry_band(const minicurve &curve,double width)
    {
    minicoord ecef;
@@ -815,6 +870,7 @@ mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const mini
    minidyna<miniv3d> nrm;
 
    if (curve.getsize()<2) return;
+   if (curve.getsize()!=width.getsize()) return;
 
    for (unsigned int i=0; i<curve.getsize(); i++)
       {
@@ -836,6 +892,7 @@ mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const mini
    minidyna<miniv3d> pos;
 
    if (curve.getsize()<2) return;
+   if (curve.getsize()!=nrm.getsize()) return;
 
    for (unsigned int i=0; i<curve.getsize(); i++)
       {
@@ -853,6 +910,8 @@ mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const mini
    minidyna<miniv3d> pos;
 
    if (curve.getsize()<2) return;
+   if (curve.getsize()!=nrm.getsize()) return;
+   if (curve.getsize()!=width.getsize()) return;
 
    for (unsigned int i=0; i<curve.getsize(); i++)
       {
@@ -862,6 +921,79 @@ mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const mini
       }
 
    *this=mininode_geometry_band(pos,nrm,width);
+   }
+
+mininode_geometry_band::mininode_geometry_band(const minipath &path,double width,double minv,double maxv,double sat,double val)
+   {
+   minicoord ecef;
+   minidyna<miniv3d> pos;
+
+   miniv3d n;
+   minidyna<miniv3d> nrm,col;
+
+   double v;
+   float hue,rgb[3];
+
+   if (path.getsize()<2) return;
+
+   for (unsigned int i=0; i<path.getsize(); i++)
+      {
+      ecef=path[i];
+      ecef.convert2ecef();
+      pos.append(ecef.vec);
+
+      n=ecef.vec;
+      n.normalize();
+      nrm.append(n);
+
+      v=path[i].velocity;
+
+      hue=(v-minv)/(maxv-minv)*360.0;
+      if (hue<0.0) hue=0.0;
+      else if (hue>360.0) hue=360.0;
+
+      hsv2rgb(hue,sat,val,rgb);
+      col.append(miniv3d(rgb));
+      }
+
+   *this=mininode_geometry_band(pos,nrm,col,width);
+   }
+
+mininode_geometry_band::mininode_geometry_band(const minipath &path,const minidyna<double> &width,double minv,double maxv,double sat,double val)
+   {
+   minicoord ecef;
+   minidyna<miniv3d> pos;
+
+   miniv3d n;
+   minidyna<miniv3d> nrm,col;
+
+   double v;
+   float hue,rgb[3];
+
+   if (path.getsize()<2) return;
+   if (path.getsize()!=width.getsize()) return;
+
+   for (unsigned int i=0; i<path.getsize(); i++)
+      {
+      ecef=path[i];
+      ecef.convert2ecef();
+      pos.append(ecef.vec);
+
+      n=ecef.vec;
+      n.normalize();
+      nrm.append(n);
+
+      v=path[i].velocity;
+
+      hue=(v-minv)/(maxv-minv)*360.0;
+      if (hue<0.0) hue=0.0;
+      else if (hue>360.0) hue=360.0;
+
+      hsv2rgb(hue,sat,val,rgb);
+      col.append(miniv3d(rgb));
+      }
+
+   *this=mininode_geometry_band(pos,nrm,col,width);
    }
 
 // mininode_geometry_tube:

@@ -13,6 +13,7 @@
 #include "minicrs.h"
 #include "minicoord.h"
 #include "minicurve.h"
+#include "minipath.h"
 #include "mininode.h"
 
 #include "ministring.h"
@@ -2294,12 +2295,16 @@ class mininode_geometry_band: public mininode_geometry
    mininode_geometry_band() : mininode_geometry(0,3,0) {}
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,double width);
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
+   mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,double width);
+   mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,const minidyna<double> &width);
 
    //! constructors from curve
    mininode_geometry_band(const minicurve &curve,double width);
    mininode_geometry_band(const minicurve &curve,const minidyna<double> &width);
    mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,double width);
    mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
+   mininode_geometry_band(const minipath &path,double width,double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0);
+   mininode_geometry_band(const minipath &path,const minidyna<double> &width,double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0);
    };
 
 //! tube geometry node
