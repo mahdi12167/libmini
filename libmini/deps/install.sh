@@ -14,6 +14,13 @@ endif
 
 echo "installing to $prefix"
 
+if ($prefix == "usr/local") then
+   if ($USER != "root") then
+      echo "this script must be run as super user (sudo ./install.sh)"
+      exit 1
+   endif
+endif
+
 # zlib
 if (-e zlib) then
    if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip zlib on MacOS X
