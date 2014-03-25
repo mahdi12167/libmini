@@ -40,7 +40,7 @@ If you install Qt from source, grab the source tar ball from:
 !! Qt Installation (Unix/Mac)
 
 Type on the unix console in your Qt source directory:
- ./configure -opensource && make && sudo make install
+ ./configure -opengl -nomake examples -nomake demos -nomake tests -opensource -confirm-license && make && sudo make install
 
 After the build process has finished (go get yourself a cup of coffee),
 you will be asked to enter your root password for installation of Qt.
@@ -54,7 +54,7 @@ Choose an appropriate platform to describe the version of MSVC:
  MSVC 9.0 -> SET PLATFORM=win32-msvc2008
  MSVC 10.0 -> SET PLATFORM=win32-msvc2010
 Navigate into the Qt source directory and type
- configure -platform %PLATFORM% -opensource -nomake examples -nomake demos
+ configure -platform %PLATFORM% -opengl -nomake examples -nomake demos -nomake tests -opensource -confirm-license
  nmake
 Add the "bin" directory in your Qt directory to your path:
  set PATH=%cd%\bin;%PATH%
