@@ -61,17 +61,21 @@ if (-e libcurl) then
 endif
 
 # squish
-echo BUILDING SQUISH
-(cd squish;\
- cmake -DCMAKE_INSTALL_PREFIX=$prefix/squish;\
- make -j 2; make install)
+if (-e squish) then
+   echo BUILDING SQUISH
+   (cd squish;\
+    cmake -DCMAKE_INSTALL_PREFIX=$prefix/squish;\
+    make -j 2; make install)
+endif
 
 # freeglut
-if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip freeglut on MacOS X
-   echo BUILDING FREEGLUT
-   (cd freeglut;\
-    cmake -DCMAKE_INSTALL_PREFIX=$prefix/freeglut;\
-    make -j 2; make install)
+if (-e freeglut) then
+   if ($HOSTTYPE != "intel-pc" && $HOSTTYPE != "intel-mac") then # skip freeglut on MacOS X
+      echo BUILDING FREEGLUT
+      (cd freeglut;\
+       cmake -DCMAKE_INSTALL_PREFIX=$prefix/freeglut;\
+       make -j 2; make install)
+   endif
 endif
 
 # other libraries to install:
@@ -93,25 +97,29 @@ if (-e libiconv) then
 endif
 
 # gdal
-echo BUILDING GDAL
-(cd gdal;\
- ./configure --prefix=$prefix/gdal\
-             --with-libtiff=internal --with-geotiff=internal\
-             --with-png=internal --with-jpeg=internal\
-             --without-curl --without-netcdf\
-             --without-sqlite3 --without-pg\
-             --without-ld-shared\
-             --enable-static --disable-shared;\
- make -j 2; make install)
+if (-e gdal) then
+   echo BUILDING GDAL
+   (cd gdal;\
+    ./configure --prefix=$prefix/gdal\
+                --with-libtiff=internal --with-geotiff=internal\
+                --with-png=internal --with-jpeg=internal\
+                --without-curl --without-netcdf\
+                --without-sqlite3 --without-pg\
+                --without-ld-shared\
+                --enable-static --disable-shared;\
+    make -j 2; make install)
+endif
 
 # dcmtk
-echo BUILDING DCMTK
-if ($HOSTTYPE != "intel-mac" && $HOSTTYPE != "intel-pc") then
-   (cd dcmtk;\
-    ./configure --prefix=$prefix/dcmtk CXXFLAGS="-g -O2 -fpermissive";\
-    make -j 2; make install-lib)
-else
-   (cd dcmtk;\
-    ./configure --prefix=$prefix/dcmtk;\
-    make -j 2; make install-lib)
+if (-e dcmtk) then
+   echo BUILDING DCMTK
+   if ($HOSTTYPE != "intel-mac" && $HOSTTYPE != "intel-pc") then
+      (cd dcmtk;\
+       ./configure --prefix=$prefix/dcmtk CXXFLAGS="-g -O2 -fpermissive";\
+       make -j 2; make install-lib)
+   else
+      (cd dcmtk;\
+       ./configure --prefix=$prefix/dcmtk;\
+       make -j 2; make install-lib)
+   endif
 endif

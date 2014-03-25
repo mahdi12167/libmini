@@ -102,7 +102,7 @@ if (-X svn) then
 endif
 
 # libiconv 1.14 (required by gdal 1.9+)
-if (! -e /usr/include/iconv.h || ! -e /usr/lib/libiconv.a) then
+if (! -e /usr/include/iconv.h || (! -e /usr/lib/libiconv.a && ! -e /usr/lib/libiconv.so && ! -e /usr/lib/libiconv.dylib)) then
    if (-X wget) then
       if (! -e libiconv) then
          wget http://ftp.gnu.org/gnu/libiconv/libiconv-1.14.tar.gz
