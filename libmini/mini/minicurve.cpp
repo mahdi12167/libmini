@@ -386,6 +386,13 @@ void minicurve::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
    bboxmax=this->bboxmax;
    }
 
+// get bounding sphere
+void minicurve::getbsphere(miniv3d &center,double &radius2) const
+   {
+   center=0.5*(bboxmin+bboxmax);
+   radius2=(0.5*(bboxmax-bboxmin)).getlength2();
+   }
+
 // serialization
 ministrings minicurve::to_strings()
    {
