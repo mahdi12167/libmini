@@ -76,10 +76,10 @@ class minicurve : public minidyna<minimeas>
    void resample(double dt);
 
    //! get bounding box
-   void getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const;
+   void getbbox(miniv3d &bboxmin,miniv3d &bboxmax);
 
    //! get bounding sphere
-   void getbsphere(miniv3d &center,double &radius2) const;
+   void getbsphere(miniv3d &center,double &radius2);
 
    //! serialization
    ministrings to_strings();

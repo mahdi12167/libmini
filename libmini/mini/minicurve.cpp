@@ -380,15 +380,19 @@ void minicurve::resample(double dt)
    }
 
 // get bounding box
-void minicurve::getbbox(miniv3d &bboxmin,miniv3d &bboxmax) const
+void minicurve::getbbox(miniv3d &bboxmin,miniv3d &bboxmax)
    {
+   validate();
+
    bboxmin=this->bboxmin;
    bboxmax=this->bboxmax;
    }
 
 // get bounding sphere
-void minicurve::getbsphere(miniv3d &center,double &radius2) const
+void minicurve::getbsphere(miniv3d &center,double &radius2)
    {
+   validate();
+
    center=0.5*(bboxmin+bboxmax);
    radius2=(0.5*(bboxmax-bboxmin)).getlength2();
    }
