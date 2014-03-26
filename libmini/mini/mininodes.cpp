@@ -785,7 +785,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
    }
 
 mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,double width)
-   : mininode_geometry(3,3,0)
+   : mininode_geometry(3,3,0,0,0,0)
    {
    if (pos.getsize()<2) return;
    if (pos.getsize()!=nrm.getsize()) return;
@@ -811,7 +811,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
    }
 
 mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,const minidyna<double> &width)
-   : mininode_geometry(3,3,0)
+   : mininode_geometry(3,3,0,0,0,0)
    {
    if (pos.getsize()<2) return;
    if (pos.getsize()!=nrm.getsize()) return;
