@@ -2286,7 +2286,7 @@ class mininode_geometry_sphere: public mininode_geometry
 
 //! band geometry node
 //!  provides triangle-stripped band
-//!  has normals
+//!  has normals (and colors)
 class mininode_geometry_band: public mininode_geometry
    {
    public:
@@ -2303,8 +2303,23 @@ class mininode_geometry_band: public mininode_geometry
    mininode_geometry_band(const minicurve &curve,const minidyna<double> &width);
    mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,double width);
    mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
-   mininode_geometry_band(const minipath &path,double width,double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0);
-   mininode_geometry_band(const minipath &path,const minidyna<double> &width,double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0);
+   };
+
+//! band path geometry node
+//!  provides triangle-stripped band
+//!  has normals and colors
+class mininode_geometry_band_path: public mininode_geometry_band
+   {
+   public:
+
+   //! default constructors
+   mininode_geometry_band_path() : mininode_geometry_band() {}
+   mininode_geometry_band_path(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,double width);
+   mininode_geometry_band_path(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,const minidyna<double> &width);
+
+   //! constructors from path
+   mininode_geometry_band_path(const minipath &path,double width,double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0);
+   mininode_geometry_band_path(const minipath &path,const minidyna<double> &width,double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0);
    };
 
 //! tube geometry node

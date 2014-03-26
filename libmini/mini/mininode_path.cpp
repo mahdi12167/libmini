@@ -21,4 +21,4 @@ mininode_geometry_path::~mininode_geometry_path()
 
 // recreate geometry from actual view point
 void mininode_geometry_path::recreate(double width)
-   {*(mininode_geometry *)this=mininode_geometry_band(path,width);}
+   {*(mininode_geometry *)this=mininode_geometry_band_path(path,width);}

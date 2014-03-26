@@ -923,7 +923,17 @@ mininode_geometry_band::mininode_geometry_band(const minicurve &curve,const mini
    *this=mininode_geometry_band(pos,nrm,width);
    }
 
-mininode_geometry_band::mininode_geometry_band(const minipath &path,double width,double minv,double maxv,double sat,double val)
+// mininode_geometry_band_path:
+
+mininode_geometry_band_path::mininode_geometry_band_path(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,double width)
+   : mininode_geometry_band(pos,nrm,col,width)
+   {}
+
+mininode_geometry_band_path::mininode_geometry_band_path(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,const minidyna<double> &width)
+   : mininode_geometry_band(pos,nrm,col,width)
+   {}
+
+mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,double width,double minv,double maxv,double sat,double val)
    {
    minicoord ecef;
    minidyna<miniv3d> pos;
@@ -956,10 +966,10 @@ mininode_geometry_band::mininode_geometry_band(const minipath &path,double width
       col.append(miniv3d(rgb));
       }
 
-   *this=mininode_geometry_band(pos,nrm,col,width);
+   *this=mininode_geometry_band_path(pos,nrm,col,width);
    }
 
-mininode_geometry_band::mininode_geometry_band(const minipath &path,const minidyna<double> &width,double minv,double maxv,double sat,double val)
+mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,const minidyna<double> &width,double minv,double maxv,double sat,double val)
    {
    minicoord ecef;
    minidyna<miniv3d> pos;
@@ -993,7 +1003,7 @@ mininode_geometry_band::mininode_geometry_band(const minipath &path,const minidy
       col.append(miniv3d(rgb));
       }
 
-   *this=mininode_geometry_band(pos,nrm,col,width);
+   *this=mininode_geometry_band_path(pos,nrm,col,width);
    }
 
 // mininode_geometry_tube:
