@@ -958,9 +958,9 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,do
 
       v=path[i].velocity;
 
-      hue=(1.0-(v-minv)/(maxv-minv))*360.0;
+      hue=(1.0-(v-minv)/(maxv-minv))*240.0;
       if (hue<0.0) hue=0.0;
-      else if (hue>360.0) hue=360.0;
+      else if (hue>240.0) hue=240.0;
 
       hsv2rgb(hue,sat,val,rgb);
       col.append(miniv3d(rgb));
@@ -995,9 +995,9 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,co
 
       v=path[i].velocity;
 
-      hue=(1.0-(v-minv)/(maxv-minv))*360.0;
+      hue=(1.0-(v-minv)/(maxv-minv))*240.0;
       if (hue<0.0) hue=0.0;
-      else if (hue>360.0) hue=360.0;
+      else if (hue>240.0) hue=240.0;
 
       hsv2rgb(hue,sat,val,rgb);
       col.append(miniv3d(rgb));
