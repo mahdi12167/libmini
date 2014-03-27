@@ -254,7 +254,7 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
                      line.clear();
                      }
 
-                  minimeas meas(coord,0.0,0.0,0.0,start);
+                  minimeas meas(coord,NAN,NAN,NAN,start);
                   meas.set_description(desc);
 
                   append(meas);
