@@ -102,6 +102,8 @@ class minicurve : public minidyna<minimeas>
 
    void sort();
    void validate();
+
+   double compute_velocity(unsigned int i);
    };
 
 #endif

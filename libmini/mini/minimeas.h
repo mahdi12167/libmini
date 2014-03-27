@@ -13,14 +13,14 @@ class minimeas: public minicoord
    //! default constructor
    minimeas()
       : minicoord(),
-        accuracy(0.0f), velocity(0.0f), heading(0.0f),
+        accuracy(NAN), velocity(NAN), heading(NAN),
         start(FALSE),
         description(NULL), metadata(NULL)
       {}
 
    //! constructor
    minimeas(const minicoord &c,
-            float a=0.0f,float v=0.0f,float h=0.0f,
+            float a=NAN,float v=NAN,float h=NAN,
             BOOLINT s=FALSE)
       : minicoord(c),
         accuracy(a), velocity(v), heading(h),

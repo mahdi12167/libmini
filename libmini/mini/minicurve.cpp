@@ -168,6 +168,11 @@ void minicurve::validate()
                      }
             }
 
+      // check for missing velocity
+      for (i=0; i<getsize(); i++)
+         if (isNAN(get(i).velocity))
+            ref(i).velocity=compute_velocity(i);
+
       // initialize bbox
       bboxmin=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
       bboxmax=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
@@ -483,4 +488,24 @@ void minicurve::from_strings(ministrings &infos)
          valid=FALSE;
          }
       }
+   }
+
+// compute velocity
+double minicurve::compute_velocity(unsigned int i)
+   {
+   // forward difference
+   if (i==0)
+      if (getsize()>0)
+         return((miniv3d(get(i+1).vec)-miniv3d(get(i).vec)).getlength()/(get(i+1).vec.w-get(i).vec.w));
+      else
+         return(0.0);
+   // backward difference
+   else if (i+1==getsize())
+      if (getsize()>0)
+         return((miniv3d(get(i).vec)-miniv3d(get(i-1).vec)).getlength()/(get(i).vec.w-get(i-1).vec.w));
+      else
+         return(0.0);
+   // central difference
+   else
+      return((miniv3d(get(i+1).vec)-miniv3d(get(i-1).vec)).getlength()/(get(i+1).vec.w-get(i-1).vec.w));
    }
