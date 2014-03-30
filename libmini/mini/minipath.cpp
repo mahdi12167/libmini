@@ -172,6 +172,8 @@ BOOLINT minipath::load(ministring filename)
    else if (info=="[track]") success=read_trk_format(path);
    else success=FALSE;
 
+   validate();
+
    return(success);
    }
 
