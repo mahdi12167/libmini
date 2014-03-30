@@ -680,7 +680,7 @@ int Object_path::initGFX()
 
          // get bounding sphere
          path_node->getpath()->getbsphere(center,radius2);
-         set_center(minicoord(center,minicoord::MINICOORD_ECEF),sqrt(radius2));
+         set_center(path_node->getpath()->get(0),2.0*sqrt(radius2));
 
          // link path node
          path_groupnode->append_child(ecef_node)->append_child(path_node);
