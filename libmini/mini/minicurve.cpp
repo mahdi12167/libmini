@@ -334,7 +334,7 @@ double minicurve::get_length()
       if (!b.start)
          {
          if (isNAN(a.vec.z) || isNAN(b.vec.z)) a.vec.z=b.vec.z=0.0;
-         length+=(miniv3d(a.vec)-miniv3d(b.vec)).getlength();
+         length+=(a.getpos()-b.getpos()).getlength();
          }
       }
 
@@ -496,16 +496,16 @@ double minicurve::compute_velocity(unsigned int i)
    // forward difference
    if (i==0)
       if (getsize()>0)
-         return((miniv3d(get(i+1).vec)-miniv3d(get(i).vec)).getlength()/(get(i+1).vec.w-get(i).vec.w));
+         return((get(i+1).getpos()-get(i).getpos()).getlength()/(get(i+1).vec.w-get(i).vec.w));
       else
          return(0.0);
    // backward difference
    else if (i+1==getsize())
       if (getsize()>0)
-         return((miniv3d(get(i).vec)-miniv3d(get(i-1).vec)).getlength()/(get(i).vec.w-get(i-1).vec.w));
+         return((get(i).getpos()-get(i-1).getpos()).getlength()/(get(i).vec.w-get(i-1).vec.w));
       else
          return(0.0);
    // central difference
    else
-      return((miniv3d(get(i+1).vec)-miniv3d(get(i-1).vec)).getlength()/(get(i+1).vec.w-get(i-1).vec.w));
+      return((get(i+1).getpos()-get(i-1).getpos()).getlength()/(get(i+1).vec.w-get(i-1).vec.w));
    }
