@@ -112,6 +112,9 @@ class ministrip
    //! set Z-scaling
    void setZscale(float zscale);
 
+   //! auto disable culling
+   void autodisableculling(BOOLINT on=TRUE);
+
    //! define shader snippet
    static void addsnippet(const char *snippetname,const char *snippet);
 
@@ -355,6 +358,8 @@ class ministrip
    BOOLINT TEXMTXSET;
 
    float ZSCALE;
+
+   BOOLINT AUTODISABLECULLING;
 
    void addvtx();
 
