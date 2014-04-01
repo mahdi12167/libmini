@@ -1846,7 +1846,7 @@ void ViewerWindow::create_extent(ministring key, double dh)
       key_sym.substitute("\\", "_");
       key_sym.substitute(":", "_");
       ministring key_ext = "extent_" + Objects::newkey() + "_from_" + key_sym;
-      Object_extent *obj_ext = new Object_extent(viewer, key_ext, ext);
+      Object_extent *obj_ext = new Object_extent(viewer, key_ext, "", ext);
       if (obj_ext == NULL) MEMERROR();
 
       errorcode = addObject(key_ext, obj_ext, "extent");
