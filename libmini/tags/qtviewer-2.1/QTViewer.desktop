@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=qtviewer %U
+Icon=/usr/share/mini/qtviewer.png
+Terminal=false
+Name=QTViewer
+GenericName=Geo-Spatial Image Viewer
+Comment=Drop GEOTIFF files to show the geo-referenced image location on earth
+Categories=Application;Graphics;
