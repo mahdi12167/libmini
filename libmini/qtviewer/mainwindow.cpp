@@ -948,8 +948,8 @@ void MainWindow::filterDEMToggled(bool on)
 {
    if (on)
    {
+      viewerWindow->runAction("hide_all");
       viewerWindow->runAction("show_elevation");
-      viewerWindow->runAction("hide_imagery");
    }
 }
 
@@ -957,8 +957,8 @@ void MainWindow::filterIMGToggled(bool on)
 {
    if (on)
    {
+      viewerWindow->runAction("hide_all");
       viewerWindow->runAction("show_imagery");
-      viewerWindow->runAction("hide_elevation");
    }
 }
 
@@ -966,8 +966,7 @@ void MainWindow::filterALLToggled(bool on)
 {
    if (on)
    {
-      viewerWindow->runAction("show_elevation");
-      viewerWindow->runAction("show_imagery");
+      viewerWindow->runAction("show_all");
    }
 }
 

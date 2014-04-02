@@ -986,6 +986,20 @@ void ViewerWindow::runAction(const ministring &action,
    {
       hide_object(value, !hasTag(value, "hidden"));
    }
+   else if (action == "show_all")
+   {
+      ministrings keys = listObjects();
+
+      for (unsigned int i=0; i<keys.size(); i++)
+         hide_object(keys[i], FALSE);
+   }
+   else if (action == "hide_all")
+   {
+      ministrings keys = listObjects();
+
+      for (unsigned int i=0; i<keys.size(); i++)
+         hide_object(keys[i], TRUE);
+   }
    else if (action == "show_elevation")
    {
       ministrings keys = listObjects();
