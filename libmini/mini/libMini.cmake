@@ -16,7 +16,8 @@ SET(MINI_HDRS
    minitime.h minirgb.h minicrs.h
    miniio.h minidir.h minidds.h
    ministub.h minitile.h miniload.h
-   minicoord.h minimeas.h minicurve.h minipath.h
+   minicoord.h minimeas.h
+   minicurve.h minipath.h minixml.h
    miniwarp.h minicam.h
    minilayer.h miniterrain.h miniearth.h
    minicache.h minishader.h
@@ -45,7 +46,8 @@ SET(MINI_SRCS
    minitime.cpp minirgb.cpp minicrs.cpp
    miniio.cpp minidir.cpp minidds.cpp
    ministub.cpp minitile.cpp miniload.cpp
-   minicoord.cpp minimeas.cpp minicurve.cpp minipath.cpp
+   minicoord.cpp minimeas.cpp
+   minicurve.cpp minipath.cpp minixml.cpp
    miniwarp.cpp minicam.cpp
    minilayer.cpp miniterrain.cpp miniearth.cpp
    minicache.cpp minishader.cpp
