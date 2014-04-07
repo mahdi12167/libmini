@@ -5,14 +5,16 @@
 #include "lunaparse.h"
 
 // default constructor
-lunaparse::lunaparse()
+lunaparse::lunaparse(BOOLINT luna)
    {
+   ERRORS=0;
+
    PATH=NULL;
    ALTPATH=NULL;
 
    VAR_NUM=0;
 
-   addLUNAtokens();
+   if (luna) addLUNAtokens();
    }
 
 // destructor
@@ -133,14 +135,16 @@ void lunaparse::addLUNAtokens()
    SCANNER.addtoken("noise2",LUNA_NOISE2);
    }
 
-void lunaparse::parseLUNA()
+int lunaparse::parseLUNA()
    {
    int addr1,addr2;
+
+   ERRORS=0;
 
    if (SCANNER.getcode()==NULL)
       {
       PARSERMSG("unspecified source code");
-      return;
+      return(ERRORS);
       }
 
    MAIN=-1;
@@ -180,16 +184,22 @@ void lunaparse::parseLUNA()
    if (MAIN!=-1) CODE.addcode(lunacode::CODE_JSR,lunacode::MODE_ANY,MAIN);
 
    SCANNER.freecode();
+
+   return(ERRORS);
    }
 
-void lunaparse::parseEXPR(const char *expr)
+int lunaparse::parseEXPR(const char *expr)
    {
+   ERRORS=0;
+
    if (SCANNER.getcode()!=NULL)
       parseLUNA();
 
    SCANNER.pushcode(expr);
    parse_expression();
    SCANNER.freecode();
+
+   return(ERRORS);
    }
 
 void lunaparse::parse_include(const char *path,const char *altpath)
@@ -1163,4 +1173,6 @@ void lunaparse::PARSERMSG(const char *msg,BOOLINT after)
       if (after && SCANNER.popline()>0) fprintf(stderr,"parser error in column %d of line %d after line %d: %s\n",SCANNER.getcol(),SCANNER.getline(),SCANNER.popline(),msg);
       else fprintf(stderr,"parser error in column %d of line %d: %s\n",SCANNER.getcol(),SCANNER.getline(),msg);
    else fprintf(stderr,"parser error: %s\n",msg);
+
+   ERRORS++;
    }

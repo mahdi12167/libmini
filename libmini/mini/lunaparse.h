@@ -93,6 +93,31 @@ The following LUNA program calculates the nth fibonacci number (iteratively):
       {
       return(fib(n));
       }
+
+Example use case:
+
+   // code to be executed
+   const char code[]="main() {return(0);}";
+
+   // compile code
+   lunaparse parser;
+   parser.setcode(code);
+   int errors=parser.parseLUNA();
+
+   // check compile errors
+   if (errors==0)
+      {
+      // execute compiled code
+      parser.getcode()->init();
+      parser.getcode()->execute();
+
+      // get main return value
+      double value=parser.getcode()->popvalue();
+
+      // get execution errors
+      int errors=parser.getcode()->geterrors();
+      }
+
 */
 
 #ifndef LUNAPARSE_H
@@ -182,7 +207,7 @@ class lunaparse
       };
 
    //! default constructor
-   lunaparse();
+   lunaparse(BOOLINT luna=TRUE);
 
    //! destructor
    ~lunaparse();
@@ -194,8 +219,8 @@ class lunaparse
    //! set the paths to be searched when including code
    void setpath(const char *path,const char *altpath=NULL);
 
-   void parseLUNA();
-   void parseEXPR(const char *expr);
+   int parseLUNA();
+   int parseEXPR(const char *expr);
 
    void print();
    void printtokens();
@@ -210,6 +235,8 @@ class lunaparse
    void PARSERMSG(const char *msg,BOOLINT after=FALSE);
 
    protected:
+
+   int ERRORS;
 
    char *PATH;
    char *ALTPATH;

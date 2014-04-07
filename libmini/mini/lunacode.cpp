@@ -5,6 +5,8 @@
 // default constructor
 lunacode::lunacode()
    {
+   ERRORS=0;
+
    CODEMAX=2;
 
    if ((CODE=(unsigned char *)malloc(CODEMAX*sizeof(unsigned char *)))==NULL) MEMERROR();
@@ -173,6 +175,8 @@ int lunacode::getaddr()
 
 void lunacode::init(BOOLINT init_static)
    {
+   ERRORS=0;
+
    RETSTACKSIZE=1;
    VALSTACKSIZE=0;
 
@@ -1942,4 +1946,7 @@ void lunacode::printcode(int code)
    }
 
 void lunacode::CODEMSG(const char *msg)
-   {fprintf(stderr,"code error: %s\n",msg);}
+   {
+   fprintf(stderr,"code error: %s\n",msg);
+   ERRORS++;
+   }

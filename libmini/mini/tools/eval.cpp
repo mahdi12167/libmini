@@ -11,6 +11,8 @@ int main(int argc,char *argv[])
    unsigned int bytes;
 
    lunaparse parser;
+
+   int errors;
    float value;
 
    BOOLINT sw_debug;
@@ -41,25 +43,36 @@ int main(int argc,char *argv[])
 
    parser.setcode(code);
    parser.setpath(argv[1],"include/");
-   parser.parseLUNA();
+   errors=parser.parseLUNA();
 
-   if (sw_debug)
+   if (errors!=0)
       {
-      printf("compiled code:\n----\n");
-      parser.getcode()->print();
-      printf("----\n");
+      printf("compilation failed\n");
+      value=-1;
       }
+   else
+      {
+      if (sw_debug)
+         {
+         printf("compiled code:\n----\n");
+         parser.getcode()->print();
+         printf("----\n");
+         }
 
-   printf("executing code...\n");
+      printf("executing code...\n");
 
-   parser.getcode()->init();
-   parser.getcode()->setdebug(sw_debug);
-   parser.getcode()->pushvalue(value);
-   parser.getcode()->execute();
+      parser.getcode()->init();
+      parser.getcode()->setdebug(sw_debug);
+      parser.getcode()->pushvalue(value);
+      parser.getcode()->execute();
 
-   value=parser.getcode()->popvalue();
+      value=parser.getcode()->popvalue();
 
-   printf("...yields value: %g\n",value);
+      if (parser.getcode()->geterrors()!=0)
+         printf("execution failed\n");
+      else
+         printf("...yields value: %g\n",value);
+      }
 
    free(code);
 

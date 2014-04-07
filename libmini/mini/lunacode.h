@@ -143,12 +143,16 @@ class lunacode
    void pushvalue(float val);
    float popvalue();
 
+   int geterrors() {return(ERRORS);}
+
    void print();
    void printcode(int code);
 
    void setdebug(BOOLINT on) {LUNADEBUG=on;}
 
    protected:
+
+   int ERRORS;
 
    unsigned char *CODE;
    int CODESIZE,CODEMAX;
