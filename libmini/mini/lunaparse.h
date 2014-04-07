@@ -234,6 +234,8 @@ class lunaparse
 
    void PARSERMSG(const char *msg,BOOLINT after=FALSE);
 
+   int geterrors() {return(ERRORS);}
+
    protected:
 
    int ERRORS;

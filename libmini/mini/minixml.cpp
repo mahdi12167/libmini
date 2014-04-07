@@ -42,5 +42,19 @@ void minixml::from_strings(ministrings &infos)
 
    parser.setcode(infos.to_string().c_str());
 
-   infos.clear();
+   while (scanner->gettoken()!=lunascan::LUNA_END)
+      if (scanner->gettoken()==XML_BRACKET_LEFT)
+         {
+         scanner->next();
+
+         while (scanner->gettoken()!=XML_BRACKET_RIGHT)
+            if (scanner->gettoken()==lunascan::LUNA_END)
+               {
+               parser.PARSERMSG("unmatched bracket");
+               break;
+               }
+            else scanner->next();
+         }
+
+   if (parser.geterrors()==0) infos.clear();
    }
