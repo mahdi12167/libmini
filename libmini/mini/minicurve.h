@@ -85,7 +85,7 @@ class minicurve : public minidyna<minimeas>
    ministrings to_strings();
 
    //! deserialization
-   void from_strings(ministrings &info);
+   void from_strings(ministrings &infos);
 
    protected:
 

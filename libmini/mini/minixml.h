@@ -9,6 +9,15 @@ class minixml : public minikeyval<ministring>
    {
    public:
 
+   enum
+      {
+      // xml tokens
+      XML_BRACKET_LEFT=lunaparse::LUNA_UNUSED_TOKENS,
+      XML_BRACKET_RIGHT,
+      XML_EQUALS,
+      XML_SLASH
+      };
+
    //! default constructor
    minixml()
       : minikeyval<ministring>()
@@ -29,7 +38,7 @@ class minixml : public minikeyval<ministring>
    ministrings to_strings();
 
    //! deserialization
-   void from_strings(ministrings &info);
+   void from_strings(ministrings &infos);
    };
 
 #endif

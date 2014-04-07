@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#include "lunaparse.h"
+
 #include "minixml.h"
 
 // load xml from file
@@ -28,5 +30,17 @@ ministrings minixml::to_strings()
    }
 
 // deserialization
-void minixml::from_strings(ministrings &info)
-   {CODEERROR();}
+void minixml::from_strings(ministrings &infos)
+   {
+   lunaparse parser(FALSE);
+   lunascan *scanner=parser.getscanner();
+
+   scanner->addtoken("<",XML_BRACKET_LEFT);
+   scanner->addtoken(">",XML_BRACKET_RIGHT);
+   scanner->addtoken("=",XML_EQUALS);
+   scanner->addtoken("/",XML_SLASH);
+
+   parser.setcode(infos.to_string().c_str());
+
+   infos.clear();
+   }
