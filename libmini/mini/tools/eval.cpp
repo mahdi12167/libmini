@@ -45,6 +45,8 @@ int main(int argc,char *argv[])
    parser.setpath(argv[1],"include/");
    errors=parser.parseLUNA();
 
+   free(code);
+
    if (errors!=0)
       {
       printf("compilation failed\n");
@@ -73,8 +75,6 @@ int main(int argc,char *argv[])
       else
          printf("...yields value: %g\n",value);
       }
-
-   free(code);
 
    return(ftrc(value+0.5f));
    }
