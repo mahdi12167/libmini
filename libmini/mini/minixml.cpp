@@ -42,20 +42,22 @@ void minixmlparser::from_strings(ministrings &infos)
    scanner->addtoken("><",XML_BRACKET_BRACKET);
    scanner->addtoken("=",XML_EQUALS);
 
-   parser_->setcode(infos.to_string().c_str());
+   parser_->setcode(infos.to_string("\n").c_str());
 
    while (scanner->gettoken()!=lunascan::LUNA_END)
+      {
       if (scanner->gettoken()==XML_BRACKET_LEFT)
          {
          parse_tag();
 
          while (scanner->gettoken()==XML_BRACKET_BRACKET)
             parse_tag();
-
-         scanner->next();
          }
       else
          parser_->PARSERMSG("expected tag");
+
+      scanner->next();
+      }
 
    if (!tags_.empty())
       parser_->PARSERMSG("tag mismatch");

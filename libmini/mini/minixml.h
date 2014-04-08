@@ -27,10 +27,6 @@ class minixmlparser
    //! default constructor
    minixmlparser() {}
 
-   //! constructor
-   minixmlparser(ministring filename)
-      {load(filename);}
-
    //! destructor
    virtual ~minixmlparser() {}
 
@@ -64,11 +60,6 @@ class minixml : public minixmlparser
    //! default constructor
    minixml()
       : minixmlparser()
-      {}
-
-   //! constructor
-   minixml(ministring filename)
-      : minixmlparser(filename)
       {}
 
    //! destructor
