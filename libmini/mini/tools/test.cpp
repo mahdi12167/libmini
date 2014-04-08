@@ -7,6 +7,7 @@
 #define MINISTRIP_TEST // enable this to perform a test of the ministrip class
 #define MINITIME_TEST // enable this to perform a test of the minitime module
 #define MINIPATH_TEST // enable this to perform a test of the minipath module
+#define MINIXML_TEST // enable this to perform a test of the minixml module
 #define GLSLMATH_TEST // enable this to perform a test of the glslmath module
 
 #include <mini/minibase.h>
@@ -17,6 +18,7 @@
 #include <mini/ministrip.h>
 #include <mini/minitime.h>
 #include <mini/minipath.h>
+#include <mini/minixml.h>
 #include <mini/glslmath.h>
 
 #ifndef __APPLE__
@@ -255,6 +257,15 @@ int main(int argc,char *argv[])
    double length=path.get_length();
    std::cout << "minipath: length=" << length << std::endl;
    if (dabs(length-1.15704e+07)<1E1) std::cout << "SUCCESS" << std::endl;
+   else std::cout << "FAILURE" << std::endl;
+#endif
+
+#ifdef MINIXML_TEST
+   ministrings txt;
+   txt.from_string("< tag > < subtag > < / subtag > < / tag > < tag > < / tag >");
+   minixmlparser xmlparser;
+   xmlparser.from_strings(txt);
+   if (txt.empty()) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
 

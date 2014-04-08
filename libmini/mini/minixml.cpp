@@ -3,7 +3,7 @@
 #include "minixml.h"
 
 // load xml from file
-BOOLINT minixml::load(ministring filename)
+BOOLINT minixmlparser::load(ministring filename)
    {
    ministrings infos;
 
@@ -14,11 +14,11 @@ BOOLINT minixml::load(ministring filename)
    }
 
 // save xml to file
-void minixml::save(ministring filename)
+void minixmlparser::save(ministring filename)
    {to_strings().save(filename);}
 
 // serialization
-ministrings minixml::to_strings()
+ministrings minixmlparser::to_strings()
    {
    ministrings infos;
 
@@ -28,7 +28,7 @@ ministrings minixml::to_strings()
    }
 
 // deserialization
-void minixml::from_strings(ministrings &infos)
+void minixmlparser::from_strings(ministrings &infos)
    {
    tags_.clear();
    parser_=new lunaparse(FALSE);
@@ -49,10 +49,12 @@ void minixml::from_strings(ministrings &infos)
       parser_->PARSERMSG("tag mismatch");
 
    if (parser_->geterrors()==0) infos.clear();
+
+   delete parser_;
    }
 
 // parse an xml tag
-void minixml::parse_tag()
+void minixmlparser::parse_tag()
    {
    lunascan *scanner=parser_->getscanner();
 
@@ -68,10 +70,14 @@ void minixml::parse_tag()
             scanner->addtoken(scanner->getstring(),XML_TAG);
             tags_.push_back(scanner->getstring());
 
-            std::cout << tags_ << std::endl; //!!
+            tag(); // track xml hierarchy
             }
          else if (scanner->gettoken()==XML_TAG)
+            {
             tags_.push_back(scanner->getstring());
+
+            tag(); // track xml hierarchy
+            }
          else
             parser_->PARSERMSG("malformed tag");
          }
@@ -86,7 +92,7 @@ void minixml::parse_tag()
                if (tags_.peek()==ministring(scanner->getstring()))
                   tags_.pop_back();
                else
-                  parser_->PARSERMSG("unmatched closing tag");
+                  parser_->PARSERMSG("unmatched tag");
             else
                parser_->PARSERMSG("tag mismatch");
             }
@@ -97,13 +103,45 @@ void minixml::parse_tag()
       scanner->next();
 
       while (scanner->gettoken()!=XML_BRACKET_RIGHT &&
+             scanner->gettoken()!=XML_SLASH &&
              scanner->gettoken()!=lunascan::LUNA_END) scanner->next();
 
-      if (scanner->gettoken()==lunascan::LUNA_END)
-         parser_->PARSERMSG("unmatched bracket");
+      if (scanner->gettoken()==XML_SLASH)
+         {
+            tags_.pop_back();
+
+            scanner->next();
+
+            if (scanner->gettoken()!=XML_BRACKET_RIGHT)
+               parser_->PARSERMSG("missing bracket");
+         }
+      else if (scanner->gettoken()==lunascan::LUNA_END)
+         parser_->PARSERMSG("missing bracket");
       }
    else
       parser_->PARSERMSG("expected tag");
 
    scanner->next();
+   }
+
+// found an xml tag
+void minixmlparser::tag()
+   {std::cout << tags_ << std::endl;}
+
+// found an xml tag
+void minixml::tag()
+   {
+   unsigned int i;
+
+   ministring tag;
+
+   if (!tag.empty())
+      {
+      tag=tags_[0];
+
+      for (i=1; i<tags_.getsize(); i++)
+         tag+="."+tags_[i];
+
+      xml.add(tag,"");
+      }
    }

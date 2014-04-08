@@ -7,7 +7,7 @@
 #include "minikeyval.h"
 #include "lunaparse.h"
 
-class minixml : public minikeyval<ministring>
+class minixmlparser
    {
    public:
 
@@ -22,14 +22,14 @@ class minixml : public minikeyval<ministring>
       };
 
    //! default constructor
-   minixml()
-      : minikeyval<ministring>()
-      {}
+   minixmlparser() {}
 
    //! constructor
-   minixml(ministring filename)
-      : minikeyval<ministring>()
+   minixmlparser(ministring filename)
       {load(filename);}
+
+   //! destructor
+   virtual ~minixmlparser() {}
 
    //! load xml from file
    BOOLINT load(ministring filename);
@@ -49,6 +49,32 @@ class minixml : public minikeyval<ministring>
    minidyna<ministring> tags_;
 
    void parse_tag();
+
+   virtual void tag();
+   };
+
+class minixml : public minixmlparser
+   {
+   public:
+
+   //! default constructor
+   minixml()
+      : minixmlparser()
+      {}
+
+   //! constructor
+   minixml(ministring filename)
+      : minixmlparser(filename)
+      {}
+
+   //! destructor
+   virtual ~minixml() {}
+
+   protected:
+
+   minikeyval<ministring> xml;
+
+   virtual void tag();
    };
 
 #endif
