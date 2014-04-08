@@ -18,6 +18,7 @@ class minixmlparser
       XML_BRACKET_RIGHT,
       XML_SLASH,
       XML_QUESTION,
+      XML_XMARK,
       XML_BRACKET_BRACKET,
       XML_EQUALS,
       XML_TAG,

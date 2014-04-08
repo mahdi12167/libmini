@@ -39,6 +39,7 @@ void minixmlparser::from_strings(ministrings &infos)
    scanner->addtoken(">",XML_BRACKET_RIGHT);
    scanner->addtoken("/",XML_SLASH);
    scanner->addtoken("?",XML_QUESTION);
+   scanner->addtoken("!",XML_XMARK);
    scanner->addtoken("><",XML_BRACKET_BRACKET);
    scanner->addtoken("=",XML_EQUALS);
 
@@ -108,6 +109,10 @@ void minixmlparser::parse_tag()
                tags_.push_back(scanner->getstring());
 
                tag(); // track xml hierarchy
+               }
+            else if (scanner->gettoken()==XML_XMARK)
+               {
+               // skip xmark tags
                }
             else
                parser_->PARSERMSG("malformed tag");
