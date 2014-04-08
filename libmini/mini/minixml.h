@@ -16,8 +16,10 @@ class minixmlparser
       // xml tokens
       XML_BRACKET_LEFT=lunaparse::LUNA_UNUSED_TOKENS,
       XML_BRACKET_RIGHT,
-      XML_EQUALS,
       XML_SLASH,
+      XML_BRACKET_SLASH,
+      XML_SLASH_BRACKET,
+      XML_EQUALS,
       XML_TAG
       };
 

@@ -37,8 +37,10 @@ void minixmlparser::from_strings(ministrings &infos)
 
    scanner->addtoken("<",XML_BRACKET_LEFT);
    scanner->addtoken(">",XML_BRACKET_RIGHT);
-   scanner->addtoken("=",XML_EQUALS);
    scanner->addtoken("/",XML_SLASH);
+   scanner->addtoken("</",XML_BRACKET_SLASH);
+   scanner->addtoken("/>",XML_SLASH_BRACKET);
+   scanner->addtoken("=",XML_EQUALS);
 
    parser_->setcode(infos.to_string().c_str());
 
@@ -56,14 +58,31 @@ void minixmlparser::from_strings(ministrings &infos)
 // parse an xml tag
 void minixmlparser::parse_tag()
    {
+   BOOLINT open;
+
    lunascan *scanner=parser_->getscanner();
 
-   if (scanner->gettoken()==XML_BRACKET_LEFT)
+   if (scanner->gettoken()==XML_BRACKET_LEFT ||
+       scanner->gettoken()==XML_BRACKET_SLASH)
       {
-      scanner->next();
+      open=FALSE;
+
+      if (scanner->gettoken()==XML_BRACKET_LEFT)
+         {
+         open=TRUE;
+         scanner->next();
+
+         if (scanner->gettoken()==XML_SLASH)
+            {
+            open=FALSE;
+            scanner->next();
+            }
+         }
+      else
+         scanner->next();
 
       // opening tag
-      if (scanner->gettoken()!=XML_SLASH)
+      if (open)
          {
          if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
             {
@@ -84,8 +103,6 @@ void minixmlparser::parse_tag()
       // closing tag
       else
          {
-         scanner->next();
-
          if (scanner->gettoken()==XML_TAG)
             {
             if (!tags_.empty())
@@ -104,6 +121,7 @@ void minixmlparser::parse_tag()
 
       while (scanner->gettoken()!=XML_BRACKET_RIGHT &&
              scanner->gettoken()!=XML_SLASH &&
+             scanner->gettoken()!=XML_SLASH_BRACKET &&
              scanner->gettoken()!=lunascan::LUNA_END) scanner->next();
 
       if (scanner->gettoken()==XML_SLASH)
@@ -114,6 +132,10 @@ void minixmlparser::parse_tag()
 
             if (scanner->gettoken()!=XML_BRACKET_RIGHT)
                parser_->PARSERMSG("missing bracket");
+         }
+      else if (scanner->gettoken()==XML_SLASH_BRACKET)
+         {
+            tags_.pop_back();
          }
       else if (scanner->gettoken()==lunascan::LUNA_END)
          parser_->PARSERMSG("missing bracket");
