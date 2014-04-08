@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger
 
-#include "lunaparse.h"
-
 #include "minixml.h"
 
 // load xml from file
@@ -42,19 +40,35 @@ void minixml::from_strings(ministrings &infos)
 
    parser.setcode(infos.to_string().c_str());
 
-   while (scanner->gettoken()!=lunascan::LUNA_END)
-      if (scanner->gettoken()==XML_BRACKET_LEFT)
-         {
-         scanner->next();
-
-         while (scanner->gettoken()!=XML_BRACKET_RIGHT)
-            if (scanner->gettoken()==lunascan::LUNA_END)
-               {
-               parser.PARSERMSG("unmatched bracket");
-               break;
-               }
-            else scanner->next();
-         }
+   while (scanner->gettoken()!=lunascan::LUNA_END) parse_tag(&parser);
 
    if (parser.geterrors()==0) infos.clear();
+   }
+
+// parse an xml tag
+void minixml::parse_tag(lunaparse *parser)
+   {
+   lunascan *scanner=parser->getscanner();
+
+   if (scanner->gettoken()==XML_BRACKET_LEFT)
+      {
+      scanner->next();
+
+      if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
+         scanner->addtoken(scanner->getstring(),XML_TAG);
+      else if (scanner->gettoken()!=XML_TAG)
+         parser->PARSERMSG("malformed tag");
+
+      scanner->next();
+
+      while (scanner->gettoken()!=XML_BRACKET_RIGHT &&
+             scanner->gettoken()!=lunascan::LUNA_END) scanner->next();
+
+      if (scanner->gettoken()==lunascan::LUNA_END)
+         parser->PARSERMSG("unmatched bracket");
+      }
+   else
+      parser->PARSERMSG("expected tag");
+
+   scanner->next();
    }

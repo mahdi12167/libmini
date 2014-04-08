@@ -4,6 +4,7 @@
 #define MINIXML_H
 
 #include "minikeyval.h"
+#include "lunaparse.h"
 
 class minixml : public minikeyval<ministring>
    {
@@ -15,7 +16,8 @@ class minixml : public minikeyval<ministring>
       XML_BRACKET_LEFT=lunaparse::LUNA_UNUSED_TOKENS,
       XML_BRACKET_RIGHT,
       XML_EQUALS,
-      XML_SLASH
+      XML_SLASH,
+      XML_TAG
       };
 
    //! default constructor
@@ -39,6 +41,10 @@ class minixml : public minikeyval<ministring>
 
    //! deserialization
    void from_strings(ministrings &infos);
+
+   protected:
+
+   void parse_tag(lunaparse *parser);
    };
 
 #endif
