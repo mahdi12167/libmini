@@ -38,16 +38,14 @@ void minixmlparser::from_strings(ministrings &infos)
    scanner->addtoken("<",XML_BRACKET_LEFT);
    scanner->addtoken(">",XML_BRACKET_RIGHT);
    scanner->addtoken("/",XML_SLASH);
-   scanner->addtoken("</",XML_BRACKET_SLASH);
-   scanner->addtoken("/>",XML_SLASH_BRACKET);
+   scanner->addtoken("?",XML_QUESTION);
    scanner->addtoken("><",XML_BRACKET_BRACKET);
    scanner->addtoken("=",XML_EQUALS);
 
    parser_->setcode(infos.to_string().c_str());
 
    while (scanner->gettoken()!=lunascan::LUNA_END)
-      if (scanner->gettoken()==XML_BRACKET_LEFT ||
-          scanner->gettoken()==XML_BRACKET_SLASH)
+      if (scanner->gettoken()==XML_BRACKET_LEFT)
          {
          parse_tag();
 
@@ -70,102 +68,143 @@ void minixmlparser::from_strings(ministrings &infos)
 // parse an xml tag
 void minixmlparser::parse_tag()
    {
-   BOOLINT open;
+   BOOLINT open,quest;
 
    lunascan *scanner=parser_->getscanner();
 
    if (scanner->gettoken()==XML_BRACKET_LEFT ||
-       scanner->gettoken()==XML_BRACKET_SLASH ||
        scanner->gettoken()==XML_BRACKET_BRACKET)
       {
-      open=FALSE;
+      open=TRUE;
+      quest=FALSE;
 
-      if (scanner->gettoken()==XML_BRACKET_LEFT ||
-          scanner->gettoken()==XML_BRACKET_BRACKET)
+      scanner->next();
+
+      if (scanner->gettoken()==XML_SLASH)
          {
-         open=TRUE;
+         open=FALSE;
          scanner->next();
-
-         if (scanner->gettoken()==XML_SLASH)
-            {
-            open=FALSE;
-            scanner->next();
-            }
          }
-      else
+      else if (scanner->gettoken()==XML_QUESTION)
+         {
+         quest=TRUE;
          scanner->next();
+         }
 
       // opening tag
       if (open)
          {
-         if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
+         if (!quest)
             {
-            scanner->addtoken(scanner->getstring(),XML_TAG);
-            tags_.push_back(scanner->getstring());
+            if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
+               {
+               scanner->addtoken(scanner->getstring(),XML_TAG);
+               tags_.push_back(scanner->getstring());
 
-            tag(); // track xml hierarchy
-            }
-         else if (scanner->gettoken()==XML_TAG)
-            {
-            tags_.push_back(scanner->getstring());
+               tag(); // track xml hierarchy
+               }
+            else if (scanner->gettoken()==XML_TAG)
+               {
+               tags_.push_back(scanner->getstring());
 
-            tag(); // track xml hierarchy
+               tag(); // track xml hierarchy
+               }
+            else
+               parser_->PARSERMSG("malformed tag");
             }
          else
-            parser_->PARSERMSG("malformed tag");
+            {
+            if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
+               {
+               scanner->addtoken(scanner->getstring(),XML_QTAG);
+
+               question(scanner->getstring()); // track xml question
+               }
+            else if (scanner->gettoken()==XML_QTAG)
+               {
+               question(scanner->getstring()); // track xml question
+               }
+            else
+               parser_->PARSERMSG("malformed question");
+            }
          }
       // closing tag
       else
-         {
-         if (scanner->gettoken()==XML_TAG)
+         if (!quest)
             {
-            if (!tags_.empty())
-               if (tags_.peek()==ministring(scanner->getstring()))
-                  tags_.pop_back();
+            if (scanner->gettoken()==XML_TAG)
+               {
+               if (!tags_.empty())
+                  if (tags_.peek()==ministring(scanner->getstring()))
+                     tags_.pop_back();
+                  else
+                     parser_->PARSERMSG("unmatched tag");
                else
-                  parser_->PARSERMSG("unmatched tag");
+                  parser_->PARSERMSG("tag mismatch");
+               }
             else
-               parser_->PARSERMSG("tag mismatch");
+               parser_->PARSERMSG("malformed tag");
             }
          else
-            parser_->PARSERMSG("malformed tag");
-         }
+            parser_->PARSERMSG("malformed question");
 
       scanner->next();
 
-      while (scanner->gettoken()!=XML_BRACKET_RIGHT &&
-             scanner->gettoken()!=XML_SLASH &&
-             scanner->gettoken()!=XML_SLASH_BRACKET &&
-             scanner->gettoken()!=XML_BRACKET_BRACKET &&
-             scanner->gettoken()!=lunascan::LUNA_END) scanner->next();
-
-      if (scanner->gettoken()==XML_SLASH)
+      if (!quest)
          {
-         tags_.pop_back();
-         scanner->next();
+         while (scanner->gettoken()!=XML_BRACKET_RIGHT &&
+                scanner->gettoken()!=XML_SLASH &&
+                scanner->gettoken()!=XML_BRACKET_BRACKET &&
+                scanner->gettoken()!=lunascan::LUNA_END) scanner->next();
 
-         if (scanner->gettoken()!=XML_BRACKET_RIGHT &&
-             scanner->gettoken()!=XML_BRACKET_BRACKET)
+         if (scanner->gettoken()==XML_SLASH)
+            {
+            tags_.pop_back();
+            scanner->next();
+
+            if (scanner->gettoken()!=XML_BRACKET_RIGHT &&
+                scanner->gettoken()!=XML_BRACKET_BRACKET)
+               parser_->PARSERMSG("missing bracket");
+            }
+         else if (scanner->gettoken()==XML_BRACKET_BRACKET)
+            {
+            // double token
+            }
+         else if (scanner->gettoken()==lunascan::LUNA_END)
             parser_->PARSERMSG("missing bracket");
          }
-      else if (scanner->gettoken()==XML_SLASH_BRACKET)
+      else
          {
-         tags_.pop_back();
+         while (scanner->gettoken()!=XML_QUESTION &&
+                scanner->gettoken()!=lunascan::LUNA_END) scanner->next();
+
+         if (scanner->gettoken()==XML_QUESTION)
+            {
+            scanner->next();
+
+            if (scanner->gettoken()!=XML_BRACKET_RIGHT &&
+                scanner->gettoken()!=XML_BRACKET_BRACKET)
+               parser_->PARSERMSG("missing bracket");
+            }
+         else if (scanner->gettoken()==lunascan::LUNA_END)
+            parser_->PARSERMSG("missing bracket");
          }
-      else if (scanner->gettoken()==XML_BRACKET_BRACKET)
-         {
-         // double token
-         }
-      else if (scanner->gettoken()==lunascan::LUNA_END)
-         parser_->PARSERMSG("missing bracket");
       }
    else
       parser_->PARSERMSG("expected tag");
    }
 
+// found an xml question
+void minixmlparser::question(ministring tag)
+   {std::cout << tag << "?" << std::endl;}
+
 // found an xml tag
 void minixmlparser::tag()
    {std::cout << tags_ << std::endl;}
+
+// found an xml question
+void minixml::question(ministring tag)
+   {std::cout << tag << "?" << std::endl;}
 
 // found an xml tag
 void minixml::tag()

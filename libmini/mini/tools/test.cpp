@@ -262,7 +262,7 @@ int main(int argc,char *argv[])
 
 #ifdef MINIXML_TEST
    ministrings txt;
-   txt.from_string("<tag><subtag></subtag></tag> \n <anothertag> < / anothertag >");
+   txt.from_string("<?xml?> \n <tag><subtag></subtag></tag> \n <anothertag> < / anothertag >");
    minixml xml;
    xml.from_strings(txt);
    if (txt.empty()) std::cout << "SUCCESS" << std::endl;

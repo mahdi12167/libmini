@@ -17,11 +17,11 @@ class minixmlparser
       XML_BRACKET_LEFT=lunaparse::LUNA_UNUSED_TOKENS,
       XML_BRACKET_RIGHT,
       XML_SLASH,
-      XML_BRACKET_SLASH,
-      XML_SLASH_BRACKET,
+      XML_QUESTION,
       XML_BRACKET_BRACKET,
       XML_EQUALS,
-      XML_TAG
+      XML_TAG,
+      XML_QTAG
       };
 
    //! default constructor
@@ -53,6 +53,7 @@ class minixmlparser
 
    void parse_tag();
 
+   virtual void question(ministring tag);
    virtual void tag();
    };
 
@@ -77,6 +78,7 @@ class minixml : public minixmlparser
 
    minikeyval<ministring> xml;
 
+   virtual void question(ministring tag);
    virtual void tag();
    };
 
