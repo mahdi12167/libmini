@@ -49,9 +49,13 @@ class minixmlparser
    minidyna<ministring> tags_;
 
    void parse_tag();
+   void parse_pair();
 
-   virtual void question(ministring tag);
-   virtual void tag();
+   ministring getname() const;
+
+   virtual void question(ministring name);
+   virtual void tag(ministring name);
+   virtual void pair(ministring name,ministring value);
    };
 
 class minixml : public minixmlparser
@@ -70,8 +74,9 @@ class minixml : public minixmlparser
 
    minikeyval<ministring> xml;
 
-   virtual void question(ministring tag);
-   virtual void tag();
+   virtual void question(ministring name);
+   virtual void tag(ministring name);
+   virtual void pair(ministring name,ministring value);
    };
 
 #endif
