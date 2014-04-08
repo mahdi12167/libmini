@@ -19,6 +19,7 @@ class minixmlparser
       XML_SLASH,
       XML_BRACKET_SLASH,
       XML_SLASH_BRACKET,
+      XML_BRACKET_BRACKET,
       XML_EQUALS,
       XML_TAG
       };
