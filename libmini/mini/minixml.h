@@ -3,6 +3,7 @@
 #ifndef MINIXML_H
 #define MINIXML_H
 
+#include "minidyna.h"
 #include "minikeyval.h"
 #include "lunaparse.h"
 
@@ -44,7 +45,10 @@ class minixml : public minikeyval<ministring>
 
    protected:
 
-   void parse_tag(lunaparse *parser);
+   lunaparse *parser_;
+   minidyna<ministring> tags_;
+
+   void parse_tag();
    };
 
 #endif
