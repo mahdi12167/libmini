@@ -262,9 +262,9 @@ int main(int argc,char *argv[])
 
 #ifdef MINIXML_TEST
    ministrings txt;
-   txt.from_string("< tag > < subtag > < / subtag > < / tag > < tag > < / tag >");
-   minixmlparser xmlparser;
-   xmlparser.from_strings(txt);
+   txt.from_string("< tag > < subtag > < / subtag > < / tag > \n < tag > < / tag >");
+   minixml xml;
+   xml.from_strings(txt);
    if (txt.empty()) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif

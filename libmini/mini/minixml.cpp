@@ -135,7 +135,7 @@ void minixml::tag()
 
    ministring tag;
 
-   if (!tag.empty())
+   if (!tags_.empty())
       {
       tag=tags_[0];
 
@@ -143,5 +143,7 @@ void minixml::tag()
          tag+="."+tags_[i];
 
       xml.add(tag,"");
+
+      std::cout << tag << std::endl;
       }
    }
