@@ -53,8 +53,6 @@ void minixmlparser::from_strings(ministrings &infos)
          while (scanner->gettoken()==XML_BRACKET_BRACKET)
             parse_tag();
          }
-      else
-         parser_->PARSERMSG("expected tag");
 
       scanner->next();
       }
