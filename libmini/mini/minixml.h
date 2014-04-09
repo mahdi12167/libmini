@@ -48,10 +48,13 @@ class minixmlparser
    lunaparse *parser_;
    minidyna<ministring> tags_;
 
+   minikeyval<int> count_;
+
    void parse_tag();
    void parse_pair();
 
-   ministring getname() const;
+   void pushname(ministring name);
+   ministring getname();
 
    virtual void question(ministring name);
    virtual void tag(ministring name);
@@ -72,7 +75,7 @@ class minixml : public minixmlparser
 
    protected:
 
-   minikeyval<ministring> xml;
+   minikeyval<ministring> xml_;
 
    virtual void question(ministring name);
    virtual void tag(ministring name);

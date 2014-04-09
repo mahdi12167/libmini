@@ -31,6 +31,8 @@ ministrings minixmlparser::to_strings()
 void minixmlparser::from_strings(ministrings &infos)
    {
    tags_.clear();
+   count_.clear();
+
    parser_=new lunaparse(FALSE);
 
    lunascan *scanner=parser_->getscanner();
@@ -107,13 +109,13 @@ void minixmlparser::parse_tag()
             if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
                {
                scanner->addtoken(scanner->getstring(),XML_TAG);
-               tags_.push_back(scanner->getstring());
+               pushname(scanner->getstring());
 
                tag(getname()); // track xml hierarchy
                }
             else if (scanner->gettoken()==XML_TAG)
                {
-               tags_.push_back(scanner->getstring());
+               pushname(scanner->getstring());
 
                tag(getname()); // track xml hierarchy
                }
@@ -129,13 +131,13 @@ void minixmlparser::parse_tag()
             if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
                {
                scanner->addtoken(scanner->getstring(),XML_QTAG);
-               tags_.push_back(scanner->getstring());
+               pushname(scanner->getstring());
 
                question(scanner->getstring()); // track xml question
                }
             else if (scanner->gettoken()==XML_QTAG)
                {
-               tags_.push_back(scanner->getstring());
+               pushname(scanner->getstring());
 
                question(scanner->getstring()); // track xml question
                }
@@ -261,19 +263,56 @@ void minixmlparser::parse_pair()
    scanner->next();
    }
 
-// get tag name
-ministring minixmlparser::getname() const
+// push tag name
+void minixmlparser::pushname(ministring name)
    {
    unsigned int i;
 
    ministring tag;
+   int *counter;
 
-   if (!tags_.empty())
+   for (i=0; i<tags_.getsize(); i++)
       {
-      tag=tags_[0];
+      if (i>0) tag+=".";
+      tag+=tags_[i];
 
-      for (i=1; i<tags_.getsize(); i++)
-         tag+="."+tags_[i];
+      counter=count_.get(tag);
+
+      if (counter!=NULL)
+         if (*counter>1) tag+="#"+ministring(*counter);
+      }
+
+   tags_.push_back(name);
+   if (!tag.empty()) tag+=".";
+   tag+=name;
+
+   counter=count_.get(tag);
+
+   if (counter==NULL) count_.add(tag,1);
+   else
+      {
+      (*counter)++;
+      tag+="#"+ministring(*counter);
+      }
+   }
+
+// get tag name
+ministring minixmlparser::getname()
+   {
+   unsigned int i;
+
+   ministring tag;
+   int *counter;
+
+   for (i=0; i<tags_.getsize(); i++)
+      {
+      if (i>0) tag+=".";
+      tag+=tags_[i];
+
+      counter=count_.get(tag);
+
+      if (counter!=NULL)
+         if (*counter>1) tag+="#"+ministring(*counter);
       }
 
    return(tag);
@@ -293,12 +332,16 @@ void minixmlparser::pair(ministring name,ministring value)
 
 // found an xml question
 void minixml::question(ministring name)
-   {std::cout << name << "?" << std::endl;}
+   {
+   xml_.add(name,"");
+
+   std::cout << name << "?" << std::endl;
+   }
 
 // found an xml tag
 void minixml::tag(ministring name)
    {
-   xml.add(name,"");
+   xml_.add(name,"");
 
    std::cout << name << std::endl;
    }
@@ -306,7 +349,7 @@ void minixml::tag(ministring name)
 // found an xml pair
 void minixml::pair(ministring name,ministring value)
    {
-   xml.add(name,value);
+   xml_.add(name,value);
 
    std::cout << name << "=" << value << std::endl;
    }
