@@ -129,11 +129,14 @@ void minixmlparser::parse_tag()
             if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
                {
                scanner->addtoken(scanner->getstring(),XML_QTAG);
+               tags_.push_back(scanner->getstring());
 
                question(scanner->getstring()); // track xml question
                }
             else if (scanner->gettoken()==XML_QTAG)
                {
+               tags_.push_back(scanner->getstring());
+
                question(scanner->getstring()); // track xml question
                }
             else
@@ -211,6 +214,8 @@ void minixmlparser::parse_tag()
             }
          else if (scanner->gettoken()!=XML_BRACKET_RIGHT)
             parser_->PARSERMSG("missing bracket");
+
+         tags_.pop_back();
          }
       }
    else
@@ -227,6 +232,8 @@ void minixmlparser::parse_pair()
        scanner->gettoken()==XML_QTAG)
       {
       ministring name=scanner->getstring();
+
+      scanner->next();
 
       if (scanner->gettoken()!=XML_EQUALS)
          parser_->PARSERMSG("equals sign expected");
