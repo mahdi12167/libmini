@@ -91,6 +91,18 @@ class minikeyval
       {
       unsigned int idx=0;
 
+      if (sorted)
+         if (pairs.empty())
+            {
+            pairs.append(minikeyval_pair<Item>(key,val));
+            return(TRUE);
+            }
+         else if (pairs.last().key<key)
+            {
+            pairs.append(minikeyval_pair<Item>(key,val));
+            return(TRUE);
+            }
+
       if (get_pair(key,idx)) return(FALSE);
 
       pairs.append(minikeyval_pair<Item>(key,val));
@@ -104,6 +116,18 @@ class minikeyval
       {
       unsigned int idx=0;
 
+      if (sorted)
+         if (pairs.empty())
+            {
+            pairs.append(minikeyval_pair<Item>(key,val,ministrings(tag)));
+            return(TRUE);
+            }
+         else if (pairs.last().key<key)
+            {
+            pairs.append(minikeyval_pair<Item>(key,val,ministrings(tag)));
+            return(TRUE);
+            }
+
       if (get_pair(key,idx)) return(FALSE);
 
       pairs.append(minikeyval_pair<Item>(key,val,ministrings(tag)));
@@ -116,6 +140,18 @@ class minikeyval
    BOOLINT add(const ministring &key,const Item &val,const ministrings &tags)
       {
       unsigned int idx=0;
+
+      if (sorted)
+         if (pairs.empty())
+            {
+            pairs.append(minikeyval_pair<Item>(key,val,tags));
+            return(TRUE);
+            }
+         else if (pairs.last().key<key)
+            {
+            pairs.append(minikeyval_pair<Item>(key,val,tags));
+            return(TRUE);
+            }
 
       if (get_pair(key,idx)) return(FALSE);
 
