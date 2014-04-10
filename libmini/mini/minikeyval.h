@@ -161,6 +161,38 @@ class minikeyval
       return(TRUE);
       }
 
+   //! add list of key-value pairs
+   BOOLINT add(const minidyna<ministring> &keys,const minidyna<Item> &vals)
+      {
+      unsigned int i;
+
+      if (keys.empty()) return(TRUE);
+      if (keys.getsize()!=vals.getsize()) return(FALSE);
+
+      sort();
+
+      minidyna< minikeyval_pair<Item> > p;
+
+      for (i=0; i<keys.getsize(); i++)
+         p.append(minikeyval_pair<Item>(keys[i],vals[i]));
+
+      shellsort< minikeyval_pair<Item> >(p);
+
+      for (i=1; i<p.getsize(); i++)
+         if (p[i].key==p[i-1].key) return(FALSE);
+
+      if (pairs.empty())
+         for (i=0; i<p.getsize(); i++) pairs.append(p[i]);
+      else
+         if (pairs.last().key<p.first().key)
+            for (i=0; i<p.getsize(); i++) pairs.append(p[i]);
+         else
+            {
+            for (i=0; i<p.getsize(); i++) pairs.append(p[i]);
+            sorted=FALSE;
+            }
+      }
+
    //! add indexable value
    BOOLINT add_at(unsigned int idx,const Item &val)
       {
