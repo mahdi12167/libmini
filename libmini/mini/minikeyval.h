@@ -405,6 +405,8 @@ class minikeyval
       ministring key,val;
       ministrings tags;
 
+      minikeyval_pair<Item> list;
+
       if (!infos.empty())
          {
          info=infos[0];
@@ -425,12 +427,12 @@ class minikeyval
             info=info.head("'");
             tags.from_string(info,";");
 
-            add(key,val,tags);
+            list.append(minikeyval_pair<Item>(key,val,tags));
 
             infos[line].clear();
             }
 
-         infos.clear();
+         if (add(list)) infos.clear();
          }
       }
 
