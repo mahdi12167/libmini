@@ -83,9 +83,7 @@ class minixml : public minixmlparser
    protected:
 
    minikeyval<ministring> xml_;
-
-   minidyna<ministring> keys_;
-   minidyna<ministring> vals_;
+   minidyna< minikeyval_pair<ministring> > list_;
 
    virtual void begin();
    virtual void question(ministring name);

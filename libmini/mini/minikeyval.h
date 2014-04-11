@@ -88,107 +88,68 @@ class minikeyval
 
    //! add key-value pair
    BOOLINT add(const ministring &key,const Item &val)
-      {
-      unsigned int idx=0;
-
-      if (sorted)
-         if (pairs.empty())
-            {
-            pairs.append(minikeyval_pair<Item>(key,val));
-            return(TRUE);
-            }
-         else if (pairs.last().key<key)
-            {
-            pairs.append(minikeyval_pair<Item>(key,val));
-            return(TRUE);
-            }
-
-      if (get_pair(key,idx)) return(FALSE);
-
-      pairs.append(minikeyval_pair<Item>(key,val));
-      sorted=FALSE;
-
-      return(TRUE);
-      }
+      {return(add(minikeyval_pair<Item>(key,val)));}
 
    //! add key-value pair with tag
    BOOLINT add(const ministring &key,const Item &val,const ministring &tag)
-      {
-      unsigned int idx=0;
-
-      if (sorted)
-         if (pairs.empty())
-            {
-            pairs.append(minikeyval_pair<Item>(key,val,ministrings(tag)));
-            return(TRUE);
-            }
-         else if (pairs.last().key<key)
-            {
-            pairs.append(minikeyval_pair<Item>(key,val,ministrings(tag)));
-            return(TRUE);
-            }
-
-      if (get_pair(key,idx)) return(FALSE);
-
-      pairs.append(minikeyval_pair<Item>(key,val,ministrings(tag)));
-      sorted=FALSE;
-
-      return(TRUE);
-      }
+      {return(add(minikeyval_pair<Item>(key,val,ministrings(tag))));}
 
    //! add key-value pair with tags
    BOOLINT add(const ministring &key,const Item &val,const ministrings &tags)
+      {return(add(minikeyval_pair<Item>(key,val,tags)));}
+
+   //! add key-value pair
+   BOOLINT add(const minikeyval_pair<Item> &pair)
       {
       unsigned int idx=0;
 
       if (sorted)
          if (pairs.empty())
             {
-            pairs.append(minikeyval_pair<Item>(key,val,tags));
+            pairs.append(pair);
             return(TRUE);
             }
-         else if (pairs.last().key<key)
+         else if (pairs.last().key<pair.key)
             {
-            pairs.append(minikeyval_pair<Item>(key,val,tags));
+            pairs.append(pair);
             return(TRUE);
             }
 
-      if (get_pair(key,idx)) return(FALSE);
+      if (get_pair(pair.key,idx)) return(FALSE);
 
-      pairs.append(minikeyval_pair<Item>(key,val,tags));
+      pairs.append(pair);
       sorted=FALSE;
 
       return(TRUE);
       }
 
    //! add list of key-value pairs
-   BOOLINT add(const minidyna<ministring> &keys,const minidyna<Item> &vals)
+   //!  adding multiple pairs at once is significantly faster
+   BOOLINT add(minidyna< minikeyval_pair<Item> > &list)
       {
       unsigned int i;
 
-      if (keys.empty()) return(TRUE);
-      if (keys.getsize()!=vals.getsize()) return(FALSE);
+      if (list.empty()) return(TRUE);
 
+      // sort actual pair list
       sort();
 
-      minidyna< minikeyval_pair<Item> > p;
+      // sort pair list to be added
+      shellsort< minikeyval_pair<Item> >(list);
 
-      for (i=0; i<keys.getsize(); i++)
-         p.append(minikeyval_pair<Item>(keys[i],vals[i]));
+      // check for consistency
+      for (i=1; i<list.getsize(); i++)
+         if (list[i].key==list[i-1].key) return(FALSE);
 
-      shellsort< minikeyval_pair<Item> >(p);
-
-      for (i=1; i<p.getsize(); i++)
-         if (p[i].key==p[i-1].key) return(FALSE);
-
+      // merge both lists
       if (pairs.empty())
-         for (i=0; i<p.getsize(); i++) pairs.append(p[i]);
+         for (i=0; i<list.getsize(); i++) pairs.append(list[i]);
       else
-         if (pairs.last().key<p.first().key)
-            for (i=0; i<p.getsize(); i++) pairs.append(p[i]);
+         if (pairs.last().key<list.first().key)
+            for (i=0; i<list.getsize(); i++) pairs.append(list[i]);
          else
             {
-            for (i=0; i<p.getsize(); i++) pairs.append(p[i]);
+            for (i=0; i<list.getsize(); i++) pairs.append(list[i]);
             sorted=FALSE;
             }
 

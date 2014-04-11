@@ -418,15 +418,13 @@ void minixmlparser::finish()
 void minixml::begin()
    {
    xml_.clear();
-   keys_.clear();
-   vals_.clear();
+   list_.clear();
    }
 
 // found an xml question
 void minixml::question(ministring name)
    {
-   keys_.append(name);
-   vals_.append("?");
+   list_.append(minikeyval_pair<ministring>(name,"?"));
 
    std::cout << name << "?" << std::endl;
    }
@@ -434,8 +432,7 @@ void minixml::question(ministring name)
 // found an xml tag
 void minixml::tag(ministring name)
    {
-   keys_.append(name);
-   vals_.append("");
+   list_.append(minikeyval_pair<ministring>(name,""));
 
    std::cout << name << std::endl;
    }
@@ -443,12 +440,11 @@ void minixml::tag(ministring name)
 // found an xml pair
 void minixml::pair(ministring name,ministring value)
    {
-   keys_.append(name);
-   vals_.append(value);
+   list_.append(minikeyval_pair<ministring>(name,value));
 
    std::cout << name << "=" << value << std::endl;
    }
 
 // finished xml
 void minixml::finish()
-   {xml_.add(keys_,vals_);}
+   {xml_.add(list_);}
