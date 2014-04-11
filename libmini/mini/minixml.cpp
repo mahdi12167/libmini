@@ -140,8 +140,6 @@ void minixmlparser::parse_tag()
                ministring name=parse_name();
 
                pushname(name);
-
-               question(name); // track xml question
                }
             else
                parser_->PARSERMSG("malformed question");
@@ -403,10 +401,6 @@ ministring minixmlparser::getname()
 void minixmlparser::begin()
    {}
 
-// found an xml question
-void minixmlparser::question(ministring name)
-   {std::cout << name << "?" << std::endl;}
-
 // found an xml pair
 void minixmlparser::pair(ministring name,ministring value)
    {std::cout << name << "=" << value << std::endl;}
@@ -420,14 +414,6 @@ void minixml::begin()
    {
    xml_.clear();
    list_.clear();
-   }
-
-// found an xml question
-void minixml::question(ministring name)
-   {
-   list_.append(minikeyval_pair<ministring>(name,"?"));
-
-   std::cout << name << "?" << std::endl;
    }
 
 // found an xml pair

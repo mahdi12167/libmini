@@ -262,16 +262,12 @@ int main(int argc,char *argv[])
 
 #ifdef MINIXML_TEST
    ministrings txt;
-   txt.from_string("<?xml?> \n <tag><subtag></subtag></tag> \n <anothertag> < / anothertag >","\n");
+   txt.from_string("<?xml version=\"1.0\"?> \n <tag><subtag>text</subtag></tag> \n <anothertag answer=42> < / anothertag >","\n");
    minixml xml;
    xml.from_strings(txt);
    if (txt.empty()) std::cout << "SUCCESS" << std::endl;
    else std::cout << "FAILURE" << std::endl;
 #endif
-
-   //!!
-   minixml gpx;
-   gpx.load("/Users/roettger/Desktop/test.gpx");
 
 #ifdef GLSLMATH_TEST
    std::cout << "glslmath:" << std::endl;

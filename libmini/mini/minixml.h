@@ -62,7 +62,6 @@ class minixmlparser
    ministring getname();
 
    virtual void begin();
-   virtual void question(ministring name);
    virtual void pair(ministring name,ministring value);
    virtual void finish();
    };
@@ -85,7 +84,6 @@ class minixml : public minixmlparser
    minidyna< minikeyval_pair<ministring> > list_;
 
    virtual void begin();
-   virtual void question(ministring name);
    virtual void pair(ministring name,ministring value);
    virtual void finish();
    };
