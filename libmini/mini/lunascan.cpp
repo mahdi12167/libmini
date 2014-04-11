@@ -591,6 +591,19 @@ void lunascan::scanstring()
    TOKEN=LUNA_STRING;
    }
 
+void lunascan::gettext(char delimiter)
+   {
+   while (CH!=delimiter && CH!='\0')
+      {
+      if (CH!='\r') pushback(CH);
+      getmychar();
+      }
+
+   if (CH!=delimiter) SCANNERMSG("unterminated text");
+
+   TOKEN=LUNA_STRING;
+   }
+
 void lunascan::scanidentifier()
    {
    while ((CH>='a' && CH<='z') || (CH>='A' && CH<='Z') || CH=='_' || (CH>='0' && CH<='9'))

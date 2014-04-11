@@ -63,7 +63,6 @@ class minixmlparser
 
    virtual void begin();
    virtual void question(ministring name);
-   virtual void tag(ministring name);
    virtual void pair(ministring name,ministring value);
    virtual void finish();
    };
@@ -87,7 +86,6 @@ class minixml : public minixmlparser
 
    virtual void begin();
    virtual void question(ministring name);
-   virtual void tag(ministring name);
    virtual void pair(ministring name,ministring value);
    virtual void finish();
    };

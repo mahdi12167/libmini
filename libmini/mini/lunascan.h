@@ -48,6 +48,8 @@ class lunascan
 
    void next();
 
+   void gettext(char delimiter='\n');
+
    int getserials();
 
    int gettoken(int serial);

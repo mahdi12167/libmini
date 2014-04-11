@@ -65,6 +65,13 @@ void minixmlparser::from_strings(ministrings &infos)
          }
 
       // skim text
+      scanner->gettext('<');
+      ministring text=scanner->getstring();
+      text.remove_leading_white_space();
+      text.remove_trailing_white_space();
+
+      if (!text.empty()) pair(getname(),text); // track pairs
+
       scanner->next();
       }
 
@@ -117,8 +124,6 @@ void minixmlparser::parse_tag()
                ministring name=parse_name();
 
                pushname(name);
-
-               tag(getname()); // track xml hierarchy
                }
             else if (scanner->gettoken()==XML_XMARK)
                {
@@ -402,10 +407,6 @@ void minixmlparser::begin()
 void minixmlparser::question(ministring name)
    {std::cout << name << "?" << std::endl;}
 
-// found an xml tag
-void minixmlparser::tag(ministring name)
-   {std::cout << name << std::endl;}
-
 // found an xml pair
 void minixmlparser::pair(ministring name,ministring value)
    {std::cout << name << "=" << value << std::endl;}
@@ -427,14 +428,6 @@ void minixml::question(ministring name)
    list_.append(minikeyval_pair<ministring>(name,"?"));
 
    std::cout << name << "?" << std::endl;
-   }
-
-// found an xml tag
-void minixml::tag(ministring name)
-   {
-   list_.append(minikeyval_pair<ministring>(name,""));
-
-   std::cout << name << std::endl;
    }
 
 // found an xml pair
