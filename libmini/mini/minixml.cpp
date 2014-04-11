@@ -30,12 +30,14 @@ ministrings minixmlparser::to_strings()
 // deserialization
 void minixmlparser::from_strings(ministrings &infos)
    {
-   tags_.clear();
-   count_.clear();
+   clear();
 
    parser_=new lunaparse(FALSE);
 
    lunascan *scanner=parser_->getscanner();
+
+   // begin xml parsing
+   begin();
 
    // register xml tokens
    scanner->addtoken("<",XML_BRACKET_LEFT);
@@ -44,7 +46,8 @@ void minixmlparser::from_strings(ministrings &infos)
    scanner->addtoken("?",XML_QUESTION);
    scanner->addtoken("!",XML_XMARK);
    scanner->addtoken("><",XML_BRACKET_BRACKET);
-   scanner->addtoken("=",XML_EQUALS);
+   scanner->addtoken(":",XML_COLON);
+   scanner->addtoken("=",XML_EQUAL);
 
    // pass xml
    parser_->setcode(infos.to_string("\n").c_str());
@@ -65,8 +68,11 @@ void minixmlparser::from_strings(ministrings &infos)
       scanner->next();
       }
 
-   if (!tags_.empty())
+   if (checkname())
       parser_->PARSERMSG("tag mismatch");
+
+   // finish xml parsing
+   finish();
 
    // parser success is indicated by consuming xml
    if (parser_->geterrors()==0) infos.clear();
@@ -77,7 +83,7 @@ void minixmlparser::from_strings(ministrings &infos)
 // parse an xml tag
 void minixmlparser::parse_tag()
    {
-   BOOLINT open,quest;
+   BOOLINT open,quest,xmark;
 
    lunascan *scanner=parser_->getscanner();
 
@@ -86,7 +92,7 @@ void minixmlparser::parse_tag()
        scanner->gettoken()==XML_BRACKET_BRACKET)
       {
       open=TRUE;
-      quest=FALSE;
+      quest=xmark=FALSE;
 
       scanner->next();
 
@@ -108,20 +114,16 @@ void minixmlparser::parse_tag()
             {
             if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
                {
-               scanner->addtoken(scanner->getstring(),XML_TAG);
-               pushname(scanner->getstring());
+               ministring name=parse_name();
 
-               tag(getname()); // track xml hierarchy
-               }
-            else if (scanner->gettoken()==XML_TAG)
-               {
-               pushname(scanner->getstring());
+               pushname(name);
 
                tag(getname()); // track xml hierarchy
                }
             else if (scanner->gettoken()==XML_XMARK)
                {
-               // skip xmark tags
+               xmark=TRUE;
+               scanner->next();
                }
             else
                parser_->PARSERMSG("malformed tag");
@@ -130,16 +132,11 @@ void minixmlparser::parse_tag()
             {
             if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
                {
-               scanner->addtoken(scanner->getstring(),XML_QTAG);
-               pushname(scanner->getstring());
+               ministring name=parse_name();
 
-               question(scanner->getstring()); // track xml question
-               }
-            else if (scanner->gettoken()==XML_QTAG)
-               {
-               pushname(scanner->getstring());
+               pushname(name);
 
-               question(scanner->getstring()); // track xml question
+               question(name); // track xml question
                }
             else
                parser_->PARSERMSG("malformed question");
@@ -149,11 +146,13 @@ void minixmlparser::parse_tag()
       else
          if (!quest)
             {
-            if (scanner->gettoken()==XML_TAG)
+            if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
                {
-               if (!tags_.empty())
-                  if (tags_.peek()==ministring(scanner->getstring()))
-                     tags_.pop_back();
+               ministring name=parse_name();
+
+               if (checkname())
+                  if (name==peekname())
+                     popname();
                   else
                      parser_->PARSERMSG("unmatched tag");
                else
@@ -165,22 +164,26 @@ void minixmlparser::parse_tag()
          else
             parser_->PARSERMSG("malformed question");
 
-      scanner->next();
-
       // closing bracket
       if (!quest)
          {
          // name=value pairs
          if (open)
-            while (scanner->gettoken()!=XML_BRACKET_RIGHT &&
-                   scanner->gettoken()!=XML_SLASH &&
-                   scanner->gettoken()!=XML_BRACKET_BRACKET &&
-                   scanner->gettoken()!=lunascan::LUNA_END)
-               parse_pair();
+            if (!xmark)
+               while (scanner->gettoken()!=XML_BRACKET_RIGHT &&
+                      scanner->gettoken()!=XML_SLASH &&
+                      scanner->gettoken()!=XML_BRACKET_BRACKET &&
+                      scanner->gettoken()!=lunascan::LUNA_END)
+                  parse_pair();
+            else
+               while (scanner->gettoken()!=XML_BRACKET_RIGHT &&
+                      scanner->gettoken()!=XML_BRACKET_BRACKET &&
+                      scanner->gettoken()!=lunascan::LUNA_END)
+                  scanner->next();
 
          if (scanner->gettoken()==XML_SLASH)
             {
-            tags_.pop_back();
+            popname();
             scanner->next();
 
             if (scanner->gettoken()!=XML_BRACKET_RIGHT &&
@@ -217,11 +220,40 @@ void minixmlparser::parse_tag()
          else if (scanner->gettoken()!=XML_BRACKET_RIGHT)
             parser_->PARSERMSG("missing bracket");
 
-         tags_.pop_back();
+         popname();
          }
       }
    else
       parser_->PARSERMSG("expected tag");
+   }
+
+// parse an xml name
+ministring minixmlparser::parse_name()
+   {
+   lunascan *scanner=parser_->getscanner();
+
+   ministring name;
+
+   if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
+      {
+      name=ministring(scanner->getstring());
+
+      scanner->next();
+
+      while (scanner->gettoken()==XML_COLON)
+         {
+         scanner->next();
+
+         if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
+            name+=ministring(scanner->getstring());
+         else
+            parser_->PARSERMSG("expected name");
+
+         scanner->next();
+         }
+      }
+
+   return(name);
    }
 
 // parse an xml name=value pair
@@ -229,15 +261,11 @@ void minixmlparser::parse_pair()
    {
    lunascan *scanner=parser_->getscanner();
 
-   if (scanner->gettoken()==lunascan::LUNA_UNKNOWN ||
-       scanner->gettoken()==XML_TAG ||
-       scanner->gettoken()==XML_QTAG)
+   if (scanner->gettoken()==lunascan::LUNA_UNKNOWN)
       {
-      ministring name=scanner->getstring();
+      ministring name=parse_name();
 
-      scanner->next();
-
-      if (scanner->gettoken()!=XML_EQUALS)
+      if (scanner->gettoken()!=XML_EQUAL)
          parser_->PARSERMSG("equals sign expected");
 
       scanner->next();
@@ -263,36 +291,83 @@ void minixmlparser::parse_pair()
    scanner->next();
    }
 
+// clear name stack
+void minixmlparser::clear()
+   {
+   tags_.clear();
+   count_.clear();
+   popped_=FALSE;
+   }
+
 // push tag name
 void minixmlparser::pushname(ministring name)
    {
    unsigned int i;
 
    ministring tag;
-   int *counter;
+   unsigned int size,count;
 
-   for (i=0; i<tags_.getsize(); i++)
+   size=tags_.getsize();
+   if (popped_) size--;
+
+   if (!popped_)
+      {
+      tags_.push_back(name);
+      count_.push_back(1);
+      }
+   else
+      {
+      if (tags_[size]==name) count_[size]++;
+      else
+         {
+         tags_[size]=name;
+         count_[size]=1;
+         }
+
+      popped_=FALSE;
+      size++;
+      }
+
+   for (i=0; i<size; i++)
       {
       if (i>0) tag+=".";
       tag+=tags_[i];
 
-      counter=count_.get(tag);
-
-      if (counter!=NULL)
-         if (*counter>1) tag+="#"+ministring(*counter);
+      count=count_[i];
+      if (count>1) tag+="#"+ministring(count);
       }
+   }
 
-   tags_.push_back(name);
-   if (!tag.empty()) tag+=".";
-   tag+=name;
+// check tag name
+BOOLINT minixmlparser::checkname()
+   {
+   unsigned int size;
 
-   counter=count_.get(tag);
+   size=tags_.getsize();
+   if (popped_) size--;
 
-   if (counter==NULL) count_.add(tag,1);
+   return(size>0);
+   }
+
+// peek tag name
+ministring minixmlparser::peekname()
+   {
+   unsigned int size;
+
+   size=tags_.getsize();
+   if (popped_) size--;
+
+   return(tags_[size-1]);
+   }
+
+// pop tag name
+void minixmlparser::popname()
+   {
+   if (!popped_) popped_=TRUE;
    else
       {
-      (*counter)++;
-      tag+="#"+ministring(*counter);
+      tags_.pop_back();
+      count_.pop_back();
       }
    }
 
@@ -302,21 +377,26 @@ ministring minixmlparser::getname()
    unsigned int i;
 
    ministring tag;
-   int *counter;
+   unsigned int size,count;
 
-   for (i=0; i<tags_.getsize(); i++)
+   size=tags_.getsize();
+   if (popped_) size--;
+
+   for (i=0; i<size; i++)
       {
       if (i>0) tag+=".";
       tag+=tags_[i];
 
-      counter=count_.get(tag);
-
-      if (counter!=NULL)
-         if (*counter>1) tag+="#"+ministring(*counter);
+      count=count_[i];
+      if (count>1) tag+="#"+ministring(count);
       }
 
    return(tag);
    }
+
+// begin xml
+void minixmlparser::begin()
+   {}
 
 // found an xml question
 void minixmlparser::question(ministring name)
@@ -330,10 +410,23 @@ void minixmlparser::tag(ministring name)
 void minixmlparser::pair(ministring name,ministring value)
    {std::cout << name << "=" << value << std::endl;}
 
+// finished xml
+void minixmlparser::finish()
+   {}
+
+// begin xml
+void minixml::begin()
+   {
+   xml_.clear();
+   keys_.clear();
+   vals_.clear();
+   }
+
 // found an xml question
 void minixml::question(ministring name)
    {
-   xml_.add(name,"");
+   keys_.append(name);
+   vals_.append("?");
 
    std::cout << name << "?" << std::endl;
    }
@@ -341,7 +434,8 @@ void minixml::question(ministring name)
 // found an xml tag
 void minixml::tag(ministring name)
    {
-   xml_.add(name,"");
+   keys_.append(name);
+   vals_.append("");
 
    std::cout << name << std::endl;
    }
@@ -349,7 +443,12 @@ void minixml::tag(ministring name)
 // found an xml pair
 void minixml::pair(ministring name,ministring value)
    {
-   xml_.add(name,value);
+   keys_.append(name);
+   vals_.append(value);
 
    std::cout << name << "=" << value << std::endl;
    }
+
+// finished xml
+void minixml::finish()
+   {xml_.add(keys_,vals_);}

@@ -191,6 +191,8 @@ class minikeyval
             for (i=0; i<p.getsize(); i++) pairs.append(p[i]);
             sorted=FALSE;
             }
+
+      return(TRUE);
       }
 
    //! add indexable value

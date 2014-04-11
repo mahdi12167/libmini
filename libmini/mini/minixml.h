@@ -20,9 +20,8 @@ class minixmlparser
       XML_QUESTION,
       XML_XMARK,
       XML_BRACKET_BRACKET,
-      XML_EQUALS,
-      XML_TAG,
-      XML_QTAG
+      XML_COLON,
+      XML_EQUAL
       };
 
    //! default constructor
@@ -47,18 +46,26 @@ class minixmlparser
 
    lunaparse *parser_;
    minidyna<ministring> tags_;
-
-   minikeyval<int> count_;
+   minidyna<unsigned int> count_;
+   BOOLINT popped_;
 
    void parse_tag();
+   ministring parse_name();
    void parse_pair();
 
+   void clear();
    void pushname(ministring name);
+   BOOLINT checkname();
+   ministring peekname();
+   void popname();
+
    ministring getname();
 
+   virtual void begin();
    virtual void question(ministring name);
    virtual void tag(ministring name);
    virtual void pair(ministring name,ministring value);
+   virtual void finish();
    };
 
 class minixml : public minixmlparser
@@ -77,9 +84,14 @@ class minixml : public minixmlparser
 
    minikeyval<ministring> xml_;
 
+   minidyna<ministring> keys_;
+   minidyna<ministring> vals_;
+
+   virtual void begin();
    virtual void question(ministring name);
    virtual void tag(ministring name);
    virtual void pair(ministring name,ministring value);
+   virtual void finish();
    };
 
 #endif
