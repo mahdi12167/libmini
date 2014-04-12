@@ -215,7 +215,9 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
 
       if (xml.get("gpx.version").empty()) return(FALSE);
 
-      minidyna< minikeyval_pair<ministring> > list=xml.get_prefix("gpx.trk.trkseg"); //!!
+      //!!
+      minidyna< minikeyval_pair<ministring> > list=xml.get_prefix("gpx.trk.trkseg");
+      std::cout << xml.xml_.get_items() << std::endl;
 
       return(gpx.empty());
       }

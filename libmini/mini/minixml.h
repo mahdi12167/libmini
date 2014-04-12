@@ -90,8 +90,8 @@ class minixml : public minixmlparser
       }
 
    //! get number of xml pairs from index
-   unsigned int get_num()
-      {return(xml_.get_num());}
+   unsigned int get_pairs()
+      {return(xml_.get_pairs());}
 
    //! get xml pair from index
    const minikeyval_pair<ministring> *get(unsigned int i)
