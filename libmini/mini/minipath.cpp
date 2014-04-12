@@ -222,13 +222,13 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
          ministring prefix="gpx.trk.trkseg";
          if (trkseg>1) prefix+="#"+ministring(trkseg);
 
-         if (xml.get(prefix+".trk.trkpt.lat").empty() ||
-             xml.get(prefix+".trk.trkpt.lon").empty() ||
-             xml.get(prefix+".trk.trkpt.time").empty()) break;
+         if (xml.get(prefix+".trkpt.lat").empty() ||
+             xml.get(prefix+".trkpt.lon").empty() ||
+             xml.get(prefix+".trkpt.time").empty()) break;
 
          for (trkpt=1; ; trkpt++)
             {
-            ministring infix=".trk.trkpt";
+            ministring infix=".trkpt";
             if (trkpt>1) infix+="#"+ministring(trkpt);
 
             ministring lat=xml.get(prefix+infix+".lat");
