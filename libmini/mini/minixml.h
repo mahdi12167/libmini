@@ -33,12 +33,6 @@ class minixmlparser
    //! load xml from file
    BOOLINT load(ministring filename);
 
-   //! save xml to file
-   void save(ministring filename);
-
-   //! serialization
-   ministrings to_strings();
-
    //! deserialization
    void from_strings(ministrings &infos);
 

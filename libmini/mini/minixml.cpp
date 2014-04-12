@@ -13,20 +13,6 @@ BOOLINT minixmlparser::load(ministring filename)
    return(infos.empty());
    }
 
-// save xml to file
-void minixmlparser::save(ministring filename)
-   {to_strings().save(filename);}
-
-// serialization
-ministrings minixmlparser::to_strings()
-   {
-   ministrings infos;
-
-   CODEERROR();
-
-   return(infos);
-   }
-
 // deserialization
 void minixmlparser::from_strings(ministrings &infos)
    {
