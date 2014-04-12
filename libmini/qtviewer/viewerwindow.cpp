@@ -504,6 +504,7 @@ ministring ViewerWindow::loadURL(ministring url)
          success = loadMap(url);
       // check path extensions
       else if (url.endswith(".csv") ||
+               url.endswith(".gpx") ||
                url.endswith(".trk"))
          success = loadPath(url);
       // check qtv extension
