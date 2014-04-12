@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger
 
+#include "minixml.h"
+
 #include "minipath.h"
 
 // serialization
@@ -207,7 +209,20 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
    if (gpx.empty()) return(FALSE);
 
    if (gpx[0].startswith("<?xml"))
-      CODEERROR();
+      {
+      minixml xml;
+      xml.from_strings(gpx);
+
+      if (xml.get("gpx.version").empty()) return(FALSE);
+
+      minidyna< minikeyval_pair<ministring> > list=xml.get_prefix("gpx.trk.trkseg");
+
+      //!!
+      for (unsigned int i=0; i< list.getsize(); i++)
+         std::cout << list[i].key << std::endl;
+
+      return(gpx.empty());
+      }
 
    return(FALSE);
    }

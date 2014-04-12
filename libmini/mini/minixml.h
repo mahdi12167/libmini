@@ -78,6 +78,28 @@ class minixml : public minixmlparser
    //! destructor
    virtual ~minixml() {}
 
+   //! get xml value from key
+   ministring get(ministring key)
+      {
+      ministring *val;
+
+      val=xml_.get(key);
+      if (val!=NULL) return(*val);
+
+      return("");
+      }
+
+   //! get number of xml pairs from index
+   unsigned int get_num()
+      {return(xml_.get_num());}
+
+   //! get xml pair from index
+   const minikeyval_pair<ministring> *get(unsigned int i)
+      {return(xml_.pair(i));}
+
+   //! get xml pairs with prefix
+   minidyna< minikeyval_pair<ministring> > get_prefix(ministring prefix);
+
    protected:
 
    minikeyval<ministring> xml_;

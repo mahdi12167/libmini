@@ -427,3 +427,19 @@ void minixml::pair(ministring name,ministring value)
 // finished xml
 void minixml::finish()
    {xml_.add(list_);}
+
+// get xml pairs with prefix
+minidyna< minikeyval_pair<ministring> > minixml::get_prefix(ministring prefix)
+   {
+   unsigned int i;
+
+   minidyna< minikeyval_pair<ministring> > list;
+
+   for (i=0; i<xml_.get_num(); i++)
+      {
+      const minikeyval_pair<ministring> *item=xml_.pair(i);
+      if (item->key.startswith(prefix)) list.append(*item);
+      }
+
+   return(list);
+   }

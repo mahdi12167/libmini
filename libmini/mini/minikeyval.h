@@ -203,6 +203,13 @@ class minikeyval
       return(NULL);
       }
 
+   //! get pair reference from index
+   const minikeyval_pair<Item> *pair(unsigned int i)
+      {
+      if (i<pairs.getsize()) return(&pairs[i]);
+      return(NULL);
+      }
+
    //! get value reference from key
    Item *get(const ministring &key)
       {
