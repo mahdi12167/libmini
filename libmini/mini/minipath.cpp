@@ -206,7 +206,7 @@ BOOLINT minipath::read_csv_format(ministrings &csv)
 // read gpx format
 BOOLINT minipath::read_gpx_format(ministrings &gpx)
    {
-   unsigned int trkseg,trkpt;
+   unsigned int trk,trkseg,trkpt;
 
    if (gpx.empty()) return(FALSE);
 
@@ -217,35 +217,48 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
 
       if (xml.get("gpx.version").empty()) return(FALSE);
 
-      for (trkseg=1; ; trkseg++)
+      for (trk=1; ; trk++)
          {
-         ministring prefix="gpx.trk.trkseg";
-         if (trkseg>1) prefix+="#"+ministring(trkseg);
+         ministring prefix="gpx.trk";
+         if (trk>1) prefix+="#"+ministring(trk);
 
-         if (xml.get(prefix+".trkpt.lat").empty() ||
-             xml.get(prefix+".trkpt.lon").empty() ||
-             xml.get(prefix+".trkpt.time").empty()) break;
+         if (xml.get(prefix+".trkseg.trkpt.lat").empty() ||
+             xml.get(prefix+".trkseg.trkpt.lon").empty() ||
+             xml.get(prefix+".trkseg.trkpt.time").empty()) break;
 
-         for (trkpt=1; ; trkpt++)
+         for (trkseg=1; ; trkseg++)
             {
-            ministring infix=".trkpt";
-            if (trkpt>1) infix+="#"+ministring(trkpt);
+            ministring infix=".trkseg";
+            if (trkseg>1) infix+="#"+ministring(trkseg);
 
-            ministring lat=xml.get(prefix+infix+".lat");
-            ministring lon=xml.get(prefix+infix+".lon");
-            ministring ele=xml.get(prefix+infix+".ele");
-            ministring time=xml.get(prefix+infix+".time");
+            if (xml.get(prefix+infix+".trkpt.lat").empty() ||
+                xml.get(prefix+infix+".trkpt.lon").empty() ||
+                xml.get(prefix+infix+".trkpt.time").empty()) break;
 
-            if (!lat.empty() && !lon.empty() && !time.empty())
+            for (trkpt=1; ; trkpt++)
                {
+               ministring infix2=".trkpt";
+               if (trkpt>1) infix2+="#"+ministring(trkpt);
+
+               ministring lat=xml.get(prefix+infix+infix2+".lat");
+               ministring lon=xml.get(prefix+infix+infix2+".lon");
+               ministring ele=xml.get(prefix+infix+infix2+".ele");
+               ministring time=xml.get(prefix+infix+infix2+".time");
+               ministring pdop=xml.get(prefix+infix+infix2+".pdop");
+               ministring magvar=xml.get(prefix+infix+infix2+".magvar");
+
+               if (lat.empty() || lon.empty() || time.empty()) break;
+
                minimeas meas;
 
                meas.set_llh(lat.value(),lon.value(),ele.value(),utc2unixtime(time));
                if (trkpt==1) meas.start=TRUE;
 
+               meas.accuracy=pdop.value();
+               meas.heading=magvar.value();
+
                append(meas);
                }
-            else break;
             }
          }
 
