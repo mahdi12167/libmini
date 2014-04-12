@@ -206,6 +206,8 @@ BOOLINT minipath::read_csv_format(ministrings &csv)
 // read gpx format
 BOOLINT minipath::read_gpx_format(ministrings &gpx)
    {
+   unsigned int trkseg,trkpt;
+
    if (gpx.empty()) return(FALSE);
 
    if (gpx[0].startswith("<?xml"))
@@ -215,9 +217,36 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
 
       if (xml.get("gpx.version").empty()) return(FALSE);
 
-      //!!
-      minidyna< minikeyval_pair<ministring> > list=xml.get_prefix("gpx.trk.trkseg");
-      std::cout << xml.xml_.get_items() << std::endl;
+      for (trkseg=1; ; trkseg++)
+         {
+         ministring prefix="gpx.trk.trkseg";
+         if (trkseg>1) prefix+="#"+ministring(trkseg);
+
+         if (xml.get(prefix+".trk.trkpt.lat").empty() ||
+             xml.get(prefix+".trk.trkpt.lon").empty()) break;
+
+         for (trkpt=1; ; trkpt++)
+            {
+            ministring infix=".trk.trkpt";
+            if (trkpt>1) infix+="#"+ministring(trkpt);
+
+            ministring lat=xml.get(prefix+infix+".lat");
+            ministring lon=xml.get(prefix+infix+".lon");
+            ministring ele=xml.get(prefix+infix+".ele");
+            ministring time=xml.get(prefix+infix+".time");
+
+            if (!lat.empty() && !lon.empty())
+               {
+               minimeas meas;
+
+               meas.set_llh(lat.value(),lon.value(),ele.value(),utc2unixtime(time));
+               if (trkpt==1) meas.start=TRUE;
+
+               append(meas);
+               }
+            else break;
+            }
+         }
 
       return(gpx.empty());
       }
