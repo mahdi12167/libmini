@@ -223,7 +223,8 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
          if (trkseg>1) prefix+="#"+ministring(trkseg);
 
          if (xml.get(prefix+".trk.trkpt.lat").empty() ||
-             xml.get(prefix+".trk.trkpt.lon").empty()) break;
+             xml.get(prefix+".trk.trkpt.lon").empty() ||
+             xml.get(prefix+".trk.trkpt.time").empty()) break;
 
          for (trkpt=1; ; trkpt++)
             {
@@ -235,7 +236,7 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
             ministring ele=xml.get(prefix+infix+".ele");
             ministring time=xml.get(prefix+infix+".time");
 
-            if (!lat.empty() && !lon.empty())
+            if (!lat.empty() && !lon.empty() && !time.empty())
                {
                minimeas meas;
 

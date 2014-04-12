@@ -97,9 +97,6 @@ class minixml : public minixmlparser
    const minikeyval_pair<ministring> *get(unsigned int i)
       {return(xml_.pair(i));}
 
-   //! get xml pairs with prefix
-   minidyna< minikeyval_pair<ministring> > get_prefix(ministring prefix);
-
    protected:
 
    minikeyval<ministring> xml_;
