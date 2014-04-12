@@ -418,11 +418,7 @@ void minixml::begin()
 
 // found an xml pair
 void minixml::pair(ministring name,ministring value)
-   {
-   list_.append(minikeyval_pair<ministring>(name,value));
-
-   std::cout << name << "=" << value << std::endl;
-   }
+   {list_.append(minikeyval_pair<ministring>(name,value));}
 
 // finished xml
 void minixml::finish()
