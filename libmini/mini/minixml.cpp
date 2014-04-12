@@ -426,7 +426,10 @@ void minixml::pair(ministring name,ministring value)
 
 // finished xml
 void minixml::finish()
-   {xml_.add(list_);}
+   {
+   xml_.add(list_);
+   list_.clear();
+   }
 
 // get xml pairs with prefix
 minidyna< minikeyval_pair<ministring> > minixml::get_prefix(ministring prefix)

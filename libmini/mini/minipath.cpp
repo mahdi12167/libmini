@@ -217,7 +217,7 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
 
       minidyna< minikeyval_pair<ministring> > list=xml.get_prefix("gpx.trk.trkseg");
 
-      //!!
+      //!! sorted?
       for (unsigned int i=0; i< list.getsize(); i++)
          std::cout << list[i].key << std::endl;
 

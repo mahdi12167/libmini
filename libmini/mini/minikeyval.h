@@ -117,15 +117,20 @@ class minikeyval
 
       if (get_pair(pair.key,idx)) return(FALSE);
 
-      pairs.append(pair);
-      sorted=FALSE;
+      if (pairs.empty()) pairs.append(pair);
+      else if (pairs.last().key<pair.key) pairs.append(pair);
+      else
+         {
+         pairs.append(pair);
+         sorted=FALSE;
+         }
 
       return(TRUE);
       }
 
    //! add list of key-value pairs
    //!  adding multiple pairs at once is significantly faster
-   BOOLINT add(minidyna< minikeyval_pair<Item> > &list)
+   BOOLINT add(minidyna< minikeyval_pair<Item> > list)
       {
       unsigned int i;
 
@@ -147,10 +152,20 @@ class minikeyval
       else
          if (pairs.last().key<list.first().key)
             for (i=0; i<list.getsize(); i++) pairs.append(list[i]);
+         else if (list.last().key<pairs.first().key)
+            {
+            for (i=0; i<pairs.getsize(); i++) list.append(pairs[i]);
+            pairs=list;
+            }
          else
             {
-            for (i=0; i<list.getsize(); i++) pairs.append(list[i]);
-            sorted=FALSE;
+            for (i=0; i<pairs.getsize(); i++) list.append(pairs[i]);
+            shellsort< minikeyval_pair<Item> >(list);
+
+            for (i=1; i<list.getsize(); i++)
+               if (list[i].key==list[i-1].key) return(FALSE);
+
+            pairs=list;
             }
 
       return(TRUE);
@@ -187,7 +202,11 @@ class minikeyval
 
    //! clear key-value pairs
    void clear()
-      {pairs.clear();}
+      {
+      pairs.clear();
+      sorted=TRUE;
+      idxnum=0;
+      }
 
    //! get key from index
    ministring get_key(unsigned int i)
