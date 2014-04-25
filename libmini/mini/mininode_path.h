@@ -25,11 +25,11 @@ class mininode_geometry_path: public mininode_geometry
 
    //! get path
    minipath *getpath()
-      {return(&path);}
+      {return(&path_);}
 
    protected:
 
-   minipath path;
+   minipath path_;
    };
 
 //! a geometry node that implements C-LOD for geo-referenced paths
@@ -49,11 +49,17 @@ class mininode_geometry_path_clod: public mininode_geometry
 
    //! get path
    minipath *getpath()
-      {return(&path);}
+      {return(&path_);}
 
    protected:
 
-   minipath path;
+   minipath path_;
+   minidyna<float> d2_;
+
+   protected:
+
+   void calcD2();
+   float calcD2(int left,int right);
    };
 
 #endif
