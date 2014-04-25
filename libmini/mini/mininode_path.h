@@ -43,6 +43,9 @@ class mininode_geometry_path_clod: public mininode_geometry
    //! destructor
    virtual ~mininode_geometry_path_clod();
 
+   //! load path
+   void load(ministring filename);
+
    //! recreate geometry from actual view point
    void recreate(miniv3d eye,
                  double maxsize,double maxdist);
@@ -60,6 +63,14 @@ class mininode_geometry_path_clod: public mininode_geometry
 
    void calcD2();
    float calcD2(int left,int right);
+
+   void calcpath();
+   void calcpath(int left,int right);
+
+   private:
+
+   miniv3d EYE_;
+   float C_;
    };
 
 #endif
