@@ -72,6 +72,10 @@ class mininode_geometry_path_clod: public mininode_geometry
 
    miniv3d EYE_;
    float C_;
+
+   minidyna<miniv3d> BAND_;
+   minidyna<miniv3d> NRM_;
+   minidyna<double> WIDTH_;
    };
 
 #endif
