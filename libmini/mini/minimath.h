@@ -78,6 +78,8 @@ void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2);
 
 // geometric operations:
 
+double distance2line(miniv3d p,miniv3d a,miniv3d b);
+
 void merge_spheres(miniv3d &center0,double &radius0,
                    const miniv3d &center1,const double radius1);
 

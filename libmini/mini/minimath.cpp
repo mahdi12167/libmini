@@ -426,6 +426,24 @@ void rot_mtx(miniv3d rot[3],const miniv3d &v1,const miniv3d &v2)
       }
    }
 
+// calculate the distance of a point p from a line segment between vectors a and b
+double distance2line(miniv3d p,miniv3d a,miniv3d b)
+   {
+   miniv3d n=b-a;
+   n.normalize();
+
+   double l=(p-a)*n;
+   miniv3d h=a+l*n;
+
+   double dh=(p-h).getlength2();
+   double da=(p-a).getlength2();
+   double db=(p-b).getlength2();
+
+   if (dh<da && dh<db) return(sqrt(dh));
+   if (da<db) return(sqrt(da));
+   else return(sqrt(db));
+   }
+
 // merge two spheres
 void merge_spheres(miniv3d &center0,double &radius0,
                    const miniv3d &center1,const double radius1)

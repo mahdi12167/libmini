@@ -47,7 +47,7 @@ class mininode_geometry_path_clod: public mininode_geometry
    void load(ministring filename);
 
    //! recreate geometry from actual view point
-   void recreate(miniv3d eye,
+   void recreate(minicoord eye,
                  double maxdiff,double atdist);
 
    //! get path
@@ -61,8 +61,6 @@ class mininode_geometry_path_clod: public mininode_geometry
    minidyna<float> md_;
 
    protected:
-
-   double calcdist(miniv3d a,miniv3d b,miniv3d p);
 
    void calcD2();
    float calcD2(int left,int right);
