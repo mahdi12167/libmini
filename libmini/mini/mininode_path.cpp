@@ -41,18 +41,37 @@ void mininode_geometry_path_clod::load(ministring filename)
 
 // recreate geometry from actual view point
 void mininode_geometry_path_clod::recreate(miniv3d eye,
-                                           double maxsize,double maxdist)
+                                           double maxdiff,double atdist)
    {
    EYE_=eye;
-   C_=fsqr(maxsize/maxdist);
+   C_=maxdiff/atdist;
 
    calcpath();
+   }
+
+// calculate the distance of a point from a line segment
+double mininode_geometry_path_clod::calcdist(miniv3d a,miniv3d b,miniv3d p)
+   {
+   miniv3d n=b-a;
+   n.normalize();
+
+   double l=(p-a)*n;
+   miniv3d h=a+l*n;
+
+   double dh=(p-h).getlength2();
+   double da=(p-a).getlength2();
+   double db=(p-b).getlength2();
+
+   if (dh<da && dh<db) return(sqrt(dh));
+   if (da<db) return(sqrt(da));
+   else return(sqrt(db));
    }
 
 // calculate the d2-values
 void mininode_geometry_path_clod::calcD2()
    {
    d2_.setsize(path_.getsize(),MAXFLOAT);
+   md_.setsize(path_.getsize(),0.0f);
 
    if (!path_.empty())
       calcD2(0,path_.getsize()-1);
@@ -61,7 +80,10 @@ void mininode_geometry_path_clod::calcD2()
 // propagate the d2-values top-down
 float mininode_geometry_path_clod::calcD2(int left,int right)
    {
-   float d2=0.0f;
+   int i;
+
+   double d2=0.0;
+   double md=0.0;
 
    if (right-left>1)
       {
@@ -70,14 +92,31 @@ float mininode_geometry_path_clod::calcD2(int left,int right)
       float d2l=calcD2(left,center);
       float d2r=calcD2(center,right);
 
-      miniv3d c=(path_.get(left).getpos()+path_.get(right).getpos())/2.0;
+      double d=(path_.get(right).getpos()-
+                path_.get(left).getpos()).getlength();
 
-      d2=(path_.get(center).getpos()-c).getlength();
+      d2=calcdist(path_.get(left).getpos(),
+                  path_.get(right).getpos(),
+                  path_.get(center).getpos());
 
-      d2=fmax(d2,d2l);
-      d2=fmax(d2,d2r);
+      if (d>0.0) d2/=d;
+      else d2=MAXFLOAT;
+
+      d2=fmax(d2,0.5f*d2l);
+      d2=fmax(d2,0.5f*d2r);
 
       d2_[center]=d2;
+
+      for (i=left+1; i<right-1; i++)
+         {
+         double d=calcdist(path_.get(left).getpos(),
+                           path_.get(right).getpos(),
+                           path_.get(i).getpos());
+
+         if (d>md) md=d;
+         }
+
+      md_[i]=md;
       }
 
    return(d2);
@@ -97,16 +136,17 @@ void mininode_geometry_path_clod::calcpath(int left,int right)
       {
       int center=(left+right)/2;
 
-      miniv3d p1=path_.get(left).getpos();
-      miniv3d p2=path_.get(right).getpos();
-
-      double l1=(p1-EYE_).getlength2();
-      double l2=(p2-EYE_).getlength2();
-
-      double l=dmax(l1,l2);
       float d2=d2_[center];
+      float md=md_[center];
 
-      if (d2*d2>l*C_)
+      double d=(path_.get(right).getpos()-
+                path_.get(left).getpos()).getlength();
+
+      double l=calcdist(path_.get(left).getpos(),
+                        path_.get(right).getpos(),
+                        EYE_);
+
+      if (d2*d>(l-md)*C_)
          {
          calcpath(left,center);
          calcpath(center,right);
