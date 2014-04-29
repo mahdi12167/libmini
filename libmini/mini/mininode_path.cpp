@@ -197,6 +197,8 @@ void mininode_geometry_path_clod::calcpath_inc(int update)
             addpoint(path_.last().getpos());
 
             *(mininode_geometry *)this=mininode_geometry_band(BAND_,NRM_,WIDTH_);
+
+            EYE_=mininode_culling::peek_view();
             }
          }
       }
