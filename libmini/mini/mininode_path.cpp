@@ -1,5 +1,6 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
+#include "minirgb.h"
 #include "minimath.h"
 
 #include "mininode_path.h"
@@ -44,6 +45,7 @@ void mininode_geometry_path_clod::load(ministring filename)
 // recreate geometry from actual view point
 void mininode_geometry_path_clod::create(double maxdiff,double atdist,
                                          double maxwidth,
+                                         double minv,double maxv,double sat,double val,
                                          int update)
    {
    EYE_=mininode_culling::peek_view();
@@ -51,6 +53,11 @@ void mininode_geometry_path_clod::create(double maxdiff,double atdist,
    C_=maxdiff/atdist;
    D_=atdist;
    W_=maxwidth/atdist;
+
+   MINV_=minv;
+   MAXV_=maxv;
+   SAT_=sat;
+   VAL_=val;
 
    UPDATE_=update;
 
@@ -132,17 +139,40 @@ float mininode_geometry_path_clod::calcD2(int left,int right)
    }
 
 // add a point
-void mininode_geometry_path_clod::addpoint(miniv3d p)
+void mininode_geometry_path_clod::addpoint(miniv3d p,double v,BOOLINT start)
    {
    double d;
+   float hue,rgb[3];
+
+   if (start)
+      if (!POS_.empty())
+         {
+         POS_.push_back(POS_.last());
+         NRM_.push_back(NRM_.last());
+         COL_.push_back(COL_.last());
+         WDT_.push_back(0.0);
+
+         POS_.push_back(POS_.last());
+         NRM_.push_back(NRM_.last());
+         COL_.push_back(COL_.last());
+         WDT_.push_back(0.0);
+         }
 
    d=(p-EYE_).getlength();
    if (d<D_) d=D_;
 
+   hue=(1.0-(v-MINV_)/(MAXV_-MINV_))*240.0;
+
+   if (hue<0.0f) hue=0.0f;
+   else if (hue>240.0f) hue=240.0f;
+
+   hsv2rgb(hue,SAT_,VAL_,rgb);
+
    POS_.push_back(p);
    p.normalize();
    NRM_.push_back(p);
-   WIDTH_.push_back(W_*d);
+   COL_.push_back(miniv3d(rgb));
+   WDT_.push_back(W_*d);
    }
 
 // subdivide a segment
@@ -171,13 +201,14 @@ void mininode_geometry_path_clod::calcpath()
       {
       POS_.clear();
       NRM_.clear();
-      WIDTH_.clear();
+      COL_.clear();
+      WDT_.clear();
 
-      addpoint(path_.first().getpos());
+      addpoint(path_.first().getpos(),path_.first().velocity);
       calcpath(0,path_.getsize()-1);
-      addpoint(path_.last().getpos());
+      addpoint(path_.last().getpos(),path_.last().velocity);
 
-      *(mininode_geometry *)this=mininode_geometry_band(POS_,NRM_,WIDTH_);
+      *(mininode_geometry *)this=mininode_geometry_band(POS_,NRM_,COL_,WDT_);
       }
    }
 
@@ -187,10 +218,10 @@ void mininode_geometry_path_clod::calcpath(int left,int right)
    if (subdiv(left,right))
       {
       int center=(left+right)/2;
-      miniv3d c=path_.get(center).getpos();
+      minimeas c=path_.get(center);
 
       calcpath(left,center);
-      addpoint(c);
+      addpoint(c.getpos(),c.velocity,c.start);
       calcpath(center,right);
       }
    }
@@ -206,9 +237,10 @@ void mininode_geometry_path_clod::calcpath_inc(int update)
          {
          POS_.clear();
          NRM_.clear();
-         WIDTH_.clear();
+         COL_.clear();
+         WDT_.clear();
 
-         addpoint(path_.first().getpos());
+         addpoint(path_.first().getpos(),path_.first().velocity);
 
          struct state_struct start={0,path_.getsize()-1,FALSE};
          STACK_.push_back(start);
@@ -223,9 +255,9 @@ void mininode_geometry_path_clod::calcpath_inc(int update)
 
          if (STACK_.empty())
             {
-            addpoint(path_.last().getpos());
+            addpoint(path_.last().getpos(),path_.last().velocity);
 
-            *(mininode_geometry *)this=mininode_geometry_band(POS_,NRM_,WIDTH_);
+            *(mininode_geometry *)this=mininode_geometry_band(POS_,NRM_,COL_,WDT_);
 
             EYE_=mininode_culling::peek_view();
             }
@@ -243,8 +275,8 @@ void mininode_geometry_path_clod::calcpath_inc()
 
    if (actual.add)
       {
-      miniv3d a=path_.get(left).getpos();
-      addpoint(a);
+      minimeas a=path_.get(left);
+      addpoint(a.getpos(),a.velocity,a.start);
       }
 
    if (subdiv(left,right))

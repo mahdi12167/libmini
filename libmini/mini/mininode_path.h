@@ -49,6 +49,7 @@ class mininode_geometry_path_clod: public mininode_geometry
    //! create geometry from actual view point
    void create(double maxdiff=1,double atdist=100,
                double maxwidth=1,
+               double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0,
                int update=100);
 
    //! get path
@@ -67,7 +68,7 @@ class mininode_geometry_path_clod: public mininode_geometry
    void calcD2();
    float calcD2(int left,int right);
 
-   void addpoint(miniv3d p);
+   void addpoint(miniv3d p,double v,BOOLINT start=FALSE);
    BOOLINT subdiv(int left,int right);
 
    void calcpath();
@@ -92,16 +93,16 @@ class mininode_geometry_path_clod: public mininode_geometry
       };
 
    miniv3d EYE_;
-   float C_;
-   float D_;
-   float W_;
+   float C_,D_,W_;
+   float MINV_,MAXV_,SAT_,VAL_;
 
    int UPDATE_;
    minidyna<struct state_struct> STACK_;
 
    minidyna<miniv3d> POS_;
    minidyna<miniv3d> NRM_;
-   minidyna<double> WIDTH_;
+   minidyna<miniv3d> COL_;
+   minidyna<double> WDT_;
    };
 
 #endif

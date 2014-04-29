@@ -963,8 +963,9 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,do
       v=path[i].velocity;
 
       hue=(1.0-(v-minv)/(maxv-minv))*240.0;
-      if (hue<0.0) hue=0.0;
-      else if (hue>240.0) hue=240.0;
+
+      if (hue<0.0f) hue=0.0f;
+      else if (hue>240.0f) hue=240.0f;
 
       hsv2rgb(hue,sat,val,rgb);
       col.append(miniv3d(rgb));
@@ -980,6 +981,7 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,co
 
    miniv3d n;
    minidyna<miniv3d> nrm,col;
+   minidyna<double> wdt;
 
    double v;
    float hue,rgb[3];
@@ -989,6 +991,20 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,co
 
    for (unsigned int i=0; i<path.getsize(); i++)
       {
+      if (path[i].start)
+         if (i>0)
+            {
+            pos.append(pos.last());
+            nrm.append(nrm.last());
+            col.append(col.last());
+            wdt.append(0.0);
+
+            pos.append(pos.last());
+            nrm.append(nrm.last());
+            col.append(col.last());
+            wdt.append(0.0);
+            }
+
       ecef=path[i];
       ecef.convert2ecef();
       pos.append(ecef.vec);
@@ -1000,14 +1016,17 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,co
       v=path[i].velocity;
 
       hue=(1.0-(v-minv)/(maxv-minv))*240.0;
-      if (hue<0.0) hue=0.0;
-      else if (hue>240.0) hue=240.0;
+
+      if (hue<0.0f) hue=0.0f;
+      else if (hue>240.0f) hue=240.0f;
 
       hsv2rgb(hue,sat,val,rgb);
       col.append(miniv3d(rgb));
+
+      wdt.append(width[i]);
       }
 
-   *this=mininode_geometry_band_path(pos,nrm,col,width);
+   *this=mininode_geometry_band_path(pos,nrm,col,wdt);
    }
 
 // mininode_geometry_tube:

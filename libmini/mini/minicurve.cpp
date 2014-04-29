@@ -265,8 +265,14 @@ double minicurve::get_time_step_min()
 
    for (i=1; i<getsize()-1; i++)
       {
-      dt=get(i+1).vec.w-get(i).vec.w;
-      if (dt<mdt) mdt=dt;
+      minimeas a=get(i);
+      minimeas b=get(i+1);
+
+      if (!b.start)
+         {
+         dt=b.vec.w-a.vec.w;
+         if (dt<mdt) mdt=dt;
+         }
       }
 
    return(mdt);
@@ -286,8 +292,14 @@ double minicurve::get_time_step_max()
 
    for (i=1; i<getsize()-1; i++)
       {
-      dt=get(i+1).vec.w-get(i).vec.w;
-      if (dt>mdt) mdt=dt;
+      minimeas a=get(i);
+      minimeas b=get(i+1);
+
+      if (!b.start)
+         {
+         dt=b.vec.w-a.vec.w;
+         if (dt>mdt) mdt=dt;
+         }
       }
 
    return(mdt);
@@ -298,20 +310,29 @@ double minicurve::get_time_step_avg()
    unsigned int i;
 
    double dt,sdt;
+   unsigned int c;
 
    validate();
 
    if (getsize()<2) return(0.0);
 
    sdt=get(1).vec.w-get(0).vec.w;
+   c=1;
 
    for (i=1; i<getsize()-1; i++)
       {
-      dt=get(i+1).vec.w-get(i).vec.w;
-      sdt+=dt;
+      minimeas a=get(i);
+      minimeas b=get(i+1);
+
+      if (!b.start)
+         {
+         dt=b.vec.w-a.vec.w;
+         sdt+=dt;
+         c++;
+         }
       }
 
-   return(sdt/(getsize()-1));
+   return(sdt/c);
    }
 
 double minicurve::get_length()
