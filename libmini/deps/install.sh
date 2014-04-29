@@ -2,7 +2,7 @@
 
 # this script installs the libMini dependencies locally
 # the installation path can be supplied as an optional argument (default is /usr/local)
-# if the installation path is the default, this script must be run as super user (sudo ./install.sh)
+# if the installation path begins with /usr, the script asks for the super user password
 
 set arg=$1
 
@@ -14,11 +14,9 @@ endif
 
 echo "installing to $prefix"
 
-if ($prefix == "usr/local") then
-   if ($USER != "root") then
-      echo "this script must be run as super user (sudo ./install.sh)"
-      exit 1
-   endif
+set sudo=""
+if ($prefix:h == "/usr") then
+   if ($USER != "root") set sudo="sudo"
 endif
 
 # zlib
@@ -27,7 +25,7 @@ if (-e zlib) then
       echo BUILDING ZLIB
       (cd zlib;\
        ./configure --prefix=$prefix/zlib;\
-       make -j 2; make install)
+       make -j 2; $sudo make install)
    endif
 endif
 
@@ -37,7 +35,7 @@ if (-e libjpeg) then
       echo BUILDING LIBJPEG
       (cd libjpeg;\
        ./configure --prefix=$prefix/libjpeg --enable-static --disable-shared;\
-       make -j 2; make install)
+       make -j 2; $sudo make install)
    endif
 endif
 
@@ -46,7 +44,7 @@ if (-e libpng) then
    echo BUILDING LIBPNG
    (cd libpng;\
     ./configure --prefix=$prefix/libpng --enable-static --disable-shared;\
-    make -j 2; make install)
+    make -j 2; $sudo make install)
 endif
 
 # curl
@@ -57,7 +55,7 @@ if (-e libcurl) then
     ./configure --prefix=$prefix/libcurl\
                 --without-ssl --disable-ldap --disable-ldaps\
                 --enable-static --disable-shared;\
-    make -j 2; make install)
+    make -j 2; $sudo make install)
 endif
 
 # squish
@@ -65,7 +63,7 @@ if (-e squish) then
    echo BUILDING SQUISH
    (cd squish;\
     cmake -DCMAKE_INSTALL_PREFIX=$prefix/squish;\
-    make -j 2; make install)
+    make -j 2; $sudo make install)
 endif
 
 # freeglut
@@ -74,7 +72,7 @@ if (-e freeglut) then
       echo BUILDING FREEGLUT
       (cd freeglut;\
        cmake -DCMAKE_INSTALL_PREFIX=$prefix/freeglut;\
-       make -j 2; make install)
+       make -j 2; $sudo make install)
    endif
 endif
 
@@ -85,7 +83,7 @@ if (-e proj) then
    echo BUILDING PROJ.4
    (cd proj;\
     ./configure --prefix=$prefix;\
-    make -j 2; make install)
+    make -j 2; $sudo make install)
 endif
 
 # libiconv (required by gdal 1.9+)
@@ -93,7 +91,7 @@ if (-e libiconv) then
    echo BUILDING LIBICONV
    (cd libiconv;\
     ./configure --prefix=$prefix/libiconv --enable-static --disable-shared;\
-    make -j 2; make install)
+    make -j 2; $sudo make install)
 endif
 
 # gdal
@@ -107,7 +105,7 @@ if (-e gdal) then
                 --without-sqlite3 --without-pg\
                 --without-ld-shared\
                 --enable-static --disable-shared;\
-    make -j 2; make install)
+    make -j 2; $sudo make install)
 endif
 
 # dcmtk
@@ -116,10 +114,10 @@ if (-e dcmtk) then
    if ($HOSTTYPE != "intel-mac" && $HOSTTYPE != "intel-pc") then
       (cd dcmtk;\
        ./configure --prefix=$prefix/dcmtk CXXFLAGS="-g -O2 -fpermissive";\
-       make -j 2; make install-lib)
+       make -j 2; $sudo make install-lib)
    else
       (cd dcmtk;\
        ./configure --prefix=$prefix/dcmtk;\
-       make -j 2; make install-lib)
+       make -j 2; $sudo make install-lib)
    endif
 endif
