@@ -47,7 +47,8 @@ class mininode_geometry_path_clod: public mininode_geometry
    void load(ministring filename);
 
    //! create geometry from actual view point
-   void create(double maxdiff,double atdist,
+   void create(double maxdiff=1,double atdist=100,
+               double maxwidth=1,
                int update=100);
 
    //! get path
@@ -58,9 +59,10 @@ class mininode_geometry_path_clod: public mininode_geometry
 
    minipath path_;
    minidyna<float> d2_;
-   minidyna<float> md_;
+   minidyna<float> dm_;
 
-   protected:
+   float calcD2(int left,int right,int center);
+   float calcDM(int left,int right);
 
    void calcD2();
    float calcD2(int left,int right);
@@ -76,7 +78,7 @@ class mininode_geometry_path_clod: public mininode_geometry
 
    virtual void traverse_pre()
       {
-      calcpath_inc(UPDATE_); // update path incrementally
+      if (UPDATE_>0) calcpath_inc(UPDATE_); // update path incrementally
       mininode_geometry::traverse_pre(); // traverse base class
       }
 
@@ -91,11 +93,13 @@ class mininode_geometry_path_clod: public mininode_geometry
 
    miniv3d EYE_;
    float C_;
+   float D_;
+   float W_;
 
    int UPDATE_;
    minidyna<struct state_struct> STACK_;
 
-   minidyna<miniv3d> BAND_;
+   minidyna<miniv3d> POS_;
    minidyna<miniv3d> NRM_;
    minidyna<double> WIDTH_;
    };
