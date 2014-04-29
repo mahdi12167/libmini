@@ -158,6 +158,9 @@ class mininode_culling: public mininode_group
    //! shoot a ray and return the distance to the closest object
    double shoot_ray(const miniv3d &o,const miniv3d &d,mininode_geometry **obj=NULL,double mindist=0.0) const;
 
+   //! peek actual view point
+   static miniv3d peek_view() {return(view_point);}
+
    //! peek actual cone
    static minicone peek_cone() {return(cone_stack.peek());}
 
@@ -172,6 +175,8 @@ class mininode_culling: public mininode_group
    static double orb_radius;
    static double orb_r_major;
    static double orb_r_minor;
+
+   static miniv3d view_point;
 
    static minidyna<minicone> cone_stack;
 

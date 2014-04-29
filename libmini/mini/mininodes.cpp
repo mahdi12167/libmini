@@ -150,6 +150,8 @@ double mininode_culling::orb_radius=0.0;
 double mininode_culling::orb_r_major=0.0;
 double mininode_culling::orb_r_minor=0.0;
 
+miniv3d mininode_culling::view_point;
+
 minidyna<minicone> mininode_culling::cone_stack;
 
 // shoot a ray and return the distance to the closest object
@@ -189,6 +191,8 @@ void mininode_culling::traverse_init()
 
    orb_radius=camera->get_orb_radius();
    camera->get_orb_axis(orb_r_major,orb_r_minor);
+
+   view_point=eye;
 
    cone_stack.push(minicone(eye,dir,cone));
 
