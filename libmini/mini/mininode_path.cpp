@@ -29,7 +29,10 @@ void mininode_geometry_path::recreate(double width)
 // default constructor
 mininode_geometry_path_clod::mininode_geometry_path_clod()
    : mininode_geometry(0,3,0)
-   {UPDATE_=0;}
+   {
+   UPDATED_=FALSE;
+   UPDATE_=0;
+   }
 
 // destructor
 mininode_geometry_path_clod::~mininode_geometry_path_clod()
@@ -39,7 +42,7 @@ mininode_geometry_path_clod::~mininode_geometry_path_clod()
 void mininode_geometry_path_clod::load(ministring filename)
    {
    path_.load(filename);
-   calcD2();
+   UPDATED_=TRUE;
    }
 
 // recreate geometry from actual view point
@@ -61,24 +64,62 @@ void mininode_geometry_path_clod::create(double maxdiff,double atdist,
 
    UPDATE_=update;
 
+   if (UPDATED_)
+      {
+      calcDC();
+      calcD2();
+
+      UPDATED_=FALSE;
+      }
+
    calcpath();
+   }
+
+// calculate the dc-values
+void mininode_geometry_path_clod::calcDC()
+   {
+   unsigned int i;
+
+   float dc;
+
+   dc_.setsize(path_.getsize(),0.0f);
+
+   for (i=0; i<path_.getsize(); i++)
+      {
+      dc=(path_.get(i).velocity-MINV_)/(MAXV_-MINV_);
+
+      if (dc<0.0f) dc=0.0f;
+      if (dc>1.0f) dc=1.0f;
+
+      dc_[i]=dc;
+      }
    }
 
 // calculate a d2-value
 float mininode_geometry_path_clod::calcD2(int left,int right,int center)
    {
-   float d2;
+   float d2,dc;
 
    miniv3d a=path_.get(left).getpos();
    miniv3d b=path_.get(right).getpos();
-   miniv3d c=path_.get(center).getpos();
+   minimeas c=path_.get(center);
 
    double d=(b-a).getlength();
 
-   d2=distance2line(c,a,b);
+   d2=distance2line(c.getpos(),a,b);
 
+   // compute euclidean deviation
    if (d>0.0) d2/=d;
    else d2=MAXFLOAT;
+
+   // compute starting deviation
+   if (c.start)
+      if (d2<1.0f) d2=1.0f;
+
+   // compute constant deviation
+   dc=dc_[center]-0.5*(dc_[left]+dc_[right]);
+   if (dc<0.0f) dc=-dc;
+   if (dc>d2) d2=dc;
 
    return(d2);
    }

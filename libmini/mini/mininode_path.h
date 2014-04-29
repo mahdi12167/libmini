@@ -59,8 +59,13 @@ class mininode_geometry_path_clod: public mininode_geometry
    protected:
 
    minipath path_;
+
+   minidyna<float> dc_;
+
    minidyna<float> d2_;
    minidyna<float> dm_;
+
+   void calcDC();
 
    float calcD2(int left,int right,int center);
    float calcDM(int left,int right);
@@ -96,7 +101,9 @@ class mininode_geometry_path_clod: public mininode_geometry
    float C_,D_,W_;
    float MINV_,MAXV_,SAT_,VAL_;
 
+   BOOLINT UPDATED_;
    int UPDATE_;
+
    minidyna<struct state_struct> STACK_;
 
    minidyna<miniv3d> POS_;
