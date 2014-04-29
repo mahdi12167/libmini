@@ -8,7 +8,7 @@ set qt5=http://download.qt-project.org/official_releases/qt/5.2/5.2.1/single/qt-
 
 set qt=$qt4
 
-wget $qt
+if (! -e $qt:t) wget $qt
 tar zxf qt-*.tar.gz
 cd qt-*/
 ./configure -opengl -release -no-webkit -no-svg -no-phonon -no-declarative -nomake examples -nomake demos -nomake tests -opensource -confirm-license
