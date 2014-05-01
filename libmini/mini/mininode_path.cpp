@@ -183,22 +183,13 @@ float mininode_geometry_path_clod::calcD2(int left,int right)
 // add a point
 void mininode_geometry_path_clod::addpoint(miniv3d p,double v,BOOLINT start)
    {
+   miniv3d n;
+
    double d;
    float hue,rgb[3];
 
-   if (start)
-      if (!POS_.empty())
-         {
-         POS_.push_back(POS_.last());
-         NRM_.push_back(NRM_.last());
-         COL_.push_back(COL_.last());
-         WDT_.push_back(0.0);
-
-         POS_.push_back(POS_.last());
-         NRM_.push_back(NRM_.last());
-         COL_.push_back(COL_.last());
-         WDT_.push_back(0.0);
-         }
+   n=p;
+   n.normalize();
 
    d=(p-EYE_).getlength();
    if (d<D_) d=D_;
@@ -210,9 +201,22 @@ void mininode_geometry_path_clod::addpoint(miniv3d p,double v,BOOLINT start)
 
    hsv2rgb(hue,SAT_,VAL_,rgb);
 
+   if (start)
+      if (!POS_.empty())
+         {
+         POS_.push_back(POS_.last());
+         NRM_.push_back(NRM_.last());
+         COL_.push_back(COL_.last());
+         WDT_.push_back(0.0);
+
+         POS_.push_back(p);
+         NRM_.push_back(n);
+         COL_.push_back(miniv3d(rgb));
+         WDT_.push_back(0.0);
+         }
+
    POS_.push_back(p);
-   p.normalize();
-   NRM_.push_back(p);
+   NRM_.push_back(n);
    COL_.push_back(miniv3d(rgb));
    WDT_.push_back(W_*d);
    }

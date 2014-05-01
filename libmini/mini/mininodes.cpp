@@ -991,27 +991,11 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,co
 
    for (unsigned int i=0; i<path.getsize(); i++)
       {
-      if (path[i].start)
-         if (i>0)
-            {
-            pos.append(pos.last());
-            nrm.append(nrm.last());
-            col.append(col.last());
-            wdt.append(0.0);
-
-            pos.append(pos.last());
-            nrm.append(nrm.last());
-            col.append(col.last());
-            wdt.append(0.0);
-            }
-
       ecef=path[i];
       ecef.convert2ecef();
-      pos.append(ecef.vec);
 
       n=ecef.vec;
       n.normalize();
-      nrm.append(n);
 
       v=path[i].velocity;
 
@@ -1021,8 +1005,24 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,co
       else if (hue>240.0f) hue=240.0f;
 
       hsv2rgb(hue,sat,val,rgb);
-      col.append(miniv3d(rgb));
 
+      if (path[i].start)
+         if (i>0)
+            {
+            pos.append(pos.last());
+            nrm.append(nrm.last());
+            col.append(col.last());
+            wdt.append(0.0);
+
+            pos.append(ecef.vec);
+            nrm.append(n);
+            col.append(miniv3d(rgb));
+            wdt.append(0.0);
+            }
+
+      pos.append(ecef.vec);
+      nrm.append(n);
+      col.append(miniv3d(rgb));
       wdt.append(width[i]);
       }
 
