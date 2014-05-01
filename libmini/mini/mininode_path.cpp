@@ -204,9 +204,13 @@ void mininode_geometry_path_clod::addpoint(miniv3d p,double v,BOOLINT start)
    if (start)
       if (!POS_.empty())
          {
-         POS_.push_back(POS_.last());
-         NRM_.push_back(NRM_.last());
-         COL_.push_back(COL_.last());
+         miniv3d lp=POS_.last();
+         miniv3d ln=NRM_.last();
+         miniv3d lc=COL_.last();
+
+         POS_.push_back(lp);
+         NRM_.push_back(ln);
+         COL_.push_back(lc);
          WDT_.push_back(0.0);
 
          POS_.push_back(p);

@@ -1009,9 +1009,13 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minipath &path,co
       if (path[i].start)
          if (i>0)
             {
-            pos.append(pos.last());
-            nrm.append(nrm.last());
-            col.append(col.last());
+            miniv3d lp=pos.last();
+            miniv3d ln=nrm.last();
+            miniv3d lc=col.last();
+
+            pos.append(lp);
+            nrm.append(ln);
+            col.append(lc);
             wdt.append(0.0);
 
             pos.append(ecef.vec);
