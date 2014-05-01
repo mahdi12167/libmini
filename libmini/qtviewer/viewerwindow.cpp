@@ -2503,7 +2503,8 @@ BOOLINT ViewerWindow::load_list(ministring filename)
 
       if (taglist.size()>0)
          if (taglist[0] == "tileset" ||
-             taglist[0] == "image")
+             taglist[0] == "image" ||
+             taglist[0] == "path")
             key = loadURL(key);
          else
             {

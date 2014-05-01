@@ -233,7 +233,7 @@ class Object_path: public Object_serializable
    protected:
 
    mininode_ref ecef_node;
-   mininode_geometry_path *path_node;
+   mininode_geometry_path_clod *path_node;
 
    static mininode *path_groupnode;
 

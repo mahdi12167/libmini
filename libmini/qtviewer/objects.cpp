@@ -670,8 +670,16 @@ int Object_path::initGFX()
       ecef_node=new mininode_ecef();
       if (ecef_node==NULL) MEMERROR();
 
-      path_node=new mininode_geometry_path(get_full_name());
+      path_node=new mininode_geometry_path_clod();
       if (path_node==NULL) MEMERROR();
+
+      path_node->load(get_full_name());
+
+      path_node->create(1,100, // maximum deviation at specific distance
+                        1, // maximum width at specific distance
+                        0.0,30.0,1.0,1.0, // velocity color mapping
+                        1.0, // weight of color mapping
+                        100); // vertices per update
 
       if (!path_node->getpath()->empty())
          {
