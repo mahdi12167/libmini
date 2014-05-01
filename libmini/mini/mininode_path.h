@@ -47,10 +47,11 @@ class mininode_geometry_path_clod: public mininode_geometry
    void load(ministring filename);
 
    //! create geometry from actual view point
-   void create(double maxdiff=1,double atdist=100,
-               double maxwidth=1,
-               double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0,
-               int update=100);
+   void create(double maxdev=1,double atdist=100, // maximum deviation at specific distance
+               double maxwidth=1, // maximum width at specific distance
+               double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0, // velocity color mapping
+               double weight=1.0, // weight of color mapping
+               int update=100); // vertices per update
 
    //! get path
    minipath *getpath()
@@ -60,10 +61,10 @@ class mininode_geometry_path_clod: public mininode_geometry
 
    minipath path_;
 
-   minidyna<float> dc_;
+   minidyna<float> dc_; // constant deviations
 
-   minidyna<float> d2_;
-   minidyna<float> dm_;
+   minidyna<float> d2_; // geometric deviations
+   minidyna<float> dm_; // geometric maximum
 
    void calcDC();
 
@@ -99,7 +100,9 @@ class mininode_geometry_path_clod: public mininode_geometry
 
    miniv3d EYE_;
    float C_,D_,W_;
+
    float MINV_,MAXV_,SAT_,VAL_;
+   float WEIGHT_;
 
    BOOLINT UPDATED_;
    int UPDATE_;

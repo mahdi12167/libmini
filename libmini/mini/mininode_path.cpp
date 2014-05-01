@@ -46,14 +46,15 @@ void mininode_geometry_path_clod::load(ministring filename)
    }
 
 // recreate geometry from actual view point
-void mininode_geometry_path_clod::create(double maxdiff,double atdist,
+void mininode_geometry_path_clod::create(double maxdev,double atdist,
                                          double maxwidth,
                                          double minv,double maxv,double sat,double val,
+                                         double weight,
                                          int update)
    {
    EYE_=mininode_culling::peek_view();
 
-   C_=maxdiff/atdist;
+   C_=maxdev/atdist;
    D_=atdist;
    W_=maxwidth/atdist;
 
@@ -61,6 +62,8 @@ void mininode_geometry_path_clod::create(double maxdiff,double atdist,
    MAXV_=maxv;
    SAT_=sat;
    VAL_=val;
+
+   WEIGHT_=weight;
 
    UPDATE_=update;
 
@@ -91,7 +94,7 @@ void mininode_geometry_path_clod::calcDC()
       if (dc<0.0f) dc=0.0f;
       if (dc>1.0f) dc=1.0f;
 
-      dc_[i]=dc;
+      dc_[i]=dc*WEIGHT_;
       }
    }
 
@@ -108,17 +111,15 @@ float mininode_geometry_path_clod::calcD2(int left,int right,int center)
 
    d2=distance2line(c.getpos(),a,b);
 
-   // compute euclidean deviation
+   // compute geometric deviation
    if (d>0.0) d2/=d;
    else d2=MAXFLOAT;
 
    // compute starting deviation
-   if (c.start)
-      if (d2<1.0f) d2=1.0f;
+   if (c.start) d2=fmax(d2,1.0f);
 
    // compute constant deviation
-   dc=dc_[center]-0.5*(dc_[left]+dc_[right]);
-   if (dc<0.0f) dc=-dc;
+   dc=fabs(dc_[center]-0.5*(dc_[left]+dc_[right]));
    if (dc>d2) d2=dc;
 
    return(d2);
@@ -281,6 +282,8 @@ void mininode_geometry_path_clod::calcpath_inc(int update)
          COL_.clear();
          WDT_.clear();
 
+         EYE_=mininode_culling::peek_view();
+
          addpoint(path_.first().getpos(),path_.first().velocity);
 
          struct state_struct start={0,path_.getsize()-1,FALSE};
@@ -299,8 +302,6 @@ void mininode_geometry_path_clod::calcpath_inc(int update)
             addpoint(path_.last().getpos(),path_.last().velocity);
 
             *(mininode_geometry *)this=mininode_geometry_band(POS_,NRM_,COL_,WDT_);
-
-            EYE_=mininode_culling::peek_view();
             }
          }
       }
