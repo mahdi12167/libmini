@@ -675,7 +675,7 @@ int Object_path::initGFX()
 
       path_node->load(get_full_name());
 
-      path_node->create(1,100, // maximum deviation at specific distance
+      path_node->create(0.25,100, // maximum deviation at specific distance
                         1, // maximum width at specific distance
                         0.0,30.0,1.0,1.0, // velocity color mapping
                         1.0, // weight of color mapping
