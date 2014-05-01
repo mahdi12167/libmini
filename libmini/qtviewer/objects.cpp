@@ -679,7 +679,7 @@ int Object_path::initGFX()
                         1, // maximum width at specific distance
                         0.0,30.0,1.0,1.0, // velocity color mapping
                         1.0, // weight of color mapping
-                        100); // vertices per update
+                        300); // vertices per update
 
       if (!path_node->getpath()->empty())
          {
