@@ -5,6 +5,9 @@
 
 #include "mininode_path.h"
 
+// zscale
+float mininode_geometry_path::zscale=0.975f;
+
 // default constructor
 mininode_geometry_path::mininode_geometry_path()
    : mininode_geometry(0,3,0)
@@ -26,8 +29,11 @@ mininode_geometry_path::~mininode_geometry_path()
 void mininode_geometry_path::recreate(double width)
    {
    *(mininode_geometry *)this=mininode_geometry_band_path(path_,width);
-   setZscale(0.9f);
+   setZscale(zscale);
    }
+
+// zscale
+float mininode_geometry_path_clod::zscale=0.975f;
 
 // default constructor
 mininode_geometry_path_clod::mininode_geometry_path_clod()
@@ -262,6 +268,7 @@ void mininode_geometry_path_clod::calcpath()
       addpoint(path_.last().getpos(),path_.last().velocity);
 
       *(mininode_geometry *)this=mininode_geometry_band(POS_,NRM_,COL_,WDT_);
+      setZscale(zscale);
       }
    }
 
@@ -313,7 +320,7 @@ void mininode_geometry_path_clod::calcpath_inc(int update)
             addpoint(path_.last().getpos(),path_.last().velocity);
 
             *(mininode_geometry *)this=mininode_geometry_band(POS_,NRM_,COL_,WDT_);
-            setZscale(0.9f);
+            setZscale(zscale);
             }
          }
       }

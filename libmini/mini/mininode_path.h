@@ -27,6 +27,9 @@ class mininode_geometry_path: public mininode_geometry
    minipath *getpath()
       {return(&path_);}
 
+   //! zscale
+   static float zscale;
+
    protected:
 
    minipath path_;
@@ -56,6 +59,9 @@ class mininode_geometry_path_clod: public mininode_geometry
    //! get path
    minipath *getpath()
       {return(&path_);}
+
+   //! zscale
+   static float zscale;
 
    protected:
 
