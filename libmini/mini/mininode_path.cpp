@@ -24,7 +24,10 @@ mininode_geometry_path::~mininode_geometry_path()
 
 // recreate geometry with a particular band width
 void mininode_geometry_path::recreate(double width)
-   {*(mininode_geometry *)this=mininode_geometry_band_path(path_,width);}
+   {
+   *(mininode_geometry *)this=mininode_geometry_band_path(path_,width);
+   setZscale(0.9f);
+   }
 
 // default constructor
 mininode_geometry_path_clod::mininode_geometry_path_clod()
@@ -310,6 +313,7 @@ void mininode_geometry_path_clod::calcpath_inc(int update)
             addpoint(path_.last().getpos(),path_.last().velocity);
 
             *(mininode_geometry *)this=mininode_geometry_band(POS_,NRM_,COL_,WDT_);
+            setZscale(0.9f);
             }
          }
       }
