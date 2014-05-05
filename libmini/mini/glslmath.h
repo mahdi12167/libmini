@@ -1263,6 +1263,21 @@ class scoped_push
 template <class T>
 std::vector<T> scoped_push<T>::stack_;
 
+// scoped opengl matrix stack
+class glScopedMatrixStack
+   {
+   public:
+
+   glScopedMatrixStack()
+      {mtxpush();}
+
+   ~glScopedMatrixStack()
+      {mtxpop();}
+   };
+
+// scoped replacement for glPushMatrix/glPopMatrix pairs
+#define glPushMatrixScoped() glScopedMatrixStack p()
+
 // test function
 int test_glslmath()
    {

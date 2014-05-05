@@ -128,7 +128,7 @@ inline void mtxtex();
 inline void mtxpush();
 inline void mtxpop();
 
-// scoped matrix stack
+// scoped opengl matrix stack
 class glScopedMatrixStack
    {
    public:
@@ -140,6 +140,7 @@ class glScopedMatrixStack
       {mtxpop();}
    };
 
+// scoped replacement for glPushMatrix/glPopMatrix pairs
 #define mtxpushscoped() glScopedMatrixStack p()
 
 inline void mtxid();
