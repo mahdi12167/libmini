@@ -604,6 +604,4 @@ inline void renderpoint(const miniv3d &v)
 
 using namespace miniOGL;
 
-#define glPushMatrixScoped() glScopedMatrixStack p()
-
 #endif
