@@ -109,8 +109,6 @@ void minicurve::sort()
 
 void minicurve::validate()
    {
-   static const double worst_accuracy=1000.0;
-
    unsigned int i,j;
 
    double t;
@@ -172,26 +170,28 @@ void minicurve::validate()
 
       // apply constraints
       for (i=1; i+1<getsize();)
-         {
-         double dt=get(i).gettime()-get(i-1).gettime();
+         if (!get(i).start)
+            {
+            double dt=get(i).gettime()-get(i-1).gettime();
 
-         miniv3d p1=get(i-1).getpos();
-         miniv3d p2=get(i).getpos();
+            miniv3d p1=get(i-1).getpos();
+            miniv3d p2=get(i).getpos();
 
-         double d=(p2-p1).getlength();
+            double d=(p2-p1).getlength();
 
-         double v1=compute_velocity(i-1);
-         double v2=compute_velocity(i);
+            double v1=compute_velocity(i-1);
+            double v2=compute_velocity(i);
 
-         double a1=get(i-1).accuracy;
-         double a2=get(i).accuracy;
+            double a1=get(i-1).accuracy;
+            double a2=get(i).accuracy;
 
-         if (isNAN(a1)) a1=worst_accuracy;
-         if (isNAN(a2)) a2=worst_accuracy;
+            if (isNAN(a1)) a1=0.0;
+            if (isNAN(a2)) a2=0.0;
 
-         if (!check_constraints(d,dt,p1,p2,v1,v2,a1,a2)) dispose(i);
+            if (!check_constraints(d,dt,p1,p2,v1,v2,a1,a2)) dispose(i);
+            else i++;
+            }
          else i++;
-         }
 
       // check for missing velocity
       for (i=0; i<getsize(); i++)
@@ -565,12 +565,14 @@ BOOLINT minicurve::check_constraints(double d,double dt,
                                      double a1,double a2)
    {
    static const double min_accuracy=50.0;
+   static const double max_relative_distance=2.0;
 
    static const double min_velocity=3.0;
-   static const double max_relative_velocity=10.0;
+   static const double max_relative_velocity=5.0;
 
-   if (a2<min_accuracy) return(FALSE);
-   if (v2*dt+a2<d) return(FALSE);
+   if (a2>min_accuracy) return(FALSE);
+
+   if (v2*dt*max_relative_distance+a1+a2<d) return(FALSE);
 
    if (v1<min_velocity) v1=min_velocity;
    if (v2<min_velocity) v2=min_velocity;
