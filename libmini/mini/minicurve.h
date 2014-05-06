@@ -43,6 +43,8 @@ class minicurve : public minidyna<minimeas>
       append_sector(p1,p2,n);
       }
 
+   virtual ~minicurve() {}
+
    void append(const minimeas &p);
 
    void append(minicurve &c);
@@ -104,6 +106,11 @@ class minicurve : public minidyna<minimeas>
    void validate();
 
    double compute_velocity(unsigned int i);
+
+   virtual BOOLINT check_constraints(double d,double dt,
+                                     miniv3d p1,miniv3d p2,double v1,double v2,
+                                     double a1,double a2);
+
    };
 
 #endif

@@ -109,6 +109,8 @@ void minicurve::sort()
 
 void minicurve::validate()
    {
+   static const double worst_accuracy=1000.0;
+
    unsigned int i,j;
 
    double t;
@@ -150,23 +152,46 @@ void minicurve::validate()
       for (i=0; i<getsize(); i++)
          if (isNAN(get(i).vec.z))
             {
-            // reduplicate height from following points
-            for (j=i+1; j<getsize(); j++)
-               if (!isNAN(get(j).vec.z))
+            // reduplicate height from previous points
+            for (j=i; j>0;)
+               if (!isNAN(get(--j).vec.z))
                   {
                   ref(i).vec.z=get(j).vec.z;
                   break;
                   }
 
-            // reduplicate height from previous points
+            // reduplicate height from following points
             if (isNAN(get(i).vec.z))
-               for (j=i; j>0;)
-                  if (!isNAN(get(--j).vec.z))
+               for (j=i+1; j<getsize(); j++)
+                  if (!isNAN(get(j).vec.z))
                      {
                      ref(i).vec.z=get(j).vec.z;
                      break;
                      }
             }
+
+      // apply constraints
+      for (i=1; i+1<getsize();)
+         {
+         double dt=get(i).gettime()-get(i-1).gettime();
+
+         miniv3d p1=get(i-1).getpos();
+         miniv3d p2=get(i).getpos();
+
+         double d=(p2-p1).getlength();
+
+         double v1=compute_velocity(i-1);
+         double v2=compute_velocity(i);
+
+         double a1=get(i-1).accuracy;
+         double a2=get(i).accuracy;
+
+         if (isNAN(a1)) a1=worst_accuracy;
+         if (isNAN(a2)) a2=worst_accuracy;
+
+         if (!check_constraints(d,dt,p1,p2,v1,v2,a1,a2)) dispose(i);
+         else i++;
+         }
 
       // check for missing velocity
       for (i=0; i<getsize(); i++)
@@ -514,6 +539,9 @@ void minicurve::from_strings(ministrings &infos)
 // compute velocity
 double minicurve::compute_velocity(unsigned int i)
    {
+   // original value
+   if (!isNAN(get(i).velocity)) return(get(i).velocity);
+
    // forward difference
    if (i==0 || get(i).start)
       if (i+1<getsize())
@@ -529,4 +557,26 @@ double minicurve::compute_velocity(unsigned int i)
    // central difference
    else
       return((get(i+1).getpos()-get(i-1).getpos()).getlength()/(get(i+1).vec.w-get(i-1).vec.w));
+   }
+
+// check constraints
+BOOLINT minicurve::check_constraints(double d,double dt,
+                                     miniv3d p1,miniv3d p2,double v1,double v2,
+                                     double a1,double a2)
+   {
+   static const double min_accuracy=50.0;
+
+   static const double min_velocity=3.0;
+   static const double max_relative_velocity=10.0;
+
+   if (a2<min_accuracy) return(FALSE);
+   if (v2*dt+a2<d) return(FALSE);
+
+   if (v1<min_velocity) v1=min_velocity;
+   if (v2<min_velocity) v2=min_velocity;
+
+   if (v1/v2>max_relative_velocity) return(FALSE);
+   if (v2/v1>max_relative_velocity) return(FALSE);
+
+   return(TRUE);
    }
