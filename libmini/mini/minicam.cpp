@@ -80,6 +80,12 @@ minicoord minicam::get_hit()
 double minicam::get_hitdist()
    {return(get_hitdist(eye,eye_dir));}
 
+minicoord minicam::get_hit_orb()
+   {return(get_hit_orb(eye,eye_dir));}
+
+double minicam::get_hitdist_orb()
+   {return(get_hitdist_orb(eye,eye_dir));}
+
 double minicam::get_angle()
    {
    double angle,pitch;
@@ -365,6 +371,44 @@ minicoord minicam::get_hit(const minicoord &pos,const miniv3d &dir)
 double minicam::get_hitdist(const minicoord &pos,const miniv3d &dir)
    {return((get_hit(pos,dir).getpos()-pos.getpos()).getlength());}
 
+minicoord minicam::get_hit_orb(const minicoord &pos,const miniv3d &dir)
+   {
+   static minicoord pos0=minicoord();
+   static miniv3d dirn0=miniv3d(0.0);
+
+   static minicoord hit=minicoord();
+
+   miniv3d dirn;
+
+   double dist;
+
+   dirn=dir;
+   dirn.normalize();
+
+   if (pos!=pos0 || dirn!=dirn0)
+      {
+      pos0=pos;
+      dirn0=dirn;
+
+      if (pos0.type!=minicoord::MINICOORD_LINEAR)
+         pos0.convert2(minicoord::MINICOORD_ECEF);
+
+      dist=shoot_orb(pos0,dirn0);
+
+      if (dist==MAXFLOAT) hit=pos0;
+      else
+         {
+         hit=pos0+dist*dirn0;
+         move_above(hit);
+         }
+      }
+
+   return(hit);
+   }
+
+double minicam::get_hitdist_orb(const minicoord &pos,const miniv3d &dir)
+   {return((get_hit_orb(pos,dir).getpos()-pos.getpos()).getlength());}
+
 // move point up so that it is above ground
 void minicam::move_above(minicoord &pos,double mindist)
    {
@@ -479,3 +523,7 @@ miniv3d minicam::unproject_viewport(int vx,int vy,
 // shoot a ray at the scene
 double minicam::shoot(const minicoord &o,const miniv3d &d,double mindist)
    {return(EARTH->shoot(o,d,mindist));}
+
+// shoot a ray at the orb
+double minicam::shoot_orb(const minicoord &o,const miniv3d &d,double mindist)
+   {return(EARTH->shoot_orb(o,d,mindist));}

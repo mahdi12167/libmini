@@ -50,6 +50,8 @@ class minicam
    double get_dist();
    minicoord get_hit();
    double get_hitdist();
+   minicoord get_hit_orb();
+   double get_hitdist_orb();
    double get_angle();
    double get_pitch();
 
@@ -83,6 +85,8 @@ class minicam
    double get_dist(const minicoord &pos);
    minicoord get_hit(const minicoord &pos,const miniv3d &dir);
    double get_hitdist(const minicoord &pos,const miniv3d &dir);
+   minicoord get_hit_orb(const minicoord &pos,const miniv3d &dir);
+   double get_hitdist_orb(const minicoord &pos,const miniv3d &dir);
 
    void move_above(minicoord &pos,double mindist=0.0);
 
@@ -110,6 +114,7 @@ class minicam
    double nearp,farp;
 
    virtual double shoot(const minicoord &o,const miniv3d &d,double mindist=0.0);
+   virtual double shoot_orb(const minicoord &o,const miniv3d &d,double mindist=0.0);
 
    private:
 
