@@ -863,7 +863,7 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double mindist)
    return(t);
    }
 
-// shoot a ray at the scene
+// shoot a ray at the orb
 double miniearth::shoot_orb(const minicoord &o,const miniv3d &d,double mindist)
    {
    double t;
