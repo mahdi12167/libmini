@@ -19,6 +19,8 @@ class minicurve : public minidyna<minimeas>
       curve_map_start=curve_map_stop=0.0;
       curve_repeat_start=curve_repeat_stop=0.0;
 
+      set_constraints();
+
       bboxmin=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
       bboxmax=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
 
@@ -34,6 +36,8 @@ class minicurve : public minidyna<minimeas>
 
       curve_map_start=curve_map_stop=0.0;
       curve_repeat_start=curve_repeat_stop=0.0;
+
+      set_constraints();
 
       bboxmin=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
       bboxmax=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
@@ -61,6 +65,15 @@ class minicurve : public minidyna<minimeas>
 
    void set_time_mapping(double map_start,double map_stop);
    void set_time_repeat(double repeat_start,double repeat_stop);
+
+   void set_constraints(double min_accuracy=50.0,
+                        double max_acceleration=5.0,
+                        double max_tolerance=2.0)
+      {
+      minicurve::min_accuracy=min_accuracy;
+      minicurve::max_acceleration=max_acceleration;
+      minicurve::max_tolerance=max_tolerance;
+      }
 
    minimeas interpolate(double t);
    minimeas interpolate_cubic(double t);
@@ -96,6 +109,10 @@ class minicurve : public minidyna<minimeas>
    double curve_start,curve_stop;
    double curve_map_start,curve_map_stop;
    double curve_repeat_start,curve_repeat_stop;
+
+   double min_accuracy;
+   double max_acceleration;
+   double max_tolerance;
 
    miniv3d bboxmin,bboxmax;
 

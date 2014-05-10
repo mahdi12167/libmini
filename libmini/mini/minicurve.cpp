@@ -564,20 +564,14 @@ BOOLINT minicurve::check_constraints(double d,double dt,
                                      miniv3d p1,miniv3d p2,double v1,double v2,
                                      double a1,double a2)
    {
-   static const double g=9.81;
-
-   static const double min_accuracy=50.0;
-   static const double max_relative_distance=2.0;
-   static const double max_acceleration=0.5*g;
-
    // check for minimum accuracy threshold
    if (a2>min_accuracy) return(FALSE);
 
-   // check for valid geometric point distance vs. maximum travelled distance
-   if (v2*dt*max_relative_distance+a1+a2<d) return(FALSE);
-
    // check for maximum acceleration threshold
    if (dabs(v2-v1)/dt>max_acceleration) return(FALSE);
+
+   // check for valid geometric point distance vs. maximum travelled distance
+   if (v2*dt*max_tolerance+a1+a2<d) return(FALSE);
 
    return(TRUE);
    }
