@@ -81,10 +81,10 @@ double minicam::get_hitdist()
    {return(get_hitdist(eye,eye_dir));}
 
 minicoord minicam::get_hit_orb()
-   {return(get_hit_orb(eye,eye_dir));}
+   {return(get_hit_orb(eye,-eye.getpos()));}
 
 double minicam::get_hitdist_orb()
-   {return(get_hitdist_orb(eye,eye_dir));}
+   {return(get_hitdist_orb(eye,-eye.getpos()));}
 
 double minicam::get_angle()
    {
