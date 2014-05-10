@@ -835,8 +835,10 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double mindist)
    miniv3d dn;
 
    minilayer *ref;
+   double r_major,r_minor;
 
    ref=getreference();
+   getorbaxis(r_major,r_minor);
 
    // check for hit with terrain
    t=TERRAIN->shoot(o,d,mindist);
@@ -851,7 +853,7 @@ double miniearth::shoot(const minicoord &o,const miniv3d &d,double mindist)
 
             if (EPARAMS.warpmode!=WARPMODE_FLAT && EPARAMS.warpmode!=WARPMODE_FLAT_REF)
                t=intersect_ray_ellipsoid(miniv3d(o.vec),dn,
-                                         miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
+                                         miniv3d(0.0,0.0,0.0),r_major,r_major,r_minor);
             else
                if (EPARAMS.warpmode==WARPMODE_FLAT_REF && ref!=NULL)
                   t=intersect_ray_plane(miniv3d(o.vec),dn,
@@ -870,8 +872,10 @@ double miniearth::shoot_orb(const minicoord &o,const miniv3d &d,double mindist)
    miniv3d dn;
 
    minilayer *ref;
+   double r_major,r_minor;
 
    ref=getreference();
+   getorbaxis(r_major,r_minor);
 
    t=MAXFLOAT;
 
@@ -884,7 +888,7 @@ double miniearth::shoot_orb(const minicoord &o,const miniv3d &d,double mindist)
 
          if (EPARAMS.warpmode!=WARPMODE_FLAT && EPARAMS.warpmode!=WARPMODE_FLAT_REF)
             t=intersect_ray_ellipsoid(miniv3d(o.vec),dn,
-                                      miniv3d(0.0,0.0,0.0),minicrs::WGS84_r_major,minicrs::WGS84_r_major,minicrs::WGS84_r_minor);
+                                      miniv3d(0.0,0.0,0.0),r_major,r_major,r_minor);
          else
             if (EPARAMS.warpmode==WARPMODE_FLAT_REF && ref!=NULL)
                t=intersect_ray_plane(miniv3d(o.vec),dn,
