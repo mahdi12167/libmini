@@ -66,8 +66,8 @@ class minicurve : public minidyna<minimeas>
    void set_time_mapping(double map_start,double map_stop);
    void set_time_repeat(double repeat_start,double repeat_stop);
 
-   void set_constraints(double min_accuracy=50.0,
-                        double max_acceleration=5.0,
+   void set_constraints(double min_accuracy=0.0,
+                        double max_acceleration=MAXFLOAT,
                         double max_tolerance=2.0)
       {
       minicurve::min_accuracy=min_accuracy;

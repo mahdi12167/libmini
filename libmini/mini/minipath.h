@@ -13,14 +13,17 @@ class minipath : public minicurve
    minipath(double start=0.0,double stop=1.0)
       : minicurve(start,stop),
       name("path"), activity("none"), description("created by libmini")
-      {}
+      {set_constraints(50.0,5.0);}
 
    //! constructor
    minipath(ministring filename,
             double start=0.0,double stop=1.0)
       : minicurve(start,stop),
       name("path"), activity("none"), description("created by libmini")
-      {load(filename);}
+      {
+      set_constraints(50.0,5.0);
+      load(filename);
+      }
 
    //! load path from file
    BOOLINT load(ministring filename);
