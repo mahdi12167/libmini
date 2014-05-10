@@ -104,7 +104,7 @@ miniv3d Camera::nearVector()
    miniv3d nearVec;
 
    // trace to find the nearest hit point
-   minicoord hit = get_hit(get_eye(), -get_eye().getpos());
+   minicoord hit = get_hit_orb();
    nearVec = hit.getpos() - get_eye().getpos();
 
    return(nearVec);
@@ -130,7 +130,7 @@ miniv3d Camera::cursorVector(double zoom)
 
    // trace to nearest hit point as fallback
    if (hit == get_eye())
-      hit = get_hit(get_eye(), -get_eye().getpos());
+      hit = get_hit_orb();
 
    // trace to find the hit point under current cursor
    if (hit != get_eye())
