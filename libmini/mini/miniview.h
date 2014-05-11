@@ -21,6 +21,7 @@ class miniview : public miniscene
    void render_geometry(float sbase=0.0f, BOOLINT anaglyph=TRUE);
 
    double shoot(const minicoord &o,const miniv3d &d,double mindist=0.0);
+   double shoot_ecef_surface(const minicoord &o,const miniv3d &d,double mindist=0.0);
 
    protected:
 

@@ -157,6 +157,15 @@ double miniview::shoot(const minicoord &o,const miniv3d &d,double mindist)
    return(dist1<dist2?dist1:dist2);
    }
 
+// shoot a ray at the ecef surface
+double miniview::shoot_ecef_surface(const minicoord &o,const miniv3d &d,double mindist)
+   {
+   minicoord o0=o;
+   o0.convert2ecef();
+
+   return(miniscene::shoot(o0,d,mindist));
+   }
+
 // check ecef geometry
 void miniview::check_ecef_geometry(miniv3d &center, double &radius)
    {

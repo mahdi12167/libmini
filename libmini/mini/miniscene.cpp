@@ -236,6 +236,10 @@ void miniscene::adapt(double dt)
 double miniscene::shoot(const minicoord &o,const miniv3d &d,double mindist)
    {return(EARTH->shoot(o,d,mindist));}
 
+// shoot a ray at the orb
+double miniscene::shoot_orb(const minicoord &o,const miniv3d &d,double mindist)
+   {return(EARTH->shoot_orb(o,d,mindist));}
+
 // extract triangles that [possibly] intersect a plane
 minidyna<miniv3d> miniscene::extract(const minicoord &p,const miniv3d &v,double radius)
    {return(EARTH->extract(p,v,radius));}
