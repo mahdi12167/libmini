@@ -832,35 +832,12 @@ double miniearth::getrelheight(const minicoord &p)
 double miniearth::shoot(const minicoord &o,const miniv3d &d,double mindist)
    {
    double t;
-   miniv3d dn;
-
-   minilayer *ref;
-   double r_major,r_minor;
-
-   ref=getreference();
-   getorbaxis(r_major,r_minor);
 
    // check for hit with terrain
    t=TERRAIN->shoot(o,d,mindist);
 
    // check for hit with earth ellipsoid
-   if (t==MAXFLOAT)
-      if (EPARAMS.useearth)
-         if (EPARAMS.warpmode!=WARPMODE_LINEAR)
-            {
-            dn=d;
-            dn.normalize();
-
-            if (EPARAMS.warpmode!=WARPMODE_FLAT && EPARAMS.warpmode!=WARPMODE_FLAT_REF)
-               t=intersect_ray_ellipsoid(miniv3d(o.vec),dn,
-                                         miniv3d(0.0,0.0,0.0),r_major,r_major,r_minor);
-            else
-               if (EPARAMS.warpmode==WARPMODE_FLAT_REF && ref!=NULL)
-                  t=intersect_ray_plane(miniv3d(o.vec),dn,
-                                        miniv3d(ref->getcenter().vec),ref->getnormal());
-
-            if (t<mindist) t=MAXFLOAT;
-            }
+   if (t==MAXFLOAT) t=shoot_orb(o,d,mindist);
 
    return(t);
    }
@@ -874,9 +851,6 @@ double miniearth::shoot_orb(const minicoord &o,const miniv3d &d,double mindist)
    minilayer *ref;
    double r_major,r_minor;
 
-   ref=getreference();
-   getorbaxis(r_major,r_minor);
-
    t=MAXFLOAT;
 
    // check for hit with earth ellipsoid
@@ -885,6 +859,9 @@ double miniearth::shoot_orb(const minicoord &o,const miniv3d &d,double mindist)
          {
          dn=d;
          dn.normalize();
+
+         ref=getreference();
+         getorbaxis(r_major,r_minor);
 
          if (EPARAMS.warpmode!=WARPMODE_FLAT && EPARAMS.warpmode!=WARPMODE_FLAT_REF)
             t=intersect_ray_ellipsoid(miniv3d(o.vec),dn,
