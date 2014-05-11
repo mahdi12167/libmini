@@ -93,8 +93,7 @@ miniv3d Camera::hitVector()
    miniv3d hitVec;
 
    // trace to find the hit point under current focus
-   minicoord hit = get_hit_orb(get_eye(), get_dir());
-   if (hit == get_eye()) hit=get_hit(get_eye(), get_dir());
+   minicoord hit = get_hit();
    hitVec = hit.getpos() - get_eye().getpos();
 
    return(hitVec);
@@ -116,8 +115,7 @@ miniv3d Camera::targetVector(float dx, float dy)
    miniv3d targetVec;
 
    // trace to find the hit point under current cursor
-   minicoord target = get_hit_orb(get_eye(), unprojectMouse(dx, dy));
-   if (target == get_eye()) target=get_hit(get_eye(), unprojectMouse(dx, dy));
+   minicoord target = get_hit(get_eye(), unprojectMouse(dx, dy));
    targetVec = target.getpos() - get_eye().getpos();
 
    return(targetVec);
@@ -127,13 +125,16 @@ miniv3d Camera::cursorVector(double zoom)
 {
    miniv3d cursorVec(0.0);
 
-   // trace to find the nearest point under current focus
-   minicoord hit = get_hit_orb(get_eye(), get_dir());
+   // trace to find the hit point under current focus
+   minicoord hit = get_hit();
+
+   // trace to nearest hit point on orb as fallback
+   if (hit == get_eye()) hit = get_hit_orb();
 
    // trace to find the hit point under current cursor
    if (hit != get_eye())
    {
-      minicoord target = get_hit_orb(get_eye(), unprojectMouse());
+      minicoord target = get_hit(get_eye(), unprojectMouse());
       if (target != get_eye())
       {
          double elev1 = get_eye().getpos().getlength();
@@ -145,29 +146,6 @@ miniv3d Camera::cursorVector(double zoom)
 
          // determine the zoom vector from eye to focus
          cursorVec += zoom * (target.getpos() - get_eye().getpos());
-      }
-   }
-   else
-   {
-      // trace to find the hit point under current focus
-      minicoord hit = get_hit(get_eye(), get_dir());
-
-      // trace to find the hit point under current cursor
-      if (hit != get_eye())
-      {
-         minicoord target = get_hit(get_eye(), unprojectMouse());
-         if (target != get_eye())
-         {
-            double elev1 = get_eye().getpos().getlength();
-            double elev2 = target.getpos().getlength();
-            double scale = elev1 / elev2;
-
-            // determine the target vector from focus to cursor
-            cursorVec = (1.0 - zoom) * scale * (target.getpos() - hit.getpos());
-
-            // determine the zoom vector from eye to focus
-            cursorVec += zoom * (target.getpos() - get_eye().getpos());
-         }
       }
    }
 
@@ -250,7 +228,7 @@ void Camera::moveCameraForward(float delta)
    if (m_Shift || m_Control)
       move_back(-delta * dist);
    else
-      move(delta * dist * unprojectMouse());
+      move(delta * dist * dir);
 
    moveAbove();
 
