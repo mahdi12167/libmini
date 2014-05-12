@@ -358,11 +358,7 @@ minicoord minicam::get_hit(const minicoord &pos,const miniv3d &dir)
       dist=shoot(pos0,dirn0);
 
       if (dist==MAXFLOAT) hit=pos0;
-      else
-         {
-         hit=pos0+dist*dirn0;
-         move_above(hit);
-         }
+      else hit=pos0+dist*dirn0;
       }
 
    return(hit);
@@ -396,11 +392,7 @@ minicoord minicam::get_hit_orb(const minicoord &pos,const miniv3d &dir)
       dist=shoot_orb(pos0,dirn0);
 
       if (dist==MAXFLOAT) hit=pos0;
-      else
-         {
-         hit=pos0+dist*dirn0;
-         move_above(hit);
-         }
+      else hit=pos0+dist*dirn0;
       }
 
    return(hit);
