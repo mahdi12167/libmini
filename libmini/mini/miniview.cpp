@@ -157,13 +157,22 @@ double miniview::shoot(const minicoord &o,const miniv3d &d,double mindist)
    return(dist1<dist2?dist1:dist2);
    }
 
-// shoot a ray at the ecef surface
-double miniview::shoot_ecef_surface(const minicoord &o,const miniv3d &d,double mindist)
+// shoot a ray at the surface
+double miniview::shoot_surface(const minicoord &o,const miniv3d &d,double mindist)
    {
    minicoord o0=o;
    o0.convert2ecef();
 
-   return(miniscene::shoot(o0,d,mindist));
+   return(miniscene::shoot_surface(o0,d,mindist));
+   }
+
+// shoot a ray at the orb
+double miniview::shoot_orb(const minicoord &o,const miniv3d &d,double mindist)
+   {
+   minicoord o0=o;
+   o0.convert2ecef();
+
+   return(miniscene::shoot_orb(o0,d,mindist));
    }
 
 // check ecef geometry

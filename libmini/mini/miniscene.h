@@ -127,6 +127,9 @@ class miniscene
    //! shoot a ray at the scene
    double shoot(const minicoord &o,const miniv3d &d,double mindist=0.0);
 
+   //! shoot a ray at the surface
+   double shoot_surface(const minicoord &o,const miniv3d &d,double mindist=0.0);
+
    //! shoot a ray at the orb
    double shoot_orb(const minicoord &o,const miniv3d &d,double mindist=0.0);
 

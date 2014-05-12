@@ -236,6 +236,10 @@ void miniscene::adapt(double dt)
 double miniscene::shoot(const minicoord &o,const miniv3d &d,double mindist)
    {return(EARTH->shoot(o,d,mindist));}
 
+// shoot a ray at the surface
+double miniscene::shoot_surface(const minicoord &o,const miniv3d &d,double mindist)
+   {return(EARTH->shoot(o,d,mindist));}
+
 // shoot a ray at the orb
 double miniscene::shoot_orb(const minicoord &o,const miniv3d &d,double mindist)
    {return(EARTH->shoot_orb(o,d,mindist));}

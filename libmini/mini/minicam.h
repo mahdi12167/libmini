@@ -114,6 +114,7 @@ class minicam
    double nearp,farp;
 
    virtual double shoot(const minicoord &o,const miniv3d &d,double mindist=0.0);
+   virtual double shoot_surface(const minicoord &o,const miniv3d &d,double mindist=0.0);
    virtual double shoot_orb(const minicoord &o,const miniv3d &d,double mindist=0.0);
 
    private:

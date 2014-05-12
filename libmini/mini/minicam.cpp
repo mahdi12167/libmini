@@ -327,7 +327,7 @@ double minicam::get_dist(const minicoord &pos)
 
       get_local_base(pos0,dir,right,up);
 
-      dist=EARTH->shoot(pos0,-up,-get_orb_radius());
+      dist=shoot_surface(pos0,-up,-get_orb_radius());
       }
 
    return(dist);
@@ -514,6 +514,10 @@ miniv3d minicam::unproject_viewport(int vx,int vy,
 
 // shoot a ray at the scene
 double minicam::shoot(const minicoord &o,const miniv3d &d,double mindist)
+   {return(EARTH->shoot(o,d,mindist));}
+
+// shoot a ray at the surface
+double minicam::shoot_surface(const minicoord &o,const miniv3d &d,double mindist)
    {return(EARTH->shoot(o,d,mindist));}
 
 // shoot a ray at the orb
