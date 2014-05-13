@@ -170,6 +170,8 @@ protected:
    void mouseMoveEvent(QMouseEvent *event);
    void mouseDoubleClickEvent(QMouseEvent *event);
 
+   void gestureEvent(QGestureEvent *event);
+
    void keyPressEvent(QKeyEvent *event);
    void keyReleaseEvent(QKeyEvent *event);
 
