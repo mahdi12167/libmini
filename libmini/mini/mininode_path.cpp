@@ -304,7 +304,7 @@ void mininode_geometry_path_clod::calcpath_inc(int update)
 
          addpoint(path_.first().getpos(),path_.first().velocity);
 
-         struct state_struct start={0,path_.getsize()-1,FALSE};
+         struct state_struct start={0,(int)path_.getsize()-1,FALSE};
          STACK_.push_back(start);
          }
       else
