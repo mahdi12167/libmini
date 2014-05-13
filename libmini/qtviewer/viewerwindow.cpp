@@ -150,6 +150,11 @@ void ViewerWindow::paintGL()
    viewer->draw();
 }
 
+bool ViewerWindow::event(QEvent *event)
+{
+   return(QGLWidget::event(event));
+}
+
 void ViewerWindow::mousePressEvent(QMouseEvent *event)
 {
    reportModifiers();
@@ -321,14 +326,6 @@ void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *event)
 
    bLeftButtonDown = false;
    bRightButtonDown = false;
-}
-
-void ViewerWindow::gestureEvent(QGestureEvent *event)
-{
-   if (event->gesture(Qt::TapGesture))
-   {
-      viewer->getCamera()->focusOnTarget();
-   }
 }
 
 void ViewerWindow::keyPressEvent(QKeyEvent *event)

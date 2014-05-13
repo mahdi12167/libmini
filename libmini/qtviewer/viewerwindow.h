@@ -11,8 +11,6 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 
-#include <QGesture>
-
 #include <mini/mini_object.h>
 
 #include "object.h"
@@ -168,12 +166,12 @@ protected:
    BOOLINT check_list(ministrings keys);
    BOOLINT check_elev_list(ministrings keys);
 
+   bool event(QEvent *event);
+
    void mousePressEvent(QMouseEvent *event);
    void mouseReleaseEvent(QMouseEvent *event);
    void mouseMoveEvent(QMouseEvent *event);
    void mouseDoubleClickEvent(QMouseEvent *event);
-
-   void gestureEvent(QGestureEvent *event);
 
    void keyPressEvent(QKeyEvent *event);
    void keyReleaseEvent(QKeyEvent *event);
