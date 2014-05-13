@@ -9,7 +9,9 @@
 #include <QtCore/QPoint>
 
 #include <QtGui/QMouseEvent>
-#include <QtGui/QGestureEvent>
+#include <QtGui/QKeyEvent>
+
+#include <QtGui/QGesture>
 
 #include <mini/mini_object.h>
 
