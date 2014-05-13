@@ -11,7 +11,7 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
 
-#include <QtGui/QGesture>
+#include <QGesture>
 
 #include <mini/mini_object.h>
 

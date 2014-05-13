@@ -327,16 +327,8 @@ void ViewerWindow::gestureEvent(QGestureEvent *event)
 {
    if (event->gesture(Qt::TapGesture))
    {
-      // we were tapped!
-      viewer->getCamera()->focusOnTarget(0.75);
+      viewer->getCamera()->focusOnTarget();
    }
-#ifdef HAVE_QT5
-   else if (event->gesture(Qt::DoubleTapGesture))
-   {
-      // we were two-finger tapped!
-      viewer->getCamera()->focusOnTarget(1.0/0.75);
-   }
-#endif
 }
 
 void ViewerWindow::keyPressEvent(QKeyEvent *event)
