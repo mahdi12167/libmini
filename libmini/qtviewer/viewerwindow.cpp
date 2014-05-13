@@ -26,7 +26,7 @@
 
 ViewerWindow::ViewerWindow()
    : viewer(NULL),
-     bLeftButtonDown(false), bRightButtonDown(false)
+     bLeftButtonDown(false), bMiddleButtonDown(false), bRightButtonDown(false)
 {
    setFocusPolicy(Qt::WheelFocus);
    setMouseTracking(true);
@@ -165,6 +165,8 @@ void ViewerWindow::mousePressEvent(QMouseEvent *event)
          bRightButtonDown = true;
       else
          bLeftButtonDown = true;
+   else if (event->buttons() & Qt::MiddleButton)
+      bMiddleButtonDown = true;
    else if (event->buttons() & Qt::RightButton)
       bRightButtonDown = true;
    else
@@ -188,6 +190,11 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent *event)
       {
          viewer->getCamera()->focusOnTarget();
       }
+      // a middle button click
+      else if (bMiddleButtonDown)
+      {
+         viewer->getCamera()->focusOnTarget(0.75);
+      }
       // a right button click
       else if (bRightButtonDown)
       {
@@ -210,6 +217,7 @@ void ViewerWindow::mouseReleaseEvent(QMouseEvent *event)
       event->ignore();
 
    bLeftButtonDown = false;
+   bMiddleButtonDown = false;
    bRightButtonDown = false;
 }
 
@@ -226,7 +234,9 @@ void ViewerWindow::mouseMoveEvent(QMouseEvent *event)
 
    // a left button move
    if (bLeftButtonDown)
+   {
       viewer->getCamera()->rotateCamera(dx, dy);
+   }
    // a right button move
    else if (bRightButtonDown)
    {
@@ -302,8 +312,17 @@ void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *event)
 
    mousePressEvent(event);
 
+   // a left button double click
    if (bLeftButtonDown)
+   {
       viewer->getCamera()->focusOnTarget(0.75);
+   }
+   // a middle button double click
+   else if (bMiddleButtonDown)
+   {
+      viewer->getCamera()->focusOnTarget(1.0/0.75);
+   }
+   // a right button double click
    else if (bRightButtonDown)
    {
       // get eye position
@@ -325,6 +344,7 @@ void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *event)
    }
 
    bLeftButtonDown = false;
+   bMiddleButtonDown = false;
    bRightButtonDown = false;
 }
 

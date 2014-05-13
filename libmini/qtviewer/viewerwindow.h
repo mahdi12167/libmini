@@ -228,6 +228,7 @@ private:
    QPoint lastPos;
    QPoint movedPos;
    bool bLeftButtonDown;
+   bool bMiddleButtonDown;
    bool bRightButtonDown;
 
    void reportModifiers();
