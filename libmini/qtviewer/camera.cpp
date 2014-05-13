@@ -275,10 +275,16 @@ void Camera::focusOnTarget(double zoom)
 
    minicoord target = get_eye();
 
-   if (m_Shift || m_Control)
-      target -= cursorVector(zoom);
+   if (zoom<1.0)
+      if (m_Shift || m_Control)
+         target -= cursorVector(zoom);
+      else
+         target += cursorVector(zoom);
    else
-      target += cursorVector(zoom);
+      if (m_Shift || m_Control)
+         target += cursorVector(1.0/zoom);
+      else
+         target -= cursorVector(1.0/zoom);
 
    curve.append_sector(get_eye(), target, 100);
    startTransition(curve, 0.0, 0.0, 0.5);
