@@ -320,7 +320,7 @@ void ViewerWindow::mouseDoubleClickEvent(QMouseEvent *event)
    // a middle button double click
    else if (bMiddleButtonDown)
    {
-      viewer->getCamera()->focusOnTarget(1.0/0.75);
+      viewer->getCamera()->focusOnTarget(-2.0);
    }
    // a right button double click
    else if (bRightButtonDown)
