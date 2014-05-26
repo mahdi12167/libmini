@@ -57,7 +57,7 @@ Choose an appropriate platform to describe the version of MSVC:
  MSVC 9.0 -> SET PLATFORM=win32-msvc2008
  MSVC 10.0 -> SET PLATFORM=win32-msvc2010
 Navigate into the Qt source directory and type
- configure -platform %PLATFORM% -opengl -release -nomake examples -nomake demos -nomake tests -opensource -confirm-license
+ configure -platform %PLATFORM% -opengl desktop -release -nomake examples -nomake demos -nomake tests -opensource -confirm-license
  nmake
 Add the "bin" directory in your Qt directory to your path:
  set PATH=%cd%\bin;%PATH%
@@ -65,7 +65,7 @@ Or add the "bin" directory to your PATH environment variable:
  System -> Advanced -> Environment Variables -> PATH
 
 At your option, you can configure Qt to produce static libraries with
- configure -platform %PLATFORM% -opengl -release -static -no-libpng -no-sql-sqlite -nomake examples -nomake demos -nomake tests -opensource -confirm-license
+ configure -platform %PLATFORM% -opengl desktop -release -static -no-libpng -no-sql-sqlite -nomake examples -nomake demos -nomake tests -opensource -confirm-license
 
 !! Installation of Libmini Dependencies (Unix/Mac)
 
