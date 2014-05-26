@@ -10,7 +10,7 @@ control. It is free software licensed under the GPL.
 Tested platforms are:
 * MacOS X 10.5 and 10.6
 * Debian
-* Ubuntu 11.04 and 12.04
+* Ubuntu 11.04, 12.04, 13.10 and 14.04
 * Linux Mint 13
 * OpenSuSe 11.4
 * Windows XP and Windows 7
@@ -33,9 +33,12 @@ packages whereas on Windows it is usually installed with the MSVC IDE.
 On MacOS X and Windows, it is recommended to build and install Qt from source!
 On Linux, it is mostly sufficient to install a recent Qt binary package.
 
+For example, install the Qt package on Ubuntu:
+ sudo apt-get install libqt4-dev
+
 If you install Qt from source, grab the source tar ball from:
  Qt4.7: ftp://ftp.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.4.tar.gz
- Qt5.2: http://download.qt-project.org/official_releases/qt/5.2/5.2.1/single/qt-everywhere-opensource-src-5.2.1.tar.gz
+ Qt5.3: http://download.qt-project.org/official_releases/qt/5.3/5.3.0/single/qt-everywhere-opensource-src-5.3.0.tar.gz
 
 !! Qt Installation (Unix/Mac)
 
