@@ -38,7 +38,7 @@ For example, install the Qt package on Ubuntu:
 
 If you install Qt from source, grab the source tar ball from:
  Qt4.7: ftp://ftp.qt.nokia.com/qt/source/qt-everywhere-opensource-src-4.7.4.tar.gz
- Qt5.3: http://download.qt-project.org/official_releases/qt/5.3/5.3.0/single/qt-everywhere-opensource-src-5.3.0.tar.gz
+ Qt5.3: http://download.qt-project.org/official_releases/qt/5.3/5.3.0/single/qt-everywhere-opensource-src-5.3.0.tar.gz/.zip
 
 !! Qt Installation (Unix/Mac)
 
