@@ -72,7 +72,7 @@ At your option, you can configure Qt to produce static libraries with
 Get the libMini dependencies from the libMini subversion repository.
 Type on the unix console in your project directory (e.g. ~/Projects):
  svn co http://libmini.googlecode.com/svn/libmini/deps deps
- (cd deps; sudo ./build.sh)
+ (cd deps; ./build.sh)
 
 !! Installation of Libmini Dependencies (Windows)
 
