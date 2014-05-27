@@ -1301,7 +1301,7 @@ BOOLINT miniterrain::checkpatch(int n)
 // check whether or not a layer has an overlap
 BOOLINT miniterrain::checkoverlap(int n)
    {
-   static const double c=1.5*sqrt(2)/2.0;
+   static const double c=1.5*sqrt(2.0)/2.0;
 
    int i;
 
