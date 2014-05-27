@@ -63,6 +63,8 @@ Add the "bin" directory in your Qt directory to your path:
  set PATH=%cd%\bin;%PATH%
 Or add the "bin" directory to your PATH environment variable:
  System -> Advanced -> Environment Variables -> PATH
+Check for working qmake
+ qmake --version
 
 At your option, you can configure Qt to produce static libraries with
  configure -platform %PLATFORM% -opengl desktop -release -static -no-libpng -no-sql-sqlite -nomake examples -nomake demos -nomake tests -opensource -confirm-license
