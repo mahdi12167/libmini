@@ -95,6 +95,7 @@ Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
  Navigate into the GDAL source directory and type
   set PROJ="your project directory"
+   e.g set PROJ="C:\Users\roettger\Projects"
   nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%PROJ%
   nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%PROJ% devinstall
   nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%PROJ% staticlib
