@@ -1,4 +1,4 @@
-GLSLmath version 1.0.3 as of 5.May.2014
+GLSLmath version 1.0.4 as of 29.May.2014
 ----
 
 GLSLmath consists of a single C++ header file.

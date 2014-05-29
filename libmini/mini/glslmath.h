@@ -1276,7 +1276,7 @@ class glScopedMatrixStack
    };
 
 // scoped replacement for glPushMatrix/glPopMatrix pairs
-#define glPushMatrixScoped() glScopedMatrixStack p()
+#define glPushMatrixScoped() glScopedMatrixStack p
 
 // test function
 int test_glslmath()
