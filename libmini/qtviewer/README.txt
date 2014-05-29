@@ -86,21 +86,22 @@ sub-directory via Tortoise SVN:
 Additionally we need GDAL to be installed. In your project directory,
 get GDAL via Tortoise SVN:
  http://svn.osgeo.org/gdal/tags/1.8.1/gdal
-To build GDAL we have to define some options (in the nmake.opt file):
- MSVC_VER -> use 1600 to identify MSVC 10.0, 1500 for MSVC 9.0, etc.
- GDAL_HOME -> needs to point to the GDAL installation directory
-  Usually this means that we point it to our project directory
+The settings of the Windows GDAL build are defined in nmake.opt.
+ To build GDAL we need to override the following settings:
+  MSVC_VER -> use 1600 to identify MSVC 10.0, 1500 for MSVC 9.0, etc.
+  GDAL_HOME -> needs to point to the GDAL installation directory
+   Usually this means that we point it to our project directory
 Open a MSVC command prompt via
  Programs -> MSVC -> Tools -> MSVC Command Prompt
-Navigate into the GDAL source directory and type
- set DEST="project directory"
- nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST%
- nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST% devinstall
- nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%DEST% staticlib
- copy gdal.lib %DEST%\lib
- copy port\*.h %DEST%\include
- copy gcore\*.h %DEST%\include
- copy ogr\*.h %DEST%\include
+ Navigate into the GDAL source directory and type
+  set PROJ="your project directory"
+  nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%PROJ%
+  nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%PROJ% devinstall
+  nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%PROJ% staticlib
+  copy gdal.lib %PROJ%\lib
+  copy port\*.h %PROJ%\include
+  copy gcore\*.h %PROJ%\include
+  copy ogr\*.h %PROJ%\include
 
 !! QTViewer Checkout and Compilation (Unix/Mac)
 
