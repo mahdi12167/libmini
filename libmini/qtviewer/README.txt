@@ -99,10 +99,10 @@ Open a MSVC command prompt via
   nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%PROJ%
   nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%PROJ% devinstall
   nmake /f makefile.vc MSVC_VER=1600 GDAL_HOME=%PROJ% staticlib
-  copy gdal.lib %PROJ%\lib
-  copy port\*.h %PROJ%\include
-  copy gcore\*.h %PROJ%\include
-  copy ogr\*.h %PROJ%\include
+  copy /y gdal.lib %PROJ%\lib
+  copy /y port\*.h %PROJ%\include
+  copy /y gcore\*.h %PROJ%\include
+  copy /y ogr\*.h %PROJ%\include
 
 !! QTViewer Checkout and Compilation (Unix/Mac)
 
