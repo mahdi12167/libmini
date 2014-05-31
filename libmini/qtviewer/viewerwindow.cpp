@@ -128,10 +128,19 @@ void ViewerWindow::initializeGL()
       viewer->getCamera()->setRotation(viewer_rotation_earth,
                                        viewer_rotation_left, viewer_rotation_back);
 
-      // load objects url from arguments
-      QStringList dataPathList = QCoreApplication::arguments();
-      for (int i=1; i<dataPathList.size(); i++)
-         runAction("open", dataPathList[i].toStdString().c_str());
+      // get arguments
+      QStringList args = QCoreApplication::arguments();
+
+      // get object urls and options from arguments
+      QStringList arg,opt;
+      for (int i=1; i<args.size(); i++)
+         if (args[i].startsWith("--")) opt.push_back(args[i].mid(2));
+         else if (args[i].startsWith("-")) opt.push_back(args[i].mid(1));
+         else arg.push_back(args[i]);
+
+      // load object urls
+      for (int i=0; i<arg.size(); i++)
+         runAction("open", arg[i].toStdString().c_str());
    }
 
    qglClearColor(Qt::black);
