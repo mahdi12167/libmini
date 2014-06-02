@@ -59,6 +59,33 @@ int main(int argc, char *argv[])
       return(1);
    }
 
+   // get argument list
+   QStringList args = QCoreApplication::arguments();
+
+   // scan for arguments and options
+   QStringList arg,opt;
+   for (int i=1; i<args.size(); i++)
+      if (args[i].startsWith("--")) opt.push_back(args[i].mid(2));
+      else if (args[i].startsWith("-")) opt.push_back(args[i].mid(1));
+      else arg.push_back(args[i]);
+
+   // scan option list
+   for (int i=0; i<opt.size(); i++)
+      if (opt[i]=="help")
+      {
+         std::cout << "usage:" << std::endl;
+         std::cout << " " << argv[0] << " {options} {url}" << std::endl;
+         std::cout << "where options are:" << std::endl;
+         std::cout << " --help: this help text" << std::endl;
+         std::cout << "where url is:" << std::endl;
+         std::cout << " a file name or url to a loadable object" << std::endl;
+         std::cout << "where object is:" << std::endl;
+         std::cout << " a terrain tileset (directory)" << std::endl;
+         std::cout << " a geotiff image (.tif)" << std::endl;
+         std::cout << " a gps path (.csv .gpx)" << std::endl;
+         exit(0);
+      }
+
    setlocale(LC_NUMERIC, "C");
 
    setminierrorhandler(errormsg);
