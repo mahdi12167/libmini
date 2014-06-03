@@ -273,7 +273,7 @@ void MainWindow::createWidgets()
 
    // worker activity:
 
-   workerActivity = new QLabel(this);
+   workerActivity = new QLabel;
    workerActivity->setText("");
 
    // fog check:
