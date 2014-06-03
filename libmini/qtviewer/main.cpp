@@ -59,6 +59,8 @@ void usage(const char *prog)
    std::cout << " a terrain tileset (directory)" << std::endl;
    std::cout << " a geotiff image (.tif)" << std::endl;
    std::cout << " a gps path (.csv .gpx)" << std::endl;
+   std::cout << "example:" << std::endl;
+   std::cout << " ./qtviewer data/trk/track.csv" << std::endl;
    exit(0);
 }
 
