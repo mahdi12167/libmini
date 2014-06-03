@@ -46,10 +46,11 @@ void centerWidgetOnScreen(QWidget *widget)
    widget->move(widget->pos() + desktop.center() - widget->frameGeometry().center());
 }
 
-void usage()
+void usage(const char *prog)
 {
+   QString name(prog);
    std::cout << "usage:" << std::endl;
-   std::cout << " " << argv[0] << " {options} {url}" << std::endl;
+   std::cout << " " << name.mid(name.lastIndexOf("/")+1).toStdString() << " {options} {url}" << std::endl;
    std::cout << "where options are:" << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "where url is:" << std::endl;
@@ -86,8 +87,8 @@ int main(int argc, char *argv[])
 
    // scan option list
    for (int i=0; i<opt.size(); i++)
-      if (opt[i]=="help") usage();
-      else usage();
+      if (opt[i]=="help") usage(argv[0]);
+      else usage(argv[0]);
 
    setlocale(LC_NUMERIC, "C");
 
