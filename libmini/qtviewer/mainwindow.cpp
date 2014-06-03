@@ -38,6 +38,11 @@ MainWindow::~MainWindow()
    delete viewerWindow;
 }
 
+void MainWindow::setRepoPath(ministring repoPath)
+{
+   viewerWindow->runAction("repo", repoPath);
+}
+
 void MainWindow::initSettings()
 {
    // define default settings:

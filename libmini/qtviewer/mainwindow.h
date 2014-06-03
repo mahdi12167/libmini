@@ -47,6 +47,9 @@ public:
    MainWindow(QWidget *parent = 0);
    virtual ~MainWindow();
 
+   //! set repository path of objects
+   void setRepoPath(ministring repoPath);
+
 public slots:
    void receiveChange(const ministring &action, const ministring &value);
    void updateTable(const ministring &action, const ministring &key);

@@ -46,21 +46,32 @@ void centerWidgetOnScreen(QWidget *widget)
    widget->move(widget->pos() + desktop.center() - widget->frameGeometry().center());
 }
 
+ministring get_str(QString o)
+{
+   return(ministring(o.toStdString().c_str()).tail("="));
+}
+
+double get_opt(QString o)
+{
+   return(get_str(o).value());
+}
+
 void usage(const char *prog)
 {
    QString name(prog);
    std::cout << "usage:" << std::endl;
    std::cout << " " << name.mid(name.lastIndexOf("/")+1).toStdString() << " {options} {url}" << std::endl;
    std::cout << "where options are:" << std::endl;
+   std::cout << " --repo=/path: repository path of objects" << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "where url is:" << std::endl;
    std::cout << " a file name or url to a loadable object" << std::endl;
    std::cout << "where object is:" << std::endl;
    std::cout << " a terrain tileset (directory)" << std::endl;
    std::cout << " a geotiff image (.tif)" << std::endl;
-   std::cout << " a gps path (.csv .gpx)" << std::endl;
+   std::cout << " a gps track (.csv .gpx)" << std::endl;
    std::cout << "example:" << std::endl;
-   std::cout << " ./qtviewer data/trk/track.csv" << std::endl;
+   std::cout << " ./qtviewer --repo=. data/trk/track.csv" << std::endl;
    exit(0);
 }
 
@@ -87,9 +98,12 @@ int main(int argc, char *argv[])
       else if (args[i].startsWith("-")) opt.push_back(args[i].mid(1));
       else arg.push_back(args[i]);
 
+   ministring repo;
+
    // scan option list
    for (int i=0; i<opt.size(); i++)
-      if (opt[i]=="help") usage(argv[0]);
+      if (opt[i].startsWith("repo=")) repo=get_str(opt[i]);
+      else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
 
    setlocale(LC_NUMERIC, "C");
@@ -103,6 +117,8 @@ int main(int argc, char *argv[])
    MINILOG("program start");
 
    MainWindow window;
+
+   if (!repo.empty()) window.setRepoPath(repo);
 
    window.show();
    centerWidgetOnScreen(&window);
