@@ -46,6 +46,21 @@ void centerWidgetOnScreen(QWidget *widget)
    widget->move(widget->pos() + desktop.center() - widget->frameGeometry().center());
 }
 
+void usage()
+{
+   std::cout << "usage:" << std::endl;
+   std::cout << " " << argv[0] << " {options} {url}" << std::endl;
+   std::cout << "where options are:" << std::endl;
+   std::cout << " --help: this help text" << std::endl;
+   std::cout << "where url is:" << std::endl;
+   std::cout << " a file name or url to a loadable object" << std::endl;
+   std::cout << "where object is:" << std::endl;
+   std::cout << " a terrain tileset (directory)" << std::endl;
+   std::cout << " a geotiff image (.tif)" << std::endl;
+   std::cout << " a gps path (.csv .gpx)" << std::endl;
+   exit(0);
+}
+
 int main(int argc, char *argv[])
 {
    QApplication app(argc, argv);
@@ -71,20 +86,8 @@ int main(int argc, char *argv[])
 
    // scan option list
    for (int i=0; i<opt.size(); i++)
-      if (opt[i]=="help")
-      {
-         std::cout << "usage:" << std::endl;
-         std::cout << " " << argv[0] << " {options} {url}" << std::endl;
-         std::cout << "where options are:" << std::endl;
-         std::cout << " --help: this help text" << std::endl;
-         std::cout << "where url is:" << std::endl;
-         std::cout << " a file name or url to a loadable object" << std::endl;
-         std::cout << "where object is:" << std::endl;
-         std::cout << " a terrain tileset (directory)" << std::endl;
-         std::cout << " a geotiff image (.tif)" << std::endl;
-         std::cout << " a gps path (.csv .gpx)" << std::endl;
-         exit(0);
-      }
+      if (opt[i]=="help") usage();
+      else usage();
 
    setlocale(LC_NUMERIC, "C");
 
