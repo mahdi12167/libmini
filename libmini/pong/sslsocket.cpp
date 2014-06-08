@@ -21,8 +21,8 @@ void SSLServer::start(QString certPath, QString keyPath, quint16 port)
    else
       std::cout << "server cannot listen" << std::endl;
 
-   this->certPath = certPath;
-   this->keyPath = keyPath;
+   certPath_ = certPath;
+   keyPath_ = keyPath;
 }
 
 // handle new incoming connection
@@ -33,8 +33,8 @@ void SSLServer::incomingConnection(int socketDescriptor)
    // create new ssl socket for each incoming connection
    QSslSocket *socket = new QSslSocket(this);
    socket->setProtocol(QSsl::TlsV1);
-   socket->setPrivateKey(keyPath);
-   socket->setLocalCertificate(certPath);
+   socket->setLocalCertificate(certPath_);
+   socket->setPrivateKey(keyPath_);
 
    // create new self-terminating thread for each incoming connection
    if (socket->setSocketDescriptor(socketDescriptor))
@@ -111,10 +111,10 @@ void ServerThread::errorOccured(const QList<QSslError> &)
 SSLClient::SSLClient(QObject* parent)
    : QObject(parent)
 {
-   connect(&clientSocket, SIGNAL(encrypted()),
+   connect(&clientSocket_, SIGNAL(encrypted()),
            this, SLOT(connectionEstablished()));
 
-   connect(&clientSocket, SIGNAL(sslErrors(const QList<QSslError> &)),
+   connect(&clientSocket_, SIGNAL(sslErrors(const QList<QSslError> &)),
            this, SLOT(errorOccured(const QList<QSslError> &)));
 }
 
@@ -125,8 +125,8 @@ SSLClient::~SSLClient()
 // start transmission
 void SSLClient::start(QString hostName, quint16 port)
 {
-   clientSocket.setProtocol(QSsl::TlsV1);
-   clientSocket.connectToHostEncrypted(hostName, port);
+   clientSocket_.setProtocol(QSsl::TlsV1);
+   clientSocket_.connectToHostEncrypted(hostName, port);
 }
 
 // handle the signal of QSslSocket.encrypted()
@@ -135,13 +135,13 @@ void SSLClient::connectionEstablished()
    std::cout << "connection established" << std::endl;
 
    // get the peer's certificate
-   QSslCertificate cert = clientSocket.peerCertificate();
+   QSslCertificate cert = clientSocket_.peerCertificate();
 
    // start writing to the socket
    startWriting();
 
    // close connection
-   clientSocket.close();
+   clientSocket_.close();
 
    std::cout << "connection closed" << std::endl;
 }
@@ -154,7 +154,7 @@ void SSLClient::startWriting()
    std::cout << "outgoing: \"" << data << "\"" << std::endl;
 
    // write on the SSL connection
-   clientSocket.write(data, strlen(data));
+   clientSocket_.write(data, strlen(data));
 
    free(data);
 }
@@ -173,5 +173,5 @@ void SSLClient::errorOccured(const QList<QSslError> &)
    std::cout << "ssl error" << std::endl;
 
    // simply ignore the errors
-   clientSocket.ignoreSslErrors();
+   clientSocket_.ignoreSslErrors();
 }

@@ -23,8 +23,8 @@ protected:
    // handle new incoming connection
    virtual void incomingConnection(int socketDescriptor);
 
-   QString certPath;
-   QString keyPath;
+   QString certPath_;
+   QString keyPath_;
 };
 
 // server thread class serving a ssl socket
@@ -76,7 +76,7 @@ protected:
    // assemble outgoing data
    char *outgoingData();
 
-   QSslSocket clientSocket;
+   QSslSocket clientSocket_;
 
 public slots:
 
