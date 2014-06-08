@@ -30,20 +30,19 @@ void SSLServer::incomingConnection(int socketDescriptor)
 {
    std::cout << "incoming connection" << std::endl;
 
-   // create new self-terminating socket for each incoming connection
-   ServerSocket *socket = new ServerSocket(this);
+   // create new ssl socket for each incoming connection
+   QSslSocket *socket = new QSslSocket(this);
+   socket->setProtocol(QSsl::TlsV1);
+   socket->setPrivateKey(keyPath);
+   socket->setLocalCertificate(certPath);
 
-   // pass the descriptor to the SSL socket
+   // create new self-terminating thread for each incoming connection
    if (socket->setSocketDescriptor(socketDescriptor))
    {
-      socket->setProtocol(QSsl::TlsV1);
+      ServerThread *thread = new ServerThread(socket, this);
+      thread->start();
 
-      socket->setPrivateKey(keyPath);
-      socket->setLocalCertificate(certPath);
-
-      socket->startServerEncryption();
-
-      std::cout << "encrypting connection" << std::endl;
+      std::cout << "serving connection" << std::endl;
    }
    else
    {
@@ -53,24 +52,39 @@ void SSLServer::incomingConnection(int socketDescriptor)
    }
 }
 
-// socket ctor
-ServerSocket::ServerSocket(QObject *parent)
-   : QSslSocket(parent)
+// server thread ctor
+ServerThread::ServerThread(QSslSocket *socket, QObject *parent)
+   : QThread(parent)
 {
-   connect(this, SIGNAL(readyRead()),
+   socket_ = socket;
+
+   connect(socket, SIGNAL(readyRead()),
            this, SLOT(startReading()));
 
-   connect(this, SIGNAL(disconnected()),
+   connect(this, SIGNAL(finished()),
            this, SLOT(deleteAfter()));
 
    connect(this, SIGNAL(sslErrors(const QList &)),
            this, SLOT(errorOccured(const QList &)));
 }
 
-// start reading from the SSL socket after QSslSocket.readyRead() signal
-void ServerSocket::startReading()
+// server thread dtor
+ServerThread::~ServerThread()
 {
-   const char *data = readAll().constData();
+   delete socket_;
+}
+
+// server thread run method
+void ServerThread::run()
+{
+   socket_->startServerEncryption();
+   socket_->waitForDisconnected();
+}
+
+// start reading from the SSL socket after QSslSocket.readyRead() signal
+void ServerThread::startReading()
+{
+   const char *data = socket_->readAll().constData();
 
    std::cout << "incoming: \"" << data << "\"" << std::endl;
 
@@ -78,19 +92,19 @@ void ServerSocket::startReading()
 }
 
 // handle incoming data
-void ServerSocket::incomingData(const char *data)
+void ServerThread::incomingData(const char *data)
 {
    if (strcmp(data, "message") == 0)
       std::cout << "success" << std::endl;
 }
 
 // handle the signal of QSslSocket.sslErrors()
-void ServerSocket::errorOccured(const QList<QSslError> &)
+void ServerThread::errorOccured(const QList<QSslError> &)
 {
    std::cout << "ssl error" << std::endl;
 
    // simply ignore the errors
-   ignoreSslErrors();
+   socket_->ignoreSslErrors();
 }
 
 // client ctor
