@@ -11,6 +11,6 @@ set qt=$qt4
 if (! -e $qt:t) wget $qt
 tar zxf qt-*.tar.gz
 cd qt-*/
-./configure -opengl -release -no-webkit -no-svg -no-phonon -no-declarative -nomake examples -nomake demos -nomake tests -opensource -confirm-license
+./configure -opengl -openssl -release -no-webkit -no-svg -no-phonon -no-declarative -nomake examples -nomake demos -nomake tests -opensource -confirm-license
 make -j 2
 sudo make install
