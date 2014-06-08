@@ -17,7 +17,7 @@ void SSLServer::start(QString certPath, QString keyPath, quint16 port)
    bool listening = listen(QHostAddress::Any, port);
 
    if (listening)
-      std::cout << "server " << serverAddress().toString().toStdString() << " is listening on " << port << std::endl;
+      std::cout << "server " << serverAddress().toString().toStdString() << " is listening on " << serverPort() << std::endl;
    else
       std::cout << "server cannot listen" << std::endl;
 

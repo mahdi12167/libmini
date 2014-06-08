@@ -16,7 +16,7 @@ public:
    virtual ~SSLServer();
 
    // start listening
-   void start(QString certPath, QString keyPath, quint16 port);
+   void start(QString certPath, QString keyPath, quint16 port = 0);
 
 protected:
 
