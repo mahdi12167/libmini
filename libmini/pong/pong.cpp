@@ -1,4 +1,6 @@
+#include <iostream>
 #include <QApplication>
+
 #include "sslsocket.h"
 
 int main(int argc, char** argv)
