@@ -25,6 +25,8 @@ void SSLServer::start(QString certPath, QString keyPath, quint16 port)
 // handle new incoming connection
 void SSLServer::incomingConnection(int socketDescriptor)
 {
+   std::cout << "incoming connection" << std::endl;
+
    // pass the descriptor to the SSL socket
    if (serverSocket->setSocketDescriptor(socketDescriptor))
    {
@@ -40,24 +42,33 @@ void SSLServer::incomingConnection(int socketDescriptor)
       serverSocket->setLocalCertificate(certPath);
 
       serverSocket->startServerEncryption();
+
+      std::cout << "encrypting connection" << std::endl;
    }
 }
 
 // start reading from the SSL socket after QSslSocket.readyRead() signal
 void SSLServer::startReading()
 {
-   incomingData(serverSocket->readAll().constData());
+   const char *data = serverSocket->readAll().constData();
+
+   std::cout << "incoming: \"" << data << "\"" << std::endl;
+
+   incomingData(data);
 }
 
 // handle incoming data
 void SSLServer::incomingData(const char *data)
 {
-   std::cout << data << std::endl;
+   if (strcmp(data, "message") == 0)
+      std::cout << "success" << std::endl;
 }
 
 // handle the signal of QSslSocket.sslErrors()
 void SSLServer::errorOccured(const QList<QSslError> &)
 {
+   std::cout << "ssl error" << std::endl;
+
    // simply ignore the errors
    serverSocket->ignoreSslErrors();
 }
@@ -85,6 +96,8 @@ void SSLClient::start(QString hostName, quint16 port)
 // handle the signal of QSslSocket.encrypted()
 void SSLClient::connectionEstablished()
 {
+   std::cout << "connection established" << std::endl;
+
    // get the peer's certificate
    QSslCertificate cert = clientSocket.peerCertificate();
 
@@ -93,12 +106,16 @@ void SSLClient::connectionEstablished()
 
    // close connection
    clientSocket.close();
+
+   std::cout << "connection closed" << std::endl;
 }
 
 // start writing through the established connection
 void SSLClient::startWriting()
 {
    char *data = outgoingData();
+
+   std::cout << "outgoing: \"" << data << "\"" << std::endl;
 
    // write on the SSL connection
    clientSocket.write(data, strlen(data));
@@ -109,7 +126,7 @@ void SSLClient::startWriting()
 // assemble outgoing data
 char *SSLClient::outgoingData()
 {
-   char data[] = "hello";
+   char data[] = "message";
 
    return(strdup(data));
 }
@@ -117,6 +134,8 @@ char *SSLClient::outgoingData()
 // handle the signal of QSslSocket.sslErrors()
 void SSLClient::errorOccured(const QList<QSslError> &)
 {
+   std::cout << "ssl error" << std::endl;
+
    // simply ignore the errors
    clientSocket.ignoreSslErrors();
 }
