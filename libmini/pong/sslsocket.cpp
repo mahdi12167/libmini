@@ -45,6 +45,12 @@ void SSLServer::incomingConnection(int socketDescriptor)
 
       std::cout << "encrypting connection" << std::endl;
    }
+   else
+   {
+      std::cout << "connection disconnected" << std::endl;
+
+      delete socket;
+   }
 }
 
 // socket ctor
@@ -53,6 +59,9 @@ ServerSocket::ServerSocket(QObject *parent)
 {
    connect(this, SIGNAL(readyRead()),
            this, SLOT(startReading()));
+
+   connect(this, SIGNAL(disconnected()),
+           this, SLOT(deleteAfter()));
 
    connect(this, SIGNAL(sslErrors(const QList &)),
            this, SLOT(errorOccured(const QList &)));
