@@ -11,7 +11,7 @@ class SSLServer: public QTcpServer
 public:
 
    SSLServer(QObject* parent = NULL);
-   ~SSLServer();
+   virtual ~SSLServer();
 
    // start listening
    void start(QString certPath, QString keyPath, quint16 port);
@@ -19,7 +19,7 @@ public:
 protected:
 
    // handle new incoming connection
-   void incomingConnection(int socketDescriptor);
+   virtual void incomingConnection(int socketDescriptor);
 
    // handle incoming data
    void incomingData(const char *data);

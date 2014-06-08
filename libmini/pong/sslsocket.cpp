@@ -11,12 +11,18 @@ SSLServer::SSLServer(QObject* parent)
 SSLServer::~SSLServer()
 {
    delete serverSocket;
+   close();
 }
 
 // start listening
 void SSLServer::start(QString certPath, QString keyPath, quint16 port)
 {
-   listen(QHostAddress::Any, port);
+   bool listening = listen(QHostAddress::Any, port);
+
+   if (listening)
+      std::cout << "server " << serverAddress().toString().toStdString() << " is listening on " << port << std::endl;
+   else
+      std::cout << "server cannot listen" << std::endl;
 
    this->certPath = certPath;
    this->keyPath = keyPath;
