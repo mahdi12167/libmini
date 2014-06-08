@@ -8,12 +8,12 @@ int main(int argc, char** argv)
    if (argc<=1)
    {
       SSLServer server;
-      server.start("ca.cer", "ca.key", 8888);
+      server.start("cert.pem", "key.pem", 10000);
    }
    else
    {
       SSLClient client;
-      client.start(argv[1], 8888);
+      client.start(argv[1], 10000);
    }
 
    return(app.exec());
