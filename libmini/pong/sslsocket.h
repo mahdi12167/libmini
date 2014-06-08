@@ -4,6 +4,7 @@
 #include <QTcpServer>
 #include <QSslSocket>
 
+// ssl server class
 class SSLServer: public QTcpServer
 {
    Q_OBJECT
@@ -21,13 +22,23 @@ protected:
    // handle new incoming connection
    virtual void incomingConnection(int socketDescriptor);
 
-   // handle incoming data
-   void incomingData(const char *data);
-
-   QSslSocket *serverSocket;
-
    QString certPath;
    QString keyPath;
+};
+
+// server ssl socket class
+class ServerSocket: public QSslSocket
+{
+   Q_OBJECT
+
+public:
+
+   ServerSocket(QObject *parent = NULL);
+
+protected:
+
+   // handle incoming data
+   void incomingData(const char *data);
 
 public slots:
 
@@ -38,6 +49,7 @@ public slots:
    void errorOccured(const QList<QSslError> &);
 };
 
+// ssl client class
 class SSLClient: public QObject
 {
    Q_OBJECT

@@ -2,17 +2,14 @@
 
 #include "sslsocket.h"
 
+// server ctor
 SSLServer::SSLServer(QObject* parent)
    : QTcpServer(parent)
-{
-   serverSocket = new QSslSocket;
-}
+{}
 
+// server dtor
 SSLServer::~SSLServer()
-{
-   delete serverSocket;
-   close();
-}
+{}
 
 // start listening
 void SSLServer::start(QString certPath, QString keyPath, quint16 port)
@@ -33,30 +30,38 @@ void SSLServer::incomingConnection(int socketDescriptor)
 {
    std::cout << "incoming connection" << std::endl;
 
+   // create new self-terminating socket for each incoming connection
+   ServerSocket *socket = new ServerSocket(this);
+
    // pass the descriptor to the SSL socket
-   if (serverSocket->setSocketDescriptor(socketDescriptor))
+   if (socket->setSocketDescriptor(socketDescriptor))
    {
-      connect(serverSocket, SIGNAL(readyRead()),
-              this, SLOT(startReading()));
+      socket->setProtocol(QSsl::TlsV1);
 
-      connect(serverSocket, SIGNAL(sslErrors(const QList &)),
-              this, SLOT(errorOccured(const QList &)));
+      socket->setPrivateKey(keyPath);
+      socket->setLocalCertificate(certPath);
 
-      serverSocket->setProtocol(QSsl::TlsV1);
-
-      serverSocket->setPrivateKey(keyPath);
-      serverSocket->setLocalCertificate(certPath);
-
-      serverSocket->startServerEncryption();
+      socket->startServerEncryption();
 
       std::cout << "encrypting connection" << std::endl;
    }
 }
 
-// start reading from the SSL socket after QSslSocket.readyRead() signal
-void SSLServer::startReading()
+// socket ctor
+ServerSocket::ServerSocket(QObject *parent)
+   : QSslSocket(parent)
 {
-   const char *data = serverSocket->readAll().constData();
+   connect(this, SIGNAL(readyRead()),
+           this, SLOT(startReading()));
+
+   connect(this, SIGNAL(sslErrors(const QList &)),
+           this, SLOT(errorOccured(const QList &)));
+}
+
+// start reading from the SSL socket after QSslSocket.readyRead() signal
+void ServerSocket::startReading()
+{
+   const char *data = readAll().constData();
 
    std::cout << "incoming: \"" << data << "\"" << std::endl;
 
@@ -64,21 +69,22 @@ void SSLServer::startReading()
 }
 
 // handle incoming data
-void SSLServer::incomingData(const char *data)
+void ServerSocket::incomingData(const char *data)
 {
    if (strcmp(data, "message") == 0)
       std::cout << "success" << std::endl;
 }
 
 // handle the signal of QSslSocket.sslErrors()
-void SSLServer::errorOccured(const QList<QSslError> &)
+void ServerSocket::errorOccured(const QList<QSslError> &)
 {
    std::cout << "ssl error" << std::endl;
 
    // simply ignore the errors
-   serverSocket->ignoreSslErrors();
+   ignoreSslErrors();
 }
 
+// client ctor
 SSLClient::SSLClient(QObject* parent)
    : QObject(parent)
 {
@@ -89,6 +95,7 @@ SSLClient::SSLClient(QObject* parent)
            this, SLOT(errorOccured(const QList<QSslError> &)));
 }
 
+// client dtor
 SSLClient::~SSLClient()
 {}
 
