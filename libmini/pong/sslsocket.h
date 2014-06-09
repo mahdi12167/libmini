@@ -3,7 +3,6 @@
 
 #include <QTcpServer>
 #include <QSslSocket>
-#include <QThread>
 
 // ssl server class
 class SSLServer: public QTcpServer
@@ -27,28 +26,27 @@ protected:
    QString keyPath_;
 };
 
-// ssl server thread class serving a ssl socket
-class ServerThread: public QThread
+// ssl server socket class
+class ServerSocket: public QSslSocket
 {
    Q_OBJECT
 
 public:
 
-   ServerThread(int socketDescriptor, QString certPath, QString keyPath, QObject *parent = NULL);
-   virtual ~ServerThread();
+   ServerSocket(int socketDescriptor, QString certPath, QString keyPath, QObject *parent = NULL);
+   virtual ~ServerSocket();
+
+   // start ssl handshake
+   void handshake();
 
 protected:
 
-   QSslSocket *socket_;
-
-   virtual void run();
-
    // handle incoming data
-   void incomingData(const char *data);
+   void incomingData(const char *data, unsigned int size);
 
 protected slots:
 
-   // start reading from the ssl socket after QSslSocket.readyRead() signal
+   // start reading after the connection is established
    void startReading();
 };
 
@@ -77,7 +75,7 @@ protected:
 
 protected slots:
 
-   // start wrting to the ssl socket after the QSslSocket.encrypted() signal
+   // start writing after the connection is established
    void connectionEstablished();
 };
 
