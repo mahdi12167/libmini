@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <QApplication>
+
 #include "sslsocket.h"
 
 // ssl server ctor
@@ -98,8 +100,13 @@ void SSLServerConnection::incomingData(const char *data,unsigned int size)
 SSLClient::SSLClient(QObject *parent)
    : QObject(parent)
 {
+   // start writing after the connection is encrypted
    connect(&socket_, SIGNAL(encrypted()),
            this, SLOT(connectionEstablished()));
+
+   // quit application after the connection is closed
+   connect(&socket_, SIGNAL(disconnected()),
+           QApplication::instance(), SLOT(quit()));
 }
 
 // ssl client dtor
@@ -110,6 +117,7 @@ SSLClient::~SSLClient()
 void SSLClient::start(QString hostName, quint16 port)
 {
    socket_.setProtocol(QSsl::TlsV1);
+   socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
    socket_.connectToHostEncrypted(hostName, port);
 }
 
