@@ -36,17 +36,20 @@ void SSLServer::incomingConnection(int socketDescriptor)
    socket->setLocalCertificate(certPath_);
    socket->setPrivateKey(keyPath_);
 
-   // create new self-terminating thread for each incoming connection
+   // attach descriptor of new connection to ssl socket
    if (socket->setSocketDescriptor(socketDescriptor))
    {
+      // create new server thread for each incoming connection
       ServerThread *thread = new ServerThread(socket, this);
+
+      // execute thread run method
       thread->start();
 
       std::cout << "serving connection" << std::endl;
    }
    else
    {
-      std::cout << "connection disconnected" << std::endl;
+      std::cout << "connection failure" << std::endl;
 
       delete socket;
    }
@@ -58,14 +61,13 @@ ServerThread::ServerThread(QSslSocket *socket, QObject *parent)
 {
    socket_ = socket;
 
-   connect(socket, SIGNAL(readyRead()),
+   // start reading when ready
+   connect(socket_, SIGNAL(readyRead()),
            this, SLOT(startReading()));
 
+   // self-termination
    connect(this, SIGNAL(finished()),
-           this, SLOT(deleteAfter()));
-
-   connect(this, SIGNAL(sslErrors(const QList &)),
-           this, SLOT(errorOccured(const QList &)));
+           this, SLOT(deleteLater()));
 }
 
 // server thread dtor
@@ -98,24 +100,12 @@ void ServerThread::incomingData(const char *data)
       std::cout << "success" << std::endl;
 }
 
-// handle the signal of QSslSocket.sslErrors()
-void ServerThread::errorOccured(const QList<QSslError> &)
-{
-   std::cout << "ssl error" << std::endl;
-
-   // simply ignore the errors
-   socket_->ignoreSslErrors();
-}
-
 // client ctor
 SSLClient::SSLClient(QObject* parent)
    : QObject(parent)
 {
    connect(&clientSocket_, SIGNAL(encrypted()),
            this, SLOT(connectionEstablished()));
-
-   connect(&clientSocket_, SIGNAL(sslErrors(const QList<QSslError> &)),
-           this, SLOT(errorOccured(const QList<QSslError> &)));
 }
 
 // client dtor
@@ -165,13 +155,4 @@ char *SSLClient::outgoingData()
    char data[] = "message";
 
    return(strdup(data));
-}
-
-// handle the signal of QSslSocket.sslErrors()
-void SSLClient::errorOccured(const QList<QSslError> &)
-{
-   std::cout << "ssl error" << std::endl;
-
-   // simply ignore the errors
-   clientSocket_.ignoreSslErrors();
 }

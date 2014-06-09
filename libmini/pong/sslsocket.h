@@ -5,7 +5,7 @@
 #include <QSslSocket>
 #include <QThread>
 
-// ssl server class
+// server class
 class SSLServer: public QTcpServer
 {
    Q_OBJECT
@@ -46,13 +46,10 @@ protected:
    // handle incoming data
    void incomingData(const char *data);
 
-public slots:
+protected slots:
 
    // handle the signal of QSslSocket.readyRead()
    void startReading();
-
-   // handle the signal of QSslSocket.sslErrors()
-   void errorOccured(const QList<QSslError> &);
 };
 
 // ssl client class
@@ -78,13 +75,10 @@ protected:
 
    QSslSocket clientSocket_;
 
-public slots:
+protected slots:
 
    // handle the signal of QSslSocket.encrypted()
    void connectionEstablished();
-
-   // handle the signal of QSslSocket.sslErrors()
-   void errorOccured(const QList<QSslError> &);
 };
 
 #endif
