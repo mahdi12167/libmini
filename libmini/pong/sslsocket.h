@@ -34,7 +34,7 @@ class ServerThread: public QThread
 
 public:
 
-   ServerThread(QSslSocket *socket, QObject *parent = NULL);
+   ServerThread(int socketDescriptor, QString certPath, QString keyPath, QObject *parent = NULL);
    virtual ~ServerThread();
 
 protected:
@@ -60,7 +60,7 @@ class SSLClient: public QObject
 public:
 
    SSLClient(QObject *parent = NULL);
-   ~SSLClient();
+   virtual ~SSLClient();
 
    // start transmission
    void start(QString hostName, quint16 port);
@@ -73,7 +73,7 @@ protected:
    // assemble outgoing data
    char *outgoingData();
 
-   QSslSocket clientSocket_;
+   QSslSocket socket_;
 
 protected slots:
 
