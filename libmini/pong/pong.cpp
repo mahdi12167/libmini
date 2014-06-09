@@ -1,4 +1,4 @@
-#include <iostream>
+// (c) by Stefan Roettger, licensed under GPL 3.0
 
 #include <QApplication>
 
@@ -10,8 +10,6 @@ int main(int argc, char **argv)
 
    if (argc <= 1)
    {
-      std::cout << "starting server" << std::endl;
-
       SSLServer server;
       server.start("cert.pem", "key.pem", 10000);
 
@@ -19,8 +17,6 @@ int main(int argc, char **argv)
    }
    else
    {
-      std::cout << "starting client" << std::endl;
-
       SSLClient client;
       client.start(argv[1], 10000);
    }

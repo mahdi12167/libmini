@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger, licensed under GPL 3.0
+
 #ifndef SSLSOCKET_H
 #define SSLSOCKET_H
 
@@ -48,7 +50,10 @@ protected:
 
 protected slots:
 
-   // start reading after the connection is established
+   // connection established
+   void connectionEstablished();
+
+   // start reading after connection is established
    void startReading();
 };
 
@@ -77,7 +82,7 @@ protected:
 
 protected slots:
 
-   // start writing after the connection is established
+   // start writing after connection is established
    void connectionEstablished();
 };
 

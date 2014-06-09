@@ -1,3 +1,5 @@
+// (c) by Stefan Roettger, licensed under GPL 3.0
+
 #include <iostream>
 
 #include "sslsocket.h"
@@ -19,30 +21,28 @@ void SSLServer::start(QString certPath, QString keyPath, quint16 port)
 
    bool listening = listen(QHostAddress::Any, port);
 
-   if (listening)
-      std::cout << "server " << serverAddress().toString().toStdString() << " is listening on " << serverPort() << std::endl;
-   else
-      std::cout << "server is unable to listen" << std::endl;
+   if (!listening)
+      std::cout << "error ";
+
+   std::cout << "listening on " << serverAddress().toString().toStdString() << ":" << serverPort() << std::endl;
 }
 
 // handle new incoming connection
 void SSLServer::incomingConnection(int socketDescriptor)
 {
-   std::cout << "incoming connection" << std::endl;
-
    // create new ssl server connection for each incoming connection
    SSLServerConnection *connection = new SSLServerConnection(socketDescriptor, certPath_, keyPath_, this);
 
    // initiate handshake
    connection->handshake();
-
-   std::cout << "serving connection" << std::endl;
 }
 
 // ssl server connection ctor
 SSLServerConnection::SSLServerConnection(int socketDescriptor, QString certPath, QString keyPath, QObject *parent)
    : QObject(parent)
 {
+   std::cout << "establishing connection" << std::endl;
+
    // create new ssl socket for each incoming connection
    socket_ = new QSslSocket(this);
    socket_->setSocketDescriptor(socketDescriptor);
@@ -51,6 +51,10 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor, QString certPath,
    socket_->setProtocol(QSsl::TlsV1);
    socket_->setLocalCertificate(certPath);
    socket_->setPrivateKey(keyPath);
+
+   // established connection
+   connect(socket_, SIGNAL(encrypted()),
+           this, SLOT(connectionEstablished()));
 
    // start reading from an established connection
    connect(socket_, SIGNAL(readyRead()),
@@ -64,6 +68,8 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor, QString certPath,
 // ssl server connection dtor
 SSLServerConnection::~SSLServerConnection()
 {
+   std::cout << "connection closed" << std::endl;
+
    delete socket_;
 }
 
@@ -73,7 +79,13 @@ void SSLServerConnection::handshake()
    socket_->startServerEncryption();
 }
 
-// start reading after the connection is established
+// connection established
+void SSLServerConnection::connectionEstablished()
+{
+   std::cout << "connection established" << std::endl;
+}
+
+// start reading after connection is established
 void SSLServerConnection::startReading()
 {
    QByteArray data = socket_->readAll();
@@ -97,7 +109,7 @@ void SSLServerConnection::incomingData(const char *data,unsigned int size)
 SSLClient::SSLClient(QObject *parent)
    : QObject(parent)
 {
-   // start writing after the connection is encrypted
+   // start writing after connection is encrypted
    connect(&socket_, SIGNAL(encrypted()),
            this, SLOT(connectionEstablished()));
 }
@@ -109,13 +121,15 @@ SSLClient::~SSLClient()
 // start transmission
 void SSLClient::start(QString hostName, quint16 port)
 {
+   std::cout << "establishing connection" << std::endl;
+
    socket_.setProtocol(QSsl::TlsV1);
    socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
    socket_.connectToHostEncrypted(hostName, port);
    socket_.waitForDisconnected();
 }
 
-// start writing after the connection is established
+// start writing after connection is established
 void SSLClient::connectionEstablished()
 {
    std::cout << "connection established" << std::endl;
