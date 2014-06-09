@@ -35,7 +35,10 @@ class SSLServerConnection: public QObject
 
 public:
 
-   SSLServerConnection(int socketDescriptor, QString certPath, QString keyPath, QObject *parent = NULL);
+   SSLServerConnection(int socketDescriptor,
+                       QString certPath, QString keyPath,
+                       QObject *parent = NULL);
+
    virtual ~SSLServerConnection();
 
    // start ssl handshake

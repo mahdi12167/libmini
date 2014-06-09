@@ -24,21 +24,26 @@ void SSLServer::start(QString certPath, QString keyPath, quint16 port)
    if (!listening)
       std::cout << "error ";
 
-   std::cout << "listening on " << serverAddress().toString().toStdString() << ":" << serverPort() << std::endl;
+   std::cout << "listening on " <<
+      serverAddress().toString().toStdString() <<
+      ":" << serverPort() << std::endl;
 }
 
 // handle new incoming connection
 void SSLServer::incomingConnection(int socketDescriptor)
 {
    // create new ssl server connection for each incoming connection
-   SSLServerConnection *connection = new SSLServerConnection(socketDescriptor, certPath_, keyPath_, this);
+   SSLServerConnection *connection =
+      new SSLServerConnection(socketDescriptor, certPath_, keyPath_, this);
 
    // initiate handshake
    connection->handshake();
 }
 
 // ssl server connection ctor
-SSLServerConnection::SSLServerConnection(int socketDescriptor, QString certPath, QString keyPath, QObject *parent)
+SSLServerConnection::SSLServerConnection(int socketDescriptor,
+                                         QString certPath, QString keyPath,
+                                         QObject *parent)
    : QObject(parent)
 {
    std::cout << "establishing connection" << std::endl;
