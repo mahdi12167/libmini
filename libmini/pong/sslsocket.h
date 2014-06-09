@@ -26,15 +26,15 @@ protected:
    QString keyPath_;
 };
 
-// ssl server socket class
-class ServerSocket: public QSslSocket
+// ssl server connection class
+class SSLServerConnection: public QObject
 {
    Q_OBJECT
 
 public:
 
-   ServerSocket(int socketDescriptor, QString certPath, QString keyPath, QObject *parent = NULL);
-   virtual ~ServerSocket();
+   SSLServerConnection(int socketDescriptor, QString certPath, QString keyPath, QObject *parent = NULL);
+   virtual ~SSLServerConnection();
 
    // start ssl handshake
    void handshake();
@@ -43,6 +43,8 @@ protected:
 
    // handle incoming data
    void incomingData(const char *data, unsigned int size);
+
+   QSslSocket *socket_;
 
 protected slots:
 

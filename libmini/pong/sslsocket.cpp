@@ -30,58 +30,62 @@ void SSLServer::incomingConnection(int socketDescriptor)
 {
    std::cout << "incoming connection" << std::endl;
 
-   // create new ssl server socket for each incoming connection
-   ServerSocket *socket = new ServerSocket(socketDescriptor, certPath_, keyPath_, this);
+   // create new ssl server connection for each incoming connection
+   SSLServerConnection *connection = new SSLServerConnection(socketDescriptor, certPath_, keyPath_, this);
 
    // initiate handshake
-   socket->handshake();
+   connection->handshake();
 
    std::cout << "serving connection" << std::endl;
 }
 
-// ssl server socket ctor
-ServerSocket::ServerSocket(int socketDescriptor, QString certPath, QString keyPath, QObject *parent)
-   : QSslSocket(parent)
+// ssl server connection ctor
+SSLServerConnection::SSLServerConnection(int socketDescriptor, QString certPath, QString keyPath, QObject *parent)
+   : QObject(parent)
 {
-   // attach ssl socket to incoming connection
-   setSocketDescriptor(socketDescriptor);
+   // create new ssl socket for each incoming connection
+   socket_ = new QSslSocket(this);
+   socket_->setSocketDescriptor(socketDescriptor);
 
    // configure ssl socket
-   setProtocol(QSsl::TlsV1);
-   setLocalCertificate(certPath);
-   setPrivateKey(keyPath);
+   socket_->setProtocol(QSsl::TlsV1);
+   socket_->setLocalCertificate(certPath);
+   socket_->setPrivateKey(keyPath);
 
    // start reading from an established connection
-   connect(this, SIGNAL(readyRead()),
+   connect(socket_, SIGNAL(readyRead()),
            this, SLOT(startReading()));
 
    // self-termination after socket has disconnected
-   connect(this, SIGNAL(disconnected()),
+   connect(socket_, SIGNAL(disconnected()),
            this, SLOT(deleteLater()));
 }
 
-// ssl server socket dtor
-ServerSocket::~ServerSocket()
-{}
+// ssl server connection dtor
+SSLServerConnection::~SSLServerConnection()
+{
+   delete socket_;
+}
 
 // start ssl handshake
-void ServerSocket::handshake()
+void SSLServerConnection::handshake()
 {
-   startServerEncryption();
+   socket_->setPeerVerifyMode(QSslSocket::VerifyNone);
+   socket_->startServerEncryption();
 }
 
 // start reading after the connection is established
-void ServerSocket::startReading()
+void SSLServerConnection::startReading()
 {
-   QByteArray data = readAll();
+   QByteArray data = socket_->readAll();
 
-   std::cout << "incoming: " << data.size() << "bytes" << std::endl;
+   std::cout << "incoming: \"" << QString(data).toStdString() << "\"" << std::endl;
 
    incomingData(data.constData(),data.size());
 }
 
 // handle incoming data
-void ServerSocket::incomingData(const char *data,unsigned int size)
+void SSLServerConnection::incomingData(const char *data,unsigned int size)
 {
    static const char message[] = "message";
 
@@ -114,9 +118,6 @@ void SSLClient::connectionEstablished()
 {
    std::cout << "connection established" << std::endl;
 
-   // get the peer's certificate
-   QSslCertificate cert = socket_.peerCertificate();
-
    // start writing to the ssl socket
    startWriting();
 
@@ -142,7 +143,7 @@ void SSLClient::startWriting()
 // assemble outgoing data
 char *SSLClient::outgoingData()
 {
-   char data[] = "message";
+   static const char data[] = "message";
 
    return(strdup(data));
 }
