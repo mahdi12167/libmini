@@ -131,7 +131,9 @@ void SSLClient::start(QString hostName, quint16 port)
    socket_.setProtocol(QSsl::TlsV1);
    socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
    socket_.connectToHostEncrypted(hostName, port);
-   socket_.waitForDisconnected();
+
+   if (!socket_.waitForDisconnected())
+      std::cout << "connection time-out" << std::endl;
 }
 
 // start writing after connection is established
