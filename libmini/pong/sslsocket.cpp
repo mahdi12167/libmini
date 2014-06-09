@@ -2,31 +2,27 @@
 
 #include "sslsocket.h"
 
-// server ctor
+// ssl server ctor
 SSLServer::SSLServer(QObject *parent)
    : QTcpServer(parent)
 {}
 
-// server dtor
+// ssl server dtor
 SSLServer::~SSLServer()
 {}
 
 // start listening
 void SSLServer::start(QString certPath, QString keyPath, quint16 port)
 {
+   certPath_ = certPath;
+   keyPath_ = keyPath;
+
    bool listening = listen(QHostAddress::Any, port);
 
    if (listening)
       std::cout << "server " << serverAddress().toString().toStdString() << " is listening on " << serverPort() << std::endl;
    else
-      std::cout << "server unable to listen" << std::endl;
-
-   certPath_ = certPath;
-   keyPath_ = keyPath;
-
-   // serve
-   while (1)
-      waitForNewConnection();
+      std::cout << "server is unable to listen" << std::endl;
 }
 
 // handle new incoming connection
@@ -43,27 +39,29 @@ void SSLServer::incomingConnection(int socketDescriptor)
    std::cout << "serving connection" << std::endl;
 }
 
-// server thread ctor
+// ssl server thread ctor
 ServerThread::ServerThread(int socketDescriptor, QString certPath, QString keyPath, QObject *parent)
    : QThread(parent)
 {
    // create new ssl socket for each incoming connection
    socket_ = new QSslSocket(this);
    socket_->setSocketDescriptor(socketDescriptor);
+
+   // configure ssl socket
    socket_->setProtocol(QSsl::TlsV1);
    socket_->setLocalCertificate(certPath);
    socket_->setPrivateKey(keyPath);
 
-   // start reading when ready
+   // start reading when ready signal is emitted
    connect(socket_, SIGNAL(readyRead()),
            this, SLOT(startReading()));
 
-   // self-termination
+   // self-termination after thread has finished
    connect(this, SIGNAL(finished()),
            this, SLOT(deleteLater()));
 }
 
-// server thread dtor
+// ssl server thread dtor
 ServerThread::~ServerThread()
 {
    delete socket_;
@@ -93,7 +91,7 @@ void ServerThread::incomingData(const char *data)
       std::cout << "success" << std::endl;
 }
 
-// client ctor
+// ssl client ctor
 SSLClient::SSLClient(QObject *parent)
    : QObject(parent)
 {
@@ -101,7 +99,7 @@ SSLClient::SSLClient(QObject *parent)
            this, SLOT(connectionEstablished()));
 }
 
-// client dtor
+// ssl client dtor
 SSLClient::~SSLClient()
 {}
 
@@ -112,7 +110,7 @@ void SSLClient::start(QString hostName, quint16 port)
    socket_.connectToHostEncrypted(hostName, port);
 }
 
-// handle the signal of QSslSocket.encrypted()
+// start wrting to the ssl socket after the QSslSocket.encrypted() signal
 void SSLClient::connectionEstablished()
 {
    std::cout << "connection established" << std::endl;
@@ -129,14 +127,14 @@ void SSLClient::connectionEstablished()
    std::cout << "connection closed" << std::endl;
 }
 
-// start writing through the established connection
+// start writing through an established connection
 void SSLClient::startWriting()
 {
    char *data = outgoingData();
 
    std::cout << "outgoing: \"" << data << "\"" << std::endl;
 
-   // write on the SSL connection
+   // write data to the ssl socket
    socket_.write(data, strlen(data));
 
    free(data);

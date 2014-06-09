@@ -5,7 +5,7 @@
 #include <QSslSocket>
 #include <QThread>
 
-// server class
+// ssl server class
 class SSLServer: public QTcpServer
 {
    Q_OBJECT
@@ -27,7 +27,7 @@ protected:
    QString keyPath_;
 };
 
-// server thread class serving a ssl socket
+// ssl server thread class serving a ssl socket
 class ServerThread: public QThread
 {
    Q_OBJECT
@@ -48,7 +48,7 @@ protected:
 
 protected slots:
 
-   // handle the signal of QSslSocket.readyRead()
+   // start reading from the ssl socket after QSslSocket.readyRead() signal
    void startReading();
 };
 
@@ -67,7 +67,7 @@ public:
 
 protected:
 
-   // start writing
+   // start writing through an established connection
    void startWriting();
 
    // assemble outgoing data
@@ -77,7 +77,7 @@ protected:
 
 protected slots:
 
-   // handle the signal of QSslSocket.encrypted()
+   // start wrting to the ssl socket after the QSslSocket.encrypted() signal
    void connectionEstablished();
 };
 

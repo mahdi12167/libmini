@@ -6,7 +6,7 @@
 
 int main(int argc, char **argv)
 {
-   QApplication app(argc, argv, false);
+   QApplication app(argc, argv);
 
    if (argc <= 1)
    {
@@ -14,6 +14,8 @@ int main(int argc, char **argv)
 
       SSLServer server;
       server.start("cert.pem", "key.pem", 10000);
+
+      return(app.exec());
    }
    else
    {
@@ -21,7 +23,7 @@ int main(int argc, char **argv)
 
       SSLClient client;
       client.start(argv[1], 10000);
-   }
 
-   return(app.exec());
+      return(app.exec());
+   }
 }
