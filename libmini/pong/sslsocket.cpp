@@ -93,6 +93,7 @@ void SSLServerConnection::connectionEstablished()
 // start reading after connection is established
 void SSLServerConnection::startReading()
 {
+   // write data to the ssl socket
    QByteArray data = socket_->readAll();
 
    std::cout << "incoming: \"" << QString(data).toStdString() << "\"" << std::endl;
