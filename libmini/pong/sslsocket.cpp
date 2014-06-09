@@ -3,7 +3,7 @@
 #include "sslsocket.h"
 
 // server ctor
-SSLServer::SSLServer(QObject* parent)
+SSLServer::SSLServer(QObject *parent)
    : QTcpServer(parent)
 {}
 
@@ -101,7 +101,7 @@ void ServerThread::incomingData(const char *data)
 }
 
 // client ctor
-SSLClient::SSLClient(QObject* parent)
+SSLClient::SSLClient(QObject *parent)
    : QObject(parent)
 {
    connect(&clientSocket_, SIGNAL(encrypted()),

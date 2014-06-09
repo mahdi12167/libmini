@@ -12,7 +12,7 @@ class SSLServer: public QTcpServer
 
 public:
 
-   SSLServer(QObject* parent = NULL);
+   SSLServer(QObject *parent = NULL);
    virtual ~SSLServer();
 
    // start listening
@@ -59,7 +59,7 @@ class SSLClient: public QObject
 
 public:
 
-   SSLClient(QObject* parent = NULL);
+   SSLClient(QObject *parent = NULL);
    ~SSLClient();
 
    // start transmission
