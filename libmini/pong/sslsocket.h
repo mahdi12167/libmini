@@ -17,7 +17,7 @@ public:
    virtual ~SSLServer();
 
    // start listening
-   void start(QString certPath, QString keyPath, quint16 port = 0);
+   bool start(QString certPath, QString keyPath, quint16 port = 0);
 
 protected:
 
@@ -46,15 +46,14 @@ public:
 
 protected:
 
-   // handle incoming data
-   void incomingData(const char *data, unsigned int size);
+   // start reading from an established connection
+   virtual void startReading(QSslSocket *socket);
+
+private:
 
    QSslSocket *socket_;
 
 protected slots:
-
-   // connection established
-   void connectionEstablished();
 
    // start reading after connection is established
    void startReading();
@@ -71,15 +70,14 @@ public:
    virtual ~SSLClient();
 
    // start transmission
-   void start(QString hostName, quint16 port);
+   bool start(QString hostName, quint16 port, bool verify=false);
 
 protected:
 
    // start writing through an established connection
-   void startWriting();
+   virtual void startWriting(QSslSocket *socket);
 
-   // assemble outgoing data
-   char *outgoingData();
+private:
 
    QSslSocket socket_;
 

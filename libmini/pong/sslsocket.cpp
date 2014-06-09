@@ -14,19 +14,12 @@ SSLServer::~SSLServer()
 {}
 
 // start listening
-void SSLServer::start(QString certPath, QString keyPath, quint16 port)
+bool SSLServer::start(QString certPath, QString keyPath, quint16 port)
 {
    certPath_ = certPath;
    keyPath_ = keyPath;
 
-   bool listening = listen(QHostAddress::Any, port);
-
-   if (!listening)
-      std::cout << "error ";
-
-   std::cout << "listening on " <<
-      serverAddress().toString().toStdString() <<
-      ":" << serverPort() << std::endl;
+   return(listen(QHostAddress::Any, port));
 }
 
 // handle new incoming connection
@@ -46,8 +39,6 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
                                          QObject *parent)
    : QObject(parent)
 {
-   std::cout << "establishing connection" << std::endl;
-
    // create new ssl socket for each incoming connection
    socket_ = new QSslSocket(this);
    socket_->setSocketDescriptor(socketDescriptor);
@@ -56,10 +47,6 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
    socket_->setProtocol(QSsl::TlsV1);
    socket_->setLocalCertificate(certPath);
    socket_->setPrivateKey(keyPath);
-
-   // established connection
-   connect(socket_, SIGNAL(encrypted()),
-           this, SLOT(connectionEstablished()));
 
    // start reading from an established connection
    connect(socket_, SIGNAL(readyRead()),
@@ -73,8 +60,6 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
 // ssl server connection dtor
 SSLServerConnection::~SSLServerConnection()
 {
-   std::cout << "connection closed" << std::endl;
-
    delete socket_;
 }
 
@@ -84,31 +69,17 @@ void SSLServerConnection::handshake()
    socket_->startServerEncryption();
 }
 
-// connection established
-void SSLServerConnection::connectionEstablished()
-{
-   std::cout << "connection established" << std::endl;
-}
-
 // start reading after connection is established
 void SSLServerConnection::startReading()
 {
-   // write data to the ssl socket
-   QByteArray data = socket_->readAll();
-
-   std::cout << "incoming: \"" << QString(data).toStdString() << "\"" << std::endl;
-
-   incomingData(data.constData(),data.size());
+   startReading(socket_);
 }
 
-// handle incoming data
-void SSLServerConnection::incomingData(const char *data,unsigned int size)
+// start reading from an established connection
+void SSLServerConnection::startReading(QSslSocket *socket)
 {
-   static const char message[] = "message";
-
-   if (size == strlen(message))
-      if (strncmp(data, message, strlen(message)) == 0)
-         std::cout << "success" << std::endl;
+   // read data data from the ssl socket
+   QByteArray data = socket->readAll();
 }
 
 // ssl client ctor
@@ -125,50 +96,29 @@ SSLClient::~SSLClient()
 {}
 
 // start transmission
-void SSLClient::start(QString hostName, quint16 port)
+bool SSLClient::start(QString hostName, quint16 port, bool verify)
 {
-   std::cout << "establishing connection" << std::endl;
-
    socket_.setProtocol(QSsl::TlsV1);
-   socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
+   if (verify) socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
    socket_.connectToHostEncrypted(hostName, port);
 
-   if (!socket_.waitForDisconnected())
-      std::cout << "connection time-out" << std::endl;
+   return(!socket_.waitForDisconnected());
 }
 
 // start writing after connection is established
 void SSLClient::connectionEstablished()
 {
-   std::cout << "connection established" << std::endl;
-
    // start writing to the ssl socket
-   startWriting();
+   startWriting(&socket_);
 
    // close connection
    socket_.flush();
    socket_.close();
-
-   std::cout << "connection closed" << std::endl;
 }
 
 // start writing through an established connection
-void SSLClient::startWriting()
+void SSLClient::startWriting(QSslSocket *socket)
 {
-   char *data = outgoingData();
-
-   std::cout << "outgoing: \"" << data << "\"" << std::endl;
-
    // write data to the ssl socket
-   socket_.write(data, strlen(data));
-
-   free(data);
-}
-
-// assemble outgoing data
-char *SSLClient::outgoingData()
-{
-   static const char data[] = "message";
-
-   return(strdup(data));
+   socket->write("ping", 4);
 }
