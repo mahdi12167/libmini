@@ -53,7 +53,7 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor, QString certPath,
    socket_->setPrivateKey(keyPath);
 
    // start reading from an established connection
-   connect(socket_, SIGNAL(encrypted()),
+   connect(socket_, SIGNAL(readyRead()),
            this, SLOT(startReading()));
 
    // self-termination after socket has disconnected
@@ -70,7 +70,6 @@ SSLServerConnection::~SSLServerConnection()
 // start ssl handshake
 void SSLServerConnection::handshake()
 {
-   socket_->setPeerVerifyMode(QSslSocket::VerifyNone);
    socket_->startServerEncryption();
 }
 
@@ -125,6 +124,7 @@ void SSLClient::connectionEstablished()
    startWriting();
 
    // close connection
+   socket_.flush();
    socket_.close();
 
    std::cout << "connection closed" << std::endl;
