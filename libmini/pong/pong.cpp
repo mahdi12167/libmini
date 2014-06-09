@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 
       SSLClient client;
       client.start(argv[1], 10000);
-
-      return(app.exec());
    }
+
+   return(0);
 }

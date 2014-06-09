@@ -1,7 +1,5 @@
 #include <iostream>
 
-#include <QApplication>
-
 #include "sslsocket.h"
 
 // ssl server ctor
@@ -55,7 +53,7 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor, QString certPath,
    socket_->setPrivateKey(keyPath);
 
    // start reading from an established connection
-   connect(socket_, SIGNAL(readyRead()),
+   connect(socket_, SIGNAL(encrypted()),
            this, SLOT(startReading()));
 
    // self-termination after socket has disconnected
@@ -103,10 +101,6 @@ SSLClient::SSLClient(QObject *parent)
    // start writing after the connection is encrypted
    connect(&socket_, SIGNAL(encrypted()),
            this, SLOT(connectionEstablished()));
-
-   // quit application after the connection is closed
-   connect(&socket_, SIGNAL(disconnected()),
-           QApplication::instance(), SLOT(quit()));
 }
 
 // ssl client dtor
@@ -119,6 +113,7 @@ void SSLClient::start(QString hostName, quint16 port)
    socket_.setProtocol(QSsl::TlsV1);
    socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
    socket_.connectToHostEncrypted(hostName, port);
+   socket_.waitForDisconnected();
 }
 
 // start writing after the connection is established
