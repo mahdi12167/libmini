@@ -19,7 +19,7 @@ int main(int argc, char **argv)
    else
    {
       SSLTestClient client;
-      client.start(argv[1], 10000);
+      client.start(argv[1], 10000, false);
    }
 
    return(0);

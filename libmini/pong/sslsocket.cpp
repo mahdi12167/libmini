@@ -131,7 +131,7 @@ SSLClient::~SSLClient()
 bool SSLClient::start(QString hostName, quint16 port, bool verify)
 {
    socket_.setProtocol(QSsl::TlsV1);
-   if (verify) socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
+   if (!verify) socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
    socket_.connectToHostEncrypted(hostName, port);
 
    return(!socket_.waitForDisconnected());
