@@ -35,6 +35,26 @@ void SSLServer::incomingConnection(int socketDescriptor)
    connection->handshake();
 }
 
+// ssl server connection factory ctor
+SSLServerConnectionFactory::SSLServerConnectionFactory()
+{}
+
+// ssl server connection factory dtor
+SSLServerConnectionFactory::~SSLServerConnectionFactory()
+{}
+
+// ssl test server connection factory ctor
+SSLTestServerConnectionFactory::SSLTestServerConnectionFactory()
+{}
+
+// create a new server connection
+SSLServerConnection *SSLTestServerConnectionFactory::create(int socketDescriptor,
+                                                            QString certPath, QString keyPath,
+                                                            QObject *parent)
+{
+   return(new SSLTestServerConnection(socketDescriptor,certPath,keyPath,parent));
+}
+
 // ssl server connection ctor
 SSLServerConnection::SSLServerConnection(int socketDescriptor,
                                          QString certPath, QString keyPath,
@@ -81,7 +101,7 @@ void SSLServerConnection::startReading()
 SSLTestServerConnection::SSLTestServerConnection(int socketDescriptor,
                                                  QString certPath, QString keyPath,
                                                  QObject *parent)
-   : SSLServerConnection(socketDescriptor,certPath,keyPath,parent)
+   : SSLServerConnection(socketDescriptor, certPath, keyPath, parent)
 {}
 
 // start reading from an established connection
@@ -92,26 +112,6 @@ void SSLTestServerConnection::startReading(QSslSocket *socket)
 
    // test output
    std::cout << "incoming: \"" << QString(data).toStdString() << "\"" << std::endl;
-}
-
-// ssl server connection factory ctor
-SSLServerConnectionFactory::SSLServerConnectionFactory()
-{}
-
-// ssl server connection factory dtor
-SSLServerConnectionFactory::~SSLServerConnectionFactory()
-{}
-
-// ssl test server connection factory ctor
-SSLTestServerConnectionFactory::SSLTestServerConnectionFactory()
-{}
-
-// create a new server connection
-SSLServerConnection *SSLTestServerConnectionFactory::create(int socketDescriptor,
-                                                            QString certPath, QString keyPath,
-                                                            QObject *parent)
-{
-   return(new SSLTestServerConnection(socketDescriptor,certPath,keyPath,parent));
 }
 
 // ssl client ctor
