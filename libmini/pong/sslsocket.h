@@ -3,8 +3,8 @@
 #ifndef SSLSOCKET_H
 #define SSLSOCKET_H
 
-#include <QTcpServer>
-#include <QSslSocket>
+#include <QtNetwork/QTcpServer>
+#include <QtNetwork/QSslSocket>
 
 class SSLServerConnectionFactory;
 
