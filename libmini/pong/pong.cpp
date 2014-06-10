@@ -10,14 +10,15 @@ int main(int argc, char **argv)
 
    if (argc <= 1)
    {
-      SSLServer server;
+      SSLTestServerConnectionFactory factory;
+      SSLServer server(&factory);
       server.start("cert.pem", "key.pem", 10000);
 
       return(app.exec());
    }
    else
    {
-      SSLClient client;
+      SSLTestClient client;
       client.start(argv[1], 10000);
    }
 

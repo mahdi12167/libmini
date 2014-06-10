@@ -6,6 +6,8 @@
 #include <QTcpServer>
 #include <QSslSocket>
 
+class SSLServerConnectionFactory;
+
 // ssl server class
 class SSLServer: public QTcpServer
 {
@@ -13,7 +15,7 @@ class SSLServer: public QTcpServer
 
 public:
 
-   SSLServer(QObject *parent = NULL);
+   SSLServer(SSLServerConnectionFactory *factory, QObject *parent = NULL);
    virtual ~SSLServer();
 
    // start listening
@@ -22,13 +24,15 @@ public:
 protected:
 
    // handle new incoming connection
-   virtual void incomingConnection(int socketDescriptor);
+   void incomingConnection(int socketDescriptor);
+
+   SSLServerConnectionFactory *factory_;
 
    QString certPath_;
    QString keyPath_;
 };
 
-// ssl server connection class
+// ssl server connection base class
 class SSLServerConnection: public QObject
 {
    Q_OBJECT
@@ -47,7 +51,7 @@ public:
 protected:
 
    // start reading from an established connection
-   virtual void startReading(QSslSocket *socket);
+   virtual void startReading(QSslSocket *socket) = 0;
 
 private:
 
@@ -59,7 +63,52 @@ protected slots:
    void startReading();
 };
 
-// ssl client class
+// ssl test server connection class
+class SSLTestServerConnection: public SSLServerConnection
+{
+   Q_OBJECT
+
+public:
+
+   SSLTestServerConnection(int socketDescriptor,
+                           QString certPath, QString keyPath,
+                           QObject *parent = NULL);
+
+protected:
+
+   // start reading from an established connection
+   virtual void startReading(QSslSocket *socket);
+};
+
+// ssl server connection factory base class
+class SSLServerConnectionFactory
+{
+public:
+
+   SSLServerConnectionFactory();
+   virtual ~SSLServerConnectionFactory();
+
+   // create a new server connection
+   virtual SSLServerConnection *create(int socketDescriptor,
+                                       QString certPath, QString keyPath,
+                                       QObject *parent) = 0;
+
+};
+
+// ssl test server connection factory base class
+class SSLTestServerConnectionFactory: public SSLServerConnectionFactory
+{
+public:
+
+   SSLTestServerConnectionFactory();
+
+   virtual SSLServerConnection *create(int socketDescriptor,
+                                       QString certPath, QString keyPath,
+                                       QObject *parent);
+
+};
+
+// ssl client base class
 class SSLClient: public QObject
 {
    Q_OBJECT
@@ -75,7 +124,7 @@ public:
 protected:
 
    // start writing through an established connection
-   virtual void startWriting(QSslSocket *socket);
+   virtual void startWriting(QSslSocket *socket) = 0;
 
 private:
 
@@ -85,6 +134,21 @@ protected slots:
 
    // start writing after connection is established
    void connectionEstablished();
+};
+
+// ssl test client class
+class SSLTestClient: public SSLClient
+{
+   Q_OBJECT
+
+public:
+
+   SSLTestClient(QObject *parent = NULL);
+
+protected:
+
+   // start writing through an established connection
+   virtual void startWriting(QSslSocket *socket);
 };
 
 #endif

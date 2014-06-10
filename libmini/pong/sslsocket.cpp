@@ -5,8 +5,10 @@
 #include "sslsocket.h"
 
 // ssl server ctor
-SSLServer::SSLServer(QObject *parent)
-   : QTcpServer(parent)
+SSLServer::SSLServer(SSLServerConnectionFactory *factory, QObject *parent)
+   : QTcpServer(parent),
+     factory_(factory),
+     certPath_(""), keyPath_("")
 {}
 
 // ssl server dtor
@@ -27,7 +29,7 @@ void SSLServer::incomingConnection(int socketDescriptor)
 {
    // create new ssl server connection for each incoming connection
    SSLServerConnection *connection =
-      new SSLServerConnection(socketDescriptor, certPath_, keyPath_, this);
+      factory_->create(socketDescriptor, certPath_, keyPath_, this);
 
    // initiate handshake
    connection->handshake();
@@ -75,11 +77,41 @@ void SSLServerConnection::startReading()
    startReading(socket_);
 }
 
+// ssl test server connection ctor
+SSLTestServerConnection::SSLTestServerConnection(int socketDescriptor,
+                                                 QString certPath, QString keyPath,
+                                                 QObject *parent)
+   : SSLServerConnection(socketDescriptor,certPath,keyPath,parent)
+{}
+
 // start reading from an established connection
-void SSLServerConnection::startReading(QSslSocket *socket)
+void SSLTestServerConnection::startReading(QSslSocket *socket)
 {
-   // read data data from the ssl socket
+   // read data from the ssl socket
    QByteArray data = socket->readAll();
+
+   // test output
+   std::cout << "incoming: \"" << QString(data).toStdString() << "\"" << std::endl;
+}
+
+// ssl server connection factory ctor
+SSLServerConnectionFactory::SSLServerConnectionFactory()
+{}
+
+// ssl server connection factory dtor
+SSLServerConnectionFactory::~SSLServerConnectionFactory()
+{}
+
+// ssl test server connection factory ctor
+SSLTestServerConnectionFactory::SSLTestServerConnectionFactory()
+{}
+
+// create a new server connection
+SSLServerConnection *SSLTestServerConnectionFactory::create(int socketDescriptor,
+                                                            QString certPath, QString keyPath,
+                                                            QObject *parent)
+{
+   return(new SSLTestServerConnection(socketDescriptor,certPath,keyPath,parent));
 }
 
 // ssl client ctor
@@ -116,9 +148,19 @@ void SSLClient::connectionEstablished()
    socket_.close();
 }
 
+// ssl test client ctor
+SSLTestClient::SSLTestClient(QObject *parent)
+   : SSLClient(parent)
+{}
+
 // start writing through an established connection
-void SSLClient::startWriting(QSslSocket *socket)
+void SSLTestClient::startWriting(QSslSocket *socket)
 {
+   static const char data[] = "test";
+
+   // test output
+   std::cout << "outgoing: \"" << data << "\"" << std::endl;
+
    // write data to the ssl socket
-   socket->write("ping", 4);
+   socket->write(data, strlen(data));
 }
