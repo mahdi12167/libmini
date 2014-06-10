@@ -28,7 +28,27 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
 // receiver of transmitted data chunks
 void SSLTransmissionServerConnectionFactory::receive(QByteArray data)
 {
-   std::cout << "transmitted: \"" << QString(data).toStdString() << "\"" << std::endl; //!!
+   queue_.push(data);
+}
+
+// check for received transmission
+bool SSLTransmissionServerConnectionFactory::hasTransmission()
+{
+   return(!queue_.empty());
+}
+
+// get received transmission
+QByteArray SSLTransmissionServerConnectionFactory::getTransmission()
+{
+   QByteArray t;
+
+   if (!queue_.empty())
+   {
+      t=queue_.front();
+      queue_.pop();
+   }
+
+   return(t);
 }
 
 SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescriptor,
