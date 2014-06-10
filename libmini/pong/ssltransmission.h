@@ -22,7 +22,7 @@ public:
 public slots:
 
    // receiver of transmitted data chunks
-   void receive(QByteArray &data);
+   void receive(QByteArray);
 };
 
 // ssl transmission server connection class
@@ -45,7 +45,7 @@ protected:
 signals:
 
    // signal transmission of data chunk
-   void transmit(QByteArray &data);
+   void transmit(QByteArray);
 };
 
 // ssl transmission client class
