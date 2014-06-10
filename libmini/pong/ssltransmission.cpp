@@ -17,14 +17,14 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
       new SSLTransmissionServerConnection(socketDescriptor, certPath, keyPath, this, parent);
 
    // signal transmission
-   connect(connection, SIGNAL(transmit(QByteArray data)),
-           this, SLOT(transmission(QByteArray data)), Qt::QueuedConnection);
+   connect(connection, SIGNAL(transmit(QByteArray &data)),
+           this, SLOT(receive(QByteArray &data)), Qt::QueuedConnection);
 
    return(connection);
 }
 
 // receiver of transmitted data chunks
-void SSLTransmissionServerConnectionFactory::receive(QByteArray data)
+void SSLTransmissionServerConnectionFactory::receive(QByteArray &data)
 {
    // transmit output
    std::cout << "transmitted: \"" << QString(data).toStdString() << "\"" << std::endl;

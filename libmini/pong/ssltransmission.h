@@ -19,10 +19,10 @@ public:
                                        QString certPath, QString keyPath,
                                        QObject *parent);
 
-protected slots:
+public slots:
 
    // receiver of transmitted data chunks
-   void receive(QByteArray data);
+   void receive(QByteArray &data);
 };
 
 // ssl transmission server connection class
@@ -45,7 +45,7 @@ protected:
 signals:
 
    // signal transmission of data chunk
-   void transmit(QByteArray data);
+   void transmit(QByteArray &data);
 };
 
 // ssl transmission client class
