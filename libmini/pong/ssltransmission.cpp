@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#include <iostream>
-
 #include "ssltransmission.h"
 
 SSLTransmissionServerConnectionFactory::SSLTransmissionServerConnectionFactory(QObject *parent)
