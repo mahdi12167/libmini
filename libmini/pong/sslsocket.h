@@ -41,6 +41,7 @@ public:
 
    SSLServerConnection(int socketDescriptor,
                        QString certPath, QString keyPath,
+                       SSLServerConnectionFactory *factory,
                        QObject *parent = NULL);
 
    virtual ~SSLServerConnection();
@@ -55,6 +56,7 @@ protected:
 
 private:
 
+   SSLServerConnectionFactory *factory_;
    QSslSocket *socket_;
 
 protected slots:
@@ -72,6 +74,7 @@ public:
 
    SSLTestServerConnection(int socketDescriptor,
                            QString certPath, QString keyPath,
+                           SSLServerConnectionFactory *factory,
                            QObject *parent = NULL);
 
 protected:
@@ -81,11 +84,13 @@ protected:
 };
 
 // ssl server connection factory base class
-class SSLServerConnectionFactory
+class SSLServerConnectionFactory: public QObject
 {
+   Q_OBJECT
+
 public:
 
-   SSLServerConnectionFactory();
+   SSLServerConnectionFactory(QObject *parent = NULL);
    virtual ~SSLServerConnectionFactory();
 
    // create a new server connection
@@ -95,13 +100,14 @@ public:
 
 };
 
-// ssl test server connection factory base class
+// ssl test server connection factory class
 class SSLTestServerConnectionFactory: public SSLServerConnectionFactory
 {
 public:
 
-   SSLTestServerConnectionFactory();
+   SSLTestServerConnectionFactory(QObject *parent = NULL);
 
+   // create a new test server connection
    virtual SSLServerConnection *create(int socketDescriptor,
                                        QString certPath, QString keyPath,
                                        QObject *parent);

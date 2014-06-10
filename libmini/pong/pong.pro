@@ -3,5 +3,5 @@ TEMPLATE = app
 
 QT += core gui network
 
-HEADERS += sslsocket.h
-SOURCES += pong.cpp sslsocket.cpp
+HEADERS += sslsocket.h ssltransmission.h
+SOURCES += pong.cpp sslsocket.cpp ssltransmission.cpp

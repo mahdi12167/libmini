@@ -2,7 +2,7 @@
 
 #include <QApplication>
 
-#include "sslsocket.h"
+#include "ssltransmission.h"
 
 int main(int argc, char **argv)
 {
@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 
    if (argc <= 1)
    {
-      SSLTestServerConnectionFactory factory;
+      SSLTransmissionServerConnectionFactory factory;
       SSLServer server(&factory);
       server.start("cert.pem", "key.pem", 10000);
 
@@ -18,7 +18,7 @@ int main(int argc, char **argv)
    }
    else
    {
-      SSLTestClient client;
+      SSLTransmissionClient client;
       client.start(argv[1], 10000, false);
    }
 

@@ -36,7 +36,8 @@ void SSLServer::incomingConnection(int socketDescriptor)
 }
 
 // ssl server connection factory ctor
-SSLServerConnectionFactory::SSLServerConnectionFactory()
+SSLServerConnectionFactory::SSLServerConnectionFactory(QObject *parent)
+   : QObject(parent)
 {}
 
 // ssl server connection factory dtor
@@ -44,22 +45,24 @@ SSLServerConnectionFactory::~SSLServerConnectionFactory()
 {}
 
 // ssl test server connection factory ctor
-SSLTestServerConnectionFactory::SSLTestServerConnectionFactory()
+SSLTestServerConnectionFactory::SSLTestServerConnectionFactory(QObject *parent)
+   : SSLServerConnectionFactory(parent)
 {}
 
-// create a new server connection
+// create a new test server connection
 SSLServerConnection *SSLTestServerConnectionFactory::create(int socketDescriptor,
                                                             QString certPath, QString keyPath,
                                                             QObject *parent)
 {
-   return(new SSLTestServerConnection(socketDescriptor, certPath, keyPath, parent));
+   return(new SSLTestServerConnection(socketDescriptor, certPath, keyPath, this, parent));
 }
 
 // ssl server connection ctor
 SSLServerConnection::SSLServerConnection(int socketDescriptor,
                                          QString certPath, QString keyPath,
+                                         SSLServerConnectionFactory *factory,
                                          QObject *parent)
-   : QObject(parent)
+   : QObject(parent), factory_(factory)
 {
    // create new ssl socket for each incoming connection
    socket_ = new QSslSocket(this);
@@ -100,8 +103,9 @@ void SSLServerConnection::startReading()
 // ssl test server connection ctor
 SSLTestServerConnection::SSLTestServerConnection(int socketDescriptor,
                                                  QString certPath, QString keyPath,
+                                                 SSLServerConnectionFactory *factory,
                                                  QObject *parent)
-   : SSLServerConnection(socketDescriptor, certPath, keyPath, parent)
+   : SSLServerConnection(socketDescriptor, certPath, keyPath, factory, parent)
 {}
 
 // start reading from an established connection
