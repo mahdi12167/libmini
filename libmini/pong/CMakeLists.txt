@@ -71,12 +71,14 @@ SET(LIB_HDRS
    # module headers
    sslsocket.h
    ssltransmission.h
+   serverui.h
    )
 
 SET(LIB_SRCS
    # module sources
    sslsocket.cpp
    ssltransmission.cpp
+   serverui.cpp
    )
 
 # moc

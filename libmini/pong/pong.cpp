@@ -1,8 +1,13 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#include <QApplication>
+#ifdef HAVE_QT5
+#include <QtWidgets/QApplication>
+#else
+#include <QtGui/QApplication>
+#endif
 
 #include "ssltransmission.h"
+#include "serverui.h"
 
 int main(int argc, char **argv)
 {
@@ -10,6 +15,10 @@ int main(int argc, char **argv)
 
    if (argc <= 1)
    {
+      ServerUI main;
+
+      main.show();
+
       SSLTransmissionServerConnectionFactory factory;
       SSLServer server(&factory);
       server.start("cert.pem", "key.pem", 10000);
