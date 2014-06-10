@@ -3,8 +3,6 @@
 #ifndef SSLTRANSMISSION_H
 #define SSLTRANSMISSION_H
 
-#include <queue>
-
 #include "sslsocket.h"
 
 // ssl transmission server connection factory class
@@ -21,20 +19,17 @@ public:
                                        QString certPath, QString keyPath,
                                        QObject *parent);
 
-   // check for received transmission
-   bool hasTransmission();
-
-   // get received transmission
-   QByteArray getTransmission();
-
 protected:
-
-   std::queue<QByteArray> queue_;
 
 public slots:
 
    // receiver of transmitted data chunks
    void receive(QByteArray);
+
+signals:
+
+   // signal transmission
+   void transmitted(QByteArray);
 };
 
 // ssl transmission server connection class
