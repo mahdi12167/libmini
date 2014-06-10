@@ -28,8 +28,7 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
 // receiver of transmitted data chunks
 void SSLTransmissionServerConnectionFactory::receive(QByteArray data)
 {
-   // transmit output
-   std::cout << "transmitted: \"" << QString(data).toStdString() << "\"" << std::endl;
+   std::cout << "transmitted: \"" << QString(data).toStdString() << "\"" << std::endl; //!!
 }
 
 SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescriptor,
@@ -49,18 +48,13 @@ void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
    emit transmit(data);
 }
 
-SSLTransmissionClient::SSLTransmissionClient(QObject *parent)
-   : SSLClient(parent)
+SSLTransmissionClient::SSLTransmissionClient(QByteArray &data, QObject *parent)
+   : SSLClient(parent), data_(data)
 {}
 
 // start writing through an established connection
 void SSLTransmissionClient::startWriting(QSslSocket *socket)
 {
-   static const char data[] = "transmission";
-
-   // transmission output
-   std::cout << "transmitting: \"" << data << "\"" << std::endl;
-
    // write data to the ssl socket
-   socket->write(data, strlen(data));
+   socket->write(data_, strlen(data_));
 }

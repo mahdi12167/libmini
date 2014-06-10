@@ -55,12 +55,14 @@ class SSLTransmissionClient: public SSLClient
 
 public:
 
-   SSLTransmissionClient(QObject *parent = NULL);
+   SSLTransmissionClient(QByteArray &data, QObject *parent = NULL);
 
 protected:
 
    // start writing through an established connection
    virtual void startWriting(QSslSocket *socket);
+
+   QByteArray data_;
 };
 
 #endif

@@ -125,7 +125,7 @@ public:
    virtual ~SSLClient();
 
    // start transmission
-   bool start(QString hostName, quint16 port, bool verify=false);
+   bool start(QString hostName, quint16 port, bool verify=true);
 
 protected:
 

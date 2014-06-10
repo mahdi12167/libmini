@@ -18,7 +18,8 @@ int main(int argc, char **argv)
    }
    else
    {
-      SSLTransmissionClient client;
+      QByteArray data("transmission");
+      SSLTransmissionClient client(data);
       client.start(argv[1], 10000, false);
    }
 
