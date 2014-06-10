@@ -52,7 +52,7 @@ SSLServerConnection *SSLTestServerConnectionFactory::create(int socketDescriptor
                                                             QString certPath, QString keyPath,
                                                             QObject *parent)
 {
-   return(new SSLTestServerConnection(socketDescriptor,certPath,keyPath,parent));
+   return(new SSLTestServerConnection(socketDescriptor, certPath, keyPath, parent));
 }
 
 // ssl server connection ctor
