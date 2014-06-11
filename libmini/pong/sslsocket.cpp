@@ -109,7 +109,8 @@ void SSLServerConnection::startReading()
 // catch socket errors
 void SSLServerConnection::error(QAbstractSocket::SocketError socketError)
 {
-   throw e_;
+   SSLError e(socket_->errorString().toStdString());
+   throw e;
 }
 
 // ssl test server connection ctor
@@ -169,13 +170,13 @@ void SSLClient::connectionEstablished()
 
    // disconnect the ssl socket
    socket_.disconnectFromHost();
-   throw e_; //!!
 }
 
 // catch socket errors
 void SSLClient::error(QAbstractSocket::SocketError socketError)
 {
-   throw e_;
+   SSLError e(socket_.errorString().toStdString());
+   throw e;
 }
 
 // ssl test client ctor
