@@ -15,21 +15,37 @@ int main(int argc, char **argv)
 
    if (argc <= 1)
    {
-      ServerUI main;
+      try
+      {
+         ServerUI main;
 
-      main.show();
+         main.show();
 
-      SSLTransmissionServerConnectionFactory factory;
-      SSLServer server(&factory);
-      server.start("cert.pem", "key.pem", 10000);
+         SSLTransmissionServerConnectionFactory factory;
+         SSLServer server(&factory);
+         server.start("cert.pem", "key.pem", 10000);
 
-      return(app.exec());
+         return(app.exec());
+      }
+      catch (std::exception &e)
+      {
+         std::cout << e.what() << std::endl;
+         return(1);
+      }
    }
    else
    {
-      QByteArray data("transmission");
-      SSLTransmissionClient client(data);
-      client.start(argv[1], 10000, false);
+      try
+      {
+         QByteArray data("transmission");
+         SSLTransmissionClient client(data);
+         client.start(argv[1], 10000, false);
+      }
+      catch (std::exception &e)
+      {
+         std::cout << e.what() << std::endl;
+         return(1);
+      }
    }
 
    return(0);

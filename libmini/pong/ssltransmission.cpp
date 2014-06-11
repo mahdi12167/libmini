@@ -54,5 +54,5 @@ SSLTransmissionClient::SSLTransmissionClient(QByteArray &data, QObject *parent)
 void SSLTransmissionClient::startWriting(QSslSocket *socket)
 {
    // write data to the ssl socket
-   socket->write(data_, strlen(data_));
+   socket->write(data_, data_.size());
 }

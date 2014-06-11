@@ -3,10 +3,35 @@
 #ifndef SSLSOCKET_H
 #define SSLSOCKET_H
 
+#include <string>
+#include <exception>
+#include <iostream>
+
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QSslSocket>
 
 class SSLServerConnectionFactory;
+
+// ssl error class
+class SSLError: public std::exception
+{
+public:
+
+   SSLError(const std::string type="") throw() : std::exception(), type_(type) {}
+   virtual ~SSLError() throw() {}
+
+protected:
+
+   virtual std::string what()
+   {
+      if (type_.empty())
+         return("ssl socket error");
+      else
+         return("ssl socket error: "+type_);
+   }
+
+   std::string type_;
+};
 
 // ssl server class
 class SSLServer: public QTcpServer
@@ -19,7 +44,7 @@ public:
    virtual ~SSLServer();
 
    // start listening
-   bool start(QString certPath, QString keyPath, quint16 port = 0);
+   void start(QString certPath, QString keyPath, quint16 port = 0);
 
 protected:
 
@@ -30,6 +55,8 @@ protected:
 
    QString certPath_;
    QString keyPath_;
+
+   SSLError e_;
 };
 
 // ssl server connection base class
@@ -54,15 +81,23 @@ protected:
    // start reading from an established connection
    virtual void startReading(QSslSocket *socket) = 0;
 
+   SSLServerConnectionFactory *factory_;
+
 private:
 
-   SSLServerConnectionFactory *factory_;
    QSslSocket *socket_;
+
+protected:
+
+   SSLError e_;
 
 protected slots:
 
    // start reading after connection is established
    void startReading();
+
+   // catch socket errors
+   void error(QAbstractSocket::SocketError socketError);
 };
 
 // ssl test server connection class
@@ -98,6 +133,9 @@ public:
                                        QString certPath, QString keyPath,
                                        QObject *parent) = 0;
 
+protected:
+
+   SSLError e_;
 };
 
 // ssl test server connection factory class
@@ -125,7 +163,7 @@ public:
    virtual ~SSLClient();
 
    // start transmission
-   bool start(QString hostName, quint16 port, bool verify=true);
+   void start(QString hostName, quint16 port, bool verify=true);
 
 protected:
 
@@ -136,10 +174,17 @@ private:
 
    QSslSocket socket_;
 
+protected:
+
+   SSLError e_;
+
 protected slots:
 
    // start writing after connection is established
    void connectionEstablished();
+
+   // catch socket errors
+   void error(QAbstractSocket::SocketError socketError);
 };
 
 // ssl test client class

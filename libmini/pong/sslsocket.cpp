@@ -1,14 +1,13 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#include <iostream>
-
 #include "sslsocket.h"
 
 // ssl server ctor
 SSLServer::SSLServer(SSLServerConnectionFactory *factory, QObject *parent)
    : QTcpServer(parent),
      factory_(factory),
-     certPath_(""), keyPath_("")
+     certPath_(""), keyPath_(""),
+     e_("server")
 {}
 
 // ssl server dtor
@@ -16,12 +15,13 @@ SSLServer::~SSLServer()
 {}
 
 // start listening
-bool SSLServer::start(QString certPath, QString keyPath, quint16 port)
+void SSLServer::start(QString certPath, QString keyPath, quint16 port)
 {
    certPath_ = certPath;
    keyPath_ = keyPath;
 
-   return(listen(QHostAddress::Any, port));
+   // listen on port
+   if (!listen(QHostAddress::Any, port)) throw e_;
 }
 
 // handle new incoming connection
@@ -37,7 +37,8 @@ void SSLServer::incomingConnection(int socketDescriptor)
 
 // ssl server connection factory ctor
 SSLServerConnectionFactory::SSLServerConnectionFactory(QObject *parent)
-   : QObject(parent)
+   : QObject(parent),
+     e_("server connection factory")
 {}
 
 // ssl server connection factory dtor
@@ -62,11 +63,16 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
                                          QString certPath, QString keyPath,
                                          SSLServerConnectionFactory *factory,
                                          QObject *parent)
-   : QObject(parent), factory_(factory)
+   : QObject(parent), factory_(factory),
+     e_("server connection")
 {
    // create new ssl socket for each incoming connection
    socket_ = new QSslSocket(this);
-   socket_->setSocketDescriptor(socketDescriptor);
+   if (!socket_->setSocketDescriptor(socketDescriptor)) throw e_;
+
+   // catch socket errors
+   connect(socket_, SIGNAL(error(QAbstractSocket::SocketError)),
+           this, SLOT(error(QAbstractSocket::SocketErro)));
 
    // configure ssl socket
    socket_->setProtocol(QSsl::TlsV1);
@@ -100,6 +106,12 @@ void SSLServerConnection::startReading()
    startReading(socket_);
 }
 
+// catch socket errors
+void SSLServerConnection::error(QAbstractSocket::SocketError socketError)
+{
+   throw e_;
+}
+
 // ssl test server connection ctor
 SSLTestServerConnection::SSLTestServerConnection(int socketDescriptor,
                                                  QString certPath, QString keyPath,
@@ -116,11 +128,15 @@ void SSLTestServerConnection::startReading(QSslSocket *socket)
 
    // test output
    std::cout << "incoming: \"" << QString(data).toStdString() << "\"" << std::endl;
+
+   // check wether or not test was successful
+   if (QString(data) != "test") throw e_;
 }
 
 // ssl client ctor
 SSLClient::SSLClient(QObject *parent)
-   : QObject(parent)
+   : QObject(parent),
+     e_("client")
 {
    // start writing after connection is encrypted
    connect(&socket_, SIGNAL(encrypted()),
@@ -132,13 +148,17 @@ SSLClient::~SSLClient()
 {}
 
 // start transmission
-bool SSLClient::start(QString hostName, quint16 port, bool verify)
+void SSLClient::start(QString hostName, quint16 port, bool verify)
 {
    socket_.setProtocol(QSsl::TlsV1);
    if (!verify) socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
    socket_.connectToHostEncrypted(hostName, port);
 
-   return(!socket_.waitForDisconnected());
+   // catch socket errors
+   connect(&socket_, SIGNAL(error(QAbstractSocket::SocketError)),
+           this, SLOT(error(QAbstractSocket::SocketError)));
+
+   while(!socket_.waitForDisconnected());
 }
 
 // start writing after connection is established
@@ -150,6 +170,12 @@ void SSLClient::connectionEstablished()
    // close connection
    socket_.flush();
    socket_.close();
+}
+
+// catch socket errors
+void SSLClient::error(QAbstractSocket::SocketError socketError)
+{
+   throw e_;
 }
 
 // ssl test client ctor
