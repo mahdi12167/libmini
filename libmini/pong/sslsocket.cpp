@@ -72,7 +72,7 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
 
    // catch socket errors
    connect(socket_, SIGNAL(error(QAbstractSocket::SocketError)),
-           this, SLOT(error(QAbstractSocket::SocketErro)));
+           this, SLOT(error(QAbstractSocket::SocketError)));
 
    // configure ssl socket
    socket_->setProtocol(QSsl::TlsV1);
@@ -167,9 +167,8 @@ void SSLClient::connectionEstablished()
    // start writing to the ssl socket
    startWriting(&socket_);
 
-   // close connection
-   socket_.flush();
-   socket_.close();
+   // disconnect ssl socket
+   socket_.disconnectFromHost();
 }
 
 // catch socket errors
