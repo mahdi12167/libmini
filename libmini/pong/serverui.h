@@ -4,9 +4,9 @@
 #define SERVERUI_H
 
 #ifdef HAVE_QT5
-#include <QtWidgets/QWidget>
+#include <QtWidgets>
 #else
-#include <QtGui/QWidget>
+#include <QtGui>
 #endif
 
 class ServerUI: public QWidget
