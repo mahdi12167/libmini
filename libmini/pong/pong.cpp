@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 
          return(app.exec());
       }
-      catch (std::exception &e)
+      catch (SSLError &e)
       {
          std::cout << e.what() << std::endl;
          return(1);
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
          SSLTransmissionClient client(data);
          client.start(argv[1], 10000, false);
       }
-      catch (std::exception &e)
+      catch (SSLError &e)
       {
          std::cout << e.what() << std::endl;
          return(1);

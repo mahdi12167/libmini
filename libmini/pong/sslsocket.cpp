@@ -167,8 +167,9 @@ void SSLClient::connectionEstablished()
    // start writing to the ssl socket
    startWriting(&socket_);
 
-   // disconnect ssl socket
+   // disconnect the ssl socket
    socket_.disconnectFromHost();
+   throw e_; //!!
 }
 
 // catch socket errors

@@ -4,7 +4,6 @@
 #define SSLSOCKET_H
 
 #include <string>
-#include <exception>
 #include <iostream>
 
 #include <QtNetwork/QTcpServer>
@@ -13,14 +12,12 @@
 class SSLServerConnectionFactory;
 
 // ssl error class
-class SSLError: public std::exception
+class SSLError
 {
 public:
 
-   SSLError(const std::string type="") throw() : std::exception(), type_(type) {}
+   SSLError(const std::string type="") throw() : type_(type) {}
    virtual ~SSLError() throw() {}
-
-protected:
 
    virtual std::string what()
    {
@@ -29,6 +26,8 @@ protected:
       else
          return("ssl socket error: "+type_);
    }
+
+protected:
 
    std::string type_;
 };
