@@ -62,7 +62,10 @@ class SSLTransmissionClient: public SSLClient
 
 public:
 
-   SSLTransmissionClient(QByteArray &data, QObject *parent = NULL);
+   SSLTransmissionClient(QObject *parent = NULL);
+
+   // start transmission
+   void transmit(QString hostName, quint16 port, QByteArray &data, bool verify=true);
 
 protected:
 

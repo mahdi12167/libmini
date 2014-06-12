@@ -60,9 +60,16 @@ void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
    emit transmit(data);
 }
 
-SSLTransmissionClient::SSLTransmissionClient(QByteArray &data, QObject *parent)
-   : SSLClient(parent), data_(data)
+SSLTransmissionClient::SSLTransmissionClient(QObject *parent)
+   : SSLClient(parent)
 {}
+
+// start transmission
+void SSLTransmissionClient::transmit(QString hostName, quint16 port, QByteArray &data, bool verify)
+{
+   data_ = data;
+   SSLClient::transmit(hostName, port, verify);
+}
 
 // start writing through an established connection
 void SSLTransmissionClient::startWriting(QSslSocket *socket)
@@ -79,4 +86,7 @@ void SSLTransmissionClient::startWriting(QSslSocket *socket)
 
    // write data block to the ssl socket
    socket->write(data_, data_.size());
+
+   // clear data block
+   data_.clear();
 }

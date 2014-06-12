@@ -149,7 +149,7 @@ SSLClient::~SSLClient()
 {}
 
 // start transmission
-void SSLClient::start(QString hostName, quint16 port, bool verify)
+void SSLClient::transmit(QString hostName, quint16 port, bool verify)
 {
    socket_.setProtocol(QSsl::TlsV1);
    if (!verify) socket_.setPeerVerifyMode(QSslSocket::VerifyNone);

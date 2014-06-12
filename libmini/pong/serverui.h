@@ -17,6 +17,17 @@ public:
 
    ServerUI(QWidget *parent = NULL);
    virtual ~ServerUI();
+
+protected:
+
+   unsigned int counter_;
+   QLabel *counterLabel_;
+
+   QLabel *lastLabel_;
+
+public slots:
+
+   void transmitted(QByteArray);
 };
 
 #endif
