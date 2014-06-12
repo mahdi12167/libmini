@@ -32,5 +32,5 @@ void ServerUI::transmitted(QByteArray data)
 
    lastLabel_->setText("Last request @ "+
                        QDateTime::currentDateTimeUtc().toString()+": "+
-                       ((data.size()<1024)?QString::number(data.size())+"bytes":QString::number((data.size()+511)/1024)+"kbytes"));
+                       ((data.size()<1024)?QString::number(data.size())+" bytes":QString::number((data.size()+511)/1024)+" kbytes"));
 }
