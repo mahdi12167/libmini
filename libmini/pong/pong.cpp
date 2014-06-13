@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
       try
       {
          SSLTransmissionClient client;
-         client.transmitFile(arg[0], 10000, arg[2], false);
+         client.transmitFile(arg[0], 10000, arg[1], false);
       }
       catch (SSLError &e)
       {
