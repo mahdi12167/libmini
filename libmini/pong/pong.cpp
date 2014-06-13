@@ -7,13 +7,60 @@
 #endif
 
 #include "ssltransmission.h"
-#include "serverui.h"
 
-int main(int argc, char **argv)
+#include "serverui.h"
+#include "clientui.h"
+
+double get_opt(QString o)
+{
+   o=o.mid(o.indexOf("=")+1);
+   return(o.toDouble());
+}
+
+void usage(const char *prog)
+{
+   QString name(prog);
+   std::cout << "usage:" << std::endl;
+   std::cout << " " << name.mid(name.lastIndexOf("/")+1).toStdString() << " {options} [ip-address]" << std::endl;
+   std::cout << "where options are:" << std::endl;
+   std::cout << " --server: start pong server" << std::endl;
+   std::cout << " --client: use drop box gui" << std::endl;
+   std::cout << " --help: this help text" << std::endl;
+   std::cout << "example server usage:" << std::endl;
+   std::cout << " ./pong --server" << std::endl;
+   std::cout << "example client usage:" << std::endl;
+   std::cout << " ./pong --client localhost" << std::endl;
+   exit(1);
+}
+
+int main(int argc, char *argv[])
 {
    QApplication app(argc, argv);
 
-   if (argc <= 1)
+   setlocale(LC_NUMERIC, "C");
+
+   // get argument list
+   QStringList args = QCoreApplication::arguments();
+
+   // scan for arguments and options
+   QStringList arg,opt;
+   for (int i=1; i<args.size(); i++)
+      if (args[i].startsWith("--")) opt.push_back(args[i].mid(2));
+      else if (args[i].startsWith("-")) opt.push_back(args[i].mid(1));
+      else arg.push_back(args[i]);
+
+   bool server=false;
+   bool client=false;
+
+   // scan option list
+   for (int i=0; i<opt.size(); i++)
+      if (opt[i]=="server") server=true;
+      else if (opt[i]=="client") client=true;
+      else if (opt[i]=="help") usage(argv[0]);
+      else usage(argv[0]);
+
+   // server mode
+   if (server)
    {
       try
       {
@@ -39,13 +86,22 @@ int main(int argc, char **argv)
          return(1);
       }
    }
-   else
+   // client mode
+   else if (client)
    {
       try
       {
+         ClientUI main;
+
+         main.show();
+
          SSLTransmissionClient client;
-         QByteArray data("transmission");
-         client.transmit(argv[1], 10000, data, false);
+
+         // connect server gui with client
+         QObject::connect(&main, SIGNAL(transmitFile(QString, quint16, QString, bool)),
+                          &client, SLOT(transmitFileNonBlocking(QString, quint16, QString, bool)));
+
+         return(app.exec());
       }
       catch (SSLError &e)
       {
@@ -53,6 +109,8 @@ int main(int argc, char **argv)
          return(1);
       }
    }
+   // print usage
+   else usage(argv[0]);
 
    return(0);
 }

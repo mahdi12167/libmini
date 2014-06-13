@@ -5,13 +5,13 @@
 #include "clientui.h"
 
 ClientUI::ClientUI(QWidget *parent)
-   : QWidget(parent)
+   : QWidget(parent), hostName_("localhost"), port_(10000), verify_(false)
 {
    QVBoxLayout *layout = new QVBoxLayout;
    setLayout(layout);
 
    layout->addWidget(new QLabel("Ping Client"));
-   layout->addWidget(new QLabel("Drag and Drop files to transmit"));
+   layout->addWidget(new QLabel("Drag and drop files to transmit"));
 
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
@@ -56,9 +56,9 @@ void ClientUI::dropEvent(QDropEvent *event)
       for (int i=0; i<urlList.size(); i++)
       {
          QUrl qurl = urlList.at(i);
-         QString url = normalizeFile(qurl.toString());
+         QString fileName = normalizeFile(qurl.toString());
 
-         std::cout << url.toStdString() << std::endl; //!!
+         emit transmitFile(hostName_, port_, fileName, verify_);
       }
    }
 }

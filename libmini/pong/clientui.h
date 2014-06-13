@@ -20,6 +20,10 @@ public:
 
 protected:
 
+   QString hostName_;
+   quint16 port_;
+   bool verify_;
+
    static QString normalizeFile(QString file);
 
    void dragEnterEvent(QDragEnterEvent *event);
@@ -29,6 +33,10 @@ protected:
 public:
 
    void dropEvent(QDropEvent *event);
+
+signals:
+
+   void transmitFile(QString hostName, quint16 port, QString fileName, bool verify);
 };
 
 #endif
