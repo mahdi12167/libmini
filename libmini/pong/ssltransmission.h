@@ -21,6 +21,9 @@ public:
 
 protected:
 
+   // consumer of transmitted data chunks
+   virtual void consume(QByteArray data);
+
 public slots:
 
    // receiver of transmitted data chunks
@@ -65,7 +68,8 @@ public:
    SSLTransmissionClient(QObject *parent = NULL);
 
    // start transmission
-   void transmit(QString hostName, quint16 port, QByteArray &data, bool verify=true);
+   bool transmit(QString hostName, quint16 port, QByteArray &data, bool verify=true);
+   bool transmitFile(QString hostName, quint16 port, QString fileName, bool verify=true);
 
 protected:
 
@@ -73,6 +77,42 @@ protected:
    virtual void startWriting(QSslSocket *socket);
 
    QByteArray data_;
+};
+
+class SSLTransmissionThread: public QThread
+{
+   Q_OBJECT
+
+public:
+
+   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify=true)
+      : QThread(), hostName_(hostName), port_(port), fileName_(fileName), verify_(verify)
+   {
+      // self-termination after thread has finished
+      connect(this, SIGNAL(finished()),
+              this, SLOT(deleteLater()));
+   }
+
+   virtual ~SSLTransmissionThread()
+   {}
+
+   // non-blocking transmission
+   static void transmitFile(QString hostName, quint16 port, QString fileName, bool verify=true);
+
+protected:
+
+   virtual void run()
+   {
+      SSLTransmissionClient client;
+      client.transmitFile(hostName_, port_, fileName_, verify_);
+   }
+
+   SSLTransmissionClient *client_;
+
+   QString hostName_;
+   quint16 port_;
+   QString fileName_;
+   bool verify_;
 };
 
 #endif

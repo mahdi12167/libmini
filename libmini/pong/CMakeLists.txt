@@ -72,6 +72,7 @@ SET(LIB_HDRS
    sslsocket.h
    ssltransmission.h
    serverui.h
+   clientui.h
    )
 
 SET(LIB_SRCS
@@ -79,6 +80,7 @@ SET(LIB_SRCS
    sslsocket.cpp
    ssltransmission.cpp
    serverui.cpp
+   clientui.cpp
    )
 
 # moc

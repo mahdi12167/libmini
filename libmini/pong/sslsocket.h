@@ -163,7 +163,7 @@ public:
    virtual ~SSLClient();
 
    // start transmission
-   void transmit(QString hostName, quint16 port, bool verify=true);
+   bool transmit(QString hostName, quint16 port, bool verify=true);
 
 protected:
 

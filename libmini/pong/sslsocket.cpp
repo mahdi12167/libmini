@@ -149,7 +149,7 @@ SSLClient::~SSLClient()
 {}
 
 // start transmission
-void SSLClient::transmit(QString hostName, quint16 port, bool verify)
+bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
 {
    socket_.setProtocol(QSsl::TlsV1);
    if (!verify) socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
@@ -160,6 +160,8 @@ void SSLClient::transmit(QString hostName, quint16 port, bool verify)
            this, SLOT(error(QAbstractSocket::SocketError)));
 
    while(!socket_.waitForDisconnected());
+
+   return(true);
 }
 
 // start writing after connection is established

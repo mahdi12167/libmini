@@ -1,5 +1,8 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
+#include <QFile>
+#include <QThread>
+
 #include "ssltransmission.h"
 
 SSLTransmissionServerConnectionFactory::SSLTransmissionServerConnectionFactory(QObject *parent)
@@ -27,7 +30,12 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
 void SSLTransmissionServerConnectionFactory::receive(QByteArray data)
 {
    emit transmitted(data);
+   consume(data);
 }
+
+// consumer of transmitted data chunks
+void SSLTransmissionServerConnectionFactory::consume(QByteArray data)
+{}
 
 SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescriptor,
                                                                  QString certPath, QString keyPath,
@@ -65,10 +73,26 @@ SSLTransmissionClient::SSLTransmissionClient(QObject *parent)
 {}
 
 // start transmission
-void SSLTransmissionClient::transmit(QString hostName, quint16 port, QByteArray &data, bool verify)
+bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QByteArray &data, bool verify)
 {
    data_ = data;
    SSLClient::transmit(hostName, port, verify);
+
+   return(true);
+}
+
+// start transmission
+bool SSLTransmissionClient::transmitFile(QString hostName, quint16 port, QString fileName, bool verify)
+{
+   QFile file(fileName);
+
+   if (!file.open(QIODevice::ReadOnly))
+      return(false);
+
+   data_ = file.readAll();
+   SSLClient::transmit(hostName, port, verify);
+
+   return(true);
 }
 
 // start writing through an established connection
@@ -89,4 +113,13 @@ void SSLTransmissionClient::startWriting(QSslSocket *socket)
 
    // clear data block
    data_.clear();
+}
+
+// non-blocking transmission
+void SSLTransmissionThread::transmitFile(QString hostName, quint16 port, QString fileName, bool verify)
+{
+   SSLTransmissionThread *thread;
+
+   thread = new SSLTransmissionThread(hostName, port, fileName, verify);
+   thread->start();
 }
