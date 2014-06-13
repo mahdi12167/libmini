@@ -56,11 +56,12 @@ void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
    in >> header.size;
    in >> header.compressed;
 
-   // check if entire data block has arrived
-   if (socket->bytesAvailable() < header.size) return;
-
    // read data block from the ssl socket
    QByteArray data = socket->read(header.size);
+
+   // uncompress data block
+   if (header.compressed)
+      data = qUncompress(data);
 
    // signal transmission of data block
    emit transmit(data);
