@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
    {
       try
       {
-         ClientUI main(arg[0]);
+         ClientUI main(arg[0], 10000, false, true);
 
          main.show();
 
