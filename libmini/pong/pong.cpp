@@ -21,10 +21,11 @@ void usage(const char *prog)
 {
    QString name(prog);
    std::cout << "usage:" << std::endl;
-   std::cout << " " << name.mid(name.lastIndexOf("/")+1).toStdString() << " {options} [ip-address]" << std::endl;
+   std::cout << " " << name.mid(name.lastIndexOf("/")+1).toStdString() << " {options} [ip-address [file]]" << std::endl;
    std::cout << "where options are:" << std::endl;
    std::cout << " --server: start pong server" << std::endl;
-   std::cout << " --client: use drop box gui" << std::endl;
+   std::cout << " --client: use drop box gui for transmissions" << std::endl;
+   std::cout << " --transmit: transmit file" << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "example server usage:" << std::endl;
    std::cout << " ./pong --server" << std::endl;
@@ -51,11 +52,13 @@ int main(int argc, char *argv[])
 
    bool server=false;
    bool client=false;
+   bool transmit=false;
 
    // scan option list
    for (int i=0; i<opt.size(); i++)
       if (opt[i]=="server") server=true;
       else if (opt[i]=="client") client=true;
+      else if (opt[i]=="transmit") transmit=true;
       else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
 
@@ -102,6 +105,20 @@ int main(int argc, char *argv[])
                           &client, SLOT(transmitFileNonBlocking(QString, quint16, QString, bool)));
 
          return(app.exec());
+      }
+      catch (SSLError &e)
+      {
+         std::cout << e.what() << std::endl;
+         return(1);
+      }
+   }
+   // transmit mode
+   else if (transmit && arg.size()==2)
+   {
+      try
+      {
+         SSLTransmissionClient client;
+         client.transmitFile(arg[0], 10000, arg[2], false);
       }
       catch (SSLError &e)
       {
