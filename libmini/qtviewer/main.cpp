@@ -72,7 +72,7 @@ void usage(const char *prog)
    std::cout << " a gps track (.csv .gpx)" << std::endl;
    std::cout << "example:" << std::endl;
    std::cout << " ./qtviewer --repo=. data/trk/track.csv" << std::endl;
-   exit(0);
+   exit(1);
 }
 
 int main(int argc, char *argv[])

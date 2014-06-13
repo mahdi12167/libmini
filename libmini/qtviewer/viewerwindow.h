@@ -20,8 +20,6 @@
 class Renderer;
 class WorkerThread;
 
-class QMimeData;
-
 #define TR(s) (ministring(tr(s).toStdString().c_str()))
 
 //! qt viewer window that
