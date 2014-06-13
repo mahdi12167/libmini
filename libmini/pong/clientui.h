@@ -15,7 +15,7 @@ class ClientUI: public QWidget
 
 public:
 
-   ClientUI(QWidget *parent = NULL);
+   ClientUI(QString hostName = "localhost", quint16 port = 10000, bool verify = true, QWidget *parent = NULL);
    virtual ~ClientUI();
 
 protected:

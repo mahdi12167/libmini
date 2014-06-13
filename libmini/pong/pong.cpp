@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
       else usage(argv[0]);
 
    // server mode
-   if (server)
+   if (server && arg.size()==0)
    {
       try
       {
@@ -87,11 +87,11 @@ int main(int argc, char *argv[])
       }
    }
    // client mode
-   else if (client)
+   else if (client && arg.size()==1)
    {
       try
       {
-         ClientUI main;
+         ClientUI main(argv[0]);
 
          main.show();
 

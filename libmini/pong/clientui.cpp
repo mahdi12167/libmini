@@ -4,8 +4,8 @@
 
 #include "clientui.h"
 
-ClientUI::ClientUI(QWidget *parent)
-   : QWidget(parent), hostName_("localhost"), port_(10000), verify_(false)
+ClientUI::ClientUI(QString hostName, quint16 port, bool verify, QWidget *parent)
+   : QWidget(parent), hostName_(hostName), port_(port), verify_(verify)
 {
    QVBoxLayout *layout = new QVBoxLayout;
    setLayout(layout);
