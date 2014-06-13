@@ -3,6 +3,9 @@
 #ifndef SSLTRANSMISSION_H
 #define SSLTRANSMISSION_H
 
+#include <QFile>
+#include <QThread>
+
 #include "sslsocket.h"
 
 // ssl transmission server connection factory class
@@ -77,37 +80,30 @@ protected:
    virtual void startWriting(QSslSocket *socket);
 
    QByteArray data_;
+
+public slots:
+
+   // start non-blocking transmission
+   void transmitFileNonBlocking(QString hostName, quint16 port, QString fileName, bool verify=true);
 };
 
+// ssl transmission thread class
 class SSLTransmissionThread: public QThread
 {
    Q_OBJECT
 
 public:
 
-   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify=true)
-      : QThread(), hostName_(hostName), port_(port), fileName_(fileName), verify_(verify)
-   {
-      // self-termination after thread has finished
-      connect(this, SIGNAL(finished()),
-              this, SLOT(deleteLater()));
-   }
+   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify=true);
 
-   virtual ~SSLTransmissionThread()
-   {}
+   virtual ~SSLTransmissionThread();
 
    // non-blocking transmission
    static void transmitFile(QString hostName, quint16 port, QString fileName, bool verify=true);
 
 protected:
 
-   virtual void run()
-   {
-      SSLTransmissionClient client;
-      client.transmitFile(hostName_, port_, fileName_, verify_);
-   }
-
-   SSLTransmissionClient *client_;
+   virtual void run();
 
    QString hostName_;
    quint16 port_;

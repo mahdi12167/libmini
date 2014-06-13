@@ -56,10 +56,9 @@ void ClientUI::dropEvent(QDropEvent *event)
       for (int i=0; i<urlList.size(); i++)
       {
          QUrl qurl = urlList.at(i);
-         QString url = qurl.toString();
+         QString url = normalizeFile(qurl.toString());
 
-         //!! connect to client to use non-blocking transmit
-         SSLTransmissionThread::transmitFile("localhost", 10000, normalizeFile(url), false);
+         std::cout << url.toStdString() << std::endl; //!!
       }
    }
 }

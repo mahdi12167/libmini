@@ -1,8 +1,5 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#include <QFile>
-#include <QThread>
-
 #include "ssltransmission.h"
 
 SSLTransmissionServerConnectionFactory::SSLTransmissionServerConnectionFactory(QObject *parent)
@@ -95,6 +92,12 @@ bool SSLTransmissionClient::transmitFile(QString hostName, quint16 port, QString
    return(true);
 }
 
+// start non-blocking transmission
+void SSLTransmissionClient::transmitFileNonBlocking(QString hostName, quint16 port, QString fileName, bool verify)
+{
+   SSLTransmissionThread::transmitFile(hostName, port, fileName, verify);
+}
+
 // start writing through an established connection
 void SSLTransmissionClient::startWriting(QSslSocket *socket)
 {
@@ -113,6 +116,24 @@ void SSLTransmissionClient::startWriting(QSslSocket *socket)
 
    // clear data block
    data_.clear();
+}
+
+SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify)
+   : QThread(), hostName_(hostName), port_(port), fileName_(fileName), verify_(verify)
+{
+   // self-termination after thread has finished
+   connect(this, SIGNAL(finished()),
+           this, SLOT(deleteLater()));
+}
+
+SSLTransmissionThread::~SSLTransmissionThread()
+{}
+
+// thread run method
+void SSLTransmissionThread::run()
+{
+   SSLTransmissionClient client;
+   client.transmitFile(hostName_, port_, fileName_, verify_);
 }
 
 // non-blocking transmission
