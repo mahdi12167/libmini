@@ -38,29 +38,36 @@ SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescr
                                                                  QString certPath, QString keyPath,
                                                                  SSLServerConnectionFactory *factory,
                                                                  QObject *parent)
-   : SSLServerConnection(socketDescriptor, certPath, keyPath, factory, parent)
+   : SSLServerConnection(socketDescriptor, certPath, keyPath, factory, parent),
+     readHeader_(true)
 {}
 
 // start reading from an established connection
 void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 {
-   struct SSLTransmissionHeader header;
-
    QDataStream in(socket);
    in.setVersion(QDataStream::Qt_4_0);
 
-   // check if header block has arrived
-   if (socket->bytesAvailable() < (int)sizeof(header)) return;
+   if (readHeader_)
+   {
+      // check if entire header block has arrived
+      if (socket->bytesAvailable() < (int)sizeof(header_)) return;
 
-   // read data block size etc.
-   in >> header.size;
-   in >> header.compressed;
+      // read data block size etc.
+      in >> header_.size;
+      in >> header_.compressed;
+
+      readHeader_ = false;
+   }
+
+   // check if entire data block has arrived
+   if (socket->bytesAvailable() < header_.size) return;
 
    // read data block from the ssl socket
-   QByteArray data = socket->read(header.size);
+   QByteArray data = socket->read(header_.size);
 
    // uncompress data block
-   if (header.compressed)
+   if (header_.compressed)
       data = qUncompress(data);
 
    // signal transmission of data block
@@ -122,10 +129,10 @@ void SSLTransmissionClient::startWriting(QSslSocket *socket, bool compress)
    out << header.compressed;
 
    // write header block to the ssl socket
-   socket->write(block, block.size());
+   socket->write(block);
 
    // write data block to the ssl socket
-   socket->write(data_, data_.size());
+   socket->write(data_);
 
    // clear data block
    data_.clear();

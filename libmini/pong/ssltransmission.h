@@ -62,6 +62,9 @@ protected:
    // start reading from an established connection
    virtual void startReading(QSslSocket *socket);
 
+   bool readHeader_;
+   struct SSLTransmissionHeader header_;
+
 signals:
 
    // signal transmission of data block
