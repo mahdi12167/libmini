@@ -39,7 +39,7 @@ SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescr
                                                                  SSLServerConnectionFactory *factory,
                                                                  QObject *parent)
    : SSLServerConnection(socketDescriptor, certPath, keyPath, factory, parent),
-     readHeader_(true)
+     state_(true)
 {}
 
 // start reading from an established connection
@@ -48,7 +48,7 @@ void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
    QDataStream in(socket);
    in.setVersion(QDataStream::Qt_4_0);
 
-   if (readHeader_)
+   if (state_)
    {
       // check if entire header block has arrived
       if (socket->bytesAvailable() < (int)sizeof(header_)) return;
@@ -57,7 +57,7 @@ void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
       in >> header_.size;
       in >> header_.compressed;
 
-      readHeader_ = false;
+      state_ = false;
    }
 
    // check if entire data block has arrived
@@ -117,7 +117,7 @@ void SSLTransmissionClient::startWriting(QSslSocket *socket, bool compress)
 
    // compress upon request
    if (compress)
-      data_ = qCompress(data_);
+      data_ = qCompress(data_, 3); // favor speed over compression ratio
 
    // assemble header to contain data block size etc.
    header.size = data_.size();
