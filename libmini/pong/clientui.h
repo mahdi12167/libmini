@@ -15,7 +15,7 @@ class ClientUI: public QWidget
 
 public:
 
-   ClientUI(QString hostName = "localhost", quint16 port = 10000, bool verify = true, QWidget *parent = NULL);
+   ClientUI(QString hostName = "localhost", quint16 port=10000, bool verify=true, bool compress=false, QWidget *parent = NULL);
    virtual ~ClientUI();
 
 protected:
@@ -23,6 +23,7 @@ protected:
    QString hostName_;
    quint16 port_;
    bool verify_;
+   bool compress_;
 
    static QString normalizeFile(QString file);
 
@@ -36,7 +37,7 @@ public:
 
 signals:
 
-   void transmitFile(QString hostName, quint16 port, QString fileName, bool verify);
+   void transmitFile(QString hostName, quint16 port, QString fileName, bool verify, bool compress);
 };
 
 #endif

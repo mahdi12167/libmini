@@ -101,8 +101,8 @@ int main(int argc, char *argv[])
          SSLTransmissionClient client;
 
          // connect server gui with client
-         QObject::connect(&main, SIGNAL(transmitFile(QString, quint16, QString, bool)),
-                          &client, SLOT(transmitFileNonBlocking(QString, quint16, QString, bool)));
+         QObject::connect(&main, SIGNAL(transmitFile(QString, quint16, QString, bool, bool)),
+                          &client, SLOT(transmitFileNonBlocking(QString, quint16, QString, bool, bool)));
 
          return(app.exec());
       }

@@ -8,6 +8,13 @@
 
 #include "sslsocket.h"
 
+// ssl transmission header structure
+struct SSLTransmissionHeader
+{
+   qint64 size;
+   qint8 compressed;
+};
+
 // ssl transmission server connection factory class
 class SSLTransmissionServerConnectionFactory: public SSLServerConnectionFactory
 {
@@ -24,12 +31,12 @@ public:
 
 protected:
 
-   // consumer of transmitted data chunks
+   // consumer of transmitted data blocks
    virtual void consume(QByteArray data);
 
 public slots:
 
-   // receiver of transmitted data chunks
+   // receiver of transmitted data blocks
    void receive(QByteArray);
 
 signals:
@@ -57,7 +64,7 @@ protected:
 
 signals:
 
-   // signal transmission of data chunk
+   // signal transmission of data block
    void transmit(QByteArray);
 };
 
@@ -77,14 +84,14 @@ public:
 protected:
 
    // start writing through an established connection
-   virtual void startWriting(QSslSocket *socket);
+   virtual void startWriting(QSslSocket *socket, bool compress=false);
 
    QByteArray data_;
 
 public slots:
 
    // start non-blocking transmission
-   void transmitFileNonBlocking(QString hostName, quint16 port, QString fileName, bool verify=true);
+   void transmitFileNonBlocking(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
 };
 
 // ssl transmission thread class
@@ -94,12 +101,12 @@ class SSLTransmissionThread: public QThread
 
 public:
 
-   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify=true);
+   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
 
    virtual ~SSLTransmissionThread();
 
    // non-blocking transmission
-   static void transmitFile(QString hostName, quint16 port, QString fileName, bool verify=true);
+   static void transmitFile(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
 
 protected:
 
@@ -109,6 +116,7 @@ protected:
    quint16 port_;
    QString fileName_;
    bool verify_;
+   bool compress_;
 };
 
 #endif

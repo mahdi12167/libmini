@@ -23,14 +23,14 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
    return(connection);
 }
 
-// receiver of transmitted data chunks
+// receiver of transmitted data blocks
 void SSLTransmissionServerConnectionFactory::receive(QByteArray data)
 {
    emit transmitted(data);
    consume(data);
 }
 
-// consumer of transmitted data chunks
+// consumer of transmitted data blocks
 void SSLTransmissionServerConnectionFactory::consume(QByteArray data)
 {}
 
@@ -44,24 +44,25 @@ SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescr
 // start reading from an established connection
 void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 {
-   qint64 block;
+   struct SSLTransmissionHeader header;
 
    QDataStream in(socket);
    in.setVersion(QDataStream::Qt_4_0);
 
-   // check if header has arrived
-   if (socket->bytesAvailable() < (int)sizeof(block)) return;
+   // check if header block has arrived
+   if (socket->bytesAvailable() < (int)sizeof(header)) return;
 
-   // read data block size
-   in >> block;
+   // read data block size etc.
+   in >> header.size;
+   in >> header.compressed;
 
    // check if entire data block has arrived
-   if (socket->bytesAvailable() < block) return;
+   if (socket->bytesAvailable() < header.size) return;
 
-   // read data from the ssl socket
-   QByteArray data = socket->read(block);
+   // read data block from the ssl socket
+   QByteArray data = socket->read(header.size);
 
-   // signal transmission of data chunk
+   // signal transmission of data block
    emit transmit(data);
 }
 
@@ -93,23 +94,34 @@ bool SSLTransmissionClient::transmitFile(QString hostName, quint16 port, QString
 }
 
 // start non-blocking transmission
-void SSLTransmissionClient::transmitFileNonBlocking(QString hostName, quint16 port, QString fileName, bool verify)
+void SSLTransmissionClient::transmitFileNonBlocking(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
 {
-   SSLTransmissionThread::transmitFile(hostName, port, fileName, verify);
+   SSLTransmissionThread::transmitFile(hostName, port, fileName, verify, compress);
 }
 
 // start writing through an established connection
-void SSLTransmissionClient::startWriting(QSslSocket *socket)
+void SSLTransmissionClient::startWriting(QSslSocket *socket, bool compress)
 {
-   QByteArray header;
-   QDataStream out(&header, QIODevice::WriteOnly);
+   struct SSLTransmissionHeader header;
 
-   // assemble header to contain data block length
+   QByteArray block;
+   QDataStream out(&block, QIODevice::WriteOnly);
+
+   // compress upon request
+   if (compress)
+      data_ = qCompress(data_);
+
+   // assemble header to contain data block size etc.
+   header.size = data_.size();
+   header.compressed = compress;
+
+   // assemble header block
    out.setVersion(QDataStream::Qt_4_0);
-   out << (qint64)data_.size();
+   out << header.size;
+   out << header.compressed;
 
-   // write header to the ssl socket
-   socket->write(header, header.size());
+   // write header block to the ssl socket
+   socket->write(block, block.size());
 
    // write data block to the ssl socket
    socket->write(data_, data_.size());
@@ -118,8 +130,8 @@ void SSLTransmissionClient::startWriting(QSslSocket *socket)
    data_.clear();
 }
 
-SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify)
-   : QThread(), hostName_(hostName), port_(port), fileName_(fileName), verify_(verify)
+SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
+   : QThread(), hostName_(hostName), port_(port), fileName_(fileName), verify_(verify), compress_(compress)
 {
    // self-termination after thread has finished
    connect(this, SIGNAL(finished()),
@@ -133,14 +145,16 @@ SSLTransmissionThread::~SSLTransmissionThread()
 void SSLTransmissionThread::run()
 {
    SSLTransmissionClient client;
+
+   client.enableCompression(compress_);
    client.transmitFile(hostName_, port_, fileName_, verify_);
 }
 
 // non-blocking transmission
-void SSLTransmissionThread::transmitFile(QString hostName, quint16 port, QString fileName, bool verify)
+void SSLTransmissionThread::transmitFile(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
 {
    SSLTransmissionThread *thread;
 
-   thread = new SSLTransmissionThread(hostName, port, fileName, verify);
+   thread = new SSLTransmissionThread(hostName, port, fileName, verify, compress);
    thread->start();
 }
