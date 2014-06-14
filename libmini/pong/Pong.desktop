@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Exec=pong
+Exec=pong --server
 Icon=/usr/share/pong/pong.png
 Terminal=false
 Name=Pong
