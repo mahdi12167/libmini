@@ -35,13 +35,12 @@ void ServerUI::transmitted(QByteArray data)
    if (data.size() < 1024)
       transmission = QString::number(data.size())+" bytes";
    else if (data.size() < 1024*1024)
-      transmission = QString::number((double)data.size()/1024)+" kbytes";
+      transmission = QString::number((double)data.size()/1024, 'g', 3)+" kbytes";
    else
-      transmission = QString::number((double)data.size()/(1024*1024))+" mbytes";
+      transmission = QString::number((double)data.size()/(1024*1024), 'g', 3)+" mbytes";
 
    lastLabel_->setText("Last request @ "+
-                       QDateTime::currentDateTimeUtc().toString()+": "+
-                       transmission);
+                       QDateTime::currentDateTimeUtc().toString()+": "+transmission);
 }
 
 void ServerUI::report(QString error)
