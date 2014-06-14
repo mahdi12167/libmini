@@ -101,9 +101,7 @@ bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QByteArray 
       data_ = qCompress(data_, 3); // favor speed over compression ratio
    compressed_ = compress_;
 
-   SSLClient::transmit(hostName, port, verify);
-
-   return(true);
+   return(SSLClient::transmit(hostName, port, verify));
 }
 
 // start transmission
