@@ -1,5 +1,11 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
+#define VERSION "v0.1 as of 16.June.2014"
+
+#define LICENSE "licensed under GPL 3.0"
+#define COPYRIGHT "(c) by Stefan Roettger 2014"
+#define DISCLAIMER "no warranty, no responsibility, no nothing is granted for anything!"
+
 #ifdef HAVE_QT5
 #include <QtWidgets/QApplication>
 #else
@@ -20,8 +26,13 @@ double get_opt(QString o)
 void usage(const char *prog)
 {
    QString name(prog);
+   std::string app(name.mid(name.lastIndexOf("/")+1).toStdString());
+   std::cout << app << " " << VERSION << std::endl;
+   std::cout << " " << LICENSE << std::endl;
+   std::cout << " " << COPYRIGHT << std::endl;
+   std::cout << " " << DISCLAIMER << std::endl;
    std::cout << "usage:" << std::endl;
-   std::cout << " " << name.mid(name.lastIndexOf("/")+1).toStdString() << " {options} [ip-address [file]]" << std::endl;
+   std::cout << " " << app << " {options} [ip-address [file]]" << std::endl;
    std::cout << "where options are:" << std::endl;
    std::cout << " --server: start pong server" << std::endl;
    std::cout << " --client: use drop box gui for transmissions" << std::endl;
@@ -30,7 +41,9 @@ void usage(const char *prog)
    std::cout << "example server usage:" << std::endl;
    std::cout << " ./pong --server" << std::endl;
    std::cout << "example client usage:" << std::endl;
-   std::cout << " ./pong --client localhost" << std::endl;
+   std::cout << " ./pong --client 127.0.0.1" << std::endl;
+   std::cout << "example transmission usage:" << std::endl;
+   std::cout << " ./pong --transmit pong.server.org file.txt" << std::endl;
    exit(1);
 }
 
