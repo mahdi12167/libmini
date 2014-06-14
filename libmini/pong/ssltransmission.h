@@ -64,6 +64,7 @@ protected:
 
    bool transmitState_;
    struct SSLTransmissionHeader header_;
+   QByteArray data_;
 
 signals:
 
