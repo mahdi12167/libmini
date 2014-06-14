@@ -24,10 +24,11 @@ protected:
    QLabel *counterLabel_;
 
    QLabel *lastLabel_;
+   QLabel *modifiedLabel_;
 
 public slots:
 
-   void transmitted(QByteArray);
+   void transmitted(QByteArray, qint64);
    void report(QString);
 };
 

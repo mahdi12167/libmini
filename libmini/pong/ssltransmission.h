@@ -5,6 +5,7 @@
 
 #include <QFile>
 #include <QThread>
+#include <QDateTime>
 
 #include "sslsocket.h"
 
@@ -13,6 +14,7 @@ struct SSLTransmissionHeader
 {
    qint64 size;
    qint8 compressed;
+   qint64 time;
 };
 
 // ssl transmission server connection factory class
@@ -32,17 +34,17 @@ public:
 protected:
 
    // consumer of transmitted data blocks
-   virtual void consume(QByteArray data);
+   virtual void consume(QByteArray data, qint64 time);
 
 public slots:
 
    // receiver of transmitted data blocks
-   void receive(QByteArray);
+   void receive(QByteArray, qint64);
 
 signals:
 
    // signal transmission
-   void transmitted(QByteArray);
+   void transmitted(QByteArray, qint64);
 };
 
 // ssl transmission server connection class
@@ -69,7 +71,7 @@ protected:
 signals:
 
    // signal transmission of data block
-   void transmit(QByteArray);
+   void transmit(QByteArray, qint64);
 };
 
 // ssl transmission client class
@@ -85,7 +87,7 @@ public:
    void enableCompression(bool compress);
 
    // start transmission
-   bool transmit(QString hostName, quint16 port, QByteArray &data, bool verify=true);
+   bool transmit(QString hostName, quint16 port, QByteArray &data, bool verify=true, QDateTime time=QDateTime::currentDateTimeUtc());
    bool transmitFile(QString hostName, quint16 port, QString fileName, bool verify=true);
 
 protected:
@@ -96,6 +98,8 @@ protected:
    bool compress_;
    QByteArray data_;
    bool compressed_;
+
+   QDateTime time_;
 
 public slots:
 

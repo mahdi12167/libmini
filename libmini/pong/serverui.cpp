@@ -17,6 +17,9 @@ ServerUI::ServerUI(QWidget *parent)
    lastLabel_ = new QLabel("none");
    layout->addWidget(lastLabel_);
 
+   modifiedLabel_ = new QLabel;
+   layout->addWidget(modifiedLabel_);
+
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
    layout->addWidget(quitButton);
@@ -25,7 +28,7 @@ ServerUI::ServerUI(QWidget *parent)
 ServerUI::~ServerUI()
 {}
 
-void ServerUI::transmitted(QByteArray data)
+void ServerUI::transmitted(QByteArray data, qint64 time)
 {
    counter_++;
    counterLabel_->setText("Transmissions: "+QString::number(counter_));
@@ -41,6 +44,11 @@ void ServerUI::transmitted(QByteArray data)
 
    lastLabel_->setText("Last request @ "+
                        QDateTime::currentDateTimeUtc().toString()+": "+transmission);
+
+   QDateTime modified;
+
+   modified.setMSecsSinceEpoch(time);
+   modifiedLabel_->setText("Time Stamp: "+modified.toString());
 }
 
 void ServerUI::report(QString error)

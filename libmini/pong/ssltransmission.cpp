@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
+#include <QFileInfo>
+
 #include "ssltransmission.h"
 
 SSLTransmissionServerConnectionFactory::SSLTransmissionServerConnectionFactory(QObject *parent)
@@ -17,21 +19,21 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
       new SSLTransmissionServerConnection(socketDescriptor, certPath, keyPath, this, parent);
 
    // signal transmission
-   connect(connection, SIGNAL(transmit(QByteArray)),
-           this, SLOT(receive(QByteArray)), Qt::QueuedConnection);
+   connect(connection, SIGNAL(transmit(QByteArray, qint64)),
+           this, SLOT(receive(QByteArray, qint64)), Qt::QueuedConnection);
 
    return(connection);
 }
 
 // receiver of transmitted data blocks
-void SSLTransmissionServerConnectionFactory::receive(QByteArray data)
+void SSLTransmissionServerConnectionFactory::receive(QByteArray data, qint64 time)
 {
-   emit transmitted(data);
-   consume(data);
+   emit transmitted(data, time);
+   consume(data, time);
 }
 
 // consumer of transmitted data blocks
-void SSLTransmissionServerConnectionFactory::consume(QByteArray data)
+void SSLTransmissionServerConnectionFactory::consume(QByteArray data, qint64 time)
 {}
 
 SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescriptor,
@@ -56,6 +58,7 @@ void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
       // read data block size etc.
       in >> header_.size;
       in >> header_.compressed;
+      in >> header_.time;
 
       transmitState_ = false;
    }
@@ -71,7 +74,7 @@ void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
       data_ = qUncompress(data_);
 
    // signal transmission of data block
-   emit transmit(data_);
+   emit transmit(data_, header_.time);
 
    // disconnect the ssl socket
    socket->disconnect();
@@ -88,9 +91,10 @@ void SSLTransmissionClient::enableCompression(bool compress)
 }
 
 // start transmission
-bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QByteArray &data, bool verify)
+bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QByteArray &data, bool verify, QDateTime time)
 {
    data_ = data;
+   time_ = time;
 
    // compress upon request
    if (compress_)
@@ -107,13 +111,14 @@ bool SSLTransmissionClient::transmitFile(QString hostName, quint16 port, QString
 {
    QByteArray data;
    QFile file(fileName);
+   QFileInfo info(fileName);
 
    if (!file.open(QIODevice::ReadOnly))
       return(false);
 
    data = file.readAll();
 
-   return(transmit(hostName, port, data, verify));
+   return(transmit(hostName, port, data, verify, info.lastModified().toUTC()));
 }
 
 // start writing through an established connection
@@ -127,11 +132,13 @@ void SSLTransmissionClient::startWriting(QSslSocket *socket)
    // assemble header to contain data block size etc.
    header.size = data_.size();
    header.compressed = compressed_;
+   header.time = time_.toMSecsSinceEpoch();
 
    // assemble header block
    out.setVersion(QDataStream::Qt_4_0);
    out << header.size;
    out << header.compressed;
+   out << header.time;
 
    // write header block to the ssl socket
    socket->write(block);

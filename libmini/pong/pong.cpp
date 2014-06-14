@@ -75,8 +75,8 @@ int main(int argc, char *argv[])
          SSLServer server(&factory);
 
          // connect server gui with connection factory transmitted signal
-         QObject::connect(&factory, SIGNAL(transmitted(QByteArray)),
-                          &main, SLOT(transmitted(QByteArray)));
+         QObject::connect(&factory, SIGNAL(transmitted(QByteArray, qint64)),
+                          &main, SLOT(transmitted(QByteArray, qint64)));
 
          // connect server gui with connection factory report signal
          QObject::connect(&factory, SIGNAL(report(QString)),
