@@ -2,8 +2,6 @@
 
 #include "ssltransmission.h"
 
-static const qint64 maxBlockSize = 0x10000;
-
 SSLTransmissionServerConnectionFactory::SSLTransmissionServerConnectionFactory(QObject *parent)
    : SSLServerConnectionFactory(parent)
 {
@@ -47,8 +45,6 @@ SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescr
 // start reading from an established connection
 void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 {
-   qint64 blockSize;
-
    QDataStream in(socket);
    in.setVersion(QDataStream::Qt_4_0);
 
@@ -64,27 +60,15 @@ void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
       transmitState_ = false;
    }
 
-   // determine transmission block size
-   blockSize = header_.size-data_.size();
-   if (blockSize > maxBlockSize) blockSize = maxBlockSize;
-
    // read data block from the ssl socket
-   data_.append(socket->read(blockSize));
-
-   std::cout << "transferred:" << blockSize << std::endl; //!!
-
-   // check if entire data block has arrived
-   if (data_.size() < header_.size) return;
+   QByteArray data = socket->read(header_.size);
 
    // uncompress data block
    if (header_.compressed)
-      data_ = qUncompress(data_);
+      data = qUncompress(data);
 
    // signal transmission of data block
-   emit transmit(data_);
-
-   // disconnect socket
-   socket->disconnect();
+   emit transmit(data);
 }
 
 SSLTransmissionClient::SSLTransmissionClient(QObject *parent)
@@ -129,9 +113,6 @@ bool SSLTransmissionClient::transmitFile(QString hostName, quint16 port, QString
 // start writing through an established connection
 void SSLTransmissionClient::startWriting(QSslSocket *socket)
 {
-   qint64 blockSize;
-   qint64 transferred;
-
    struct SSLTransmissionHeader header;
 
    QByteArray block;
@@ -149,19 +130,8 @@ void SSLTransmissionClient::startWriting(QSslSocket *socket)
    // write header block to the ssl socket
    socket->write(block);
 
-   // transmission loop
-   transferred=0;
-   while (transferred < data_.size())
-   {
-      // determine transmission block size
-      blockSize = data_.size()-transferred;
-      if (blockSize > maxBlockSize) blockSize = maxBlockSize;
-
-      // write data block to the ssl socket
-      transferred += socket->write(data_.constData()+transferred, blockSize);
-
-      std::cout << "transferred:" << blockSize << std::endl; //!!
-   }
+   // write data block to the ssl socket
+   socket->write(data_);
 
    // clear data block
    data_.clear();

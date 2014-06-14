@@ -122,6 +122,7 @@ void SSLServerConnection::handshake()
 // start reading after connection is established
 void SSLServerConnection::startReading()
 {
+   // start reading from the ssl socket
    startReading(socket_);
 }
 
@@ -142,6 +143,11 @@ SSLTestServerConnection::SSLTestServerConnection(int socketDescriptor,
 // start reading from an established connection
 void SSLTestServerConnection::startReading(QSslSocket *socket)
 {
+   static const QByteArray test("test");
+
+   // check if entire block has arrived
+   if (socket->bytesAvailable() < test.size()) return;
+
    // read data from the ssl socket
    QByteArray data = socket->readAll();
 
@@ -149,7 +155,7 @@ void SSLTestServerConnection::startReading(QSslSocket *socket)
    std::cout << "incoming: \"" << QString(data).toStdString() << "\"" << std::endl;
 
    // check wether or not test was successful
-   if (QString(data) != "test") throw e_;
+   if (data != test) throw e_;
 }
 
 // ssl client ctor
@@ -179,7 +185,7 @@ bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
       connect(&socket_, SIGNAL(error(QAbstractSocket::SocketError)),
               this, SLOT(error(QAbstractSocket::SocketError)));
 
-      while(!socket_.waitForDisconnected());
+      socket_.waitForDisconnected(-1); // no time-out
    }
    catch (SSLError &e)
    {
@@ -214,11 +220,11 @@ SSLTestClient::SSLTestClient(QObject *parent)
 // start writing through an established connection
 void SSLTestClient::startWriting(QSslSocket *socket)
 {
-   static const char data[] = "test";
+   static const QByteArray test("test");
 
    // test output
-   std::cout << "outgoing: \"" << data << "\"" << std::endl;
+   std::cout << "outgoing: \"" << QString(test).toStdString() << "\"" << std::endl;
 
    // write data to the ssl socket
-   socket->write(data, strlen(data));
+   socket->write(test);
 }
