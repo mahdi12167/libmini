@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
       else usage(argv[0]);
 
    // server mode
-   if (server && arg.size()==0)
+   if (arg.size()==0)
    {
       try
       {
