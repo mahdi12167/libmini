@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
+#include <QFile>
+
 #include "sslsocket.h"
 
 // ssl server ctor
@@ -15,10 +17,22 @@ SSLServer::~SSLServer()
 {}
 
 // start listening
-void SSLServer::start(QString certPath, QString keyPath, quint16 port)
+void SSLServer::start(QString certPath, QString keyPath, quint16 port, QString altPath)
 {
    certPath_ = certPath;
    keyPath_ = keyPath;
+
+   if (!QFile(certPath_).exists())
+   {
+      certPath_ = altPath+"/"+certPath;
+      if (!QFile(certPath_).exists()) throw e_;
+   }
+
+   if (!QFile(keyPath_).exists())
+   {
+      keyPath_ = altPath+"/"+keyPath;
+      if (!QFile(keyPath_).exists()) throw e_;
+   }
 
    // listen on port
    if (!listen(QHostAddress::Any, port)) throw e_;

@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
                           &main, SLOT(report(QString)));
 
          // start server on port 10000
-         server.start("cert.pem", "key.pem", 10000);
+         server.start("cert.pem", "key.pem", 10000, "/usr/share/pong");
 
          return(app.exec());
       }
