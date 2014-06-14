@@ -137,7 +137,6 @@ void SSLTestServerConnection::startReading(QSslSocket *socket)
 // ssl client ctor
 SSLClient::SSLClient(QObject *parent)
    : QObject(parent),
-     compress_(false),
      e_("client")
 {
    // start writing after connection is encrypted
@@ -148,12 +147,6 @@ SSLClient::SSLClient(QObject *parent)
 // ssl client dtor
 SSLClient::~SSLClient()
 {}
-
-// enable compression
-void SSLClient::enableCompression(bool compress)
-{
-   compress_ = compress;
-}
 
 // start transmission
 bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
@@ -175,7 +168,7 @@ bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
 void SSLClient::connectionEstablished()
 {
    // start writing to the ssl socket
-   startWriting(&socket_, compress_);
+   startWriting(&socket_);
 
    // disconnect the ssl socket
    socket_.disconnectFromHost();
@@ -194,7 +187,7 @@ SSLTestClient::SSLTestClient(QObject *parent)
 {}
 
 // start writing through an established connection
-void SSLTestClient::startWriting(QSslSocket *socket, bool compress)
+void SSLTestClient::startWriting(QSslSocket *socket)
 {
    static const char data[] = "test";
 

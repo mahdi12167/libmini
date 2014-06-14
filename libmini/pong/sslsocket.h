@@ -162,21 +162,17 @@ public:
    SSLClient(QObject *parent = NULL);
    virtual ~SSLClient();
 
-   // enable compression
-   void enableCompression(bool compress);
-
    // start transmission
    bool transmit(QString hostName, quint16 port, bool verify=true);
 
 protected:
 
    // start writing through an established connection
-   virtual void startWriting(QSslSocket *socket, bool compress=false) = 0;
+   virtual void startWriting(QSslSocket *socket) = 0;
 
 private:
 
    QSslSocket socket_;
-   bool compress_;
 
 protected:
 
@@ -203,7 +199,7 @@ public:
 protected:
 
    // start writing through an established connection
-   virtual void startWriting(QSslSocket *socket, bool compress=false);
+   virtual void startWriting(QSslSocket *socket);
 };
 
 #endif

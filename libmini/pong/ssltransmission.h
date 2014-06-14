@@ -62,7 +62,7 @@ protected:
    // start reading from an established connection
    virtual void startReading(QSslSocket *socket);
 
-   bool state_;
+   bool transmitState_;
    struct SSLTransmissionHeader header_;
 
 signals:
@@ -80,6 +80,9 @@ public:
 
    SSLTransmissionClient(QObject *parent = NULL);
 
+   // enable compression
+   void enableCompression(bool compress);
+
    // start transmission
    bool transmit(QString hostName, quint16 port, QByteArray &data, bool verify=true);
    bool transmitFile(QString hostName, quint16 port, QString fileName, bool verify=true);
@@ -87,9 +90,11 @@ public:
 protected:
 
    // start writing through an established connection
-   virtual void startWriting(QSslSocket *socket, bool compress=false);
+   virtual void startWriting(QSslSocket *socket);
 
+   bool compress_;
    QByteArray data_;
+   bool compressed_;
 
 public slots:
 
