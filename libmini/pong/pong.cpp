@@ -74,9 +74,13 @@ int main(int argc, char *argv[])
          SSLTransmissionServerConnectionFactory factory;
          SSLServer server(&factory);
 
-         // connect server gui with connection factory
+         // connect server gui with connection factory transmitted signal
          QObject::connect(&factory, SIGNAL(transmitted(QByteArray)),
                           &main, SLOT(transmitted(QByteArray)));
+
+         // connect server gui with connection factory report signal
+         QObject::connect(&factory, SIGNAL(report(QString)),
+                          &main, SLOT(report(QString)));
 
          // start server on port 10000
          server.start("cert.pem", "key.pem", 10000);
@@ -118,7 +122,9 @@ int main(int argc, char *argv[])
       try
       {
          SSLTransmissionClient client;
-         client.transmitFile(arg[0], 10000, arg[1], false);
+
+         if (!client.transmitFile(arg[0], 10000, arg[1], false))
+            return(1);
       }
       catch (SSLError &e)
       {

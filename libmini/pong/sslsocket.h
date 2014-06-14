@@ -98,6 +98,11 @@ protected slots:
 
    // catch socket errors
    void error(QAbstractSocket::SocketError socketError);
+
+signals:
+
+   // report errors
+   void report(QString);
 };
 
 // ssl test server connection class
@@ -136,6 +141,16 @@ public:
 protected:
 
    SSLError e_;
+
+public slots:
+
+   // receive error report
+   void receiveReport(QString);
+
+signals:
+
+   // report errors
+   void report(QString);
 };
 
 // ssl test server connection factory class

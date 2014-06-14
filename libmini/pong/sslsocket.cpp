@@ -58,6 +58,12 @@ SSLServerConnection *SSLTestServerConnectionFactory::create(int socketDescriptor
    return(new SSLTestServerConnection(socketDescriptor, certPath, keyPath, this, parent));
 }
 
+// receive error report
+void SSLServerConnectionFactory::receiveReport(QString error)
+{
+   emit report(error);
+}
+
 // ssl server connection ctor
 SSLServerConnection::SSLServerConnection(int socketDescriptor,
                                          QString certPath, QString keyPath,
@@ -68,24 +74,37 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
 {
    // create new ssl socket for each incoming connection
    socket_ = new QSslSocket(this);
-   if (!socket_->setSocketDescriptor(socketDescriptor)) throw e_;
+   if (socket_->setSocketDescriptor(socketDescriptor))
+   {
+      // catch socket errors
+      connect(socket_, SIGNAL(error(QAbstractSocket::SocketError)),
+              this, SLOT(error(QAbstractSocket::SocketError)));
 
-   // catch socket errors
-   connect(socket_, SIGNAL(error(QAbstractSocket::SocketError)),
-           this, SLOT(error(QAbstractSocket::SocketError)));
+      // connect error report signal
+      connect(this, SIGNAL(report(QString)),
+              factory_, SLOT(receiveReport(QString)));
 
-   // configure ssl socket
-   socket_->setProtocol(QSsl::TlsV1);
-   socket_->setLocalCertificate(certPath);
-   socket_->setPrivateKey(keyPath);
+      // configure ssl socket
+      socket_->setProtocol(QSsl::TlsV1);
+      socket_->setLocalCertificate(certPath);
+      socket_->setPrivateKey(keyPath);
 
-   // start reading from an established connection
-   connect(socket_, SIGNAL(readyRead()),
-           this, SLOT(startReading()));
+      // start reading from an established connection
+      connect(socket_, SIGNAL(readyRead()),
+              this, SLOT(startReading()));
 
-   // self-termination after socket has disconnected
-   connect(socket_, SIGNAL(disconnected()),
-           this, SLOT(deleteLater()));
+      // self-termination after socket has disconnected
+      connect(socket_, SIGNAL(disconnected()),
+              this, SLOT(deleteLater()));
+   }
+   else
+   {
+      // self-termination after socket has disappeared
+      connect(socket_, SIGNAL(destroyed()),
+              this, SLOT(deleteLater()));
+
+      delete socket_;
+   }
 }
 
 // ssl server connection dtor
@@ -109,8 +128,7 @@ void SSLServerConnection::startReading()
 // catch socket errors
 void SSLServerConnection::error(QAbstractSocket::SocketError socketError)
 {
-   SSLError e(socket_->errorString().toStdString());
-   throw e;
+   emit report(socket_->errorString());
 }
 
 // ssl test server connection ctor
@@ -151,15 +169,22 @@ SSLClient::~SSLClient()
 // start transmission
 bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
 {
-   socket_.setProtocol(QSsl::TlsV1);
-   if (!verify) socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
-   socket_.connectToHostEncrypted(hostName, port);
+   try
+   {
+      socket_.setProtocol(QSsl::TlsV1);
+      if (!verify) socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
+      socket_.connectToHostEncrypted(hostName, port);
 
-   // catch socket errors
-   connect(&socket_, SIGNAL(error(QAbstractSocket::SocketError)),
-           this, SLOT(error(QAbstractSocket::SocketError)));
+      // catch socket errors
+      connect(&socket_, SIGNAL(error(QAbstractSocket::SocketError)),
+              this, SLOT(error(QAbstractSocket::SocketError)));
 
-   while(!socket_.waitForDisconnected());
+      while(!socket_.waitForDisconnected());
+   }
+   catch (SSLError &e)
+   {
+      return(false);
+   }
 
    return(true);
 }

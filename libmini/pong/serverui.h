@@ -28,6 +28,7 @@ protected:
 public slots:
 
    void transmitted(QByteArray);
+   void report(QString);
 };
 
 #endif
