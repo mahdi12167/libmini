@@ -129,7 +129,6 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
 SSLServerConnection::~SSLServerConnection()
 {
    delete socket_;
-   emit finished();
 }
 
 // start ssl handshake

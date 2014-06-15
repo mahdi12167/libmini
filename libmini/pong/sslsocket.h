@@ -101,9 +101,6 @@ protected slots:
 
 signals:
 
-   // finished connection
-   void finished();
-
    // report errors
    void report(QString);
 };
