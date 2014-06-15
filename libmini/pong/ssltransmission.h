@@ -25,28 +25,28 @@ class SSLTransmission
 {
 public:
 
-   SSLTransmission(const QDateTime time = QDateTime::currentDateTimeUtc())
-      : data_(), tid_(), uid_(), transmitState_(0)
+   SSLTransmission(const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc())
+      : data_(), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0)
    {
       header_.size = 0;
       header_.compressed = false;
       header_.time = time.toUTC().toMSecsSinceEpoch();
-      header_.tid_size = 0;
-      header_.uid_size = 0;
+      header_.tid_size = tid_.size();
+      header_.uid_size = uid_.size();
    }
 
-   SSLTransmission(const QByteArray &data, const QDateTime time = QDateTime::currentDateTimeUtc())
-      : data_(data), tid_(), uid_(), transmitState_(0)
+   SSLTransmission(const QByteArray &data, const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc())
+      : data_(data), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0)
    {
       header_.size = data_.size();
       header_.compressed = false;
       header_.time = time.toUTC().toMSecsSinceEpoch();
-      header_.tid_size = 0;
-      header_.uid_size = 0;
+      header_.tid_size = tid_.size();
+      header_.uid_size = uid_.size();
    }
 
-   SSLTransmission(QFile &file)
-      : data_(file.readAll()), tid_(file.fileName().toAscii()), uid_(), transmitState_(0)
+   SSLTransmission(QFile &file, const QString uid="")
+      : data_(file.readAll()), tid_(file.fileName().toAscii()), uid_(uid.toAscii()), transmitState_(0)
    {
       QFileInfo fileInfo(file);
 
@@ -54,7 +54,7 @@ public:
       header_.compressed = false;
       header_.time = fileInfo.lastModified().toUTC().toMSecsSinceEpoch();
       header_.tid_size = tid_.size();
-      header_.uid_size = 0;
+      header_.uid_size = uid_.size();
    }
 
    ~SSLTransmission()
@@ -78,6 +78,16 @@ public:
       t.setMSecsSinceEpoch(header_.time);
 
       return(t.toUTC());
+   }
+
+   QString getTID()
+   {
+      return(tid_);
+   }
+
+   QString getUID()
+   {
+      return(uid_);
    }
 
    void append(const QByteArray &data)
