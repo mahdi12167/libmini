@@ -26,7 +26,8 @@ protected:
    QLabel *counterLabel_;
 
    QLabel *lastLabel_;
-   QLabel *modifiedLabel_;
+   QLabel *timeLabel_;
+   QLabel *nameLabel_;
 
 public slots:
 

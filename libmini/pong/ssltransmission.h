@@ -177,49 +177,47 @@ public:
 
          transmitState_++;
       }
-      else
+
+      if (transmitState_ == 1)
       {
-         if (transmitState_ == 1)
+         if (header_.tid_size > 0)
          {
-            if (header_.tid_size > 0)
-            {
-               // read tid block from the ssl socket
-               tid_.append(socket->read(header_.tid_size-tid_.size()));
+            // read tid block from the ssl socket
+            tid_.append(socket->read(header_.tid_size-tid_.size()));
 
-               // check if entire tid block has arrived
-               if (tid_.size() < header_.tid_size) return(false);
-            }
-
-            transmitState_++;
+            // check if entire tid block has arrived
+            if (tid_.size() < header_.tid_size) return(false);
          }
 
-         if (transmitState_ == 2)
+         transmitState_++;
+      }
+
+      if (transmitState_ == 2)
+      {
+         if (header_.uid_size > 0)
          {
-            if (header_.uid_size > 0)
-            {
-               // read uid block from the ssl socket
-               uid_.append(socket->read(header_.uid_size-uid_.size()));
+            // read uid block from the ssl socket
+            uid_.append(socket->read(header_.uid_size-uid_.size()));
 
-               // check if entire uid block has arrived
-               if (uid_.size() < header_.uid_size) return(false);
-            }
-
-            transmitState_++;
+            // check if entire uid block has arrived
+            if (uid_.size() < header_.uid_size) return(false);
          }
 
-         if (transmitState_ == 3)
+         transmitState_++;
+      }
+
+      if (transmitState_ == 3)
+      {
+         if (header_.size > 0)
          {
-            if (header_.size > 0)
-            {
-               // read data block from the ssl socket
-               data_.append(socket->read(header_.size-data_.size()));
+            // read data block from the ssl socket
+            data_.append(socket->read(header_.size-data_.size()));
 
-               // check if entire data block has arrived
-               if (data_.size() < header_.size) return(false);
-            }
-
-            transmitState_++;
+            // check if entire data block has arrived
+            if (data_.size() < header_.size) return(false);
          }
+
+         transmitState_++;
       }
 
       return(true);

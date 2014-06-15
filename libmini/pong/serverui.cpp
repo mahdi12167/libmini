@@ -17,8 +17,11 @@ ServerUI::ServerUI(QWidget *parent)
    lastLabel_ = new QLabel("none");
    layout->addWidget(lastLabel_);
 
-   modifiedLabel_ = new QLabel;
-   layout->addWidget(modifiedLabel_);
+   timeLabel_ = new QLabel;
+   layout->addWidget(timeLabel_);
+
+   nameLabel_ = new QLabel;
+   layout->addWidget(nameLabel_);
 
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
@@ -45,7 +48,8 @@ void ServerUI::transmitted(SSLTransmission t)
    lastLabel_->setText("Last request @ "+
                        QDateTime::currentDateTimeUtc().toString()+": "+transmission);
 
-   modifiedLabel_->setText("Time Stamp: "+t.getTime().toString());
+   timeLabel_->setText("Time Stamp: "+t.getTime().toString());
+   nameLabel_->setText("File Name: "+t.getTID());
 }
 
 void ServerUI::report(QString error)
