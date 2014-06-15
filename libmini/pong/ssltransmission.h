@@ -3,6 +3,8 @@
 #ifndef SSLTRANSMISSION_H
 #define SSLTRANSMISSION_H
 
+#include <algorithm>
+
 #include <QFile>
 #include <QFileInfo>
 #include <QThread>
@@ -31,8 +33,8 @@ public:
       header_.size = 0;
       header_.compressed = false;
       header_.time = time.toUTC().toMSecsSinceEpoch();
-      header_.tid_size = tid_.size();
-      header_.uid_size = uid_.size();
+      header_.tid_size = std::min(tid_.size(), 65535);
+      header_.uid_size = std::min(uid_.size(), 65535);
    }
 
    SSLTransmission(const QByteArray &data, const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc())
@@ -41,8 +43,8 @@ public:
       header_.size = data_.size();
       header_.compressed = false;
       header_.time = time.toUTC().toMSecsSinceEpoch();
-      header_.tid_size = tid_.size();
-      header_.uid_size = uid_.size();
+      header_.tid_size = std::min(tid_.size(), 65535);
+      header_.uid_size = std::min(uid_.size(), 65535);
    }
 
    SSLTransmission(QFile &file, const QString uid="")
@@ -53,8 +55,8 @@ public:
       header_.size = data_.size();
       header_.compressed = false;
       header_.time = fileInfo.lastModified().toUTC().toMSecsSinceEpoch();
-      header_.tid_size = tid_.size();
-      header_.uid_size = uid_.size();
+      header_.tid_size = std::min(tid_.size(), 65535);
+      header_.uid_size = std::min(uid_.size(), 65535);
    }
 
    ~SSLTransmission()
@@ -131,6 +133,8 @@ public:
          out << header_.size;
          out << header_.compressed;
          out << header_.time;
+         out << header_.tid_size;
+         out << header_.uid_size;
 
          // write header block to the ssl socket
          socket->write(block);
@@ -159,6 +163,8 @@ public:
          in >> header_.size;
          in >> header_.compressed;
          in >> header_.time;
+         in >> header_.tid_size;
+         in >> header_.uid_size;
 
          transmitState_++;
       }
