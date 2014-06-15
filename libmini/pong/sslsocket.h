@@ -91,11 +91,6 @@ protected:
 
    SSLError e_;
 
-public slots:
-
-   // catch socket disconnection
-   void disconnected();
-
 protected slots:
 
    // start reading after connection is established
@@ -105,6 +100,9 @@ protected slots:
    void error(QAbstractSocket::SocketError socketError);
 
 signals:
+
+   // finished connection
+   void finished();
 
    // report errors
    void report(QString);
