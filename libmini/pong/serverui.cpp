@@ -48,8 +48,8 @@ void ServerUI::transmitted(SSLTransmission t)
    lastLabel_->setText("Last request @ "+
                        QDateTime::currentDateTimeUtc().toString()+": "+transmission);
 
-   timeLabel_->setText("Time Stamp: "+t.getTime().toString());
-   nameLabel_->setText("File Name: "+t.getTID());
+   timeLabel_->setText("Time stamp: "+t.getTime().toString());
+   nameLabel_->setText("Transmission name: "+t.getTID());
 }
 
 void ServerUI::report(QString error)
