@@ -174,6 +174,7 @@ class SSLTransmissionServerConnectionFactory: public SSLServerConnectionFactory
 public:
 
    SSLTransmissionServerConnectionFactory(QObject *parent = NULL);
+   virtual ~SSLTransmissionServerConnectionFactory();
 
    // create a new transmission server connection
    virtual SSLServerConnection *create(int socketDescriptor,
@@ -208,6 +209,8 @@ public:
                                    SSLServerConnectionFactory *factory,
                                    QObject *parent = NULL);
 
+   virtual ~SSLTransmissionServerConnection();
+
 protected:
 
    // start reading from an established connection
@@ -229,6 +232,7 @@ class SSLTransmissionClient: public SSLClient
 public:
 
    SSLTransmissionClient(QObject *parent = NULL);
+   virtual ~SSLTransmissionClient();
 
    // start transmission
    bool transmit(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true);
@@ -255,7 +259,6 @@ class SSLTransmissionThread: public QThread
 public:
 
    SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
-
    virtual ~SSLTransmissionThread();
 
    // non-blocking transmission

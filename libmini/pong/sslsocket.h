@@ -117,6 +117,8 @@ public:
                            SSLServerConnectionFactory *factory,
                            QObject *parent = NULL);
 
+   virtual ~SSLTestServerConnection();
+
 protected:
 
    // start reading from an established connection
@@ -159,6 +161,7 @@ class SSLTestServerConnectionFactory: public SSLServerConnectionFactory
 public:
 
    SSLTestServerConnectionFactory(QObject *parent = NULL);
+   virtual ~SSLTestServerConnectionFactory();
 
    // create a new test server connection
    virtual SSLServerConnection *create(int socketDescriptor,
@@ -210,6 +213,7 @@ class SSLTestClient: public SSLClient
 public:
 
    SSLTestClient(QObject *parent = NULL);
+   virtual ~SSLTestClient();
 
 protected:
 

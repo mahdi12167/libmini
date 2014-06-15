@@ -2,11 +2,16 @@
 
 #include "ssltransmission.h"
 
+// ssl transmission server connection factory ctor
 SSLTransmissionServerConnectionFactory::SSLTransmissionServerConnectionFactory(QObject *parent)
    : SSLServerConnectionFactory(parent)
 {
    qRegisterMetaType<SSLTransmission>("SSLTransmission");
 }
+
+// ssl transmission server connection factory dtor
+SSLTransmissionServerConnectionFactory::~SSLTransmissionServerConnectionFactory()
+{}
 
 // create a new transmission server connection
 SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDescriptor,
@@ -34,11 +39,16 @@ void SSLTransmissionServerConnectionFactory::receive(SSLTransmission t)
 void SSLTransmissionServerConnectionFactory::consume(SSLTransmission &)
 {}
 
+// ssl transmission server connection ctor
 SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescriptor,
                                                                  QString certPath, QString keyPath,
                                                                  SSLServerConnectionFactory *factory,
                                                                  QObject *parent)
    : SSLServerConnection(socketDescriptor, certPath, keyPath, factory, parent)
+{}
+
+// ssl transmission server connection dtor
+SSLTransmissionServerConnection::~SSLTransmissionServerConnection()
 {}
 
 // start reading from an established connection
@@ -54,8 +64,13 @@ void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
    socket->disconnect();
 }
 
+// ssl transmission client ctor
 SSLTransmissionClient::SSLTransmissionClient(QObject *parent)
    : SSLClient(parent)
+{}
+
+// ssl transmission client dtor
+SSLTransmissionClient::~SSLTransmissionClient()
 {}
 
 // start transmission
@@ -95,6 +110,7 @@ void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, 
    SSLTransmissionThread::transmit(hostName, port, fileName, verify, compress);
 }
 
+// ssl transmission thread ctor
 SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
    : QThread(), hostName_(hostName), port_(port), fileName_(fileName), verify_(verify), compress_(compress)
 {
@@ -103,6 +119,7 @@ SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, QSt
            this, SLOT(deleteLater()));
 }
 
+// ssl transmission thread dtor
 SSLTransmissionThread::~SSLTransmissionThread()
 {}
 

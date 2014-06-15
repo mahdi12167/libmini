@@ -59,9 +59,19 @@ SSLServerConnectionFactory::SSLServerConnectionFactory(QObject *parent)
 SSLServerConnectionFactory::~SSLServerConnectionFactory()
 {}
 
+// receive error report
+void SSLServerConnectionFactory::receiveReport(QString error)
+{
+   emit report(error);
+}
+
 // ssl test server connection factory ctor
 SSLTestServerConnectionFactory::SSLTestServerConnectionFactory(QObject *parent)
    : SSLServerConnectionFactory(parent)
+{}
+
+// ssl test server connection factory dtor
+SSLTestServerConnectionFactory::~SSLTestServerConnectionFactory()
 {}
 
 // create a new test server connection
@@ -70,12 +80,6 @@ SSLServerConnection *SSLTestServerConnectionFactory::create(int socketDescriptor
                                                             QObject *parent)
 {
    return(new SSLTestServerConnection(socketDescriptor, certPath, keyPath, this, parent));
-}
-
-// receive error report
-void SSLServerConnectionFactory::receiveReport(QString error)
-{
-   emit report(error);
 }
 
 // ssl server connection ctor
@@ -154,6 +158,10 @@ SSLTestServerConnection::SSLTestServerConnection(int socketDescriptor,
    : SSLServerConnection(socketDescriptor, certPath, keyPath, factory, parent)
 {}
 
+// ssl test server connection dtor
+SSLTestServerConnection::~SSLTestServerConnection()
+{}
+
 // start reading from an established connection
 void SSLTestServerConnection::startReading(QSslSocket *socket)
 {
@@ -229,6 +237,10 @@ void SSLClient::error(QAbstractSocket::SocketError socketError)
 // ssl test client ctor
 SSLTestClient::SSLTestClient(QObject *parent)
    : SSLClient(parent)
+{}
+
+// ssl test client dtor
+SSLTestClient::~SSLTestClient()
 {}
 
 // start writing through an established connection
