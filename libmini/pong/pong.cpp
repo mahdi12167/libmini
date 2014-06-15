@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#define VERSION "v0.1 as of 16.June.2014"
+#define VERSION "v0.2 as of 15.June.2014"
 
 #define LICENSE "licensed under GPL 3.0"
 #define COPYRIGHT "(c) by Stefan Roettger 2014"
@@ -37,6 +37,7 @@ void usage(const char *prog)
    std::cout << " --server: start pong server" << std::endl;
    std::cout << " --client: use drop box gui for transmissions" << std::endl;
    std::cout << " --transmit: transmit file" << std::endl;
+   std::cout << " --compress: transmit compressed files " << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "example server usage:" << std::endl;
    std::cout << " ./pong --server" << std::endl;
@@ -66,12 +67,14 @@ int main(int argc, char *argv[])
    bool server=false;
    bool client=false;
    bool transmit=false;
+   bool compress=false;
 
    // scan option list
    for (int i=0; i<opt.size(); i++)
       if (opt[i]=="server") server=true;
       else if (opt[i]=="client") client=true;
       else if (opt[i]=="transmit") transmit=true;
+      else if (opt[i]=="compress") transmit=compress=true;
       else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
 
@@ -88,8 +91,8 @@ int main(int argc, char *argv[])
          SSLServer server(&factory);
 
          // connect server gui with connection factory transmitted signal
-         QObject::connect(&factory, SIGNAL(transmitted(QByteArray, qint64)),
-                          &main, SLOT(transmitted(QByteArray, qint64)));
+         QObject::connect(&factory, SIGNAL(transmitted(SSLTransmission)),
+                          &main, SLOT(transmitted(SSLTransmission)));
 
          // connect server gui with connection factory report signal
          QObject::connect(&factory, SIGNAL(report(QString)),
@@ -118,8 +121,8 @@ int main(int argc, char *argv[])
          SSLTransmissionClient client;
 
          // connect server gui with client
-         QObject::connect(&main, SIGNAL(transmitFile(QString, quint16, QString, bool, bool)),
-                          &client, SLOT(transmitFileNonBlocking(QString, quint16, QString, bool, bool)));
+         QObject::connect(&main, SIGNAL(transmit(QString, quint16, QString, bool, bool)),
+                          &client, SLOT(transmitNonBlocking(QString, quint16, QString, bool, bool)));
 
          return(app.exec());
       }
@@ -136,7 +139,7 @@ int main(int argc, char *argv[])
       {
          SSLTransmissionClient client;
 
-         if (!client.transmitFile(arg[0], 10000, arg[1], false))
+         if (!client.transmit(arg[0], 10000, arg[1], false, compress))
             return(1);
       }
       catch (SSLError &e)

@@ -37,7 +37,7 @@ public:
 
 signals:
 
-   void transmitFile(QString hostName, quint16 port, QString fileName, bool verify, bool compress);
+   void transmit(QString hostName, quint16 port, QString fileName, bool verify, bool compress);
 };
 
 #endif

@@ -9,6 +9,8 @@
 #include <QtGui>
 #endif
 
+#include "ssltransmission.h"
+
 class ServerUI: public QWidget
 {
    Q_OBJECT
@@ -28,7 +30,7 @@ protected:
 
 public slots:
 
-   void transmitted(QByteArray, qint64);
+   void transmitted(SSLTransmission);
    void report(QString);
 };
 

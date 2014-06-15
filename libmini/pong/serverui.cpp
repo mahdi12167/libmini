@@ -28,27 +28,24 @@ ServerUI::ServerUI(QWidget *parent)
 ServerUI::~ServerUI()
 {}
 
-void ServerUI::transmitted(QByteArray data, qint64 time)
+void ServerUI::transmitted(SSLTransmission t)
 {
    counter_++;
    counterLabel_->setText("Transmissions: "+QString::number(counter_));
 
    QString transmission;
 
-   if (data.size() < 1024)
-      transmission = QString::number(data.size())+" bytes";
-   else if (data.size() < 1024*1024)
-      transmission = QString::number((double)data.size()/1024, 'g', 3)+" kbytes";
+   if (t.getSize() < 1024)
+      transmission = QString::number(t.getSize())+" bytes";
+   else if (t.getSize() < 1024*1024)
+      transmission = QString::number((double)t.getSize()/1024, 'g', 3)+" kbytes";
    else
-      transmission = QString::number((double)data.size()/(1024*1024), 'g', 3)+" mbytes";
+      transmission = QString::number((double)t.getSize()/(1024*1024), 'g', 3)+" mbytes";
 
    lastLabel_->setText("Last request @ "+
                        QDateTime::currentDateTimeUtc().toString()+": "+transmission);
 
-   QDateTime modified;
-
-   modified.setMSecsSinceEpoch(time);
-   modifiedLabel_->setText("Time Stamp: "+modified.toString());
+   modifiedLabel_->setText("Time Stamp: "+t.getTime().toString());
 }
 
 void ServerUI::report(QString error)

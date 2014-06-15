@@ -4,6 +4,7 @@
 #define SSLTRANSMISSION_H
 
 #include <QFile>
+#include <QFileInfo>
 #include <QThread>
 #include <QDateTime>
 
@@ -15,6 +16,152 @@ struct SSLTransmissionHeader
    qint64 size;
    qint8 compressed;
    qint64 time;
+};
+
+// ssl transmission class
+class SSLTransmission
+{
+public:
+
+   SSLTransmission(const QDateTime time = QDateTime::currentDateTimeUtc())
+      : data_(), transmitState_(0)
+   {
+      header_.size = 0;
+      header_.compressed = false;
+      header_.time = time.toUTC().toMSecsSinceEpoch();
+   }
+
+   SSLTransmission(const QByteArray &data, const QDateTime time = QDateTime::currentDateTimeUtc())
+      : data_(data), transmitState_(0)
+   {
+      header_.size = data_.size();
+      header_.compressed = false;
+      header_.time = time.toUTC().toMSecsSinceEpoch();
+   }
+
+   SSLTransmission(QFile &file)
+      : data_(file.readAll()), transmitState_(0)
+   {
+      QFileInfo fileInfo(file);
+
+      header_.size = data_.size();
+      header_.compressed = false;
+      header_.time = fileInfo.lastModified().toUTC().toMSecsSinceEpoch();
+   }
+
+   ~SSLTransmission()
+   {}
+
+   QByteArray getData()
+   {
+      uncompress();
+      return(data_);
+   }
+
+   qint64 getSize()
+   {
+      return(header_.size);
+   }
+
+   QDateTime getTime()
+   {
+      QDateTime t;
+
+      t.setMSecsSinceEpoch(header_.time);
+
+      return(t.toUTC());
+   }
+
+   void append(const QByteArray &data)
+   {
+      if (!header_.compressed)
+      {
+         data_.append(data);
+         header_.size = data_.size();
+      }
+   }
+
+   void compress()
+   {
+      if (!header_.compressed)
+      {
+         data_ = qCompress(data_, 3); // favor speed over compression ratio
+         header_.compressed = true;
+      }
+   }
+
+   void uncompress()
+   {
+      if (header_.compressed)
+      {
+         data_ = qUncompress(data_);
+         header_.compressed = false;
+      }
+   }
+
+   void write(QSslSocket *socket)
+   {
+      if (transmitState_ == 0)
+      {
+         QByteArray block;
+         QDataStream out(&block, QIODevice::WriteOnly);
+
+         // assemble header block
+         out.setVersion(QDataStream::Qt_4_0);
+         out << header_.size;
+         out << header_.compressed;
+         out << header_.time;
+
+         // write header block to the ssl socket
+         socket->write(block);
+
+         // write data block to the ssl socket
+         socket->write(data_);
+
+         // clear data block
+         data_.clear();
+
+         transmitState_++;
+      }
+   }
+
+   bool read(QSslSocket *socket)
+   {
+      QDataStream in(socket);
+      in.setVersion(QDataStream::Qt_4_0);
+
+      if (transmitState_ == 0)
+      {
+         // check if entire header block has arrived
+         if (socket->bytesAvailable() < (int)sizeof(header_)) return(false);
+
+         // read data block size etc.
+         in >> header_.size;
+         in >> header_.compressed;
+         in >> header_.time;
+
+         transmitState_++;
+      }
+      else if (transmitState_ == 1)
+      {
+         // read data block from the ssl socket
+         data_.append(socket->read(header_.size-data_.size()));
+
+         // check if entire data block has arrived
+         if (data_.size() < header_.size) return(false);
+
+         transmitState_++;
+      }
+
+      return(true);
+   }
+
+protected:
+
+   struct SSLTransmissionHeader header_;
+   QByteArray data_;
+
+   int transmitState_;
 };
 
 // ssl transmission server connection factory class
@@ -34,17 +181,17 @@ public:
 protected:
 
    // consumer of transmitted data blocks
-   virtual void consume(QByteArray data, qint64 time);
+   virtual void consume(SSLTransmission &t);
 
 public slots:
 
    // receiver of transmitted data blocks
-   void receive(QByteArray, qint64);
+   void receive(SSLTransmission);
 
 signals:
 
    // signal transmission
-   void transmitted(QByteArray, qint64);
+   void transmitted(SSLTransmission);
 };
 
 // ssl transmission server connection class
@@ -64,14 +211,12 @@ protected:
    // start reading from an established connection
    virtual void startReading(QSslSocket *socket);
 
-   bool transmitState_;
-   struct SSLTransmissionHeader header_;
-   QByteArray data_;
+   SSLTransmission t_;
 
 signals:
 
    // signal transmission of data block
-   void transmit(QByteArray, qint64);
+   void transmit(SSLTransmission);
 };
 
 // ssl transmission client class
@@ -83,28 +228,21 @@ public:
 
    SSLTransmissionClient(QObject *parent = NULL);
 
-   // enable compression
-   void enableCompression(bool compress);
-
    // start transmission
-   bool transmit(QString hostName, quint16 port, QByteArray &data, bool verify=true, QDateTime time=QDateTime::currentDateTimeUtc());
-   bool transmitFile(QString hostName, quint16 port, QString fileName, bool verify=true);
+   bool transmit(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true);
+   bool transmit(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
 
 protected:
 
    // start writing through an established connection
    virtual void startWriting(QSslSocket *socket);
 
-   bool compress_;
-   QByteArray data_;
-   bool compressed_;
-
-   QDateTime time_;
+   SSLTransmission t_;
 
 public slots:
 
    // start non-blocking transmission
-   void transmitFileNonBlocking(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
+   void transmitNonBlocking(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
 };
 
 // ssl transmission thread class
@@ -119,7 +257,7 @@ public:
    virtual ~SSLTransmissionThread();
 
    // non-blocking transmission
-   static void transmitFile(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
+   static void transmit(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
 
 protected:
 

@@ -58,7 +58,7 @@ void ClientUI::dropEvent(QDropEvent *event)
          QUrl qurl = urlList.at(i);
          QString fileName = normalizeFile(qurl.toString());
 
-         emit transmitFile(hostName_, port_, fileName, verify_, compress_);
+         emit transmit(hostName_, port_, fileName, verify_, compress_);
       }
    }
 }

@@ -1,13 +1,11 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#include <QFileInfo>
-
 #include "ssltransmission.h"
 
 SSLTransmissionServerConnectionFactory::SSLTransmissionServerConnectionFactory(QObject *parent)
    : SSLServerConnectionFactory(parent)
 {
-   qRegisterMetaType<QByteArray>("QByteArray");
+   qRegisterMetaType<SSLTransmission>("SSLTransmission");
 }
 
 // create a new transmission server connection
@@ -19,139 +17,82 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
       new SSLTransmissionServerConnection(socketDescriptor, certPath, keyPath, this, parent);
 
    // signal transmission
-   connect(connection, SIGNAL(transmit(QByteArray, qint64)),
-           this, SLOT(receive(QByteArray, qint64)), Qt::QueuedConnection);
+   connect(connection, SIGNAL(transmit(SSLTransmission)),
+           this, SLOT(receive(SSLTransmission)), Qt::QueuedConnection);
 
    return(connection);
 }
 
 // receiver of transmitted data blocks
-void SSLTransmissionServerConnectionFactory::receive(QByteArray data, qint64 time)
+void SSLTransmissionServerConnectionFactory::receive(SSLTransmission t)
 {
-   emit transmitted(data, time);
-   consume(data, time);
+   emit transmitted(t);
+   consume(t);
 }
 
 // consumer of transmitted data blocks
-void SSLTransmissionServerConnectionFactory::consume(QByteArray data, qint64 time)
+void SSLTransmissionServerConnectionFactory::consume(SSLTransmission &)
 {}
 
 SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescriptor,
                                                                  QString certPath, QString keyPath,
                                                                  SSLServerConnectionFactory *factory,
                                                                  QObject *parent)
-   : SSLServerConnection(socketDescriptor, certPath, keyPath, factory, parent),
-     transmitState_(true)
+   : SSLServerConnection(socketDescriptor, certPath, keyPath, factory, parent)
 {}
 
 // start reading from an established connection
 void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 {
-   QDataStream in(socket);
-   in.setVersion(QDataStream::Qt_4_0);
-
-   if (transmitState_)
-   {
-      // check if entire header block has arrived
-      if (socket->bytesAvailable() < (int)sizeof(header_)) return;
-
-      // read data block size etc.
-      in >> header_.size;
-      in >> header_.compressed;
-      in >> header_.time;
-
-      transmitState_ = false;
-   }
-
-   // read data block from the ssl socket
-   data_.append(socket->read(header_.size-data_.size()));
-
-   // check if entire data block has arrived
-   if (data_.size() < header_.size) return;
-
-   // uncompress data block
-   if (header_.compressed)
-      data_ = qUncompress(data_);
+   // read from the ssl socket
+   if (!t_.read(socket)) return;
 
    // signal transmission of data block
-   emit transmit(data_, header_.time);
+   emit transmit(t_);
 
    // disconnect the ssl socket
    socket->disconnect();
 }
 
 SSLTransmissionClient::SSLTransmissionClient(QObject *parent)
-   : SSLClient(parent), compress_(false), compressed_(false)
+   : SSLClient(parent)
 {}
 
-// enable compression
-void SSLTransmissionClient::enableCompression(bool compress)
-{
-   compress_ = compress;
-}
-
 // start transmission
-bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QByteArray &data, bool verify, QDateTime time)
+bool SSLTransmissionClient::transmit(QString hostName, quint16 port, const SSLTransmission &t, bool verify)
 {
-   data_ = data;
-   time_ = time;
-
-   // compress upon request
-   if (compress_)
-      data_ = qCompress(data_, 3); // favor speed over compression ratio
-   compressed_ = compress_;
+   t_ = t;
 
    return(SSLClient::transmit(hostName, port, verify));
 }
 
 // start transmission
-bool SSLTransmissionClient::transmitFile(QString hostName, quint16 port, QString fileName, bool verify)
+bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
 {
-   QByteArray data;
    QFile file(fileName);
-   QFileInfo info(fileName);
 
    if (!file.open(QIODevice::ReadOnly))
       return(false);
 
-   data = file.readAll();
+   SSLTransmission t(file);
 
-   return(transmit(hostName, port, data, verify, info.lastModified().toUTC()));
+   if (compress)
+      t.compress();
+
+   return(transmit(hostName, port, t, verify));
 }
 
 // start writing through an established connection
 void SSLTransmissionClient::startWriting(QSslSocket *socket)
 {
-   struct SSLTransmissionHeader header;
-
-   QByteArray block;
-   QDataStream out(&block, QIODevice::WriteOnly);
-
-   // assemble header to contain data block size etc.
-   header.size = data_.size();
-   header.compressed = compressed_;
-   header.time = time_.toMSecsSinceEpoch();
-
-   // assemble header block
-   out.setVersion(QDataStream::Qt_4_0);
-   out << header.size;
-   out << header.compressed;
-   out << header.time;
-
-   // write header block to the ssl socket
-   socket->write(block);
-
-   // write data block to the ssl socket
-   socket->write(data_);
-
-   // clear data block
-   data_.clear();
+   // write to the ssl socket
+   t_.write(socket);
 }
 
 // start non-blocking transmission
-void SSLTransmissionClient::transmitFileNonBlocking(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
+void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
 {
-   SSLTransmissionThread::transmitFile(hostName, port, fileName, verify, compress);
+   SSLTransmissionThread::transmit(hostName, port, fileName, verify, compress);
 }
 
 SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
@@ -170,12 +111,11 @@ void SSLTransmissionThread::run()
 {
    SSLTransmissionClient client;
 
-   client.enableCompression(compress_);
-   client.transmitFile(hostName_, port_, fileName_, verify_);
+   client.transmit(hostName_, port_, fileName_, verify_, compress_);
 }
 
 // non-blocking transmission
-void SSLTransmissionThread::transmitFile(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
+void SSLTransmissionThread::transmit(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
 {
    SSLTransmissionThread *thread;
 
