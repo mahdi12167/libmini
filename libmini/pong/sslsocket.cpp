@@ -129,6 +129,7 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
 SSLServerConnection::~SSLServerConnection()
 {
    delete socket_;
+   std::cout << "deleted socket" << std::endl; //!!
 }
 
 // start ssl handshake
@@ -141,7 +142,11 @@ void SSLServerConnection::handshake()
 void SSLServerConnection::startReading()
 {
    // start reading from the ssl socket
-   startReading(socket_);
+   if (startReading(socket_))
+   {
+      // disconnect the ssl socket
+      socket_->disconnect();
+   }
 }
 
 // catch socket errors
@@ -163,12 +168,12 @@ SSLTestServerConnection::~SSLTestServerConnection()
 {}
 
 // start reading from an established connection
-void SSLTestServerConnection::startReading(QSslSocket *socket)
+bool SSLTestServerConnection::startReading(QSslSocket *socket)
 {
    static const QByteArray test("test");
 
    // check if entire block has arrived
-   if (socket->bytesAvailable() < test.size()) return;
+   if (socket->bytesAvailable() < test.size()) return(false);
 
    // read data from the ssl socket
    QByteArray data = socket->readAll();
@@ -178,6 +183,8 @@ void SSLTestServerConnection::startReading(QSslSocket *socket)
 
    // check wether or not test was successful
    if (data != test) throw e_;
+
+   return(true);
 }
 
 // ssl client ctor

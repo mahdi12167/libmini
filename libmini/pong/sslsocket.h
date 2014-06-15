@@ -79,7 +79,7 @@ public:
 protected:
 
    // start reading from an established connection
-   virtual void startReading(QSslSocket *socket) = 0;
+   virtual bool startReading(QSslSocket *socket) = 0;
 
    SSLServerConnectionFactory *factory_;
 
@@ -122,7 +122,7 @@ public:
 protected:
 
    // start reading from an established connection
-   virtual void startReading(QSslSocket *socket);
+   virtual bool startReading(QSslSocket *socket);
 };
 
 // ssl server connection factory base class

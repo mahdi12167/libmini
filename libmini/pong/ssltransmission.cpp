@@ -49,19 +49,20 @@ SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescr
 
 // ssl transmission server connection dtor
 SSLTransmissionServerConnection::~SSLTransmissionServerConnection()
-{}
+{
+   std::cout << "deleted" << std::endl; //!!
+}
 
 // start reading from an established connection
-void SSLTransmissionServerConnection::startReading(QSslSocket *socket)
+bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 {
    // read from the ssl socket
-   if (!t_.read(socket)) return;
+   if (!t_.read(socket)) return(false);
 
    // signal transmission of data block
    emit transmit(t_);
 
-   // disconnect the ssl socket
-   socket->disconnect();
+   return(true);
 }
 
 // ssl transmission client ctor

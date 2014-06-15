@@ -214,7 +214,7 @@ public:
 protected:
 
    // start reading from an established connection
-   virtual void startReading(QSslSocket *socket);
+   virtual bool startReading(QSslSocket *socket);
 
    SSLTransmission t_;
 
