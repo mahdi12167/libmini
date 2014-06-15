@@ -13,9 +13,11 @@
 // ssl transmission header structure
 struct SSLTransmissionHeader
 {
-   qint64 size;
-   qint8 compressed;
-   qint64 time;
+   qint64 size; // size of data block
+   qint8 compressed; // is the data block compressed?
+   qint64 time; // time stamp of data block in epoch respresentation
+   quint16 tid_size; // size of transmission id block
+   quint16 uid_size; // size of user id block
 };
 
 // ssl transmission class
@@ -24,29 +26,35 @@ class SSLTransmission
 public:
 
    SSLTransmission(const QDateTime time = QDateTime::currentDateTimeUtc())
-      : data_(), transmitState_(0)
+      : data_(), tid_(), uid_(), transmitState_(0)
    {
       header_.size = 0;
       header_.compressed = false;
       header_.time = time.toUTC().toMSecsSinceEpoch();
+      header_.tid_size = 0;
+      header_.uid_size = 0;
    }
 
    SSLTransmission(const QByteArray &data, const QDateTime time = QDateTime::currentDateTimeUtc())
-      : data_(data), transmitState_(0)
+      : data_(data), tid_(), uid_(), transmitState_(0)
    {
       header_.size = data_.size();
       header_.compressed = false;
       header_.time = time.toUTC().toMSecsSinceEpoch();
+      header_.tid_size = 0;
+      header_.uid_size = 0;
    }
 
    SSLTransmission(QFile &file)
-      : data_(file.readAll()), transmitState_(0)
+      : data_(file.readAll()), tid_(file.fileName().toAscii()), uid_(), transmitState_(0)
    {
       QFileInfo fileInfo(file);
 
       header_.size = data_.size();
       header_.compressed = false;
       header_.time = fileInfo.lastModified().toUTC().toMSecsSinceEpoch();
+      header_.tid_size = tid_.size();
+      header_.uid_size = 0;
    }
 
    ~SSLTransmission()
@@ -160,8 +168,10 @@ public:
 
 protected:
 
-   struct SSLTransmissionHeader header_;
-   QByteArray data_;
+   struct SSLTransmissionHeader header_; // transmission header
+   QByteArray data_; // transmission data block
+   QByteArray tid_; // transmission id
+   QByteArray uid_; // user id
 
    int transmitState_;
 };
