@@ -37,7 +37,7 @@ void usage(const char *prog)
    std::cout << " --server: start pong server" << std::endl;
    std::cout << " --client: use drop box gui for transmissions" << std::endl;
    std::cout << " --transmit: transmit file" << std::endl;
-   std::cout << " --compress: transmit compressed files " << std::endl;
+   std::cout << " --compress: compress files" << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "example server usage:" << std::endl;
    std::cout << " ./pong --server" << std::endl;
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
       if (opt[i]=="server") server=true;
       else if (opt[i]=="client") client=true;
       else if (opt[i]=="transmit") transmit=true;
-      else if (opt[i]=="compress") transmit=compress=true;
+      else if (opt[i]=="compress") compress=true;
       else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
 
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
    {
       try
       {
-         ClientUI main(arg[0], 10000, false);
+         ClientUI main(arg[0], 10000, false, compress);
 
          main.show();
 
