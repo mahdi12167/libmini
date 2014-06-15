@@ -148,16 +148,13 @@ void SSLServerConnection::startReading()
    if (startReading(socket_))
    {
       // disconnect the ssl socket
-      socket_->disconnect();
-      std::cout << "disconnected" << std::endl; //!!
+      socket_->disconnectFromHost();
    }
 }
 
 // catch socket disconnection
 void SSLServerConnection::disconnected()
-{
-   std::cout << "disconnected signal" << std::endl; //!!
-}
+{}
 
 // catch socket errors
 void SSLServerConnection::error(QAbstractSocket::SocketError socketError)
