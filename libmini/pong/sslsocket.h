@@ -91,6 +91,11 @@ protected:
 
    SSLError e_;
 
+public slots:
+
+   // catch socket disconnection
+   void disconnected();
+
 protected slots:
 
    // start reading after connection is established

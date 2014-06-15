@@ -111,6 +111,10 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
       connect(socket_, SIGNAL(readyRead()),
               this, SLOT(startReading()));
 
+      // catch disconnection of socket
+      connect(socket_, SIGNAL(disconnected()),
+              this, SLOT(disconnected()));
+
       // self-termination after socket has disconnected
       connect(socket_, SIGNAL(disconnected()),
               this, SLOT(deleteLater()));
@@ -129,7 +133,6 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
 SSLServerConnection::~SSLServerConnection()
 {
    delete socket_;
-   std::cout << "deleted socket" << std::endl; //!!
 }
 
 // start ssl handshake
@@ -146,7 +149,14 @@ void SSLServerConnection::startReading()
    {
       // disconnect the ssl socket
       socket_->disconnect();
+      std::cout << "disconnected" << std::endl; //!!
    }
+}
+
+// catch socket disconnection
+void SSLServerConnection::disconnected()
+{
+   std::cout << "disconnected signal" << std::endl; //!!
 }
 
 // catch socket errors

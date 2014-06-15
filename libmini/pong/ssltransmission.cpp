@@ -49,9 +49,7 @@ SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescr
 
 // ssl transmission server connection dtor
 SSLTransmissionServerConnection::~SSLTransmissionServerConnection()
-{
-   std::cout << "deleted" << std::endl; //!!
-}
+{}
 
 // start reading from an established connection
 bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
