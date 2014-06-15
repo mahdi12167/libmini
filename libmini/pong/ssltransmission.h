@@ -86,6 +86,7 @@ public:
       if (!header_.compressed)
       {
          data_ = qCompress(data_, 3); // favor speed over compression ratio
+         header_.size = data_.size();
          header_.compressed = true;
       }
    }
@@ -95,6 +96,7 @@ public:
       if (header_.compressed)
       {
          data_ = qUncompress(data_);
+         header_.size = data_.size();
          header_.compressed = false;
       }
    }
