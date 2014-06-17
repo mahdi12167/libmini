@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
    bool server=false;
    bool client=false;
    bool transmit=false;
+   int port=10000;
    bool compress=false;
 
    // scan option list
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
       if (opt[i]=="server") server=true;
       else if (opt[i]=="client") client=true;
       else if (opt[i]=="transmit") transmit=true;
+      else if (opt[i].startsWith("port=")) port=(int)get_opt(opt[i]);
       else if (opt[i]=="compress") compress=true;
       else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
@@ -105,8 +107,8 @@ int main(int argc, char *argv[])
          QObject::connect(&factory, SIGNAL(report(QString)),
                           &main, SLOT(report(QString)));
 
-         // start server on port 10000
-         server.start("cert.pem", "key.pem", 10000, "/usr/share/pong");
+         // start server on specified port (default 10000)
+         server.start("cert.pem", "key.pem", port, "/usr/share/pong");
 
          return(app.exec());
       }
@@ -121,7 +123,7 @@ int main(int argc, char *argv[])
    {
       try
       {
-         ClientUI main(arg[0], 10000, false, compress);
+         ClientUI main(arg[0], port, false, compress);
 
          main.show();
 
@@ -146,7 +148,7 @@ int main(int argc, char *argv[])
       {
          SSLTransmissionClient client;
 
-         if (!client.transmit(arg[0], 10000, arg[1], false, compress))
+         if (!client.transmit(arg[0], port, arg[1], false, compress))
             return(1);
       }
       catch (SSLError &e)
