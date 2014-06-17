@@ -13,6 +13,7 @@
 #endif
 
 #include "ssltransmission.h"
+#include "ssldatabase.h"
 
 #include "serverui.h"
 #include "clientui.h"
@@ -37,6 +38,7 @@ void usage(const char *prog)
    std::cout << " --server: start pong server" << std::endl;
    std::cout << " --client: use drop box gui for transmissions" << std::endl;
    std::cout << " --transmit: transmit file" << std::endl;
+   std::cout << " --port=n: use tcp port n" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "example server usage:" << std::endl;
@@ -89,12 +91,17 @@ int main(int argc, char *argv[])
 
          SSLTransmissionServerConnectionFactory factory;
          SSLServer server(&factory);
+         SSLTransmissionDatabase db;
 
-         // connect server gui with connection factory transmitted signal
+         // connect server gui with the connection factory transmitted signal
          QObject::connect(&factory, SIGNAL(transmitted(SSLTransmission)),
                           &main, SLOT(transmitted(SSLTransmission)));
 
-         // connect server gui with connection factory report signal
+         // connect transmission database with the connection factory transmitted signal
+         QObject::connect(&factory, SIGNAL(transmitted(SSLTransmission)),
+                          &db, SLOT(write(SSLTransmission)));
+
+         // connect server gui with the connection factory report signal
          QObject::connect(&factory, SIGNAL(report(QString)),
                           &main, SLOT(report(QString)));
 
