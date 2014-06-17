@@ -71,6 +71,7 @@ SET(LIB_HDRS
    # module headers
    sslsocket.h
    ssltransmission.h
+   ssldatabase.h
    serverui.h
    clientui.h
    )
@@ -79,6 +80,7 @@ SET(LIB_SRCS
    # module sources
    sslsocket.cpp
    ssltransmission.cpp
+   ssldatabase.cpp
    serverui.cpp
    clientui.cpp
    )

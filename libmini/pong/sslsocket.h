@@ -7,6 +7,7 @@
 #include <exception>
 #include <iostream>
 
+#include <QObject>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QSslSocket>
 

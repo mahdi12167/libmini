@@ -32,12 +32,7 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
 void SSLTransmissionServerConnectionFactory::receive(SSLTransmission t)
 {
    emit transmitted(t);
-   consume(t);
 }
-
-// consumer of transmitted data blocks
-void SSLTransmissionServerConnectionFactory::consume(SSLTransmission &)
-{}
 
 // ssl transmission server connection ctor
 SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescriptor,

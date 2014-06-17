@@ -62,6 +62,11 @@ public:
    ~SSLTransmission()
    {}
 
+   bool empty()
+   {
+      return(header_.size == 0);
+   }
+
    QByteArray getData()
    {
       uncompress();
@@ -247,11 +252,6 @@ public:
    virtual SSLServerConnection *create(int socketDescriptor,
                                        QString certPath, QString keyPath,
                                        QObject *parent);
-
-protected:
-
-   // consumer of transmitted data blocks
-   virtual void consume(SSLTransmission &t);
 
 public slots:
 
