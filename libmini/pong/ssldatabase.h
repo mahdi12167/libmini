@@ -3,6 +3,8 @@
 #ifndef SSLDATABASE_H
 #define SSLDATABASE_H
 
+#include <QtSql/QSqlDatabase>
+
 #include "ssltransmission.h"
 
 // storage container for ssl transmissions
@@ -22,6 +24,8 @@ protected:
 
    // remove a transmission from the db
    void remove(QString tid, QString uid);
+
+   QSqlDatabase db;
 
 public slots:
 
