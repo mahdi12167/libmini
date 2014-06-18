@@ -4,6 +4,7 @@
 #define SSLDATABASE_H
 
 #include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlError>
 
 #include "ssltransmission.h"
 
@@ -17,7 +18,11 @@ public:
    SSLTransmissionDatabase(QObject *parent = NULL);
    virtual ~SSLTransmissionDatabase();
 
-protected:
+   // open db connection
+   bool openConnection();
+
+   // remove db
+   bool removeDB();
 
    // read a transmission from the db
    SSLTransmission read(QString tid, QString uid);
@@ -25,7 +30,15 @@ protected:
    // remove a transmission from the db
    void remove(QString tid, QString uid);
 
-   QSqlDatabase db;
+   // get last db error
+   //  if opening database has failed
+   //  user can ask for error description by QSqlError::text()
+   QSqlError lastError();
+
+protected:
+
+   QSqlDatabase db_;
+   QString path_;
 
 public slots:
 
