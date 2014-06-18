@@ -1,6 +1,7 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
 #include <QDir>
+#include <QSQLQuery>
 
 #include "ssldatabase.h"
 
@@ -37,6 +38,25 @@ bool SSLTransmissionDatabase::removeDB()
 
    // remove db file
    return(QFile::remove(path_));
+}
+
+// create key/value table
+bool SSLTransmissionDatabase::createTable()
+{
+   bool success = false;
+
+   // create table "files"
+   if (db_.isOpen())
+   {
+      QSqlQuery query;
+      success = query.exec("CREATE TABLE files"
+                           "("
+                           "filename TEXT PRIMARY KEY,"
+                           "content BLOB"
+                           ")");
+   }
+
+   return(success);
 }
 
 // read a transmission from the db

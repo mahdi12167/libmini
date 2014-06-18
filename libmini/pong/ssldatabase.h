@@ -24,6 +24,9 @@ public:
    // remove db
    bool removeDB();
 
+   // create key/value table
+   bool createTable();
+
    // read a transmission from the db
    SSLTransmission read(QString tid, QString uid);
 
