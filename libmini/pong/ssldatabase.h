@@ -27,6 +27,9 @@ public:
    // create key/value table
    bool createTable();
 
+   // list transmissions in the db
+   QStringList list(QString uid);
+
    // read a transmission from the db
    SSLTransmission read(QString tid, QString uid);
 
