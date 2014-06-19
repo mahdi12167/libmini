@@ -13,22 +13,31 @@ SSLTransmissionDatabase::~SSLTransmissionDatabase()
 {}
 
 // open db connection
-bool SSLTransmissionDatabase::openConnection()
+bool SSLTransmissionDatabase::openDB()
 {
-   // open connection with SQLite driver
-   db_ = QSqlDatabase::addDatabase("QSQLITE");
-
    // determine db path
    QString path(QDir::home().path());
    path.append(QDir::separator()).append("db.sqlite");
    path = QDir::toNativeSeparators(path);
+
+   // check for existing database
+   bool exists = QFileInfo(path).exists();
+
+   // open connection with SQLite driver
+   db_ = QSqlDatabase::addDatabase("QSQLITE");
 
    // set db name
    db_.setDatabaseName(path);
    path_ = path;
 
    // open db
-   return db_.open();
+   bool success = db_.open();
+
+   // create table
+   if (!exists)
+      createTable();
+
+   return(success);
 }
 
 bool SSLTransmissionDatabase::removeDB()
@@ -70,8 +79,8 @@ QStringList SSLTransmissionDatabase::list(QString uid)
 
    if (db_.isOpen())
    {
-      QString select = QString("SELECT t.tid FROM transmissions t"
-                            "WHERE t.uid = '%1')").arg(uid);
+      QString select = QString("SELECT tid FROM transmissions"
+                               "WHERE uid = '%1')").arg(uid);
 
       QSqlQuery query(select);
 
@@ -89,8 +98,8 @@ SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid)
 
    if (db_.isOpen())
    {
-      QString select = QString("SELECT t.content, t.isotime FROM transmissions t"
-                               "WHERE (t.tid = '%1') AND (t.uid = '%2')").arg(tid).arg(uid);
+      QString select = QString("SELECT content, isotime FROM transmissions"
+                               "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
 
       QSqlQuery query(select);
       query.next();
@@ -100,19 +109,6 @@ SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid)
    }
 
    return(t);
-}
-
-// remove a transmission from the db
-void SSLTransmissionDatabase::remove(QString tid, QString uid)
-{
-   if (db_.isOpen())
-   {
-      QString remove = QString("DELETE FROM transmissions"
-                               "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
-
-      QSqlQuery query(remove);
-      query.exec();
-   }
 }
 
 // write a transmission to the db
@@ -126,6 +122,19 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
       QSqlQuery query;
       query.prepare(insert);
       query.addBindValue(t.getData());
+      query.exec();
+   }
+}
+
+// remove a transmission from the db
+void SSLTransmissionDatabase::remove(QString tid, QString uid)
+{
+   if (db_.isOpen())
+   {
+      QString remove = QString("DELETE FROM transmissions"
+                               "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
+
+      QSqlQuery query(remove);
       query.exec();
    }
 }

@@ -19,13 +19,10 @@ public:
    virtual ~SSLTransmissionDatabase();
 
    // open db connection
-   bool openConnection();
+   bool openDB();
 
    // remove db
    bool removeDB();
-
-   // create key/value table
-   bool createTable();
 
    // list transmissions in the db
    QStringList list(QString uid);
@@ -42,6 +39,9 @@ public:
    QSqlError lastError();
 
 protected:
+
+   // create key/value table
+   bool createTable();
 
    QSqlDatabase db_;
    QString path_;
