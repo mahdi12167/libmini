@@ -5,13 +5,13 @@
 
 #include "ssldatabase.h"
 
-SSLTransmissionDatabase::SSLTransmissionDatabase(QObject *parent)
+SSLTransmissionDatabase::SSLTransmissionDatabase(QObject *parent, QString name)
    : QObject(parent),
      e_("database")
 {
    // determine db path
    QString path(QDir::home().path());
-   path.append(QDir::separator()).append("db.sqlite");
+   path.append(QDir::separator()).append(name).append(".sqlite");
    path_ = QDir::toNativeSeparators(path);
 }
 
@@ -140,7 +140,7 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
 
       QSqlQuery query;
       query.prepare(insert);
-      query.addBindValue(t.getData());
+      query.addBindValue(t.getData()); //!! use compressed data
       if (!query.exec()) throw e_;
    }
 }
