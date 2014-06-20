@@ -117,11 +117,8 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
    }
    else
    {
-      // self-termination after socket has disappeared
-      connect(socket_, SIGNAL(destroyed()),
-              this, SLOT(deleteLater()));
-
-      delete socket_;
+      // self-termination
+      deleteLater();
    }
 }
 

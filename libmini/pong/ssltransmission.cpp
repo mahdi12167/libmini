@@ -31,7 +31,7 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
 // receiver of transmitted data blocks
 void SSLTransmissionServerConnectionFactory::receive(SSLTransmission t)
 {
-   emit transmitted(t);
+   emit transmitted(t); //!! start thread
 }
 
 // ssl transmission server connection ctor
