@@ -93,7 +93,9 @@ int main(int argc, char *argv[])
 
          SSLTransmissionServerConnectionFactory factory;
          SSLServer server(&factory);
+
          SSLTransmissionDatabase db;
+         db.openDB();
 
          // connect server gui with the connection factory transmitted signal
          QObject::connect(&factory, SIGNAL(transmitted(SSLTransmission)),
