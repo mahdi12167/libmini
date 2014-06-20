@@ -75,11 +75,20 @@ bool SSLTransmissionDatabase::createTable()
 // list user names in the db
 QStringList SSLTransmissionDatabase::users()
 {
-   QStringList users;
+   QStringList list;
 
-   //!!
+   if (db_.isOpen())
+   {
+      QString select = QString("SELECT DISTINCT uid FROM transmissions"
+                               "ORDER BY uid ASC");
 
-   return(users);
+      QSqlQuery query(select);
+
+      while (query.next())
+         list.append(query.value(0).toString());
+   }
+
+   return(list);
 }
 
 // list transmission names in the db
@@ -91,7 +100,7 @@ QStringList SSLTransmissionDatabase::list(QString uid)
    {
       QString select = QString("SELECT tid FROM transmissions"
                                "WHERE uid = '%1'"
-                               "ORDER BY id ASC)").arg(uid);
+                               "ORDER BY id ASC").arg(uid);
 
       QSqlQuery query(select);
 
@@ -110,7 +119,7 @@ QString SSLTransmissionDatabase::oldest(QString uid)
    if (db_.isOpen())
    {
       QString select = QString("SELECT tid, MIN(id) FROM transmissions"
-                               "WHERE (uid = '%1')").arg(uid);
+                               "WHERE uid = '%1'").arg(uid);
 
       QSqlQuery query(select);
 
@@ -135,7 +144,7 @@ SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid)
 
       if (query.next())
          t = SSLTransmission(query.value(0).toByteArray(), tid, uid,
-                             QDateTime::fromString(query.value(1).toString(), Qt::ISODate));
+                             QDateTime::fromString(query.value(1).toString(), Qt::ISODate), true);
    }
 
    return(t);
@@ -146,24 +155,13 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
 {
    if (db_.isOpen())
    {
+      QString insert=QString("INSERT OR REPLACE INTO transmissions VALUES('%1', '%2', '%3', NULL, ?)")
+                     .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate));
+
       QSqlQuery query;
-
-      QString select = QString("SELECT id FROM transmissions"
-                               "WHERE (tid = '%1') AND (uid = '%2')").arg(t.getTID()).arg(t.getUID());
-
-      if (!query.exec(select))
-      {
-         QString insert=QString("INSERT INTO transmissions VALUES('%1', '%2', '%3', NULL, ?)")
-                        .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate));
-
-         query.prepare(insert);
-         query.addBindValue(t.getData()); //!! use compressed data
-         if (!query.exec()) throw e_;
-      }
-      else
-      {
-         //!! overwrite
-      }
+      query.prepare(insert);
+      query.addBindValue(t.getCompressedData());
+      if (!query.exec()) throw e_;
    }
 }
 

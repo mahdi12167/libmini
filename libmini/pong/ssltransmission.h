@@ -41,12 +41,12 @@ public:
       header_.uid_size = std::min(uid_.size(), 65535);
    }
 
-   SSLTransmission(const QByteArray &data, const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc())
+   SSLTransmission(const QByteArray &data, const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc(), bool compressed=false)
       : data_(data), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0)
    {
       header_.magic = magic;
       header_.size = data_.size();
-      header_.compressed = false;
+      header_.compressed = compressed;
       header_.time = time.toUTC().toMSecsSinceEpoch();
       header_.tid_size = std::min(tid_.size(), 65535);
       header_.uid_size = std::min(uid_.size(), 65535);
@@ -76,6 +76,12 @@ public:
    QByteArray getData()
    {
       uncompress();
+      return(data_);
+   }
+
+   QByteArray getCompressedData()
+   {
+      compress();
       return(data_);
    }
 
