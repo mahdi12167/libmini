@@ -6,7 +6,8 @@
 #include "ssldatabase.h"
 
 SSLTransmissionDatabase::SSLTransmissionDatabase(QObject *parent)
-   : QObject(parent)
+   : QObject(parent),
+     e_("database")
 {
    // determine db path
    QString path(QDir::home().path());
@@ -32,7 +33,8 @@ bool SSLTransmissionDatabase::openDB()
 
    // create table
    if (!exists)
-      createTable();
+      if (!createTable())
+         success = false;
 
    return(success);
 }
@@ -60,7 +62,7 @@ bool SSLTransmissionDatabase::createTable()
                      "uid TEXT,"
                      "isotime VARCHAR(19),"
                      "id INT,"
-                     "content BLOB,"
+                     "content BLOB"
                      ")");
 
       QSqlQuery query;
@@ -139,7 +141,7 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
       QSqlQuery query;
       query.prepare(insert);
       query.addBindValue(t.getData());
-      query.exec();
+      if (!query.exec()) throw e_;
    }
 }
 
@@ -152,7 +154,7 @@ void SSLTransmissionDatabase::remove(QString tid, QString uid)
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
 
       QSqlQuery query(remove);
-      query.exec();
+      if (!query.exec()) throw e_;
    }
 }
 

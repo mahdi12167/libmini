@@ -49,7 +49,9 @@ protected:
    QSqlDatabase db_;
    QString path_;
 
-public slots:
+   SSLError e_;
+
+   public slots:
 
    // write a transmission to the db
    void write(SSLTransmission);
