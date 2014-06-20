@@ -24,6 +24,9 @@ public:
    // remove db
    bool removeDB();
 
+   // list user names in the db
+   QStringList users();
+
    // list transmission names in the db
    QStringList list(QString uid);
 

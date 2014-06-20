@@ -72,6 +72,16 @@ bool SSLTransmissionDatabase::createTable()
    return(success);
 }
 
+// list user names in the db
+QStringList SSLTransmissionDatabase::users()
+{
+   QStringList users;
+
+   //!!
+
+   return(users);
+}
+
 // list transmission names in the db
 QStringList SSLTransmissionDatabase::list(QString uid)
 {
@@ -103,6 +113,7 @@ QString SSLTransmissionDatabase::oldest(QString uid)
                                "WHERE (uid = '%1')").arg(uid);
 
       QSqlQuery query(select);
+
       if (query.next())
          tid = query.value(0).toString();
    }
@@ -121,10 +132,10 @@ SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid)
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
 
       QSqlQuery query(select);
-      query.next();
 
-      t = SSLTransmission(query.value(0).toByteArray(), tid, uid,
-                          QDateTime::fromString(query.value(1).toString(), Qt::ISODate));
+      if (query.next())
+         t = SSLTransmission(query.value(0).toByteArray(), tid, uid,
+                             QDateTime::fromString(query.value(1).toString(), Qt::ISODate));
    }
 
    return(t);
@@ -135,13 +146,24 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
 {
    if (db_.isOpen())
    {
-      QString insert=QString("INSERT INTO transmissions VALUES('%1', '%2', '%3', NULL, ?)")
-                     .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate));
-
       QSqlQuery query;
-      query.prepare(insert);
-      query.addBindValue(t.getData()); //!! use compressed data
-      if (!query.exec()) throw e_;
+
+      QString select = QString("SELECT id FROM transmissions"
+                               "WHERE (tid = '%1') AND (uid = '%2')").arg(t.getTID()).arg(t.getUID());
+
+      if (!query.exec(select))
+      {
+         QString insert=QString("INSERT INTO transmissions VALUES('%1', '%2', '%3', NULL, ?)")
+                        .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate));
+
+         query.prepare(insert);
+         query.addBindValue(t.getData()); //!! use compressed data
+         if (!query.exec()) throw e_;
+      }
+      else
+      {
+         //!! overwrite
+      }
    }
 }
 
