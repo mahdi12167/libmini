@@ -170,16 +170,14 @@ int main(int argc, char *argv[])
 
       QStringList users = db.users();
 
-      std::cout << "size=" << users.size() << std::endl; //!!
-
       for (int i=0; i<users.size(); i++)
       {
-         std::cout << users[i].toStdString() << ":" << std::endl;
+         std::cout << "user \"" << users[i].toStdString() << "\":" << std::endl;
 
          QStringList list = db.list(users[i]);
 
          for (int j=0; j<list.size(); j++)
-            std::cout << " " << list[j].toStdString() << std::endl;
+            std::cout << " file \"" << list[j].toStdString() << "\"" << std::endl;
       }
    }
    // print usage

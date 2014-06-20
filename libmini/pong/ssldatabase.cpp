@@ -79,7 +79,7 @@ QStringList SSLTransmissionDatabase::users()
 
    if (db_.isOpen())
    {
-      QString select = QString("SELECT DISTINCT uid FROM transmissions"
+      QString select = QString("SELECT DISTINCT uid FROM transmissions "
                                "ORDER BY uid ASC");
 
       QSqlQuery query(select);
@@ -98,8 +98,8 @@ QStringList SSLTransmissionDatabase::list(QString uid)
 
    if (db_.isOpen())
    {
-      QString select = QString("SELECT tid FROM transmissions"
-                               "WHERE uid = '%1'"
+      QString select = QString("SELECT tid FROM transmissions "
+                               "WHERE uid = '%1' "
                                "ORDER BY id ASC").arg(uid);
 
       QSqlQuery query(select);
@@ -118,7 +118,7 @@ QString SSLTransmissionDatabase::oldest(QString uid)
 
    if (db_.isOpen())
    {
-      QString select = QString("SELECT tid, MIN(id) FROM transmissions"
+      QString select = QString("SELECT tid, MIN(id) FROM transmissions "
                                "WHERE uid = '%1'").arg(uid);
 
       QSqlQuery query(select);
@@ -137,7 +137,7 @@ SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid)
 
    if (db_.isOpen())
    {
-      QString select = QString("SELECT content, isotime FROM transmissions"
+      QString select = QString("SELECT content, isotime FROM transmissions "
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
 
       QSqlQuery query(select);
@@ -170,7 +170,7 @@ void SSLTransmissionDatabase::remove(QString tid, QString uid)
 {
    if (db_.isOpen())
    {
-      QString remove = QString("DELETE FROM transmissions"
+      QString remove = QString("DELETE FROM transmissions "
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
 
       QSqlQuery query(remove);
