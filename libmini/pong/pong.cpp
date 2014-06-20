@@ -76,10 +76,10 @@ int main(int argc, char *argv[])
 
    // scan option list
    for (int i=0; i<opt.size(); i++)
-      if (opt[i]=="server") server=true;
-      else if (opt[i]=="client") client=true;
-      else if (opt[i]=="transmit") transmit=true;
-      else if (opt[i]=="dump") dump=true;
+      if (opt[i]=="server") {server=true; client=transmit=dump=false;}
+      else if (opt[i]=="client") {client=true; server=transmit=dump=false;}
+      else if (opt[i]=="transmit") {transmit=true; server=client=dump=false;}
+      else if (opt[i]=="dump") {dump=true; server=client=transmit=false;}
       else if (opt[i].startsWith("port=")) port=(int)get_opt(opt[i]);
       else if (opt[i]=="compress") compress=true;
       else if (opt[i]=="help") usage(argv[0]);
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
          SSLServer server(&factory);
 
          SSLTransmissionDatabase db;
-         db.openDB();
+         if (!db.openDB()) return(1);
 
          // connect server gui with the connection factory transmitted signal
          QObject::connect(&factory, SIGNAL(transmitted(SSLTransmission)),
@@ -166,9 +166,11 @@ int main(int argc, char *argv[])
    else if (dump && arg.size()==0)
    {
       SSLTransmissionDatabase db;
-      db.openDB();
+      if (!db.openDB()) return(1);
 
       QStringList users = db.users();
+
+      std::cout << "size=" << users.size() << std::endl; //!!
 
       for (int i=0; i<users.size(); i++)
       {
@@ -177,7 +179,7 @@ int main(int argc, char *argv[])
          QStringList list = db.list(users[i]);
 
          for (int j=0; j<list.size(); j++)
-            std::cout << " " << list[i].toStdString() << std::endl;
+            std::cout << " " << list[j].toStdString() << std::endl;
       }
    }
    // print usage
