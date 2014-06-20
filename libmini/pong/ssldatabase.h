@@ -24,8 +24,11 @@ public:
    // remove db
    bool removeDB();
 
-   // list transmissions in the db
+   // list transmission names in the db
    QStringList list(QString uid);
+
+   // retrieve oldest transmission name in the db
+   QString oldest(QString uid);
 
    // read a transmission from the db
    SSLTransmission read(QString tid, QString uid);

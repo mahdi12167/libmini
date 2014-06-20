@@ -7,7 +7,12 @@
 
 SSLTransmissionDatabase::SSLTransmissionDatabase(QObject *parent)
    : QObject(parent)
-{}
+{
+   // determine db path
+   QString path(QDir::home().path());
+   path.append(QDir::separator()).append("db.sqlite");
+   path_ = QDir::toNativeSeparators(path);
+}
 
 SSLTransmissionDatabase::~SSLTransmissionDatabase()
 {}
@@ -15,22 +20,14 @@ SSLTransmissionDatabase::~SSLTransmissionDatabase()
 // open db connection
 bool SSLTransmissionDatabase::openDB()
 {
-   // determine db path
-   QString path(QDir::home().path());
-   path.append(QDir::separator()).append("db.sqlite");
-   path = QDir::toNativeSeparators(path);
-
    // check for existing database
-   bool exists = QFileInfo(path).exists();
+   bool exists = QFileInfo(path_).exists();
 
    // open connection with SQLite driver
    db_ = QSqlDatabase::addDatabase("QSQLITE");
 
-   // set db name
-   db_.setDatabaseName(path);
-   path_ = path;
-
    // open db
+   db_.setDatabaseName(path_);
    bool success = db_.open();
 
    // create table
@@ -61,7 +58,8 @@ bool SSLTransmissionDatabase::createTable()
                      "("
                      "tid TEXT PRIMARY KEY,"
                      "uid TEXT,"
-                     "isotime varchar(19),"
+                     "isotime VARCHAR(19),"
+                     "id INT,"
                      "content BLOB,"
                      ")");
 
@@ -72,7 +70,7 @@ bool SSLTransmissionDatabase::createTable()
    return(success);
 }
 
-// list transmissions in the db
+// list transmission names in the db
 QStringList SSLTransmissionDatabase::list(QString uid)
 {
    QStringList list;
@@ -80,7 +78,8 @@ QStringList SSLTransmissionDatabase::list(QString uid)
    if (db_.isOpen())
    {
       QString select = QString("SELECT tid FROM transmissions"
-                               "WHERE uid = '%1')").arg(uid);
+                               "WHERE uid = '%1'"
+                               "ORDER BY id ASC)").arg(uid);
 
       QSqlQuery query(select);
 
@@ -89,6 +88,24 @@ QStringList SSLTransmissionDatabase::list(QString uid)
    }
 
    return(list);
+}
+
+// retrieve oldest transmission name in the db
+QString SSLTransmissionDatabase::oldest(QString uid)
+{
+   QString tid;
+
+   if (db_.isOpen())
+   {
+      QString select = QString("SELECT tid, MIN(id) FROM transmissions"
+                               "WHERE (uid = '%1')").arg(uid);
+
+      QSqlQuery query(select);
+      if (query.next())
+         tid = query.value(0).toString();
+   }
+
+   return(tid);
 }
 
 // read a transmission from the db
@@ -116,7 +133,7 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
 {
    if (db_.isOpen())
    {
-      QString insert=QString("INSERT INTO transmissions VALUES('%1','%2','%3',?)")
+      QString insert=QString("INSERT INTO transmissions VALUES('%1', '%2', '%3', NULL, ?)")
                      .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate));
 
       QSqlQuery query;
