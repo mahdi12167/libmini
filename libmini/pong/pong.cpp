@@ -38,6 +38,7 @@ void usage(const char *prog)
    std::cout << " --server: start pong server" << std::endl;
    std::cout << " --client: use drop box gui for transmissions" << std::endl;
    std::cout << " --transmit: transmit file" << std::endl;
+   std::cout << " --dump: dump database contents" << std::endl;
    std::cout << " --port=n: use tcp port n" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
    std::cout << " --help: this help text" << std::endl;
@@ -66,9 +67,10 @@ int main(int argc, char *argv[])
       else if (args[i].startsWith("-")) opt.push_back(args[i].mid(1));
       else arg.push_back(args[i]);
 
-   bool server=false;
+   bool server=true;
    bool client=false;
    bool transmit=false;
+   bool dump=false;
    int port=10000;
    bool compress=false;
 
@@ -77,13 +79,14 @@ int main(int argc, char *argv[])
       if (opt[i]=="server") server=true;
       else if (opt[i]=="client") client=true;
       else if (opt[i]=="transmit") transmit=true;
+      else if (opt[i]=="dump") dump=true;
       else if (opt[i].startsWith("port=")) port=(int)get_opt(opt[i]);
       else if (opt[i]=="compress") compress=true;
       else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
 
    // server mode
-   if (arg.size()==0)
+   if (server && arg.size()==0)
    {
       try
       {
@@ -157,6 +160,24 @@ int main(int argc, char *argv[])
       {
          std::cout << e.what() << std::endl;
          return(1);
+      }
+   }
+   // dump mode
+   else if (dump && arg.size()==0)
+   {
+      SSLTransmissionDatabase db;
+      db.openDB();
+
+      QStringList users = db.users();
+
+      for (int i=0; i<users.size(); i++)
+      {
+         std::cout << users[i].toStdString() << ":" << std::endl;
+
+         QStringList list = db.list(users[i]);
+
+         for (int j=0; j<list.size(); j++)
+            std::cout << " " << list[i].toStdString() << std::endl;
       }
    }
    // print usage
