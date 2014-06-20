@@ -68,7 +68,7 @@ public:
    ~SSLTransmission()
    {}
 
-   bool empty()
+   bool empty() const
    {
       return(header_.size == 0);
    }
@@ -85,12 +85,12 @@ public:
       return(data_);
    }
 
-   qint64 getSize()
+   qint64 getSize() const
    {
       return(header_.size);
    }
 
-   QDateTime getTime()
+   QDateTime getTime() const
    {
       QDateTime t;
 
@@ -99,12 +99,12 @@ public:
       return(t.toUTC());
    }
 
-   QString getTID()
+   QString getTID() const
    {
       return(tid_);
    }
 
-   QString getUID()
+   QString getUID() const
    {
       return(uid_);
    }
@@ -254,6 +254,18 @@ protected:
 
    int transmitState_;
 };
+
+// stream output
+inline std::ostream& operator << (std::ostream &out, const SSLTransmission &t)
+{
+   out << "SSLTransmission("
+       << "\"" << t.getTID().toStdString() << "\", "
+       << "\"" << t.getUID().toStdString() << "\", "
+       << t.getTime().toString(Qt::ISODate).toStdString() << ", "
+       << t.getSize() << ")";
+
+   return(out);
+}
 
 // ssl transmission server connection factory class
 class SSLTransmissionServerConnectionFactory: public SSLServerConnectionFactory

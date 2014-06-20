@@ -177,7 +177,10 @@ int main(int argc, char *argv[])
          QStringList list = db.list(users[i]);
 
          for (int j=0; j<list.size(); j++)
-            std::cout << " file \"" << list[j].toStdString() << "\"" << std::endl;
+         {
+            SSLTransmission t = db.read(list[j], users[i]);
+            std::cout << " " << t << std::endl;
+         }
       }
    }
    // print usage
