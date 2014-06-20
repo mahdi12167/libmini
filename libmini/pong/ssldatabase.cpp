@@ -58,11 +58,12 @@ bool SSLTransmissionDatabase::createTable()
    {
       QString create("CREATE TABLE transmissions"
                      "("
+                     "id INT,"
                      "tid TEXT PRIMARY KEY,"
                      "uid TEXT,"
                      "isotime VARCHAR(19),"
-                     "id INT,"
-                     "content BLOB"
+                     "content BLOB,"
+                     "compressed BIT"
                      ")");
 
       QSqlQuery query;
@@ -137,14 +138,15 @@ SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid)
 
    if (db_.isOpen())
    {
-      QString select = QString("SELECT content, isotime FROM transmissions "
+      QString select = QString("SELECT content, isotime, compressed FROM transmissions "
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
 
       QSqlQuery query(select);
 
       if (query.next())
          t = SSLTransmission(query.value(0).toByteArray(), tid, uid,
-                             QDateTime::fromString(query.value(1).toString(), Qt::ISODate), true);
+                             QDateTime::fromString(query.value(1).toString(), Qt::ISODate),
+                             query.value(2).toInt());
    }
 
    return(t);
@@ -155,12 +157,12 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
 {
    if (db_.isOpen())
    {
-      QString insert=QString("INSERT OR REPLACE INTO transmissions VALUES('%1', '%2', '%3', NULL, ?)")
-                     .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate));
+      QString insert=QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, '%4')")
+                     .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate)).arg(t.isCompressed());
 
       QSqlQuery query;
       query.prepare(insert);
-      query.addBindValue(t.getCompressedData());
+      query.addBindValue(t.getData());
       if (!query.exec()) throw e_;
    }
 }

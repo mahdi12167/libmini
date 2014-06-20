@@ -75,14 +75,12 @@ public:
 
    QByteArray getData()
    {
-      uncompress();
       return(data_);
    }
 
-   QByteArray getCompressedData()
+   bool isCompressed() const
    {
-      compress();
-      return(data_);
+      return(header_.compressed);
    }
 
    qint64 getSize() const
@@ -262,7 +260,8 @@ inline std::ostream& operator << (std::ostream &out, const SSLTransmission &t)
        << "\"" << t.getTID().toStdString() << "\", "
        << "\"" << t.getUID().toStdString() << "\", "
        << t.getTime().toString(Qt::ISODate).toStdString() << ", "
-       << t.getSize() << ")";
+       << t.getSize() << ", "
+       << t.isCompressed() << ")";
 
    return(out);
 }

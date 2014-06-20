@@ -41,7 +41,7 @@ public:
 
    // get last db error
    //  if opening database has failed
-   //  user can ask for error description by QSqlError::text()
+   //  ask for error description by lastError().text()
    QSqlError lastError();
 
 protected:
