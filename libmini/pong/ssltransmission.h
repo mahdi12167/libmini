@@ -15,6 +15,7 @@
 // ssl transmission header structure
 struct SSLTransmissionHeader
 {
+   qint32 magic; // magic number
    qint64 size; // size of data block
    qint8 compressed; // is the data block compressed?
    qint64 time; // time stamp of data block in epoch respresentation
@@ -27,9 +28,12 @@ class SSLTransmission
 {
 public:
 
+   static const int magic = 15695;
+
    SSLTransmission(const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc())
       : data_(), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0)
    {
+      header_.magic = magic;
       header_.size = 0;
       header_.compressed = false;
       header_.time = time.toUTC().toMSecsSinceEpoch();
@@ -40,6 +44,7 @@ public:
    SSLTransmission(const QByteArray &data, const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc())
       : data_(data), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0)
    {
+      header_.magic = magic;
       header_.size = data_.size();
       header_.compressed = false;
       header_.time = time.toUTC().toMSecsSinceEpoch();
@@ -52,6 +57,7 @@ public:
    {
       QFileInfo fileInfo(file);
 
+      header_.magic = magic;
       header_.size = data_.size();
       header_.compressed = false;
       header_.time = fileInfo.lastModified().toUTC().toMSecsSinceEpoch();
@@ -135,6 +141,7 @@ public:
 
          // assemble header block
          out.setVersion(QDataStream::Qt_4_0);
+         out << header_.magic;
          out << header_.size;
          out << header_.compressed;
          out << header_.time;
@@ -172,6 +179,10 @@ public:
       {
          // check if entire header block has arrived
          if (socket->bytesAvailable() < (int)sizeof(header_)) return(false);
+
+         // read magic number
+         in >> header_.magic;
+         if (header_.magic != magic) return(true);
 
          // read data block size etc.
          in >> header_.size;

@@ -53,7 +53,7 @@ bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
    if (!t_.read(socket)) return(false);
 
    // signal transmission of data block
-   emit transmit(t_);
+   if (!t_.empty()) emit transmit(t_);
 
    return(true);
 }
