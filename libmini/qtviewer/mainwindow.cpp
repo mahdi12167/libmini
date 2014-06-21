@@ -202,6 +202,8 @@ void MainWindow::createMenus()
 
 void MainWindow::createWidgets()
 {
+   // main groups:
+
    mainGroup = new QGroupBox;
    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
    mainSplitter = new QSplitter;
@@ -210,12 +212,15 @@ void MainWindow::createWidgets()
    tabWidget = new QTabWidget;
 
    viewerGroup = new QGroupBox;
+   viewerGroup->setObjectName("viewerGroupBox");
    viewerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
    prefGroup = new QGroupBox;
+   prefGroup->setObjectName("prefGroupBox");
    prefLayout = new QVBoxLayout;
 
    paramGroup = new QGroupBox;
+   paramGroup->setObjectName("paramGroupBox");
    paramLayout = new QVBoxLayout;
 
    buttonBox = new QDialogButtonBox;
@@ -227,6 +232,18 @@ void MainWindow::createWidgets()
 
    sliderBox = new QGroupBox;
    sliderLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+
+   // style sheets:
+
+   QString css("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; }"
+               "QGroupBox#viewerGroupBox { border: 0; border-radius: 0; }"
+               "QGroupBox#prefGroupBox { border: 0; border-radius: 0; }"
+               "QGroupBox#paramGroupBox { border: 0; border-radius: 0; }");
+
+   tabWidget->setStyleSheet(css);
+
+   prefGroup->setStyleSheet("QGroupBox { margin: 3px; padding-top: 12px; }");
+   paramGroup->setStyleSheet("QGroupBox { margin: 3px; padding-top: 12px; }");
 
    // drag and drop:
 
@@ -449,7 +466,7 @@ void MainWindow::createWidgets()
    sliderButton = new QCheckBox(tr("Show Controls"));
    sliderButton->setChecked(true);
 
-   QGroupBox *sliderButtonBox= new QGroupBox;
+   QGroupBox *sliderButtonBox= new QGroupBox(tr("View Tab"));
    QHBoxLayout *sliderButtonBoxLayout= new QHBoxLayout;
    sliderButtonBoxLayout->addWidget(sliderButton);
    sliderButtonBox->setLayout(sliderButtonBoxLayout);
