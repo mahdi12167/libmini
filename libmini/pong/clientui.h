@@ -15,13 +15,14 @@ class ClientUI: public QWidget
 
 public:
 
-   ClientUI(QString hostName = "localhost", quint16 port=10000, bool verify=true, bool compress=false, QWidget *parent = NULL);
+   ClientUI(QString hostName = "localhost", quint16 port = 10000, QString uid = "", bool verify=true, bool compress=false, QWidget *parent = NULL);
    virtual ~ClientUI();
 
 protected:
 
    QString hostName_;
    quint16 port_;
+   QString uid_;
    bool verify_;
    bool compress_;
 
@@ -37,7 +38,7 @@ public:
 
 signals:
 
-   void transmit(QString hostName, quint16 port, QString fileName, bool verify, bool compress);
+   void transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify, bool compress);
 };
 
 #endif

@@ -16,6 +16,7 @@
 struct SSLTransmissionHeader
 {
    qint32 magic; // magic number
+   qint8 command; // command number
    qint64 size; // size of data block
    qint8 compressed; // is the data block compressed?
    qint64 time; // time stamp of data block in epoch respresentation
@@ -28,12 +29,14 @@ class SSLTransmission
 {
 public:
 
-   static const int magic = 15695;
+   static const qint32 magic_number = 0x02071971;
+   static const qint8 command_transmit = 0;
 
-   SSLTransmission(const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc())
+   SSLTransmission(const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc(), const int command = command_transmit)
       : data_(), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0)
    {
-      header_.magic = magic;
+      header_.magic = magic_number;
+      header_.command = command;
       header_.size = 0;
       header_.compressed = false;
       header_.time = time.toUTC().toMSecsSinceEpoch();
@@ -41,10 +44,11 @@ public:
       header_.uid_size = std::min(uid_.size(), 65535);
    }
 
-   SSLTransmission(const QByteArray &data, const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc(), bool compressed=false)
+   SSLTransmission(const QByteArray &data, const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc(), bool compressed=false, const int command = command_transmit)
       : data_(data), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0)
    {
-      header_.magic = magic;
+      header_.magic = magic_number;
+      header_.command = command;
       header_.size = data_.size();
       header_.compressed = compressed;
       header_.time = time.toUTC().toMSecsSinceEpoch();
@@ -52,12 +56,13 @@ public:
       header_.uid_size = std::min(uid_.size(), 65535);
    }
 
-   SSLTransmission(QFile &file, const QString uid="")
+   SSLTransmission(QFile &file, const QString uid="", const int command = command_transmit)
       : data_(file.readAll()), tid_(file.fileName().toAscii()), uid_(uid.toAscii()), transmitState_(0)
    {
       QFileInfo fileInfo(file);
 
-      header_.magic = magic;
+      header_.magic = magic_number;
+      header_.command = command;
       header_.size = data_.size();
       header_.compressed = false;
       header_.time = fileInfo.lastModified().toUTC().toMSecsSinceEpoch();
@@ -107,6 +112,11 @@ public:
       return(uid_);
    }
 
+   int getCommand() const
+   {
+      return(header_.command);
+   }
+
    void append(const QByteArray &data)
    {
       if (!header_.compressed)
@@ -146,6 +156,7 @@ public:
          // assemble header block
          out.setVersion(QDataStream::Qt_4_0);
          out << header_.magic;
+         out << header_.command;
          out << header_.size;
          out << header_.compressed;
          out << header_.time;
@@ -186,9 +197,10 @@ public:
 
          // read magic number
          in >> header_.magic;
-         if (header_.magic != magic) return(true);
+         if (header_.magic != magic_number) return(true);
 
          // read data block size etc.
+         in >> header_.command;
          in >> header_.size;
          in >> header_.compressed;
          in >> header_.time;
@@ -261,7 +273,8 @@ inline std::ostream& operator << (std::ostream &out, const SSLTransmission &t)
        << "\"" << t.getUID().toStdString() << "\", "
        << t.getTime().toString(Qt::ISODate).toStdString() << ", "
        << t.getSize() << ", "
-       << t.isCompressed() << ")";
+       << t.isCompressed() << ", "
+       << t.getCommand() << ")";
 
    return(out);
 }
@@ -317,6 +330,9 @@ signals:
 
    // signal transmission of data block
    void transmit(SSLTransmission);
+
+   // signal command block
+   void command(SSLTransmission);
 };
 
 // ssl transmission client class
@@ -331,7 +347,7 @@ public:
 
    // start transmission
    bool transmit(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true);
-   bool transmit(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
+   bool transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit);
 
 protected:
 
@@ -343,7 +359,7 @@ protected:
 public slots:
 
    // start non-blocking transmission
-   void transmitNonBlocking(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
+   void transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit);
 };
 
 // ssl transmission thread class
@@ -353,11 +369,11 @@ class SSLTransmissionThread: public QThread
 
 public:
 
-   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
+   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit);
    virtual ~SSLTransmissionThread();
 
    // non-blocking transmission
-   static void transmit(QString hostName, quint16 port, QString fileName, bool verify=true, bool compress=false);
+   static void transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit);
 
 protected:
 
@@ -366,8 +382,10 @@ protected:
    QString hostName_;
    quint16 port_;
    QString fileName_;
+   QString uid_;
    bool verify_;
    bool compress_;
+   int command_;
 };
 
 #endif

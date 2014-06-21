@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#define VERSION "v0.2 as of 20.June.2014"
+#define VERSION "v0.3 as of 21.June.2014"
 
 #define LICENSE "licensed under GPL 3.0"
 #define COPYRIGHT "(c) by Stefan Roettger 2014"
@@ -18,10 +18,14 @@
 #include "serverui.h"
 #include "clientui.h"
 
+QString get_str(QString o)
+{
+   return(o.mid(o.indexOf("=")+1));
+}
+
 double get_opt(QString o)
 {
-   o=o.mid(o.indexOf("=")+1);
-   return(o.toDouble());
+   return(get_str(o).toDouble());
 }
 
 void usage(const char *prog)
@@ -40,6 +44,7 @@ void usage(const char *prog)
    std::cout << " --transmit: transmit file" << std::endl;
    std::cout << " --dump: dump database contents" << std::endl;
    std::cout << " --port=n: use tcp port n" << std::endl;
+   std::cout << " --user=...: specify user name" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "example server usage:" << std::endl;
@@ -67,6 +72,7 @@ int main(int argc, char *argv[])
       else if (args[i].startsWith("-")) opt.push_back(args[i].mid(1));
       else arg.push_back(args[i]);
 
+   QString user="";
    bool server=true;
    bool client=false;
    bool transmit=false;
@@ -80,6 +86,7 @@ int main(int argc, char *argv[])
       else if (opt[i]=="client") {client=true; server=transmit=dump=false;}
       else if (opt[i]=="transmit") {transmit=true; server=client=dump=false;}
       else if (opt[i]=="dump") {dump=true; server=client=transmit=false;}
+      else if (opt[i].startsWith("user=")) user=get_str(opt[i]);
       else if (opt[i].startsWith("port=")) port=(int)get_opt(opt[i]);
       else if (opt[i]=="compress") compress=true;
       else if (opt[i]=="help") usage(argv[0]);
@@ -128,15 +135,15 @@ int main(int argc, char *argv[])
    {
       try
       {
-         ClientUI main(arg[0], port, false, compress);
+         ClientUI main(arg[0], port, user, false, compress);
 
          main.show();
 
          SSLTransmissionClient client;
 
          // connect server gui with client
-         QObject::connect(&main, SIGNAL(transmit(QString, quint16, QString, bool, bool)),
-                          &client, SLOT(transmitNonBlocking(QString, quint16, QString, bool, bool)));
+         QObject::connect(&main, SIGNAL(transmit(QString, quint16, QString, QString, bool, bool)),
+                          &client, SLOT(transmitNonBlocking(QString, quint16, QString, QString, bool, bool)));
 
          return(app.exec());
       }
@@ -153,7 +160,7 @@ int main(int argc, char *argv[])
       {
          SSLTransmissionClient client;
 
-         if (!client.transmit(arg[0], port, arg[1], false, compress))
+         if (!client.transmit(arg[0], port, arg[1], user, false, compress))
             return(1);
       }
       catch (SSLError &e)

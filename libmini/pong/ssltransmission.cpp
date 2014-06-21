@@ -53,7 +53,9 @@ bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
    if (!t_.read(socket)) return(false);
 
    // signal transmission of data block
-   if (!t_.empty()) emit transmit(t_);
+   if (!t_.empty())
+      if (t_.getCommand() == SSLTransmission::command_transmit) emit transmit(t_);
+      else emit command(t_);
 
    return(true);
 }
@@ -76,14 +78,14 @@ bool SSLTransmissionClient::transmit(QString hostName, quint16 port, const SSLTr
 }
 
 // start transmission
-bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
+bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify, bool compress, int command)
 {
    QFile file(fileName);
 
    if (!file.open(QIODevice::ReadOnly))
       return(false);
 
-   SSLTransmission t(file);
+   SSLTransmission t(file, uid, command);
 
    if (compress)
       t.compress();
@@ -99,14 +101,14 @@ void SSLTransmissionClient::startWriting(QSslSocket *socket)
 }
 
 // start non-blocking transmission
-void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
+void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid, bool verify, bool compress, int command)
 {
-   SSLTransmissionThread::transmit(hostName, port, fileName, verify, compress);
+   SSLTransmissionThread::transmit(hostName, port, fileName, uid, verify, compress, command);
 }
 
 // ssl transmission thread ctor
-SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
-   : QThread(), hostName_(hostName), port_(port), fileName_(fileName), verify_(verify), compress_(compress)
+SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, QString fileName, QString uid, bool verify, bool compress, int command)
+   : QThread(), hostName_(hostName), port_(port), fileName_(fileName), uid_(uid), verify_(verify), compress_(compress), command_(command)
 {
    // self-termination after thread has finished
    connect(this, SIGNAL(finished()),
@@ -122,14 +124,14 @@ void SSLTransmissionThread::run()
 {
    SSLTransmissionClient client;
 
-   client.transmit(hostName_, port_, fileName_, verify_, compress_);
+   client.transmit(hostName_, port_, fileName_, uid_, verify_, compress_, command_);
 }
 
 // non-blocking transmission
-void SSLTransmissionThread::transmit(QString hostName, quint16 port, QString fileName, bool verify, bool compress)
+void SSLTransmissionThread::transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify, bool compress, int command)
 {
    SSLTransmissionThread *thread;
 
-   thread = new SSLTransmissionThread(hostName, port, fileName, verify, compress);
+   thread = new SSLTransmissionThread(hostName, port, fileName, uid, verify, compress, command);
    thread->start();
 }
