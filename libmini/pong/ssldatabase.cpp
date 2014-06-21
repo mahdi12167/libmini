@@ -24,7 +24,7 @@ bool SSLTransmissionDatabase::openDB()
    // check for existing database
    bool exists = QFileInfo(path_).exists();
 
-   // open connection with SQLite driver
+   // open default connection with SQLite driver
    db_ = QSqlDatabase::addDatabase("QSQLITE");
 
    // open db
@@ -157,7 +157,7 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
 {
    if (db_.isOpen())
    {
-      QString insert=QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, '%4')")
+      QString insert=QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, %4)")
                      .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate)).arg(t.isCompressed());
 
       QSqlQuery query;
