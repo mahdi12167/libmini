@@ -23,6 +23,9 @@ ServerUI::ServerUI(QWidget *parent)
    nameLabel_ = new QLabel;
    layout->addWidget(nameLabel_);
 
+   userLabel_ = new QLabel;
+   layout->addWidget(userLabel_);
+
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
    layout->addWidget(quitButton);
@@ -49,7 +52,8 @@ void ServerUI::transmitted(SSLTransmission t)
                        QDateTime::currentDateTimeUtc().toString()+": "+transmission);
 
    timeLabel_->setText("Time stamp: "+t.getTime().toString());
-   nameLabel_->setText("Transmission name: "+t.getTID());
+   nameLabel_->setText("File name: "+t.getTID());
+   userLabel_->setText("User name: "+t.getUID());
 }
 
 void ServerUI::report(QString error)
