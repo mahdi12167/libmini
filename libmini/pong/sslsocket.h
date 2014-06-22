@@ -41,7 +41,9 @@ class SSLServer: public QTcpServer
 
 public:
 
-   SSLServer(SSLServerConnectionFactory *factory, QObject *parent = NULL);
+   SSLServer(SSLServerConnectionFactory *factory,
+             QObject *parent = NULL);
+
    virtual ~SSLServer();
 
    // start listening
@@ -187,7 +189,7 @@ public:
 protected:
 
    // start writing through an established connection
-   virtual void startWriting(QSslSocket *socket) = 0;
+   virtual bool startWriting(QSslSocket *socket) = 0;
 
 private:
 
@@ -219,7 +221,7 @@ public:
 protected:
 
    // start writing through an established connection
-   virtual void startWriting(QSslSocket *socket);
+   virtual bool startWriting(QSslSocket *socket);
 };
 
 #endif

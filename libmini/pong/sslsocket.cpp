@@ -5,7 +5,8 @@
 #include "sslsocket.h"
 
 // ssl server ctor
-SSLServer::SSLServer(SSLServerConnectionFactory *factory, QObject *parent)
+SSLServer::SSLServer(SSLServerConnectionFactory *factory,
+                     QObject *parent)
    : QTcpServer(parent),
      factory_(factory),
      certPath_(""), keyPath_(""),
@@ -202,6 +203,7 @@ bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
 {
    try
    {
+      // setup ssl socket
       socket_.setProtocol(QSsl::TlsV1);
       if (!verify) socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
       socket_.connectToHostEncrypted(hostName, port);
@@ -210,6 +212,7 @@ bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
       connect(&socket_, SIGNAL(error(QAbstractSocket::SocketError)),
               this, SLOT(error(QAbstractSocket::SocketError)));
 
+      // block until transmission is finished
       socket_.waitForDisconnected(-1); // no time-out
    }
    catch (SSLError &e)
@@ -223,11 +226,16 @@ bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
 // start writing after connection is established
 void SSLClient::connectionEstablished()
 {
+   bool success;
+
    // start writing to the ssl socket
-   startWriting(&socket_);
+   success = startWriting(&socket_);
 
    // disconnect the ssl socket
    socket_.disconnectFromHost();
+
+   // check for successfull transmission
+   if (!success) throw e_;
 }
 
 // catch socket errors
@@ -247,7 +255,7 @@ SSLTestClient::~SSLTestClient()
 {}
 
 // start writing through an established connection
-void SSLTestClient::startWriting(QSslSocket *socket)
+bool SSLTestClient::startWriting(QSslSocket *socket)
 {
    static const QByteArray test("test");
 
@@ -256,4 +264,6 @@ void SSLTestClient::startWriting(QSslSocket *socket)
 
    // write data to the ssl socket
    socket->write(test);
+
+   return(true);
 }

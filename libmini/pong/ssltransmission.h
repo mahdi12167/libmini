@@ -24,16 +24,33 @@ struct SSLTransmissionHeader
    quint16 uid_size; // size of user id block
 };
 
+class SSLTransmission;
+
+// ssl transmission responder base class
+class SSLTransmissionResponder
+{
+public:
+
+   SSLTransmissionResponder() {}
+   virtual ~SSLTransmissionResponder() {}
+
+   virtual SSLTransmission *create(SSLTransmission *t) = 0;
+};
+
 // ssl transmission class
 class SSLTransmission
 {
 public:
 
    static const qint32 magic_number = 0x02071971;
+
    static const qint8 command_transmit = 0;
+   static const qint8 command_respond = 0;
+
+   static const qint8 response_code_ok = 1;
 
    SSLTransmission(const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc(), const int command = command_transmit)
-      : data_(), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0)
+      : data_(), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0), response_(NULL), responder_(NULL), error_(false)
    {
       header_.magic = magic_number;
       header_.command = command;
@@ -45,7 +62,7 @@ public:
    }
 
    SSLTransmission(const QByteArray &data, const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc(), bool compressed=false, const int command = command_transmit)
-      : data_(data), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0)
+      : data_(data), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0), response_(NULL), responder_(NULL), error_(false)
    {
       header_.magic = magic_number;
       header_.command = command;
@@ -57,7 +74,7 @@ public:
    }
 
    SSLTransmission(QFile &file, const QString uid="", const int command = command_transmit)
-      : data_(file.readAll()), tid_(file.fileName().toAscii()), uid_(uid.toAscii()), transmitState_(0)
+      : data_(file.readAll()), tid_(file.fileName().toAscii()), uid_(uid.toAscii()), transmitState_(0), response_(NULL), responder_(NULL), error_(false)
    {
       QFileInfo fileInfo(file);
 
@@ -71,7 +88,10 @@ public:
    }
 
    ~SSLTransmission()
-   {}
+   {
+      if (response_)
+         delete response_;
+   }
 
    bool empty() const
    {
@@ -117,6 +137,21 @@ public:
       return(header_.command);
    }
 
+   void setResponder(SSLTransmissionResponder *responder)
+   {
+      responder_ = responder;
+   }
+
+   SSLTransmission *getResponse() const
+   {
+      return(response_);
+   }
+
+   bool error() const
+   {
+      return(error_);
+   }
+
    void append(const QByteArray &data)
    {
       if (!header_.compressed)
@@ -146,7 +181,7 @@ public:
       }
    }
 
-   void write(QSslSocket *socket)
+   bool write(QSslSocket *socket)
    {
       if (transmitState_ == 0)
       {
@@ -183,6 +218,54 @@ public:
 
          transmitState_++;
       }
+
+      if (transmitState_ == 1)
+      {
+         if (header_.command == command_transmit)
+         {
+            char code;
+
+            // check if response code has arrived
+            while (socket->bytesAvailable() < 1)
+               socket->waitForReadyRead(-1);
+
+            // read response code from the ssl socket
+            socket->read(&code, 1);
+
+            // check for correct response code
+            if (code != response_code_ok)
+            {
+               error_ = true;
+               return(false);
+            }
+
+            transmitState_++;
+         }
+         else if (header_.command == command_respond)
+         {
+            transmitState_++;
+         }
+         else
+         {
+            // allocate transmission response
+            response_ = new SSLTransmission();
+
+            // check if entire response block has arrived
+            while (!response_->read(socket))
+               socket->waitForReadyRead(-1);
+
+            // check for correct response block
+            if (response_->error())
+            {
+               error_ = true;
+               return(false);
+            }
+
+            transmitState_++;
+         }
+      }
+
+      return(true);
    }
 
    bool read(QSslSocket *socket)
@@ -197,7 +280,11 @@ public:
 
          // read magic number
          in >> header_.magic;
-         if (header_.magic != magic_number) return(true);
+         if (header_.magic != magic_number)
+         {
+            error_ = true;
+            return(true);
+         }
 
          // read data block size etc.
          in >> header_.command;
@@ -252,6 +339,37 @@ public:
          transmitState_++;
       }
 
+      if (transmitState_ == 4)
+      {
+         if (header_.command == command_transmit)
+         {
+            char code = response_code_ok;
+
+            // write response code to ssl socket
+            socket->write(&code, 1);
+         }
+         else
+         {
+            // ask transmission responder to respond
+            if (responder_)
+            {
+               // create transmission response
+               response_ = responder_->create(this);
+               response_->header_.command = command_respond;
+            }
+            else
+            {
+               error_ = true;
+               return(true);
+            }
+
+            // write transmission response to ssl socket
+            response_->write(socket);
+         }
+
+         transmitState_++;
+      }
+
       return(true);
    }
 
@@ -262,19 +380,28 @@ protected:
    QByteArray tid_; // transmission id
    QByteArray uid_; // user id
 
-   int transmitState_;
+   int transmitState_; // actual state of transmission
+   SSLTransmission *response_; // received transmission response
+   SSLTransmissionResponder *responder_; // transmission responder
+   bool error_; // is the transmission valid?
 };
 
 // stream output
 inline std::ostream& operator << (std::ostream &out, const SSLTransmission &t)
 {
-   out << "SSLTransmission("
-       << "\"" << t.getTID().toStdString() << "\", "
+   out << "SSLTransmission(";
+
+   out << "\"" << t.getTID().toStdString() << "\", "
        << "\"" << t.getUID().toStdString() << "\", "
        << t.getTime().toString(Qt::ISODate).toStdString() << ", "
        << t.getSize() << ", "
        << t.isCompressed() << ", "
-       << t.getCommand() << ")";
+       << t.getCommand();
+
+   if (t.error())
+      out << ", ERROR";
+
+   out << ")";
 
    return(out);
 }
@@ -286,13 +413,19 @@ class SSLTransmissionServerConnectionFactory: public SSLServerConnectionFactory
 
 public:
 
-   SSLTransmissionServerConnectionFactory(QObject *parent = NULL);
+   SSLTransmissionServerConnectionFactory(SSLTransmissionResponder *responder = NULL,
+                                          QObject *parent = NULL);
+
    virtual ~SSLTransmissionServerConnectionFactory();
 
    // create a new transmission server connection
    virtual SSLServerConnection *create(int socketDescriptor,
                                        QString certPath, QString keyPath,
                                        QObject *parent);
+
+protected:
+
+   SSLTransmissionResponder *responder_;
 
 public slots:
 
@@ -315,6 +448,7 @@ public:
    SSLTransmissionServerConnection(int socketDescriptor,
                                    QString certPath, QString keyPath,
                                    SSLServerConnectionFactory *factory,
+                                   SSLTransmissionResponder *responder = NULL,
                                    QObject *parent = NULL);
 
    virtual ~SSLTransmissionServerConnection();
@@ -331,8 +465,29 @@ signals:
    // signal transmission of data block
    void transmit(SSLTransmission);
 
-   // signal command block
+   // signal command data block
    void command(SSLTransmission);
+};
+
+// ssl transmission response receiver base class
+class SSLTransmissionResponseReceiver: public QObject
+{
+   Q_OBJECT
+
+public:
+
+   SSLTransmissionResponseReceiver(QObject *parent = NULL);
+   virtual ~SSLTransmissionResponseReceiver();
+
+   virtual void onSuccess(QString hostName, quint16 port, QString fileName, QString uid) = 0;
+   virtual void onFailure(QString hostName, quint16 port, QString fileName, QString uid) = 0;
+   virtual void onResponse(SSLTransmission t) = 0;
+
+   public slots:
+
+   void success(QString, quint16, QString, QString);
+   void failure(QString, quint16, QString, QString);
+   void response(SSLTransmission);
 };
 
 // ssl transmission client class
@@ -352,14 +507,19 @@ public:
 protected:
 
    // start writing through an established connection
-   virtual void startWriting(QSslSocket *socket);
+   virtual bool startWriting(QSslSocket *socket);
 
    SSLTransmission t_;
 
 public slots:
 
    // start non-blocking transmission
-   void transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit);
+   void transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit,
+                            SSLTransmissionResponseReceiver *receiver = NULL);
+
+signals:
+
+   void response(SSLTransmission);
 };
 
 // ssl transmission thread class
@@ -369,11 +529,10 @@ class SSLTransmissionThread: public QThread
 
 public:
 
-   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit);
-   virtual ~SSLTransmissionThread();
+   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit,
+                         QObject *parent = NULL);
 
-   // non-blocking transmission
-   static void transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit);
+   virtual ~SSLTransmissionThread();
 
 protected:
 
@@ -386,6 +545,16 @@ protected:
    bool verify_;
    bool compress_;
    int command_;
+
+protected slots:
+
+   void receive(SSLTransmission);
+
+signals:
+
+   void success(QString, quint16, QString, QString);
+   void failure(QString, quint16, QString, QString);
+   void response(SSLTransmission);
 };
 
 #endif
