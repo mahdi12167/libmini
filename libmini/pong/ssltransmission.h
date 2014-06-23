@@ -280,7 +280,8 @@ public:
 
       if (transmitState_ == 1)
       {
-         if (header_.command == cc_transmit)
+         if (header_.command == cc_transmit ||
+             header_.command == cc_response)
          {
             char code;
 
@@ -298,10 +299,6 @@ public:
                return(false);
             }
 
-            transmitState_++;
-         }
-         else if (header_.command == cc_response)
-         {
             transmitState_++;
          }
          else
@@ -401,7 +398,8 @@ public:
 
       if (transmitState_ == 4)
       {
-         if (header_.command == cc_transmit)
+         if (header_.command == cc_transmit ||
+             header_.command == cc_response)
          {
             char code = response_ok;
 
@@ -417,8 +415,8 @@ public:
                response_ = responder_->create(this);
                response_->header_.command = cc_response;
 
-               // check for valid transmission response
-               if (!response_->valid())
+               // write transmission response to ssl socket
+               if (!response_->write(socket))
                {
                   setError();
                   return(true);
@@ -429,9 +427,6 @@ public:
                setError();
                return(true);
             }
-
-            // write transmission response to ssl socket
-            response_->write(socket);
          }
 
          transmitState_++;
