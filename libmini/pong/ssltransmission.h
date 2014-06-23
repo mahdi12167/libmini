@@ -22,6 +22,7 @@ struct SSLTransmissionHeader
    qint64 time; // time stamp of data block in epoch respresentation
    quint16 tid_size; // size of transmission id block
    quint16 uid_size; // size of user id block
+   qint8 valid; // is the data block valid
 };
 
 class SSLTransmission;
@@ -34,7 +35,8 @@ public:
    SSLTransmissionResponder() {}
    virtual ~SSLTransmissionResponder() {}
 
-   virtual SSLTransmission *create(SSLTransmission *t) = 0;
+   // create a transmission response
+   virtual SSLTransmission *create(const SSLTransmission *t) = 0;
 };
 
 // ssl transmission class
@@ -43,14 +45,21 @@ class SSLTransmission
 public:
 
    static const qint32 magic_number = 0x02071971;
+   static const qint8 response_ok = 1;
 
-   static const qint8 command_transmit = 0;
-   static const qint8 command_respond = 0;
+   enum CommandCode
+   {
+      cc_transmit = 0,
+      cc_respond  = 1,
+      cc_response = 2,
+   };
 
-   static const qint8 response_code_ok = 1;
-
-   SSLTransmission(const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc(), const int command = command_transmit)
-      : data_(), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0), response_(NULL), responder_(NULL), error_(false)
+   SSLTransmission(const QString tid="", const QString uid="",
+                   const QDateTime time = QDateTime::currentDateTimeUtc(),
+                   const CommandCode command = cc_transmit)
+      : data_(),
+        tid_(tid.toAscii()), uid_(uid.toAscii()),
+        transmitState_(0), response_(NULL), responder_(NULL)
    {
       header_.magic = magic_number;
       header_.command = command;
@@ -59,10 +68,15 @@ public:
       header_.time = time.toUTC().toMSecsSinceEpoch();
       header_.tid_size = std::min(tid_.size(), 65535);
       header_.uid_size = std::min(uid_.size(), 65535);
+      header_.valid = true;
    }
 
-   SSLTransmission(const QByteArray &data, const QString tid="", const QString uid="", const QDateTime time = QDateTime::currentDateTimeUtc(), bool compressed=false, const int command = command_transmit)
-      : data_(data), tid_(tid.toAscii()), uid_(uid.toAscii()), transmitState_(0), response_(NULL), responder_(NULL), error_(false)
+   SSLTransmission(const QByteArray &data, const QString tid="", const QString uid="",
+                   const QDateTime time = QDateTime::currentDateTimeUtc(), bool compressed=false,
+                   const CommandCode command = cc_transmit)
+      : data_(data),
+        tid_(tid.toAscii()), uid_(uid.toAscii()),
+        transmitState_(0), response_(NULL), responder_(NULL)
    {
       header_.magic = magic_number;
       header_.command = command;
@@ -71,10 +85,14 @@ public:
       header_.time = time.toUTC().toMSecsSinceEpoch();
       header_.tid_size = std::min(tid_.size(), 65535);
       header_.uid_size = std::min(uid_.size(), 65535);
+      header_.valid = true;
    }
 
-   SSLTransmission(QFile &file, const QString uid="", const int command = command_transmit)
-      : data_(file.readAll()), tid_(file.fileName().toAscii()), uid_(uid.toAscii()), transmitState_(0), response_(NULL), responder_(NULL), error_(false)
+   SSLTransmission(QFile &file, const QString uid="",
+                   const CommandCode command = cc_transmit)
+      : data_(file.readAll()),
+        tid_(file.fileName().toAscii()), uid_(uid.toAscii()),
+        transmitState_(0), response_(NULL), responder_(NULL)
    {
       QFileInfo fileInfo(file);
 
@@ -85,6 +103,34 @@ public:
       header_.time = fileInfo.lastModified().toUTC().toMSecsSinceEpoch();
       header_.tid_size = std::min(tid_.size(), 65535);
       header_.uid_size = std::min(uid_.size(), 65535);
+      header_.valid = true;
+   }
+
+   SSLTransmission(const SSLTransmission &t)
+      : header_(t.header_), data_(t.data_),
+        tid_(t.tid_), uid_(t.uid_),
+        transmitState_(t.transmitState_), response_(NULL), responder_(t.responder_)
+   {
+      if (t.response_ != NULL)
+         response_ = new SSLTransmission(*t.response_);
+   }
+
+   SSLTransmission& operator = (const SSLTransmission &t)
+   {
+      header_ = t.header_;
+      data_ = t.data_;
+
+      tid_ = t.tid_;
+      uid_ = t.uid_;
+
+      transmitState_ = t.transmitState_;
+      response_ = NULL;
+      responder_ = t.responder_;
+
+      if (t.response_ != NULL)
+         response_ = new SSLTransmission(*t.response_);
+
+      return(*this);
    }
 
    ~SSLTransmission()
@@ -98,7 +144,14 @@ public:
       return(header_.size == 0);
    }
 
-   QByteArray getData()
+   void setData(const QByteArray &data, bool compressed=false)
+   {
+      data_ =  data;
+      header_.size = data_.size();
+      header_.compressed = compressed;
+   }
+
+   QByteArray getData() const
    {
       return(data_);
    }
@@ -132,9 +185,9 @@ public:
       return(uid_);
    }
 
-   int getCommand() const
+   CommandCode getCommand() const
    {
-      return(header_.command);
+      return((CommandCode)header_.command);
    }
 
    void setResponder(SSLTransmissionResponder *responder)
@@ -147,9 +200,14 @@ public:
       return(response_);
    }
 
-   bool error() const
+   void setError()
    {
-      return(error_);
+      header_.valid = false;
+   }
+
+   bool valid() const
+   {
+      return(header_.valid);
    }
 
    void append(const QByteArray &data)
@@ -197,6 +255,7 @@ public:
          out << header_.time;
          out << header_.tid_size;
          out << header_.uid_size;
+         out << header_.valid;
 
          // write header block to the ssl socket
          socket->write(block);
@@ -221,7 +280,7 @@ public:
 
       if (transmitState_ == 1)
       {
-         if (header_.command == command_transmit)
+         if (header_.command == cc_transmit)
          {
             char code;
 
@@ -233,15 +292,15 @@ public:
             socket->read(&code, 1);
 
             // check for correct response code
-            if (code != response_code_ok)
+            if (code != response_ok)
             {
-               error_ = true;
+               setError();
                return(false);
             }
 
             transmitState_++;
          }
-         else if (header_.command == command_respond)
+         else if (header_.command == cc_response)
          {
             transmitState_++;
          }
@@ -255,9 +314,9 @@ public:
                socket->waitForReadyRead(-1);
 
             // check for correct response block
-            if (response_->error())
+            if (!response_->valid())
             {
-               error_ = true;
+               setError();
                return(false);
             }
 
@@ -282,7 +341,7 @@ public:
          in >> header_.magic;
          if (header_.magic != magic_number)
          {
-            error_ = true;
+            setError();
             return(true);
          }
 
@@ -293,6 +352,7 @@ public:
          in >> header_.time;
          in >> header_.tid_size;
          in >> header_.uid_size;
+         in >> header_.valid;
 
          transmitState_++;
       }
@@ -341,9 +401,9 @@ public:
 
       if (transmitState_ == 4)
       {
-         if (header_.command == command_transmit)
+         if (header_.command == cc_transmit)
          {
-            char code = response_code_ok;
+            char code = response_ok;
 
             // write response code to ssl socket
             socket->write(&code, 1);
@@ -355,11 +415,18 @@ public:
             {
                // create transmission response
                response_ = responder_->create(this);
-               response_->header_.command = command_respond;
+               response_->header_.command = cc_response;
+
+               // check for valid transmission response
+               if (!response_->valid())
+               {
+                  setError();
+                  return(true);
+               }
             }
             else
             {
-               error_ = true;
+               setError();
                return(true);
             }
 
@@ -383,7 +450,6 @@ protected:
    int transmitState_; // actual state of transmission
    SSLTransmission *response_; // received transmission response
    SSLTransmissionResponder *responder_; // transmission responder
-   bool error_; // is the transmission valid?
 };
 
 // stream output
@@ -398,8 +464,8 @@ inline std::ostream& operator << (std::ostream &out, const SSLTransmission &t)
        << t.isCompressed() << ", "
        << t.getCommand();
 
-   if (t.error())
-      out << ", ERROR";
+   if (!t.valid())
+      out << ", INVALID";
 
    out << ")";
 
@@ -465,8 +531,14 @@ signals:
    // signal transmission of data block
    void transmit(SSLTransmission);
 
+   // signal arrival of transmission response
+   void respond(SSLTransmission);
+
    // signal command data block
    void command(SSLTransmission);
+
+   // signal invalid data block
+   void invalid(SSLTransmission);
 };
 
 // ssl transmission response receiver base class
@@ -502,7 +574,7 @@ public:
 
    // start transmission
    bool transmit(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true);
-   bool transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit);
+   bool transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit);
 
 protected:
 
@@ -514,7 +586,8 @@ protected:
 public slots:
 
    // start non-blocking transmission
-   void transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit,
+   void transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid,
+                            bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit,
                             SSLTransmissionResponseReceiver *receiver = NULL);
 
 signals:
@@ -529,7 +602,8 @@ class SSLTransmissionThread: public QThread
 
 public:
 
-   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, int command = SSLTransmission::command_transmit,
+   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, QString uid,
+                         bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit,
                          QObject *parent = NULL);
 
    virtual ~SSLTransmissionThread();
@@ -544,7 +618,8 @@ protected:
    QString uid_;
    bool verify_;
    bool compress_;
-   int command_;
+
+   SSLTransmission::CommandCode command_;
 
 protected slots:
 

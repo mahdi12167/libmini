@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#define VERSION "v0.4 as of 22.June.2014"
+#define VERSION "v0.5 as of 23.June.2014"
 
 #define LICENSE "licensed under GPL 3.0"
 #define COPYRIGHT "(c) by Stefan Roettger 2014"

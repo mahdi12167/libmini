@@ -131,10 +131,26 @@ QString SSLTransmissionDatabase::oldest(QString uid)
    return(tid);
 }
 
+// check for a transmission name in the db
+bool SSLTransmissionDatabase::exists(QString tid, QString uid)
+{
+   if (db_.isOpen())
+   {
+      QString select = QString("SELECT id FROM transmissions "
+                               "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
+
+      QSqlQuery query(select);
+      if (query.next()) return(true);
+   }
+
+   return(false);
+}
+
 // read a transmission from the db
 SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid)
 {
    SSLTransmission t;
+   t.setError();
 
    if (db_.isOpen())
    {
@@ -168,7 +184,7 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
 }
 
 // remove a transmission from the db
-void SSLTransmissionDatabase::remove(QString tid, QString uid)
+bool SSLTransmissionDatabase::remove(QString tid, QString uid)
 {
    if (db_.isOpen())
    {
@@ -176,12 +192,20 @@ void SSLTransmissionDatabase::remove(QString tid, QString uid)
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
 
       QSqlQuery query(remove);
-      if (!query.exec()) throw e_;
+      if (query.exec()) return(true);
    }
+
+   return(false);
 }
 
 // get last db error
 QSqlError SSLTransmissionDatabase::lastError()
 {
    return(db_.lastError());
+}
+
+// create a transmission response from the db
+SSLTransmission *SSLTransmissionDatabaseResponder::create(const SSLTransmission *t)
+{
+   return(new SSLTransmission(db_->read(t->getTID(), t->getUID())));
 }

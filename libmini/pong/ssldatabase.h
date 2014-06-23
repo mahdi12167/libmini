@@ -33,11 +33,14 @@ public:
    // retrieve oldest transmission name in the db
    QString oldest(QString uid);
 
+   // check for a transmission name in the db
+   bool exists(QString tid, QString uid);
+
    // read a transmission from the db
    SSLTransmission read(QString tid, QString uid);
 
    // remove a transmission from the db
-   void remove(QString tid, QString uid);
+   bool remove(QString tid, QString uid);
 
    // get last db error
    //  if opening database has failed
@@ -58,6 +61,26 @@ protected:
 
    // write a transmission to the db
    void write(SSLTransmission);
+};
+
+// ssl transmission database responder class
+class SSLTransmissionDatabaseResponder: public SSLTransmissionResponder
+{
+public:
+
+   SSLTransmissionDatabaseResponder(SSLTransmissionDatabase *db)
+      : SSLTransmissionResponder(), db_(db)
+   {}
+
+   virtual ~SSLTransmissionDatabaseResponder()
+   {}
+
+   // create a transmission response from the db
+   virtual SSLTransmission *create(const SSLTransmission *t);
+
+   protected:
+
+   SSLTransmissionDatabase *db_;
 };
 
 #endif
