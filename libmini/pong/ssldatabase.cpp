@@ -53,7 +53,7 @@ bool SSLTransmissionDatabase::createTable()
 {
    bool success = false;
 
-   // create table "transmissions"
+   // create tables
    if (db_.isOpen())
    {
       QString create("CREATE TABLE transmissions"
@@ -67,11 +67,56 @@ bool SSLTransmissionDatabase::createTable()
                      "PRIMARY KEY(tid, uid)"
                      ")");
 
+      QString create_users("CREATE TABLE users"
+                           "("
+                           "id INT,"
+                           "uid TEXT NOT NULL,"
+                           "PRIMARY KEY(uid)"
+                           ")");
+
       QSqlQuery query;
       success = query.exec(create);
+      success &= query.exec(create_users);
    }
 
    return(success);
+}
+
+// generate a random string
+QString SSLTransmissionDatabase::random(const int len)
+{
+   static const char alphanum[] =
+       "0123456789"
+       "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+       "abcdefghijklmnopqrstuvwxyz";
+
+   QString s;
+
+   for (int i=0; i<len; i++)
+      s += alphanum[rand() % (sizeof(alphanum)-1)];
+
+   return(s);
+}
+
+// create a unique user name
+QString SSLTransmissionDatabase::create_uid(const int len)
+{
+   QString uid;
+
+   QSqlQuery query;
+
+   if (db_.isOpen())
+   {
+      do
+      {
+         uid = random(len);
+         QString insert=QString("INSERT INTO users VALUES(NULL, '%1')").arg(uid);
+         query.prepare(insert);
+      }
+      while (!query.exec());
+   }
+
+   return(uid);
 }
 
 // list user names in the db
@@ -210,7 +255,16 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
 {
    SSLTransmission *r = new SSLTransmission(t->getTID(), t->getUID());
 
-   if (t->getTID() == "oldest")
+   if (t->getTID() == "create_uid")
+   {
+      QString uid = db_->create_uid();
+
+      if (uid.size() == 0)
+         r->setError();
+      else
+         r->setData(uid.toAscii());
+   }
+   else if (t->getTID() == "oldest")
    {
       QString oldest = db_->oldest(t->getUID());
 

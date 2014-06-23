@@ -24,6 +24,9 @@ public:
    // remove db
    bool removeDB();
 
+   // create a unique user name
+   QString create_uid(const int len=1024);
+
    // list user names in the db
    QStringList users();
 
@@ -56,6 +59,11 @@ protected:
 
    // write a transmission to the db
    void write(SSLTransmission);
+
+private:
+
+   // generate a random string
+   static QString random(const int len);
 };
 
 // ssl transmission database responder class
