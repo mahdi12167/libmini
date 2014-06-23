@@ -42,11 +42,6 @@ public:
    // remove a transmission from the db
    bool remove(QString tid, QString uid);
 
-   // get last db error
-   //  if opening database has failed
-   //  ask for error description by lastError().text()
-   QSqlError lastError();
-
 protected:
 
    // create key/value table

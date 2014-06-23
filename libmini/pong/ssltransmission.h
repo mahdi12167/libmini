@@ -156,7 +156,7 @@ public:
       return(data_);
    }
 
-   bool isCompressed() const
+   bool compressed() const
    {
       return(header_.compressed);
    }
@@ -460,9 +460,10 @@ inline std::ostream& operator << (std::ostream &out, const SSLTransmission &t)
    out << "\"" << t.getTID().toStdString() << "\", "
        << "\"" << t.getUID().toStdString() << "\", "
        << t.getTime().toString(Qt::ISODate).toStdString() << ", "
-       << t.getSize() << ", "
-       << t.isCompressed() << ", "
-       << t.getCommand();
+       << t.getSize();
+
+   if (t.compressed())
+      out << ", COMPRESSED";
 
    if (!t.valid())
       out << ", INVALID";

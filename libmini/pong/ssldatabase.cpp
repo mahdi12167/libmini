@@ -59,11 +59,12 @@ bool SSLTransmissionDatabase::createTable()
       QString create("CREATE TABLE transmissions"
                      "("
                      "id INT,"
-                     "tid TEXT PRIMARY KEY,"
-                     "uid TEXT,"
+                     "tid TEXT NOT NULL,"
+                     "uid TEXT NOT NULL,"
                      "isotime VARCHAR(19),"
                      "content BLOB,"
-                     "compressed BIT"
+                     "compressed BIT,"
+                     "PRIMARY KEY(tid, uid)"
                      ")");
 
       QSqlQuery query;
@@ -174,7 +175,7 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
    if (db_.isOpen())
    {
       QString insert=QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, %4)")
-                     .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate)).arg(t.isCompressed());
+                     .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate)).arg(t.compressed());
 
       QSqlQuery query;
       query.prepare(insert);
@@ -196,12 +197,6 @@ bool SSLTransmissionDatabase::remove(QString tid, QString uid)
    }
 
    return(false);
-}
-
-// get last db error
-QSqlError SSLTransmissionDatabase::lastError()
-{
-   return(db_.lastError());
 }
 
 // create a transmission response from the db
