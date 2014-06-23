@@ -129,6 +129,10 @@ int main(int argc, char *argv[])
          std::cout << e.what() << std::endl;
          return(1);
       }
+      catch (...)
+      {
+         return(1);
+      }
    }
    // client mode
    else if (client && arg.size()==1)
@@ -152,6 +156,10 @@ int main(int argc, char *argv[])
          std::cout << e.what() << std::endl;
          return(1);
       }
+      catch (...)
+      {
+         return(1);
+      }
    }
    // transmit mode
    else if (transmit && arg.size()==2)
@@ -166,6 +174,10 @@ int main(int argc, char *argv[])
       catch (SSLError &e)
       {
          std::cout << e.what() << std::endl;
+         return(1);
+      }
+      catch (...)
+      {
          return(1);
       }
    }
