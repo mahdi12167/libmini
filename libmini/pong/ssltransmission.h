@@ -37,6 +37,9 @@ public:
 
    // create a transmission response
    virtual SSLTransmission *create(const SSLTransmission *t) = 0;
+
+   // create a command response
+   virtual SSLTransmission *command(const SSLTransmission *t) = 0;
 };
 
 // ssl transmission class
@@ -52,6 +55,8 @@ public:
       cc_transmit = 0,
       cc_respond  = 1,
       cc_response = 2,
+      cc_command = 3,
+      cc_result = 4
    };
 
    SSLTransmission(const QString tid="", const QString uid="",
@@ -281,7 +286,8 @@ public:
       if (transmitState_ == 1)
       {
          if (header_.command == cc_transmit ||
-             header_.command == cc_response)
+             header_.command == cc_response ||
+             header_.command == cc_result)
          {
             char code;
 
@@ -301,7 +307,8 @@ public:
 
             transmitState_++;
          }
-         else
+         else if (header_.command == cc_respond ||
+                  header_.command == cc_command)
          {
             // allocate transmission response
             response_ = new SSLTransmission();
@@ -399,21 +406,31 @@ public:
       if (transmitState_ == 4)
       {
          if (header_.command == cc_transmit ||
-             header_.command == cc_response)
+             header_.command == cc_response ||
+             header_.command == cc_result)
          {
             char code = response_ok;
 
             // write response code to ssl socket
             socket->write(&code, 1);
          }
-         else
+         else if (header_.command == cc_respond ||
+                  header_.command == cc_command)
          {
             // ask transmission responder to respond
             if (responder_)
             {
                // create transmission response
-               response_ = responder_->create(this);
-               response_->header_.command = cc_response;
+               if (header_.command == cc_respond)
+               {
+                  response_ = responder_->create(this);
+                  response_->header_.command = cc_response;
+               }
+               else
+               {
+                  response_ = responder_->command(this);
+                  response_->header_.command = cc_result;
+               }
 
                // write transmission response to ssl socket
                if (!response_->write(socket))
@@ -550,12 +567,14 @@ public:
    virtual void onSuccess(QString hostName, quint16 port, QString fileName, QString uid) = 0;
    virtual void onFailure(QString hostName, quint16 port, QString fileName, QString uid) = 0;
    virtual void onResponse(SSLTransmission t) = 0;
+   virtual void onResult(SSLTransmission t) = 0;
 
    public slots:
 
    void success(QString, quint16, QString, QString);
    void failure(QString, quint16, QString, QString);
    void response(SSLTransmission);
+   void result(SSLTransmission);
 };
 
 // ssl transmission client class
@@ -589,6 +608,7 @@ public slots:
 signals:
 
    void response(SSLTransmission);
+   void result(SSLTransmission);
 };
 
 // ssl transmission thread class
@@ -619,13 +639,15 @@ protected:
 
 protected slots:
 
-   void receive(SSLTransmission);
+   void receive_response(SSLTransmission);
+   void receive_result(SSLTransmission);
 
 signals:
 
    void success(QString, quint16, QString, QString);
    void failure(QString, quint16, QString, QString);
    void response(SSLTransmission);
+   void result(SSLTransmission);
 };
 
 #endif

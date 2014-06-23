@@ -58,9 +58,11 @@ bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 
    // signal transmission of data block
    if (t_.valid())
+   {
       if (t_.getCommand() == SSLTransmission::cc_transmit) emit transmit(t_);
       else if (t_.getCommand() == SSLTransmission::cc_respond) emit respond(t_);
-      else emit command(t_);
+      else if (t_.getCommand() == SSLTransmission::cc_command) emit command(t_);
+   }
    else emit invalid(t_);
 
    return(true);
@@ -88,7 +90,10 @@ bool SSLTransmissionClient::transmit(QString hostName, quint16 port, const SSLTr
    // check for available response
    if (success)
       if (t_.getResponse())
-         emit response(*(t_.getResponse()));
+         if (t_.getCommand() == SSLTransmission::cc_response)
+            emit response(*(t_.getResponse()));
+         else if (t_.getCommand() == SSLTransmission::cc_result)
+            emit result(*(t_.getResponse()));
 
    return(success);
 }
@@ -139,6 +144,10 @@ void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, 
          // signal transmission response
          connect(thread, SIGNAL(response(SSLTransmission)),
                  receiver, SLOT(response(SSLTransmission)), Qt::QueuedConnection);
+
+         // signal command result
+         connect(thread, SIGNAL(result(SSLTransmission)),
+                 receiver, SLOT(result(SSLTransmission)), Qt::QueuedConnection);
          }
 
    thread->start();
@@ -169,7 +178,11 @@ void SSLTransmissionThread::run()
 
    // receive response data block
    connect(&client, SIGNAL(response(SSLTransmission)),
-           this, SLOT(receive(SSLTransmission)));
+           this, SLOT(receive_response(SSLTransmission)));
+
+   // receive command result block
+   connect(&client, SIGNAL(result(SSLTransmission)),
+           this, SLOT(receive_result(SSLTransmission)));
 
    // transmit
    ok = client.transmit(hostName_, port_, fileName_, uid_, verify_, compress_, command_);
@@ -182,9 +195,15 @@ void SSLTransmissionThread::run()
 }
 
 // receive ssl transmission response
-void SSLTransmissionThread::receive(SSLTransmission t)
+void SSLTransmissionThread::receive_response(SSLTransmission t)
 {
    emit response(t);
+}
+
+// receive ssl command result
+void SSLTransmissionThread::receive_result(SSLTransmission t)
+{
+   emit result(t);
 }
 
 // ssl transmission response receiver ctor
@@ -212,4 +231,10 @@ void SSLTransmissionResponseReceiver::failure(QString hostName, quint16 port, QS
 void SSLTransmissionResponseReceiver::response(SSLTransmission t)
 {
    onResponse(t);
+}
+
+// transmission response
+void SSLTransmissionResponseReceiver::result(SSLTransmission t)
+{
+   onResult(t);
 }

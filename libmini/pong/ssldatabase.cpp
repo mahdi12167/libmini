@@ -204,3 +204,23 @@ SSLTransmission *SSLTransmissionDatabaseResponder::create(const SSLTransmission 
 {
    return(new SSLTransmission(db_->read(t->getTID(), t->getUID())));
 }
+
+// create a command response from the db
+SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission *t)
+{
+   SSLTransmission *r = new SSLTransmission(t->getTID(), t->getUID());
+
+   if (t->getTID() == "oldest")
+   {
+      QString oldest = db_->oldest(t->getUID());
+
+      if (oldest.size() == 0)
+         r->setError();
+      else
+         r->setData(oldest.toAscii());
+   }
+   else
+      r->setError();
+
+   return(r);
+}

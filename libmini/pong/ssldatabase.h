@@ -73,7 +73,10 @@ public:
    // create a transmission response from the db
    virtual SSLTransmission *create(const SSLTransmission *t);
 
-   protected:
+   // create a command response from the db
+   virtual SSLTransmission *command(const SSLTransmission *t);
+
+protected:
 
    SSLTransmissionDatabase *db_;
 };
