@@ -591,6 +591,9 @@ public:
    bool transmit(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true);
    bool transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit);
 
+   // get transmission response
+   SSLTransmission *getResponse() const;
+
 protected:
 
    // start writing through an established connection

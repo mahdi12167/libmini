@@ -44,7 +44,9 @@ void usage(const char *prog)
    std::cout << " --transmit: transmit file" << std::endl;
    std::cout << " --dump: dump database contents" << std::endl;
    std::cout << " --port=n: use tcp port n" << std::endl;
-   std::cout << " --user=...: specify user name" << std::endl;
+   std::cout << " --user=\"name\": specify user name" << std::endl;
+   std::cout << " --verify-peer: verify integrity of peer" << std::endl;
+   std::cout << " --self-certified: allow self-certified certificates" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "example server usage:" << std::endl;
@@ -52,7 +54,7 @@ void usage(const char *prog)
    std::cout << "example client usage:" << std::endl;
    std::cout << " ./pong --client 127.0.0.1" << std::endl;
    std::cout << "example transmission usage:" << std::endl;
-   std::cout << " ./pong --transmit pong.server.org file.txt" << std::endl;
+   std::cout << " ./pong --transmit pong.server.org --compress file.txt" << std::endl;
    exit(1);
 }
 
@@ -78,6 +80,7 @@ int main(int argc, char *argv[])
    bool transmit=false;
    bool dump=false;
    int port=10000;
+   bool verify=false;
    bool compress=false;
 
    // scan option list
@@ -87,10 +90,27 @@ int main(int argc, char *argv[])
       else if (opt[i]=="transmit") {transmit=true; server=client=dump=false;}
       else if (opt[i]=="dump") {dump=true; server=client=transmit=false;}
       else if (opt[i].startsWith("user=")) user=get_str(opt[i]);
-      else if (opt[i].startsWith("port=")) port=(int)get_opt(opt[i]);
+      else if (opt[i].startsWith("port=")) port=(int)(get_opt(opt[i])+0.5);
+      else if (opt[i]=="verify-peer") verify=true;
+      else if (opt[i]=="self-certified") verify=false;
       else if (opt[i]=="compress") compress=true;
       else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
+
+   //!! test code
+   // auto-select user name
+   if (user == "auto-select")
+   {
+      SSLTransmissionClient client;
+
+      SSLTransmission t("create_uid", "", QDateTime::currentDateTimeUtc(), SSLTransmission::cc_command);
+
+      if (client.transmit(arg[0], port, t, verify))
+         if (client.getResponse() != NULL)
+            std::cout << (*client.getResponse()) << std::endl;
+
+      exit(0);
+   }
 
    // server mode
    if (server && arg.size()==0)
@@ -101,11 +121,14 @@ int main(int argc, char *argv[])
 
          main.show();
 
-         SSLTransmissionServerConnectionFactory factory;
-         SSLServer server(&factory);
-
+         // open transmission database
          SSLTransmissionDatabase db;
          if (!db.openDB()) return(1);
+
+         // connect transmission database with connection factory
+         SSLTransmissionDatabaseResponder responder(&db);
+         SSLTransmissionServerConnectionFactory factory(&responder);
+         SSLServer server(&factory);
 
          // connect server gui with the connection factory transmitted signal
          QObject::connect(&factory, SIGNAL(transmitted(SSLTransmission)),
@@ -139,13 +162,13 @@ int main(int argc, char *argv[])
    {
       try
       {
-         ClientUI main(arg[0], port, user, false, compress);
+         ClientUI main(arg[0], port, user, verify, compress);
 
          main.show();
 
          SSLTransmissionClient client;
 
-         // connect server gui with client
+         // connect client gui with client
          QObject::connect(&main, SIGNAL(transmit(QString, quint16, QString, QString, bool, bool)),
                           &client, SLOT(transmitNonBlocking(QString, quint16, QString, QString, bool, bool)));
 
@@ -168,7 +191,7 @@ int main(int argc, char *argv[])
       {
          SSLTransmissionClient client;
 
-         if (!client.transmit(arg[0], port, arg[1], user, false, compress))
+         if (!client.transmit(arg[0], port, arg[1], user, verify, compress))
             return(1);
       }
       catch (SSLError &e)

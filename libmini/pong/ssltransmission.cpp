@@ -115,6 +115,12 @@ bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QString fil
    return(transmit(hostName, port, t, verify));
 }
 
+// get transmission response
+SSLTransmission *SSLTransmissionClient::getResponse() const
+{
+   return(t_.getResponse());
+}
+
 // start writing through an established connection
 bool SSLTransmissionClient::startWriting(QSslSocket *socket)
 {
