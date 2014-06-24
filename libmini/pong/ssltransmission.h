@@ -296,6 +296,10 @@ public:
          if (header_.size > 0)
             socket->write(data_);
 
+         // wait until entire data block has been written
+         if (!socket->waitForBytesWritten(-1)) // no time-out
+            return(false);
+
          // clear data block
          data_.clear();
 
@@ -311,18 +315,15 @@ public:
             char code;
 
             // check if response code has arrived
-            while (socket->bytesAvailable() < 1)
-               socket->waitForReadyRead(-1);
+            if (!socket->waitForReadyRead())
+               return(false);
 
             // read response code from the ssl socket
             socket->read(&code, 1);
 
             // check for correct response code
             if (code != response_ok)
-            {
-               setError();
                return(false);
-            }
 
             transmitState_++;
          }
@@ -334,14 +335,12 @@ public:
 
             // check if entire response block has arrived
             while (!response_->read(socket))
-               socket->waitForReadyRead(-1);
+               if (!socket->waitForReadyRead())
+                  return(false);
 
             // check for correct response block
             if (!response_->valid())
-            {
-               setError();
                return(false);
-            }
 
             transmitState_++;
          }
@@ -432,6 +431,13 @@ public:
 
             // write response code to the ssl socket
             socket->write(&code, 1);
+
+            // wait until response code has been written
+            if (!socket->waitForBytesWritten())
+            {
+               setError();
+               return(true);
+            }
          }
          else if (header_.command == cc_respond ||
                   header_.command == cc_command)

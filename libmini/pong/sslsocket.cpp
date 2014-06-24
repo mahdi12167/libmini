@@ -179,7 +179,7 @@ void SSLClient::run()
    socket_->connectToHostEncrypted(hostName_, port_);
 
    // wait for encryption to be established
-   if (socket_->waitForEncrypted(-1))
+   if (socket_->waitForEncrypted())
       success_ = startWriting();
 
    // delete ssl socket
@@ -195,7 +195,6 @@ bool SSLClient::startWriting()
    success = startWriting(socket_);
 
    // disconnect ssl socket
-   socket_->waitForBytesWritten();
    socket_->disconnectFromHost();
 
    return(success);
@@ -235,10 +234,10 @@ bool SSLTestServerConnection::startReading(QSslSocket *socket)
 {
    static const QByteArray test("test");
 
-   // check if entire block has arrived
+   // check if entire data block has arrived
    if (socket->bytesAvailable() < test.size()) return(false);
 
-   // read data from ssl socket
+   // read data block from ssl socket
    QByteArray data = socket->readAll();
 
    // test output
@@ -267,8 +266,9 @@ bool SSLTestClient::startWriting(QSslSocket *socket)
    // test output
    std::cout << "outgoing: \"" << QString(test).toStdString() << "\"" << std::endl;
 
-   // write data to ssl socket
+   // write data block to ssl socket
    socket->write(test);
 
-   return(true);
+   // wait until entire data block has been written
+   return(socket->waitForBytesWritten());
 }
