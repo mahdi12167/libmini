@@ -44,6 +44,7 @@ void usage(const char *prog)
    std::cout << " --dump: dump database contents" << std::endl;
    std::cout << " --port=n: use tcp port n" << std::endl;
    std::cout << " --user=\"name\": specify user name" << std::endl;
+   std::cout << " --user-reset: reset auto-selected user name" << std::endl;
    std::cout << " --verify-peer: verify integrity of peer" << std::endl;
    std::cout << " --self-certified: allow self-certified certificates" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
@@ -73,12 +74,13 @@ int main(int argc, char *argv[])
       else if (args[i].startsWith("-")) opt.push_back(args[i].mid(1));
       else arg.push_back(args[i]);
 
-   QString user="";
    bool server=true;
    bool client=false;
    bool transmit=false;
    bool dump=false;
    int port=10000;
+   QString user="";
+   bool reset=false;
    bool verify=false;
    bool compress=false;
 
@@ -88,8 +90,9 @@ int main(int argc, char *argv[])
       else if (opt[i]=="client") {client=true; server=transmit=dump=false;}
       else if (opt[i]=="transmit") {transmit=true; server=client=dump=false;}
       else if (opt[i]=="dump") {dump=true; server=client=transmit=false;}
-      else if (opt[i].startsWith("user=")) user=get_str(opt[i]);
       else if (opt[i].startsWith("port=")) port=(int)(get_opt(opt[i])+0.5);
+      else if (opt[i].startsWith("user=")) user=get_str(opt[i]);
+      else if (opt[i]=="user-reset") reset=true;
       else if (opt[i]=="verify-peer") verify=true;
       else if (opt[i]=="self-certified") verify=false;
       else if (opt[i]=="compress") compress=true;
@@ -139,9 +142,7 @@ int main(int argc, char *argv[])
 
          // auto-select user name
          if (user == "")
-            client.autoselectUID();
-         else if (user == "reset")
-            client.autoselectUID(true);
+            client.autoselectUID(reset);
 
          // connect client gui with client
          QObject::connect(&main, SIGNAL(transmit(QString)),
@@ -170,9 +171,7 @@ int main(int argc, char *argv[])
 
          // auto-select user name
          if (user == "")
-            client.autoselectUID();
-         else if (user == "reset")
-            client.autoselectUID(true);
+            client.autoselectUID(reset);
 
          // transmit file
          if (!client.transmit(arg[1]))
