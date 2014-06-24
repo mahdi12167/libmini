@@ -15,6 +15,9 @@ SSLTransmissionDatabase::SSLTransmissionDatabase(QObject *parent, QString name)
    QString path(QDir::home().path());
    path.append(QDir::separator()).append(name).append(".sqlite");
    path_ = QDir::toNativeSeparators(path);
+
+   // seed random number generator
+   srand(time(NULL));
 }
 
 SSLTransmissionDatabase::~SSLTransmissionDatabase()
