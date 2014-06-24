@@ -89,4 +89,81 @@ protected:
    SSLTransmissionDatabase *db_;
 };
 
+// ssl transmission database server class
+class SSLTransMissionDatabaseServer: public QObject
+{
+   Q_OBJECT
+
+public:
+
+   SSLTransMissionDatabaseServer(quint16 port = 10000,
+                                 QString certPath = "cert.pem", QString keyPath = "key.pem",
+                                 QString altPath = "/usr/share/pong",
+                                 QObject *parent = NULL);
+
+   virtual ~SSLTransMissionDatabaseServer();
+
+   // get port
+   quint16 getPort();
+
+   // get database
+   SSLTransmissionDatabase *getDatabase();
+
+   // get factory
+   SSLTransmissionServerConnectionFactory *getFactory();
+
+   // start listening
+   void start();
+
+protected:
+
+   quint16 port_;
+   QString certPath_, keyPath_;
+   QString altPath_;
+
+   SSLTransmissionDatabase *db_;
+   SSLTransmissionDatabaseResponder *responder_;
+   SSLTransmissionServerConnectionFactory *factory_;
+   SSLServer *server_;
+
+   SSLError e_;
+};
+
+// ssl transmission database client class
+class SSLTransmissionDatabaseClient: public SSLTransmissionClient
+{
+   Q_OBJECT
+
+public:
+
+   SSLTransmissionDatabaseClient(QString hostName, quint16 port=10000,
+                                 QString uid="", bool verify=true, bool compress=false,
+                                 QObject *parent = NULL);
+
+   virtual ~SSLTransmissionDatabaseClient();
+
+   // get host name
+   QString getHostName();
+
+   // get port
+   quint32 getPort();
+
+   // get user name
+   QString getUID();
+
+   // auto-select user name
+   void autoselectUID();
+
+   // start transmission
+   bool transmit(QString fileName, bool verify=true, bool compress=false);
+
+protected:
+
+   QString hostName_;
+   quint16 port_;
+   QString uid_;
+   bool verify_;
+   bool compress_;
+};
+
 #endif

@@ -1,6 +1,8 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
 #include <QDir>
+#include <QSettings>
+
 #include <QSQLQuery>
 
 #include "ssldatabase.h"
@@ -277,4 +279,124 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       r->setError();
 
    return(r);
+}
+
+// ssl transmission database server ctor
+SSLTransMissionDatabaseServer::SSLTransMissionDatabaseServer(quint16 port,
+                                                             QString certPath, QString keyPath,
+                                                             QString altPath,
+                                                             QObject *parent)
+   : QObject(parent),
+     port_(port), certPath_(certPath), keyPath_(keyPath), altPath_(altPath),
+     db_(NULL), responder_(NULL), factory_(NULL), server_(NULL),
+     e_("database server")
+{
+   // open transmission database
+   db_ = new SSLTransmissionDatabase;
+   if (!db_->openDB()) throw e_;
+
+   // aggregate transmission database with server
+   responder_ = new SSLTransmissionDatabaseResponder(db_);
+   factory_ = new SSLTransmissionServerConnectionFactory(responder_);
+   server_ = new SSLServer(factory_);
+}
+
+// ssl transmission database server dtor
+SSLTransMissionDatabaseServer::~SSLTransMissionDatabaseServer()
+{
+   if (server_)
+      delete server_;
+
+   if (factory_)
+      delete factory_;
+
+   if (responder_)
+      delete responder_;
+
+   if (db_)
+      delete db_;
+}
+
+// get port
+quint16 SSLTransMissionDatabaseServer::getPort()
+{
+   return(port_);
+}
+
+// get database
+SSLTransmissionDatabase *SSLTransMissionDatabaseServer::getDatabase()
+{
+   return(db_);
+}
+
+// get factory
+SSLTransmissionServerConnectionFactory *SSLTransMissionDatabaseServer::getFactory()
+{
+   return(factory_);
+}
+
+// start listening
+void SSLTransMissionDatabaseServer::start()
+{
+   // start server on specified port (default 10000)
+   server_->start(certPath_, keyPath_, port_, altPath_);
+}
+
+// ssl transmission database client ctor
+SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, quint16 port,
+                                                             QString uid, bool verify, bool compress,
+                                                             QObject *parent)
+   : SSLTransmissionClient(parent),
+     hostName_(hostName), port_(port),
+     uid_(uid), verify_(verify), compress_(compress)
+{}
+
+// ssl transmission database client dtor
+SSLTransmissionDatabaseClient::~SSLTransmissionDatabaseClient()
+{}
+
+// get host name
+QString SSLTransmissionDatabaseClient::getHostName()
+{
+   return(hostName_);
+}
+
+// get port
+quint32 SSLTransmissionDatabaseClient::getPort()
+{
+   return(port_);
+}
+
+// get user name
+QString SSLTransmissionDatabaseClient::getUID()
+{
+   return(uid_);
+}
+
+// auto-select user name
+void SSLTransmissionDatabaseClient::autoselectUID()
+{
+   QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
+
+   if (settings.contains("uid"))
+      uid_ = settings.value("uid").toString();
+   else
+   {
+      SSLTransmissionClient client;
+      SSLTransmission t("create_uid", "", QDateTime::currentDateTimeUtc(), SSLTransmission::cc_command);
+
+      if (!client.transmit(hostName_, port_, t, verify_)) throw e_;
+      else
+         if (client.getResponse() == NULL) throw e_;
+         else
+            uid_ = client.getResponse()->getData();
+
+      settings.setValue("uid", uid_);
+   }
+}
+
+// start transmission
+bool SSLTransmissionDatabaseClient::transmit(QString fileName, bool verify, bool compress)
+{
+   return(SSLTransmissionClient::transmit(hostName_, port_, fileName, uid_, verify_, compress_));
 }

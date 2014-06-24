@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#define VERSION "v0.5 as of 23.June.2014"
+#define VERSION "v0.6 as of 24.June.2014"
 
 #define LICENSE "licensed under GPL 3.0"
 #define COPYRIGHT "(c) by Stefan Roettger 2014"
@@ -96,21 +96,6 @@ int main(int argc, char *argv[])
       else if (opt[i]=="compress") compress=true;
       else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
-
-   //!! test code
-   // auto-select user name
-   if (user == "auto-select")
-   {
-      SSLTransmissionClient client;
-
-      SSLTransmission t("create_uid", "", QDateTime::currentDateTimeUtc(), SSLTransmission::cc_command);
-
-      if (client.transmit(arg[0], port, t, verify))
-         if (client.getResponse() != NULL)
-            std::cout << (*client.getResponse()) << std::endl;
-
-      exit(0);
-   }
 
    // server mode
    if (server && arg.size()==0)
