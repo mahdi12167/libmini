@@ -138,8 +138,8 @@ int main(int argc, char *argv[])
          SSLTransmissionDatabaseClient client(arg[0], port, user, verify, compress);
 
          // auto-select user name
-         //!!if (user == "")
-         //!!   client.autoselectUID();
+         if (user == "")
+            client.autoselectUID();
 
          // connect client gui with client
          QObject::connect(&main, SIGNAL(transmit(QString)),

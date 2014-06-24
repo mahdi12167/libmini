@@ -7,8 +7,8 @@
 
 #include <QFile>
 #include <QFileInfo>
-#include <QThread>
 #include <QDateTime>
+#include <QThread>
 
 #include "sslsocket.h"
 
@@ -291,9 +291,13 @@ public:
          {
             char code;
 
+            std::cout << "waiting for ok" << std::endl; //!!
+
             // check if response code has arrived
             while (socket->bytesAvailable() < 1)
                socket->waitForReadyRead(-1);
+
+            std::cout << "received ok" << std::endl; //!!
 
             // read response code from the ssl socket
             socket->read(&code, 1);
@@ -313,9 +317,13 @@ public:
             // allocate transmission response
             response_ = new SSLTransmission();
 
+            std::cout << "waiting for response" << std::endl; //!!
+
             // check if entire response block has arrived
             while (!response_->read(socket))
                socket->waitForReadyRead(-1);
+
+            std::cout << "received response" << std::endl; //!!
 
             // check for correct response block
             if (!response_->valid())
@@ -413,6 +421,8 @@ public:
 
             // write response code to ssl socket
             socket->write(&code, 1);
+
+            socket->flush();
          }
          else if (header_.command == cc_respond ||
                   header_.command == cc_command)
