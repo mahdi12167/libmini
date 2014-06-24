@@ -171,7 +171,7 @@ public:
    QString getUID();
 
    // auto-select user name
-   void autoselectUID(bool reset=false);
+   bool autoselectUID(bool reset=false);
 
    // start transmission
    bool transmit(QString fileName);

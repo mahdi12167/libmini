@@ -409,7 +409,7 @@ QString SSLTransmissionDatabaseClient::getUID()
 }
 
 // auto-select user name
-void SSLTransmissionDatabaseClient::autoselectUID(bool reset)
+bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
 {
    QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
@@ -420,14 +420,18 @@ void SSLTransmissionDatabaseClient::autoselectUID(bool reset)
       SSLTransmissionClient client;
       SSLTransmission t("create_uid", "", QDateTime::currentDateTimeUtc(), SSLTransmission::cc_command);
 
-      if (!client.transmit(hostName_, port_, t, verify_)) throw e_;
+      if (!client.transmit(hostName_, port_, t, verify_))
+         return(false);
       else
-         if (client.getResponse() == NULL) throw e_;
+         if (!client.getResponse())
+            return(false);
          else
             uid_ = client.getResponse()->getData();
 
       settings.setValue("uid", uid_);
    }
+
+   return(true);
 }
 
 // start transmission
