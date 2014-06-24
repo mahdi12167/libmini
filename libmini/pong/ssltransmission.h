@@ -184,7 +184,7 @@ public:
       return(tid_);
    }
 
-   QString getShortTID(const int len=32) const
+   QString getShortTID(const int len=50) const
    {
       QString tid(tid_);
 
@@ -199,7 +199,7 @@ public:
       return(uid_);
    }
 
-   QString getShortUID(const int len=32) const
+   QString getShortUID(const int len=50) const
    {
       QString uid(uid_);
 
