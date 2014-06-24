@@ -197,6 +197,10 @@ bool SSLClient::startWriting()
    // disconnect ssl socket
    socket_->disconnectFromHost();
 
+   // wait until ssl socket has disconnected
+   if (!socket_->waitForDisconnected())
+      success = false;
+
    return(success);
 }
 

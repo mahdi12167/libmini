@@ -115,7 +115,7 @@ public:
         tid_(t.tid_), uid_(t.uid_),
         transmitState_(t.transmitState_), response_(NULL), responder_(t.responder_)
    {
-      if (t.response_ != NULL)
+      if (t.response_)
          response_ = new SSLTransmission(*t.response_);
    }
 
@@ -131,7 +131,7 @@ public:
       response_ = NULL;
       responder_ = t.responder_;
 
-      if (t.response_ != NULL)
+      if (t.response_)
          response_ = new SSLTransmission(*t.response_);
 
       return(*this);
