@@ -71,7 +71,9 @@ bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 // ssl transmission client ctor
 SSLTransmissionClient::SSLTransmissionClient(QObject *parent)
    : SSLClient(parent)
-{}
+{
+   qRegisterMetaType<SSLTransmission>("SSLTransmission");
+}
 
 // ssl transmission client dtor
 SSLTransmissionClient::~SSLTransmissionClient()
@@ -138,23 +140,23 @@ void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, 
    thread = new SSLTransmissionThread(hostName, port, fileName, uid, verify, compress, command);
 
    if (receiver != NULL)
-      {
-         // signal successful transmission
-         connect(thread, SIGNAL(success(QString, quint16, QString, QString)),
-                 receiver, SLOT(success(QString, quint16, QString, QString)), Qt::QueuedConnection);
+   {
+      // signal successful transmission
+      connect(thread, SIGNAL(success(QString, quint16, QString, QString)),
+              receiver, SLOT(success(QString, quint16, QString, QString)), Qt::QueuedConnection);
 
-         // signal unsuccessful transmission
-         connect(thread, SIGNAL(failure(QString, quint16, QString, QString)),
-                 receiver, SLOT(failure(QString, quint16, QString, QString)), Qt::QueuedConnection);
+      // signal unsuccessful transmission
+      connect(thread, SIGNAL(failure(QString, quint16, QString, QString)),
+              receiver, SLOT(failure(QString, quint16, QString, QString)), Qt::QueuedConnection);
 
-         // signal transmission response
-         connect(thread, SIGNAL(response(SSLTransmission)),
-                 receiver, SLOT(response(SSLTransmission)), Qt::QueuedConnection);
+      // signal transmission response
+      connect(thread, SIGNAL(response(SSLTransmission)),
+              receiver, SLOT(response(SSLTransmission)), Qt::QueuedConnection);
 
-         // signal command result
-         connect(thread, SIGNAL(result(SSLTransmission)),
-                 receiver, SLOT(result(SSLTransmission)), Qt::QueuedConnection);
-         }
+      // signal command result
+      connect(thread, SIGNAL(result(SSLTransmission)),
+              receiver, SLOT(result(SSLTransmission)), Qt::QueuedConnection);
+   }
 
    thread->start();
 }
