@@ -45,6 +45,9 @@ public:
    // remove a transmission from the db
    bool remove(QString tid, QString uid);
 
+   // dump the db
+   static void dump();
+
 protected:
 
    // create key/value table
@@ -90,18 +93,18 @@ protected:
 };
 
 // ssl transmission database server class
-class SSLTransMissionDatabaseServer: public QObject
+class SSLTransmissionDatabaseServer: public QObject
 {
    Q_OBJECT
 
 public:
 
-   SSLTransMissionDatabaseServer(quint16 port = 10000,
+   SSLTransmissionDatabaseServer(quint16 port = 10000,
                                  QString certPath = "cert.pem", QString keyPath = "key.pem",
                                  QString altPath = "/usr/share/pong",
                                  QObject *parent = NULL);
 
-   virtual ~SSLTransMissionDatabaseServer();
+   virtual ~SSLTransmissionDatabaseServer();
 
    // get port
    quint16 getPort();
@@ -127,6 +130,22 @@ protected:
    SSLServer *server_;
 
    SSLError e_;
+};
+
+// ssl transmission database response receiver class
+class SSLTransmissionDatabaseResponseReceiver: public SSLTransmissionResponseReceiver
+{
+   Q_OBJECT
+
+public:
+
+   SSLTransmissionDatabaseResponseReceiver(QObject *parent = NULL) : SSLTransmissionResponseReceiver(parent) {}
+   virtual ~SSLTransmissionDatabaseResponseReceiver() {}
+
+   virtual void onSuccess(QString hostName, quint16 port, QString fileName, QString uid) {}
+   virtual void onFailure(QString hostName, quint16 port, QString fileName, QString uid) {}
+   virtual void onResponse(SSLTransmission t) {}
+   virtual void onResult(SSLTransmission t) {}
 };
 
 // ssl transmission database client class
@@ -155,7 +174,7 @@ public:
    void autoselectUID();
 
    // start transmission
-   bool transmit(QString fileName, bool verify=true, bool compress=false);
+   bool transmit(QString fileName);
 
 protected:
 
@@ -164,6 +183,13 @@ protected:
    QString uid_;
    bool verify_;
    bool compress_;
+
+   SSLTransmissionResponseReceiver *receiver_;
+
+public slots:
+
+   // start non-blocking transmission
+   void transmitNonBlocking(QString fileName);
 };
 
 #endif

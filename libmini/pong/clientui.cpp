@@ -4,8 +4,8 @@
 
 #include "clientui.h"
 
-ClientUI::ClientUI(QString hostName, quint16 port, QString uid, bool verify, bool compress, QWidget *parent)
-   : QWidget(parent), hostName_(hostName), port_(port), uid_(uid), verify_(verify), compress_(compress)
+ClientUI::ClientUI(QWidget *parent)
+   : QWidget(parent)
 {
    QVBoxLayout *layout = new QVBoxLayout;
    setLayout(layout);
@@ -58,7 +58,7 @@ void ClientUI::dropEvent(QDropEvent *event)
          QUrl qurl = urlList.at(i);
          QString fileName = normalizeFile(qurl.toString());
 
-         emit transmit(hostName_, port_, fileName, uid_, verify_, compress_);
+         emit transmit(fileName);
       }
    }
 }

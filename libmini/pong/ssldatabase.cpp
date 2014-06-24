@@ -246,6 +246,28 @@ bool SSLTransmissionDatabase::remove(QString tid, QString uid)
    return(false);
 }
 
+// dump the db
+void SSLTransmissionDatabase::dump()
+{
+   SSLTransmissionDatabase db;
+   if (!db.openDB()) return;
+
+   QStringList users = db.users();
+
+   for (int i=0; i<users.size(); i++)
+   {
+      std::cout << "user \"" << users[i].toStdString() << "\":" << std::endl;
+
+      QStringList list = db.list(users[i]);
+
+      for (int j=0; j<list.size(); j++)
+      {
+         SSLTransmission t = db.read(list[j], users[i]);
+         std::cout << " " << t << std::endl;
+      }
+   }
+}
+
 // create a transmission response from the db
 SSLTransmission *SSLTransmissionDatabaseResponder::create(const SSLTransmission *t)
 {
@@ -282,7 +304,7 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
 }
 
 // ssl transmission database server ctor
-SSLTransMissionDatabaseServer::SSLTransMissionDatabaseServer(quint16 port,
+SSLTransmissionDatabaseServer::SSLTransmissionDatabaseServer(quint16 port,
                                                              QString certPath, QString keyPath,
                                                              QString altPath,
                                                              QObject *parent)
@@ -299,10 +321,14 @@ SSLTransMissionDatabaseServer::SSLTransMissionDatabaseServer(quint16 port,
    responder_ = new SSLTransmissionDatabaseResponder(db_);
    factory_ = new SSLTransmissionServerConnectionFactory(responder_);
    server_ = new SSLServer(factory_);
+
+   // connect transmission database with the connection factory transmitted signal
+   connect(factory_, SIGNAL(transmitted(SSLTransmission)),
+           db_, SLOT(write(SSLTransmission)));
 }
 
 // ssl transmission database server dtor
-SSLTransMissionDatabaseServer::~SSLTransMissionDatabaseServer()
+SSLTransmissionDatabaseServer::~SSLTransmissionDatabaseServer()
 {
    if (server_)
       delete server_;
@@ -318,25 +344,25 @@ SSLTransMissionDatabaseServer::~SSLTransMissionDatabaseServer()
 }
 
 // get port
-quint16 SSLTransMissionDatabaseServer::getPort()
+quint16 SSLTransmissionDatabaseServer::getPort()
 {
    return(port_);
 }
 
 // get database
-SSLTransmissionDatabase *SSLTransMissionDatabaseServer::getDatabase()
+SSLTransmissionDatabase *SSLTransmissionDatabaseServer::getDatabase()
 {
    return(db_);
 }
 
 // get factory
-SSLTransmissionServerConnectionFactory *SSLTransMissionDatabaseServer::getFactory()
+SSLTransmissionServerConnectionFactory *SSLTransmissionDatabaseServer::getFactory()
 {
    return(factory_);
 }
 
 // start listening
-void SSLTransMissionDatabaseServer::start()
+void SSLTransmissionDatabaseServer::start()
 {
    // start server on specified port (default 10000)
    server_->start(certPath_, keyPath_, port_, altPath_);
@@ -348,12 +374,18 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
                                                              QObject *parent)
    : SSLTransmissionClient(parent),
      hostName_(hostName), port_(port),
-     uid_(uid), verify_(verify), compress_(compress)
-{}
+     uid_(uid), verify_(verify), compress_(compress),
+     receiver_(NULL)
+{
+   receiver_ = new SSLTransmissionDatabaseResponseReceiver;
+}
 
 // ssl transmission database client dtor
 SSLTransmissionDatabaseClient::~SSLTransmissionDatabaseClient()
-{}
+{
+   if (receiver_)
+      delete receiver_;
+}
 
 // get host name
 QString SSLTransmissionDatabaseClient::getHostName()
@@ -396,7 +428,14 @@ void SSLTransmissionDatabaseClient::autoselectUID()
 }
 
 // start transmission
-bool SSLTransmissionDatabaseClient::transmit(QString fileName, bool verify, bool compress)
+bool SSLTransmissionDatabaseClient::transmit(QString fileName)
 {
    return(SSLTransmissionClient::transmit(hostName_, port_, fileName, uid_, verify_, compress_));
+}
+
+// start non-blocking transmission
+void SSLTransmissionDatabaseClient::transmitNonBlocking(QString fileName)
+{
+   SSLTransmissionClient::transmitNonBlocking(hostName_, port_, fileName, uid_, verify_, compress_,
+                                              SSLTransmission::cc_transmit, receiver_);
 }

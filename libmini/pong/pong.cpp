@@ -12,7 +12,6 @@
 #include <QtGui/QApplication>
 #endif
 
-#include "ssltransmission.h"
 #include "ssldatabase.h"
 
 #include "serverui.h"
@@ -103,32 +102,20 @@ int main(int argc, char *argv[])
       try
       {
          ServerUI main;
-
-         main.show();
-
-         // open transmission database
-         SSLTransmissionDatabase db;
-         if (!db.openDB()) return(1);
-
-         // connect transmission database with connection factory
-         SSLTransmissionDatabaseResponder responder(&db);
-         SSLTransmissionServerConnectionFactory factory(&responder);
-         SSLServer server(&factory);
+         SSLTransmissionDatabaseServer server(port, "cert.pem", "key.pem", "/usr/share/pong");
 
          // connect server gui with the connection factory transmitted signal
-         QObject::connect(&factory, SIGNAL(transmitted(SSLTransmission)),
+         QObject::connect(server.getFactory(), SIGNAL(transmitted(SSLTransmission)),
                           &main, SLOT(transmitted(SSLTransmission)));
 
-         // connect transmission database with the connection factory transmitted signal
-         QObject::connect(&factory, SIGNAL(transmitted(SSLTransmission)),
-                          &db, SLOT(write(SSLTransmission)));
-
          // connect server gui with the connection factory report signal
-         QObject::connect(&factory, SIGNAL(report(QString)),
+         QObject::connect(server.getFactory(), SIGNAL(report(QString)),
                           &main, SLOT(report(QString)));
 
          // start server on specified port (default 10000)
-         server.start("cert.pem", "key.pem", port, "/usr/share/pong");
+         server.start();
+
+         main.show();
 
          return(app.exec());
       }
@@ -147,15 +134,18 @@ int main(int argc, char *argv[])
    {
       try
       {
-         ClientUI main(arg[0], port, user, verify, compress);
+         ClientUI main;
+         SSLTransmissionDatabaseClient client(arg[0], port, user, verify, compress);
 
-         main.show();
-
-         SSLTransmissionClient client;
+         // auto-select user name
+         if (user == "")
+            client.autoselectUID();
 
          // connect client gui with client
-         QObject::connect(&main, SIGNAL(transmit(QString, quint16, QString, QString, bool, bool)),
-                          &client, SLOT(transmitNonBlocking(QString, quint16, QString, QString, bool, bool)));
+         QObject::connect(&main, SIGNAL(transmit(QString)),
+                          &client, SLOT(transmitNonBlocking(QString)));
+
+         main.show();
 
          return(app.exec());
       }
@@ -174,9 +164,14 @@ int main(int argc, char *argv[])
    {
       try
       {
-         SSLTransmissionClient client;
+         SSLTransmissionDatabaseClient client(arg[0], port, user, verify, compress);
 
-         if (!client.transmit(arg[0], port, arg[1], user, verify, compress))
+         // auto-select user name
+         if (user == "")
+            client.autoselectUID();
+
+         // transmit file
+         if (!client.transmit(arg[1]))
             return(1);
       }
       catch (SSLError &e)
@@ -192,23 +187,7 @@ int main(int argc, char *argv[])
    // dump mode
    else if (dump && arg.size()==0)
    {
-      SSLTransmissionDatabase db;
-      if (!db.openDB()) return(1);
-
-      QStringList users = db.users();
-
-      for (int i=0; i<users.size(); i++)
-      {
-         std::cout << "user \"" << users[i].toStdString() << "\":" << std::endl;
-
-         QStringList list = db.list(users[i]);
-
-         for (int j=0; j<list.size(); j++)
-         {
-            SSLTransmission t = db.read(list[j], users[i]);
-            std::cout << " " << t << std::endl;
-         }
-      }
+      SSLTransmissionDatabase::dump();
    }
    // print usage
    else usage(argv[0]);
