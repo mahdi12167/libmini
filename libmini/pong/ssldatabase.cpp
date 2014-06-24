@@ -33,9 +33,9 @@ bool SSLTransmissionDatabase::openDB()
    db_.setDatabaseName(path_);
    bool success = db_.open();
 
-   // create table
+   // create tables
    if (!exists)
-      if (!createTable())
+      if (!createTables())
          success = false;
 
    return(success);
@@ -50,8 +50,8 @@ bool SSLTransmissionDatabase::removeDB()
    return(QFile::remove(path_));
 }
 
-// create key/value table
-bool SSLTransmissionDatabase::createTable()
+// create key/value tables
+bool SSLTransmissionDatabase::createTables()
 {
    bool success = false;
 
@@ -406,11 +406,11 @@ QString SSLTransmissionDatabaseClient::getUID()
 }
 
 // auto-select user name
-void SSLTransmissionDatabaseClient::autoselectUID()
+void SSLTransmissionDatabaseClient::autoselectUID(bool reset)
 {
    QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
-   if (settings.contains("uid"))
+   if (settings.contains("uid") && !reset)
       uid_ = settings.value("uid").toString();
    else
    {

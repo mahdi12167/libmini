@@ -66,23 +66,6 @@ void SSLServerConnectionFactory::receiveReport(QString error)
    emit report(error);
 }
 
-// ssl test server connection factory ctor
-SSLTestServerConnectionFactory::SSLTestServerConnectionFactory(QObject *parent)
-   : SSLServerConnectionFactory(parent)
-{}
-
-// ssl test server connection factory dtor
-SSLTestServerConnectionFactory::~SSLTestServerConnectionFactory()
-{}
-
-// create a new test server connection
-SSLServerConnection *SSLTestServerConnectionFactory::create(int socketDescriptor,
-                                                            QString certPath, QString keyPath,
-                                                            QObject *parent)
-{
-   return(new SSLTestServerConnection(socketDescriptor, certPath, keyPath, this, parent));
-}
-
 // ssl server connection ctor
 SSLServerConnection::SSLServerConnection(int socketDescriptor,
                                          QString certPath, QString keyPath,
@@ -155,38 +138,6 @@ void SSLServerConnection::error(QAbstractSocket::SocketError socketError)
    emit report(socket_->errorString());
 }
 
-// ssl test server connection ctor
-SSLTestServerConnection::SSLTestServerConnection(int socketDescriptor,
-                                                 QString certPath, QString keyPath,
-                                                 SSLServerConnectionFactory *factory,
-                                                 QObject *parent)
-   : SSLServerConnection(socketDescriptor, certPath, keyPath, factory, parent)
-{}
-
-// ssl test server connection dtor
-SSLTestServerConnection::~SSLTestServerConnection()
-{}
-
-// start reading from ssl socket
-bool SSLTestServerConnection::startReading(QSslSocket *socket)
-{
-   static const QByteArray test("test");
-
-   // check if entire block has arrived
-   if (socket->bytesAvailable() < test.size()) return(false);
-
-   // read data from ssl socket
-   QByteArray data = socket->readAll();
-
-   // test output
-   std::cout << "incoming: \"" << QString(data).toStdString() << "\"" << std::endl;
-
-   // check wether or not test was successful
-   if (data != test) throw e_;
-
-   return(true);
-}
-
 // ssl client ctor
 SSLClient::SSLClient(QObject *parent)
    : QThread(parent),
@@ -229,14 +180,14 @@ void SSLClient::run()
 
    // wait for encryption to be established
    if (socket_->waitForEncrypted(-1))
-      success_ = connectionEstablished();
+      success_ = startWriting();
 
    // delete ssl socket
    delete socket_;
 }
 
 // start writing after connection is established
-bool SSLClient::connectionEstablished()
+bool SSLClient::startWriting()
 {
    bool success;
 
@@ -248,6 +199,55 @@ bool SSLClient::connectionEstablished()
    socket_->disconnectFromHost();
 
    return(success);
+}
+
+// ssl test server connection factory ctor
+SSLTestServerConnectionFactory::SSLTestServerConnectionFactory(QObject *parent)
+   : SSLServerConnectionFactory(parent)
+{}
+
+// ssl test server connection factory dtor
+SSLTestServerConnectionFactory::~SSLTestServerConnectionFactory()
+{}
+
+// create a new test server connection
+SSLServerConnection *SSLTestServerConnectionFactory::create(int socketDescriptor,
+                                                            QString certPath, QString keyPath,
+                                                            QObject *parent)
+{
+   return(new SSLTestServerConnection(socketDescriptor, certPath, keyPath, this, parent));
+}
+
+// ssl test server connection ctor
+SSLTestServerConnection::SSLTestServerConnection(int socketDescriptor,
+                                                 QString certPath, QString keyPath,
+                                                 SSLServerConnectionFactory *factory,
+                                                 QObject *parent)
+   : SSLServerConnection(socketDescriptor, certPath, keyPath, factory, parent)
+{}
+
+// ssl test server connection dtor
+SSLTestServerConnection::~SSLTestServerConnection()
+{}
+
+// start reading from ssl socket
+bool SSLTestServerConnection::startReading(QSslSocket *socket)
+{
+   static const QByteArray test("test");
+
+   // check if entire block has arrived
+   if (socket->bytesAvailable() < test.size()) return(false);
+
+   // read data from ssl socket
+   QByteArray data = socket->readAll();
+
+   // test output
+   std::cout << "incoming: \"" << QString(data).toStdString() << "\"" << std::endl;
+
+   // check wether or not test was successful
+   if (data != test) throw e_;
+
+   return(true);
 }
 
 // ssl test client ctor

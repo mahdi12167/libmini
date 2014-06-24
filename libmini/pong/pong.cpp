@@ -140,6 +140,8 @@ int main(int argc, char *argv[])
          // auto-select user name
          if (user == "")
             client.autoselectUID();
+         else if (user == "reset")
+            client.autoselectUID(true);
 
          // connect client gui with client
          QObject::connect(&main, SIGNAL(transmit(QString)),
@@ -169,6 +171,8 @@ int main(int argc, char *argv[])
          // auto-select user name
          if (user == "")
             client.autoselectUID();
+         else if (user == "reset")
+            client.autoselectUID(true);
 
          // transmit file
          if (!client.transmit(arg[1]))

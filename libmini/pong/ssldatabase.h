@@ -50,8 +50,8 @@ public:
 
 protected:
 
-   // create key/value table
-   bool createTable();
+   // create key/value tables
+   bool createTables();
 
    QSqlDatabase db_;
    QString path_;
@@ -171,7 +171,7 @@ public:
    QString getUID();
 
    // auto-select user name
-   void autoselectUID();
+   void autoselectUID(bool reset=false);
 
    // start transmission
    bool transmit(QString fileName);

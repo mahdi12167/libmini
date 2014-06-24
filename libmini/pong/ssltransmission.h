@@ -184,9 +184,29 @@ public:
       return(tid_);
    }
 
+   QString getShortTID(const int len=32) const
+   {
+      QString tid(tid_);
+
+      if (tid.size() > len)
+         tid = tid.mid(0, len-1) + "...";
+
+      return(tid);
+   }
+
    QString getUID() const
    {
       return(uid_);
+   }
+
+   QString getShortUID(const int len=32) const
+   {
+      QString uid(uid_);
+
+      if (uid.size() > len)
+         uid = uid.mid(0, len-1) + "...";
+
+      return(uid);
    }
 
    CommandCode getCommand() const
@@ -468,8 +488,8 @@ inline std::ostream& operator << (std::ostream &out, const SSLTransmission &t)
 {
    out << "SSLTransmission(";
 
-   out << "\"" << t.getTID().toStdString() << "\", "
-       << "\"" << t.getUID().toStdString() << "\", "
+   out << "\"" << t.getShortTID().toStdString() << "\", "
+       << "\"" << t.getShortUID().toStdString() << "\", "
        << t.getTime().toString(Qt::ISODate).toStdString() << ", "
        << t.getSize();
 
