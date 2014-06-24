@@ -92,7 +92,9 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
      e_("server connection")
 {
    // create new ssl socket for each incoming connection
-   socket_ = new QSslSocket(this);
+   socket_ = new QSslSocket;
+
+   // assign descriptor to ssl socket
    if (socket_->setSocketDescriptor(socketDescriptor))
    {
       // catch socket errors
@@ -126,6 +128,7 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
 // ssl server connection dtor
 SSLServerConnection::~SSLServerConnection()
 {
+   // delete ssl socket
    delete socket_;
 }
 
@@ -138,10 +141,10 @@ void SSLServerConnection::handshake()
 // start reading after connection is established
 void SSLServerConnection::startReading()
 {
-   // start reading from the ssl socket
+   // start reading from ssl socket
    if (startReading(socket_))
    {
-      // disconnect the ssl socket
+      // disconnect ssl socket
       socket_->disconnectFromHost();
    }
 }
@@ -164,7 +167,7 @@ SSLTestServerConnection::SSLTestServerConnection(int socketDescriptor,
 SSLTestServerConnection::~SSLTestServerConnection()
 {}
 
-// start reading from an established connection
+// start reading from ssl socket
 bool SSLTestServerConnection::startReading(QSslSocket *socket)
 {
    static const QByteArray test("test");
@@ -172,7 +175,7 @@ bool SSLTestServerConnection::startReading(QSslSocket *socket)
    // check if entire block has arrived
    if (socket->bytesAvailable() < test.size()) return(false);
 
-   // read data from the ssl socket
+   // read data from ssl socket
    QByteArray data = socket->readAll();
 
    // test output
@@ -186,13 +189,9 @@ bool SSLTestServerConnection::startReading(QSslSocket *socket)
 
 // ssl client ctor
 SSLClient::SSLClient(QObject *parent)
-   : QObject(parent),
+   : QThread(parent),
      e_("client")
-{
-   // start writing after connection is encrypted
-   connect(&socket_, SIGNAL(encrypted()),
-           this, SLOT(connectionEstablished()));
-}
+{}
 
 // ssl client dtor
 SSLClient::~SSLClient()
@@ -201,48 +200,54 @@ SSLClient::~SSLClient()
 // start transmission
 bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
 {
-   try
-   {
-      // setup ssl socket
-      socket_.setProtocol(QSsl::TlsV1);
-      if (!verify) socket_.setPeerVerifyMode(QSslSocket::VerifyNone);
-      socket_.connectToHostEncrypted(hostName, port);
+   hostName_ = hostName;
+   port_ = port;
+   verify_ = verify;
 
-      // catch socket errors
-      connect(&socket_, SIGNAL(error(QAbstractSocket::SocketError)),
-              this, SLOT(error(QAbstractSocket::SocketError)));
+   // start thread
+   success_ = false;
+   start();
 
-      // block until transmission is finished
-      socket_.waitForDisconnected(-1); // no time-out
-   }
-   catch (SSLError &e)
-   {
-      return(false);
-   }
+   // wait until thread has finished
+   wait();
 
-   return(true);
+   return(success_);
+}
+
+// thread run method
+void SSLClient::run()
+{
+   // create new ssl socket for each outgoing transmission
+   socket_ = new QSslSocket;
+
+   // configure ssl socket
+   socket_->setProtocol(QSsl::TlsV1);
+   if (!verify_) socket_->setPeerVerifyMode(QSslSocket::VerifyNone);
+
+   // connect ssl socket
+   socket_->connectToHostEncrypted(hostName_, port_);
+
+   // wait for encryption to be established
+   if (socket_->waitForEncrypted(-1))
+      success_ = connectionEstablished();
+
+   // delete ssl socket
+   delete socket_;
 }
 
 // start writing after connection is established
-void SSLClient::connectionEstablished()
+bool SSLClient::connectionEstablished()
 {
    bool success;
 
-   // start writing to the ssl socket
-   success = startWriting(&socket_);
+   // start writing to ssl socket
+   success = startWriting(socket_);
 
-   // disconnect the ssl socket
-   socket_.disconnectFromHost();
+   // disconnect ssl socket
+   socket_->waitForBytesWritten();
+   socket_->disconnectFromHost();
 
-   // check for successfull transmission
-   if (!success) throw e_;
-}
-
-// catch socket errors
-void SSLClient::error(QAbstractSocket::SocketError socketError)
-{
-   SSLError e(socket_.errorString().toStdString());
-   throw e;
+   return(success);
 }
 
 // ssl test client ctor
@@ -254,7 +259,7 @@ SSLTestClient::SSLTestClient(QObject *parent)
 SSLTestClient::~SSLTestClient()
 {}
 
-// start writing through an established connection
+// start writing to ssl socket
 bool SSLTestClient::startWriting(QSslSocket *socket)
 {
    static const QByteArray test("test");
@@ -262,7 +267,7 @@ bool SSLTestClient::startWriting(QSslSocket *socket)
    // test output
    std::cout << "outgoing: \"" << QString(test).toStdString() << "\"" << std::endl;
 
-   // write data to the ssl socket
+   // write data to ssl socket
    socket->write(test);
 
    return(true);

@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QSslSocket>
+#include <QThread>
 
 class SSLServerConnectionFactory;
 
@@ -81,7 +82,7 @@ public:
 
 protected:
 
-   // start reading from an established connection
+   // start reading from ssl socket
    virtual bool startReading(QSslSocket *socket) = 0;
 
    SSLServerConnectionFactory *factory_;
@@ -124,7 +125,7 @@ public:
 
 protected:
 
-   // start reading from an established connection
+   // start reading from ssl socket
    virtual bool startReading(QSslSocket *socket);
 };
 
@@ -174,7 +175,7 @@ public:
 };
 
 // ssl client base class
-class SSLClient: public QObject
+class SSLClient: public QThread
 {
    Q_OBJECT
 
@@ -188,24 +189,28 @@ public:
 
 protected:
 
-   // start writing through an established connection
+   // thread run method
+   virtual void run();
+
+   // start writing after connection is established
+   bool connectionEstablished();
+
+   // start writing to ssl socket
    virtual bool startWriting(QSslSocket *socket) = 0;
 
 private:
 
-   QSslSocket socket_;
+   QSslSocket *socket_;
+
+   QString hostName_;
+   quint16 port_;
+   bool verify_;
+
+   bool success_;
 
 protected:
 
    SSLError e_;
-
-protected slots:
-
-   // start writing after connection is established
-   void connectionEstablished();
-
-   // catch socket errors
-   void error(QAbstractSocket::SocketError socketError);
 };
 
 // ssl test client class
@@ -220,7 +225,7 @@ public:
 
 protected:
 
-   // start writing through an established connection
+   // start writing to ssl socket
    virtual bool startWriting(QSslSocket *socket);
 };
 

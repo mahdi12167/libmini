@@ -50,7 +50,7 @@ SSLTransmissionServerConnection::SSLTransmissionServerConnection(int socketDescr
 SSLTransmissionServerConnection::~SSLTransmissionServerConnection()
 {}
 
-// start reading from an established connection
+// start reading from ssl socket
 bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 {
    // read from the ssl socket
@@ -121,7 +121,7 @@ SSLTransmission *SSLTransmissionClient::getResponse() const
    return(t_.getResponse());
 }
 
-// start writing through an established connection
+// start writing to ssl socket
 bool SSLTransmissionClient::startWriting(QSslSocket *socket)
 {
    // write to the ssl socket
