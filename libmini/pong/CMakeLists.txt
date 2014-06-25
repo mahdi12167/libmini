@@ -145,6 +145,7 @@ INSTALL(
 IF (UNIX AND NOT APPLE)
    INSTALL(FILES Pong.desktop DESTINATION /usr/share/applications)
    INSTALL(FILES pong.png DESTINATION /usr/share/pong)
+   INSTALL(FILES Ping.desktop DESTINATION /usr/share/applications)
 ENDIF (UNIX AND NOT APPLE)
 
 # install pong data

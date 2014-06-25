@@ -4,6 +4,6 @@ Exec=pong --server
 Icon=/usr/share/pong/pong.png
 Terminal=false
 Name=Pong
-GenericName=Pong Server
+GenericName=Pong Transmission Server
 Comment=Receives data from the Ping transmission client
 Categories=Application;Server;
