@@ -3,7 +3,7 @@
 #include <QDir>
 #include <QSettings>
 
-#include <QSQLQuery>
+#include <QtSql/QSqlQuery>
 
 #include "ssldatabase.h"
 
