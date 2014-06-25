@@ -4,7 +4,7 @@ IF (WIN32)
    SET(CMAKE_CONFIGURATION_TYPES "RelWithDebInfo" CACHE STRING "" FORCE)
 ENDIF (WIN32)
 
-PROJECT(PongServer)
+PROJECT(PingPong)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 
@@ -109,46 +109,53 @@ SET_SOURCE_FILES_PROPERTIES(
    MACOSX_PACKAGE_LOCATION Resources
    )
 
-SET(APPNAME pong)
-SET(MAINNAME pong.cpp)
-ADD_EXECUTABLE(${APPNAME} MACOSX_BUNDLE ${MAINNAME} ${MACOSX_BUNDLE_ICON_FILE})
-IF (BUILD_WITH_QT5)
-   TARGET_LINK_LIBRARIES(${APPNAME}
-      Qt5::Widgets
-      Qt5::Network
-      Qt5::Sql
+# build macro
+MACRO(MAKE_EXECUTABLE name main)
+   # compile and link executable
+   ADD_EXECUTABLE(${name} MACOSX_BUNDLE ${main} ${MACOSX_BUNDLE_ICON_FILE})
+   IF (BUILD_WITH_QT5)
+      TARGET_LINK_LIBRARIES(${name}
+         Qt5::Widgets
+         Qt5::Network
+         Qt5::Sql
+         )
+   ELSE (BUILD_WITH_QT5)
+      TARGET_LINK_LIBRARIES(${name}
+         ${QT_LIBRARIES}
+         )
+   ENDIF (BUILD_WITH_QT5)
+   TARGET_LINK_LIBRARIES(${name}
+      ${LIB_NAME}
+      ${JPEG_LIBRARIES}
+      ${PNG_LIBRARIES}
+      ${ZLIB_LIBRARIES}
+      ${CMAKE_THREAD_LIBS_INIT}
       )
-ELSE (BUILD_WITH_QT5)
-   TARGET_LINK_LIBRARIES(${APPNAME}
-      ${QT_LIBRARIES}
-      )
-ENDIF (BUILD_WITH_QT5)
-TARGET_LINK_LIBRARIES(${APPNAME}
-   ${LIB_NAME}
-   ${JPEG_LIBRARIES}
-   ${PNG_LIBRARIES}
-   ${ZLIB_LIBRARIES}
-   ${CMAKE_THREAD_LIBS_INIT}
-   )
-IF (UNIX AND NOT APPLE)
-   TARGET_LINK_LIBRARIES(${APPNAME} dl rt)
-ENDIF (UNIX AND NOT APPLE)
+   IF (UNIX AND NOT APPLE)
+      TARGET_LINK_LIBRARIES(${name} dl rt)
+   ENDIF (UNIX AND NOT APPLE)
 
-# install target
-INSTALL(
-   TARGETS ${APPNAME}
-   RUNTIME DESTINATION bin
-   BUNDLE DESTINATION /Applications
-   )
+   # install target
+   INSTALL(
+      TARGETS ${name}
+      RUNTIME DESTINATION bin
+      BUNDLE DESTINATION /Applications
+      )
+ENDMACRO(MAKE_EXECUTABLE name main)
+
+# build executables
+MAKE_EXECUTABLE(pong pong.cpp)
+MAKE_EXECUTABLE(ping ping.cpp)
 
 # install .desktop file and icon for KDE4 (and Gnome)
 IF (UNIX AND NOT APPLE)
    INSTALL(FILES Pong.desktop DESTINATION /usr/share/applications)
-   INSTALL(FILES pong.png DESTINATION /usr/share/pong)
+   INSTALL(FILES pong.png DESTINATION /usr/share/pingpong)
    INSTALL(FILES Ping.desktop DESTINATION /usr/share/applications)
+   INSTALL(FILES ping.png DESTINATION /usr/share/pingpong)
 ENDIF (UNIX AND NOT APPLE)
 
 # install pong data
 IF (UNIX)
-   INSTALL(FILES cert.pem key.pem DESTINATION /usr/share/pong)
+   INSTALL(FILES cert.pem key.pem DESTINATION /usr/share/pingpong)
 ENDIF (UNIX)

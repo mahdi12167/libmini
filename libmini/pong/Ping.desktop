@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Exec=pong --client
-Icon=/usr/share/pong/pong.png
+Exec=ping
+Icon=/usr/share/pingpong/ping.png
 Terminal=false
 Name=Ping
 GenericName=Ping Transmission Client

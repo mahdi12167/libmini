@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Exec=pong --server
-Icon=/usr/share/pong/pong.png
+Exec=pong
+Icon=/usr/share/pingpong/pong.png
 Terminal=false
 Name=Pong
 GenericName=Pong Transmission Server
