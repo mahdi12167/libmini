@@ -133,7 +133,7 @@ void SSLServerConnection::startReading()
 }
 
 // catch socket errors
-void SSLServerConnection::error(QAbstractSocket::SocketError socketError)
+void SSLServerConnection::error(QAbstractSocket::SocketError)
 {
    emit report(socket_->errorString());
 }
