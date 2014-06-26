@@ -13,15 +13,15 @@ OPTION(BUILD_WITH_QT5 "Use Qt5 instead of Qt4." OFF)
 # settings
 
 # non-standard path to Qt4 source installation
-SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH};
-    /usr/local/Trolltech/Qt-4.7.4;
-   )
+SET (QT4_DIR /usr/local/Trolltech/Qt-4.7.4)
+SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}; ${QT4_DIR};)
+INCLUDE_DIRECTORIES(${QT4_DIR}/include ${QT5_DIR}/include/QtGui ${QT5_DIR}/QtCore)
 
 # non-standard path to Qt5
 IF (BUILD_WITH_QT5)
    SET (QT5_DIR /usr/local/Qt-5.3.0)
    SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH}; ${QT5_DIR};)
-   INCLUDE_DIRECTORIES(${QT5_DIR}/include ${QT5_DIR}/include/QtWidgets)
+   INCLUDE_DIRECTORIES(${QT5_DIR}/include ${QT5_DIR}/include/QtWidgets ${QT5_DIR}/include/QtCore)
 ENDIF (BUILD_WITH_QT5)
 
 # default Unix compiler definitions

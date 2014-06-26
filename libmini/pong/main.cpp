@@ -1,16 +1,12 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#define VERSION "v0.7 as of 25.June.2014"
+#define VERSION "v0.7 as of 26.June.2014"
 
 #define LICENSE "licensed under GPL 3.0"
 #define COPYRIGHT "(c) by Stefan Roettger 2014"
 #define DISCLAIMER "no warranty, no responsibility, no nothing is granted for anything!"
 
-#ifdef HAVE_QT5
-#include <QtWidgets/QApplication>
-#else
-#include <QtGui/QApplication>
-#endif
+#include <QApplication>
 
 #include "ssldatabase.h"
 
