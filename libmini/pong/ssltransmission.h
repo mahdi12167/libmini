@@ -11,19 +11,6 @@
 
 #include "sslsocket.h"
 
-// ssl transmission header structure
-struct SSLTransmissionHeader
-{
-   qint32 magic; // magic number
-   qint8 command; // command number
-   qint64 size; // size of data block
-   qint8 compressed; // is the data block compressed?
-   qint64 time; // time stamp of data block in epoch respresentation
-   quint16 tid_size; // size of transmission id block
-   quint16 uid_size; // size of user id block
-   qint8 valid; // is the data block valid
-};
-
 class SSLTransmission;
 
 // ssl transmission responder base class
@@ -45,6 +32,29 @@ public:
 class SSLTransmission
 {
 public:
+
+   // ssl transmission header structure
+   struct SSLTransmissionHeader
+   {
+      qint32 magic; // magic number
+      qint8 command; // command number
+      qint64 size; // size of data block
+      qint8 compressed; // is the data block compressed?
+      qint64 time; // time stamp of data block in epoch respresentation
+      quint16 tid_size; // size of transmission id block
+      quint16 uid_size; // size of user id block
+      qint8 valid; // is the data block valid
+   };
+
+   static const int header_size =
+      sizeof(qint32) +
+      sizeof(qint8) +
+      sizeof(qint64) +
+      sizeof(qint8) +
+      sizeof(qint64) +
+      sizeof(quint16) +
+      sizeof(quint16) +
+      sizeof(qint8);
 
    static const qint32 magic_number = 0x02071971;
    static const qint8 response_ok = 1;
@@ -263,7 +273,7 @@ public:
       }
    }
 
-   bool write(QSslSocket *socket)
+   bool write(QSslSocket *socket, bool ack=true)
    {
       if (transmitState_ == 0)
       {
@@ -308,42 +318,43 @@ public:
 
       if (transmitState_ == 1)
       {
-         if (header_.command == cc_transmit ||
-             header_.command == cc_response ||
-             header_.command == cc_result)
+         if (ack)
          {
-            char code;
+            if (header_.command == cc_transmit ||
+                header_.command == cc_response ||
+                header_.command == cc_result)
+            {
+               char code;
 
-            // check if response code has arrived
-            if (!socket->waitForReadyRead())
-               return(false);
-
-            // read response code from the ssl socket
-            socket->read(&code, 1);
-
-            // check for correct response code
-            if (code != response_ok)
-               return(false);
-
-            transmitState_++;
-         }
-         else if (header_.command == cc_respond ||
-                  header_.command == cc_command)
-         {
-            // allocate transmission response
-            response_ = new SSLTransmission();
-
-            // check if entire response block has arrived
-            while (!response_->read(socket))
+               // check if response code has arrived
                if (!socket->waitForReadyRead())
                   return(false);
 
-            // check for correct response block
-            if (!response_->valid())
-               return(false);
+               // read response code from the ssl socket
+               socket->read(&code, 1);
 
-            transmitState_++;
+               // check for correct response code
+               if (code != response_ok)
+                  return(false);
+            }
+            else if (header_.command == cc_respond ||
+                     header_.command == cc_command)
+            {
+               // allocate transmission response
+               response_ = new SSLTransmission();
+
+               // check if entire response block has arrived
+               while (!response_->read(socket))
+                  if (!socket->waitForReadyRead())
+                     return(false);
+
+               // check for correct response block
+               if (!response_->valid())
+                  return(false);
+            }
          }
+
+         transmitState_++;
       }
 
       return(true);
@@ -356,13 +367,6 @@ public:
 
       if (transmitState_ == 0)
       {
-         // determine header block size
-         static const int header_size =
-            2*sizeof(qint64) +
-            sizeof(qint32) +
-            2*sizeof(quint16) +
-            3*sizeof(qint8);
-
          // check if entire header block has arrived
          if (socket->bytesAvailable() < header_size) return(false);
 
@@ -439,8 +443,6 @@ public:
             // write response code to the ssl socket
             socket->write(&code, 1);
 
-            std::cout << "wait for ok" << std::endl; //!!
-
             // wait until response code has been written
             if (!socket->waitForBytesWritten())
             {
@@ -467,13 +469,42 @@ public:
                }
 
                // write transmission response to the ssl socket
-               if (!response_->write(socket))
+               if (response_->write(socket, false))
+                  return(false);
                {
                   setError();
                   return(true);
                }
             }
             else
+            {
+               setError();
+               return(true);
+            }
+         }
+
+         transmitState_++;
+      }
+
+      if (transmitState_ == 5)
+      {
+         if (header_.command == cc_respond ||
+             header_.command == cc_command)
+         {
+            char code;
+
+            // check if response code has arrived
+            if (!socket->waitForReadyRead())
+            {
+               setError();
+               return(true);
+            }
+
+            // read response code from the ssl socket
+            socket->read(&code, 1);
+
+            // check for correct response code
+            if (code != response_ok)
             {
                setError();
                return(true);
