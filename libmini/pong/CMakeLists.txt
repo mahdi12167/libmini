@@ -113,6 +113,9 @@ SET_SOURCE_FILES_PROPERTIES(
 MACRO(MAKE_EXECUTABLE name main)
    # compile and link executable
    ADD_EXECUTABLE(${name} MACOSX_BUNDLE ${main} ${MACOSX_BUNDLE_ICON_FILE})
+   TARGET_LINK_LIBRARIES(${name}
+      ${LIB_NAME}
+      )
    IF (BUILD_WITH_QT5)
       TARGET_LINK_LIBRARIES(${name}
          Qt5::Widgets
@@ -125,7 +128,6 @@ MACRO(MAKE_EXECUTABLE name main)
          )
    ENDIF (BUILD_WITH_QT5)
    TARGET_LINK_LIBRARIES(${name}
-      ${LIB_NAME}
       ${JPEG_LIBRARIES}
       ${PNG_LIBRARIES}
       ${ZLIB_LIBRARIES}
