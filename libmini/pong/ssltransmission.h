@@ -327,8 +327,9 @@ public:
                char code;
 
                // check if response code has arrived
-               if (!socket->waitForReadyRead())
-                  return(false);
+               if (socket->bytesAvailable() < 1)
+                  if (!socket->waitForReadyRead())
+                     return(false);
 
                // read response code from the ssl socket
                socket->read(&code, 1);
@@ -470,7 +471,11 @@ public:
 
                // write transmission response to the ssl socket
                if (response_->write(socket, false))
+               {
+                  transmitState_++;
                   return(false);
+               }
+               else
                {
                   setError();
                   return(true);
@@ -494,11 +499,12 @@ public:
             char code;
 
             // check if response code has arrived
-            if (!socket->waitForReadyRead())
-            {
-               setError();
-               return(true);
-            }
+            if (socket->bytesAvailable() < 1)
+               if (!socket->waitForReadyRead())
+               {
+                  setError();
+                  return(true);
+               }
 
             // read response code from the ssl socket
             socket->read(&code, 1);
