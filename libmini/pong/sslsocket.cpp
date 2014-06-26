@@ -198,8 +198,9 @@ bool SSLClient::startWriting()
    socket_->disconnectFromHost();
 
    // wait until ssl socket has disconnected
-   if (!socket_->waitForDisconnected())
-      success = false;
+   if (socket_->state() != QTcpSocket::UnconnectedState)
+      if (!socket_->waitForDisconnected())
+         success = false;
 
    return(success);
 }
