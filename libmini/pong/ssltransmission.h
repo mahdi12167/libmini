@@ -470,16 +470,14 @@ public:
                }
 
                // write transmission response to the ssl socket
-               if (response_->write(socket, false))
-               {
-                  transmitState_++;
-                  return(false);
-               }
-               else
+               if (!response_->write(socket, false))
                {
                   setError();
                   return(true);
                }
+
+               transmitState_++;
+               return(false);
             }
             else
             {
