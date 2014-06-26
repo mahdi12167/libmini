@@ -284,9 +284,6 @@ public:
          // write header block to the ssl socket
          socket->write(block);
 
-         std::cout << "header bytes: " << block.size() << std::endl; //!!
-         std::cout << "header written" << std::endl; //!!
-
          // write tid block to the ssl socket
          if (header_.tid_size > 0)
             socket->write(tid_);
@@ -359,11 +356,15 @@ public:
 
       if (transmitState_ == 0)
       {
-         std::cout << "header bytes: " << sizeof(header_) << std::endl; //!!
-         std::cout << "header bytes available: " << socket->bytesAvailable() << std::endl; //!!
+         // determine header block size
+         static const int header_size =
+            2*sizeof(qint64) +
+            sizeof(qint32) +
+            2*sizeof(quint16) +
+            3*sizeof(qint8);
 
          // check if entire header block has arrived
-         if (socket->bytesAvailable() < (int)sizeof(header_)) return(false);
+         if (socket->bytesAvailable() < header_size) return(false);
 
          // read magic number
          in >> header_.magic;
@@ -437,6 +438,8 @@ public:
 
             // write response code to the ssl socket
             socket->write(&code, 1);
+
+            std::cout << "wait for ok" << std::endl; //!!
 
             // wait until response code has been written
             if (!socket->waitForBytesWritten())
