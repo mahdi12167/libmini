@@ -151,6 +151,9 @@ SSLClient::~SSLClient()
 // start transmission
 bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
 {
+   if (hostName == "")
+      return(false);
+
    hostName_ = hostName;
    port_ = port;
    verify_ = verify;

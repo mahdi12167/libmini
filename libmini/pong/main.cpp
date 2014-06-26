@@ -44,6 +44,7 @@ void usage(const char *prog)
    std::cout << " --verify-peer: verify integrity of peer" << std::endl;
    std::cout << " --self-certified: allow self-certified certificates" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
+   std::cout << " --no-gui: run without user interface" << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "example server usage:" << std::endl;
    std::cout << " ./pong --server" << std::endl;
@@ -78,6 +79,7 @@ int main(int argc, char *argv[])
    QString user="";
    bool reset=false;
    bool verify=false;
+   bool gui=true;
    bool compress=false;
 
 #ifdef HAVE_SERVER
@@ -101,6 +103,7 @@ int main(int argc, char *argv[])
       else if (opt[i]=="user-reset") reset=true;
       else if (opt[i]=="verify-peer") verify=true;
       else if (opt[i]=="self-certified") verify=false;
+      else if (opt[i]=="no-gui") gui=false;
       else if (opt[i]=="compress") compress=true;
       else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
@@ -110,23 +113,35 @@ int main(int argc, char *argv[])
    {
       try
       {
-         ServerUI main;
-         SSLTransmissionDatabaseServer server(port, "cert.pem", "key.pem", "/usr/share/pingpong");
+         if (gui)
+         {
+            ServerUI main;
+            SSLTransmissionDatabaseServer server(port, "cert.pem", "key.pem", "/usr/share/pingpong");
 
-         // connect server gui with the connection factory transmitted signal
-         QObject::connect(server.getFactory(), SIGNAL(transmitted(SSLTransmission)),
-                          &main, SLOT(transmitted(SSLTransmission)));
+            // connect server gui with the connection factory transmitted signal
+            QObject::connect(server.getFactory(), SIGNAL(transmitted(SSLTransmission)),
+                             &main, SLOT(transmitted(SSLTransmission)));
 
-         // connect server gui with the connection factory report signal
-         QObject::connect(server.getFactory(), SIGNAL(report(QString)),
-                          &main, SLOT(report(QString)));
+            // connect server gui with the connection factory report signal
+            QObject::connect(server.getFactory(), SIGNAL(report(QString)),
+                             &main, SLOT(report(QString)));
 
-         // start server on specified port (default 10000)
-         server.start();
+            // start server on specified port (default 10000)
+            server.start();
 
-         main.show();
+            main.show();
 
-         return(app.exec());
+            return(app.exec());
+         }
+         else
+         {
+            SSLTransmissionDatabaseServer server(port, "cert.pem", "key.pem", "/usr/share/pingpong");
+
+            // start server on specified port (default 10000)
+            server.start();
+
+            return(app.exec());
+         }
       }
       catch (SSLError &e)
       {
@@ -143,7 +158,7 @@ int main(int argc, char *argv[])
    {
       try
       {
-         QString hostName = "localhost";
+         QString hostName = "";
          if (arg.size()>0) hostName = arg[0];
 
          ClientUI main;
