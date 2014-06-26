@@ -270,8 +270,6 @@ public:
          QByteArray block;
          QDataStream out(&block, QIODevice::WriteOnly);
 
-         std::cout << "write header" << std::endl; //!!
-
          // assemble header block
          out.setVersion(QDataStream::Qt_4_0);
          out << header_.magic;
@@ -283,10 +281,11 @@ public:
          out << header_.uid_size;
          out << header_.valid;
 
-         std::cout << "header written" << std::endl; //!!
-
          // write header block to the ssl socket
          socket->write(block);
+
+         std::cout << "header bytes: " << block.size() << std::endl; //!!
+         std::cout << "header written" << std::endl; //!!
 
          // write tid block to the ssl socket
          if (header_.tid_size > 0)
@@ -300,15 +299,9 @@ public:
          if (header_.size > 0)
             socket->write(data_);
 
-         std::cout << "data written" << std::endl; //!!
-
-         std::cout << "waiting for bytes written" << std::endl; //!!
-
          // wait until entire data block has been written
          if (!socket->waitForBytesWritten(-1)) // no time-out
             return(false);
-
-         std::cout << "bytes written" << std::endl; //!!
 
          // clear data block
          data_.clear();
@@ -340,8 +333,6 @@ public:
          else if (header_.command == cc_respond ||
                   header_.command == cc_command)
          {
-            std::cout << "receiving response" << std::endl; //!!
-
             // allocate transmission response
             response_ = new SSLTransmission();
 
@@ -349,8 +340,6 @@ public:
             while (!response_->read(socket))
                if (!socket->waitForReadyRead())
                   return(false);
-
-            std::cout << "received response" << std::endl; //!!
 
             // check for correct response block
             if (!response_->valid())
@@ -375,8 +364,6 @@ public:
 
          // check if entire header block has arrived
          if (socket->bytesAvailable() < (int)sizeof(header_)) return(false);
-
-         std::cout << "read header" << std::endl; //!!
 
          // read magic number
          in >> header_.magic;
