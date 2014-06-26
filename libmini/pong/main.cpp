@@ -192,7 +192,10 @@ int main(int argc, char *argv[])
    {
       try
       {
-         SSLTransmissionDatabaseClient client(arg[0], port, user, verify, compress);
+         QString hostName = arg[0];
+         QString fileName = arg[1];
+
+         SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
 
          // auto-select user name
          if (user == "")
@@ -200,7 +203,7 @@ int main(int argc, char *argv[])
                return(1);
 
          // transmit file
-         if (!client.transmit(arg[1]))
+         if (!client.transmit(fileName))
             return(1);
       }
       catch (SSLError &e)
