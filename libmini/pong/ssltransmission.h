@@ -578,12 +578,24 @@ protected:
 public slots:
 
    // receiver of transmitted data blocks
-   void receive(SSLTransmission);
+   void transmit(SSLTransmission);
+
+   // receiver of command data blocks
+   void command(SSLTransmission);
+
+   // receiver of invalid data blocks
+   void invalid(SSLTransmission);
 
 signals:
 
    // signal transmission
    void transmitted(SSLTransmission);
+
+   // signal command
+   void execute(SSLTransmission);
+
+   // signal error
+   void error(SSLTransmission);
 };
 
 // ssl transmission server connection class
@@ -612,9 +624,6 @@ signals:
 
    // signal transmission of data block
    void transmit(SSLTransmission);
-
-   // signal arrival of transmission response
-   void respond(SSLTransmission);
 
    // signal command data block
    void command(SSLTransmission);

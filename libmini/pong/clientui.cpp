@@ -24,7 +24,6 @@ ClientUI::ClientUI(SSLTransmissionDatabaseClient *client,
    layout->addWidget(dropBox);
    dropBox->setLayout(dropBoxLayout);
    QLabel *dropText = new QLabel("drag and drop here!");
-   dropText->setFont(QFont("Arial", 16, QFont::Bold));
    dropBoxLayout->addWidget(dropText);
 
    QGroupBox *lineEditGroup_hostName = createEdit("Transmit to host", hostName_, &lineEdit_hostName);
