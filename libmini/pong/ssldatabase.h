@@ -181,13 +181,13 @@ public:
 
 protected:
 
-   QString _hostName_;
-   quint16 _port_;
-   QString _uid_;
-   bool _verify_;
-   bool _compress_;
+   QString hostName__;
+   quint16 port__;
+   QString uid__;
+   bool verify__;
+   bool compress__;
 
-   SSLTransmissionResponseReceiver *_receiver_;
+   SSLTransmissionResponseReceiver *receiver__;
 
 public slots:
 
