@@ -173,20 +173,26 @@ public:
    // auto-select user name
    bool autoselectUID(bool reset=false);
 
+   // get receiver
+   SSLTransmissionResponseReceiver *getReceiver();
+
    // start transmission
    bool transmit(QString fileName);
 
 protected:
 
-   QString hostName_;
-   quint16 port_;
-   QString uid_;
-   bool verify_;
-   bool compress_;
+   QString _hostName_;
+   quint16 _port_;
+   QString _uid_;
+   bool _verify_;
+   bool _compress_;
 
-   SSLTransmissionResponseReceiver *receiver_;
+   SSLTransmissionResponseReceiver *_receiver_;
 
 public slots:
+
+   // determine transmission host name
+   void transmitHostName(QString hostName);
 
    // start non-blocking transmission
    void transmitNonBlocking(QString fileName);

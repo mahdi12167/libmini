@@ -4,11 +4,17 @@
 
 #include "clientui.h"
 
-ClientUI::ClientUI(QWidget *parent)
-   : QWidget(parent)
+ClientUI::ClientUI(QString hostName,
+                   QWidget *parent)
+   : QWidget(parent), hostName_(hostName)
 {
    QVBoxLayout *layout = new QVBoxLayout;
    setLayout(layout);
+
+   QGroupBox *lineEditGroup_hostName = createEdit("Transmit to host", hostName_, &lineEdit_hostName);
+   connect(lineEdit_hostName, SIGNAL(textChanged(QString)), this, SLOT(hostNameChanged(QString)));
+
+   layout->addWidget(lineEditGroup_hostName);
 
    layout->addWidget(new QLabel("Ping Client"));
    layout->addWidget(new QLabel("Drag and drop files to transmit"));
@@ -23,6 +29,22 @@ ClientUI::ClientUI(QWidget *parent)
 
 ClientUI::~ClientUI()
 {}
+
+QGroupBox *ClientUI::createEdit(QString name, QString value,
+                                QLineEdit **lineEdit)
+{
+   QGroupBox *lineEditGroup = new QGroupBox(name);
+   QVBoxLayout *lineEditLayout = new QVBoxLayout;
+   lineEditGroup->setLayout(lineEditLayout);
+   *lineEdit = new QLineEdit(value);
+   lineEditLayout->addWidget(*lineEdit);
+   return(lineEditGroup);
+}
+
+void ClientUI::hostNameChanged(QString hostName)
+{
+   emit host(hostName);
+}
 
 QString ClientUI::normalizeFile(QString file)
 {

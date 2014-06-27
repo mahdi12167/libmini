@@ -15,10 +15,15 @@ class ClientUI: public QWidget
 
 public:
 
-   ClientUI(QWidget *parent = NULL);
+   ClientUI(QString hostName = "",
+            QWidget *parent = NULL);
+
    virtual ~ClientUI();
 
 protected:
+
+   static QGroupBox *createEdit(QString name, QString value,
+                                QLineEdit **lineEdit);
 
    static QString normalizeFile(QString file);
 
@@ -26,12 +31,20 @@ protected:
    void dragMoveEvent(QDragMoveEvent *event);
    void dragLeaveEvent(QDragLeaveEvent *event);
 
+   QString hostName_;
+   QLineEdit *lineEdit_hostName;
+
 public:
 
    void dropEvent(QDropEvent *event);
 
+protected slots:
+
+   void hostNameChanged(QString hostName);
+
 signals:
 
+   void host(QString hostName);
    void transmit(QString fileName);
 };
 

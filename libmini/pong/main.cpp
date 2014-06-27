@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#define VERSION "v0.7 as of 26.June.2014"
+#define VERSION "v0.8 as of 27.June.2014"
 
 #define LICENSE "licensed under GPL 3.0"
 #define COPYRIGHT "(c) by Stefan Roettger 2014"
@@ -158,10 +158,10 @@ int main(int argc, char *argv[])
    {
       try
       {
-         QString hostName = "";
+         QString hostName = "localhost";
          if (arg.size()>0) hostName = arg[0];
 
-         ClientUI main;
+         ClientUI main(hostName);
          SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
 
          // auto-select user name
@@ -169,9 +169,13 @@ int main(int argc, char *argv[])
             if (!client.autoselectUID(reset))
                return(1);
 
-         // connect client gui with client
+         // connect client gui with transmit signal
          QObject::connect(&main, SIGNAL(transmit(QString)),
                           &client, SLOT(transmitNonBlocking(QString)));
+
+         // connect client gui with host signal
+         QObject::connect(&main, SIGNAL(host(QString)),
+                          &client, SLOT(transmitHostName(QString)));
 
          main.show();
 
