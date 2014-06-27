@@ -8,16 +8,26 @@ ClientUI::ClientUI(QString hostName,
                    QWidget *parent)
    : QWidget(parent), hostName_(hostName)
 {
+   // set main inherited style sheet
+   QString css("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; margin: 3px; padding-top: 16px; }"
+               "QGroupBox::title { subcontrol-origin: padding; subcontrol-position: top left; padding-left: 8px; padding-top: 3px; }");
+   setStyleSheet(css);
+
    QVBoxLayout *layout = new QVBoxLayout;
    setLayout(layout);
+
+   layout->addWidget(new QLabel("Ping Client"));
+
+   QGroupBox *dropBox = new QGroupBox("To transmit files");
+   QVBoxLayout *dropBoxLayout = new QVBoxLayout;
+   layout->addWidget(dropBox);
+   dropBox->setLayout(dropBoxLayout);
+   dropBoxLayout->addWidget(new QLabel("drag and drop here"));
 
    QGroupBox *lineEditGroup_hostName = createEdit("Transmit to host", hostName_, &lineEdit_hostName);
    connect(lineEdit_hostName, SIGNAL(textChanged(QString)), this, SLOT(hostNameChanged(QString)));
 
    layout->addWidget(lineEditGroup_hostName);
-
-   layout->addWidget(new QLabel("Ping Client"));
-   layout->addWidget(new QLabel("Drag and drop files to transmit"));
 
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));

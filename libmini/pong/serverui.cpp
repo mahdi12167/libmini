@@ -5,26 +5,36 @@
 ServerUI::ServerUI(QWidget *parent)
    : QWidget(parent)
 {
+   // set main inherited style sheet
+   QString css("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; margin: 3px; padding-top: 16px; }"
+               "QGroupBox::title { subcontrol-origin: padding; subcontrol-position: top left; padding-left: 8px; padding-top: 3px; }");
+   setStyleSheet(css);
+
    QVBoxLayout *layout = new QVBoxLayout;
    setLayout(layout);
 
    layout->addWidget(new QLabel("Pong Server"));
 
+   QGroupBox *infoBox = new QGroupBox("Server status");
+   QVBoxLayout *infoBoxLayout = new QVBoxLayout;
+   layout->addWidget(infoBox);
+   infoBox->setLayout(infoBoxLayout);
+
    counter_ = 0;
    counterLabel_ = new QLabel("Transmissions:");
-   layout->addWidget(counterLabel_);
+   infoBoxLayout->addWidget(counterLabel_);
 
    lastLabel_ = new QLabel("none");
-   layout->addWidget(lastLabel_);
+   infoBoxLayout->addWidget(lastLabel_);
 
    timeLabel_ = new QLabel;
-   layout->addWidget(timeLabel_);
+   infoBoxLayout->addWidget(timeLabel_);
 
    nameLabel_ = new QLabel;
-   layout->addWidget(nameLabel_);
+   infoBoxLayout->addWidget(nameLabel_);
 
    userLabel_ = new QLabel;
-   layout->addWidget(userLabel_);
+   infoBoxLayout->addWidget(userLabel_);
 
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
