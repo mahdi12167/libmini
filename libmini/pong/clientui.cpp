@@ -22,7 +22,9 @@ ClientUI::ClientUI(QString hostName,
    QVBoxLayout *dropBoxLayout = new QVBoxLayout;
    layout->addWidget(dropBox);
    dropBox->setLayout(dropBoxLayout);
-   dropBoxLayout->addWidget(new QLabel("drag and drop here"));
+   QLabel *dropText = new QLabel("drag and drop here!");
+   dropText->setFont(QFont("Arial", 16, QFont::Bold));
+   dropBoxLayout->addWidget(dropText);
 
    QGroupBox *lineEditGroup_hostName = createEdit("Transmit to host", hostName_, &lineEdit_hostName);
    connect(lineEdit_hostName, SIGNAL(textChanged(QString)), this, SLOT(hostNameChanged(QString)));
