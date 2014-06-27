@@ -378,8 +378,12 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
    : SSLTransmissionClient(parent),
      hostName__(hostName), port__(port),
      uid__(uid), verify__(verify), compress__(compress),
+     autoselect__(true), reset__(false),
      receiver__(NULL)
 {
+   if (uid != "")
+      autoselect__ = false;
+
    receiver__ = new SSLTransmissionDatabaseResponseReceiver;
 }
 
@@ -405,6 +409,11 @@ quint32 SSLTransmissionDatabaseClient::getPort()
 // get user name
 QString SSLTransmissionDatabaseClient::getUID()
 {
+   // auto-select user name
+   if (autoselect__)
+      if (!autoselectUID(reset__))
+         return("");
+
    return(uid__);
 }
 
@@ -443,18 +452,19 @@ SSLTransmissionResponseReceiver *SSLTransmissionDatabaseClient::getReceiver()
 // start transmission
 bool SSLTransmissionDatabaseClient::transmit(QString fileName)
 {
-   return(SSLTransmissionClient::transmit(hostName__, port__, fileName, uid__, verify__, compress__));
+   return(SSLTransmissionClient::transmit(hostName__, port__, fileName, getUID(), verify__, compress__));
 }
 
 // determine transmission host name
 void SSLTransmissionDatabaseClient::transmitHostName(QString hostName)
 {
    hostName__ = hostName;
+   reset__ = true;
 }
 
 // start non-blocking transmission
 void SSLTransmissionDatabaseClient::transmitNonBlocking(QString fileName)
 {
-   SSLTransmissionClient::transmitNonBlocking(hostName__, port__, fileName, uid__, verify__, compress__,
+   SSLTransmissionClient::transmitNonBlocking(hostName__, port__, fileName, getUID(), verify__, compress__,
                                               SSLTransmission::cc_transmit, receiver__);
 }

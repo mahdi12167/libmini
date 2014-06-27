@@ -164,11 +164,6 @@ int main(int argc, char *argv[])
          ClientUI main(hostName);
          SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
 
-         // auto-select user name
-         if (user == "")
-            if (!client.autoselectUID(reset))
-               return(1);
-
          // connect client gui with transmit signal
          QObject::connect(&main, SIGNAL(transmit(QString)),
                           &client, SLOT(transmitNonBlocking(QString)));
@@ -200,11 +195,6 @@ int main(int argc, char *argv[])
          QString fileName = arg[1];
 
          SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
-
-         // auto-select user name
-         if (user == "")
-            if (!client.autoselectUID(reset))
-               return(1);
 
          // transmit file
          if (!client.transmit(fileName))

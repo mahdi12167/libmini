@@ -187,6 +187,9 @@ protected:
    bool verify__;
    bool compress__;
 
+   bool autoselect__;
+   bool reset__;
+
    SSLTransmissionResponseReceiver *receiver__;
 
 public slots:
