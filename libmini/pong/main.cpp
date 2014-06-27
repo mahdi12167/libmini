@@ -182,6 +182,10 @@ int main(int argc, char *argv[])
 
          SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
 
+         // reset user name
+         if (reset)
+            client.autoselectUID(true);
+
          // transmit file
          if (!client.transmit(fileName))
             return(1);

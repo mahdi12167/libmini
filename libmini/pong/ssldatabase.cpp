@@ -450,6 +450,10 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
       SSLTransmissionClient client;
       SSLTransmission t("create_uid", "", QDateTime::currentDateTimeUtc(), SSLTransmission::cc_command);
 
+      std::cout << "check1: " << hostName__ << std::endl; //!!
+      std::cout << "check1: " << port__ << std::endl; //!!
+      std::cout << "check1: " << uid__ << std::endl; //!!
+
       if (!client.transmit(hostName__, port__, t, verify__))
          return(false);
       else
@@ -457,6 +461,8 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
             return(false);
          else
             uid__ = client.getResponse()->getData();
+
+      std::cout << "check2" << std::endl; //!!
 
       settings.setValue("hostName", hostName__);
       settings.setValue("port", port__);
