@@ -23,7 +23,7 @@ ClientUI::ClientUI(SSLTransmissionDatabaseClient *client,
    QVBoxLayout *dropBoxLayout = new QVBoxLayout;
    layout->addWidget(dropBox);
    dropBox->setLayout(dropBoxLayout);
-   QLabel *dropText = new QLabel("drag and drop here!");
+   QLabel *dropText = new QLabel("drag&drop here!");
    dropBoxLayout->addWidget(dropText);
 
    QGroupBox *lineEditGroup_hostName = createEdit("Transmit to host", hostName_, &lineEdit_hostName);
