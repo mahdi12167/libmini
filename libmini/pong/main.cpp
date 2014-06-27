@@ -40,7 +40,7 @@ void usage(const char *prog)
    std::cout << " --dump: dump database contents" << std::endl;
    std::cout << " --port=n: use tcp port n" << std::endl;
    std::cout << " --user=\"name\": specify user name" << std::endl;
-   std::cout << " --user-reset: reset auto-selected user name" << std::endl;
+   std::cout << " --reset-user: reset auto-selected user name" << std::endl;
    std::cout << " --verify-peer: verify integrity of peer" << std::endl;
    std::cout << " --self-certified: allow self-certified certificates" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
       else if (opt[i]=="dump") {dump=true; server=client=transmit=false;}
       else if (opt[i].startsWith("port=")) port=(int)(get_opt(opt[i])+0.5);
       else if (opt[i].startsWith("user=")) user=get_str(opt[i]);
-      else if (opt[i]=="user-reset") reset=true;
+      else if (opt[i]=="reset-user") reset=true;
       else if (opt[i]=="verify-peer") verify=true;
       else if (opt[i]=="self-certified") verify=false;
       else if (opt[i]=="no-gui") gui=false;
@@ -184,7 +184,8 @@ int main(int argc, char *argv[])
 
          // reset user name
          if (reset)
-            client.autoselectUID(true);
+            if (!client.autoselectUID(true))
+               return(1);
 
          // transmit file
          if (!client.transmit(fileName))
