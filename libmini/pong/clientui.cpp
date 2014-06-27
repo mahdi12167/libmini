@@ -4,7 +4,7 @@
 
 #include "clientui.h"
 
-ClientUI::ClientUI(QString hostName,
+ClientUI::ClientUI(QString hostName, //!! get host name from client
                    QWidget *parent)
    : QWidget(parent), hostName_(hostName)
 {

@@ -400,12 +400,22 @@ SSLTransmissionDatabaseClient::~SSLTransmissionDatabaseClient()
 // get host name
 QString SSLTransmissionDatabaseClient::getHostName()
 {
+   // auto-select user name
+   if (!autoselectUID())
+      if (receiver__)
+         receiver__->onError("failed to register with server");
+
    return(hostName__);
 }
 
 // get port
 quint32 SSLTransmissionDatabaseClient::getPort()
 {
+   // auto-select user name
+   if (!autoselectUID())
+      if (receiver__)
+         receiver__->onError("failed to register with server");
+
    return(port__);
 }
 
@@ -413,10 +423,9 @@ quint32 SSLTransmissionDatabaseClient::getPort()
 QString SSLTransmissionDatabaseClient::getUID()
 {
    // auto-select user name
-   if (autoselect__)
-      if (!autoselectUID())
-         if (receiver__)
-            receiver__->onError("failed to register with server");
+   if (!autoselectUID())
+      if (receiver__)
+         receiver__->onError("failed to register with server");
 
    return(uid__);
 }
@@ -424,11 +433,16 @@ QString SSLTransmissionDatabaseClient::getUID()
 // auto-select user name
 bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
 {
+   if (!autoselect__)
+      return(true);
+
    QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
    if (settings.contains("uid") && !reset)
    {
       hostName__ = settings.value("hostName").toString();
+      port__ = settings.value("port").toInt();
+
       uid__ = settings.value("uid").toString();
    }
    else
@@ -445,6 +459,8 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
             uid__ = client.getResponse()->getData();
 
       settings.setValue("hostName", hostName__);
+      settings.setValue("port", port__);
+
       settings.setValue("uid", uid__);
    }
 
