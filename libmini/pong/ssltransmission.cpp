@@ -246,3 +246,9 @@ void SSLTransmissionResponseReceiver::result(SSLTransmission t)
 {
    onResult(t);
 }
+
+// transmission error
+void SSLTransmissionResponseReceiver::error(QString e)
+{
+   onError(e);
+}

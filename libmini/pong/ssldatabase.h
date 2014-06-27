@@ -146,6 +146,7 @@ public:
    virtual void onFailure(QString hostName, quint16 port, QString fileName, QString uid) {}
    virtual void onResponse(SSLTransmission t) {}
    virtual void onResult(SSLTransmission t) {}
+   virtual void onError(QString e) {}
 };
 
 // ssl transmission database client class
@@ -188,7 +189,6 @@ protected:
    bool compress__;
 
    bool autoselect__;
-   bool reset__;
 
    SSLTransmissionResponseReceiver *receiver__;
 

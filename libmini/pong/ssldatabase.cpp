@@ -378,9 +378,12 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
    : SSLTransmissionClient(parent),
      hostName__(hostName), port__(port),
      uid__(uid), verify__(verify), compress__(compress),
-     autoselect__(true), reset__(false),
+     autoselect__(true),
      receiver__(NULL)
 {
+   if (hostName__ == "")
+      hostName__ = "localhost";
+
    if (uid != "")
       autoselect__ = false;
 
@@ -411,8 +414,9 @@ QString SSLTransmissionDatabaseClient::getUID()
 {
    // auto-select user name
    if (autoselect__)
-      if (!autoselectUID(reset__))
-         return("");
+      if (!autoselectUID())
+         if (receiver__)
+            receiver__->onError("failed to register with server");
 
    return(uid__);
 }
@@ -423,7 +427,10 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
    QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
    if (settings.contains("uid") && !reset)
+   {
+      hostName__ = settings.value("hostName").toString();
       uid__ = settings.value("uid").toString();
+   }
    else
    {
       SSLTransmissionClient client;
@@ -437,6 +444,7 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
          else
             uid__ = client.getResponse()->getData();
 
+      settings.setValue("hostName", hostName__);
       settings.setValue("uid", uid__);
    }
 
@@ -452,19 +460,37 @@ SSLTransmissionResponseReceiver *SSLTransmissionDatabaseClient::getReceiver()
 // start transmission
 bool SSLTransmissionDatabaseClient::transmit(QString fileName)
 {
-   return(SSLTransmissionClient::transmit(hostName__, port__, fileName, getUID(), verify__, compress__));
+   QString uid = getUID();
+
+   if (uid != "")
+      return(SSLTransmissionClient::transmit(hostName__, port__, fileName, uid, verify__, compress__));
+
+   return(false);
 }
 
 // determine transmission host name
 void SSLTransmissionDatabaseClient::transmitHostName(QString hostName)
 {
-   hostName__ = hostName;
-   reset__ = true;
+   if (hostName != hostName__)
+   {
+      hostName__ = hostName;
+      uid__ = "";
+
+      if (!autoselectUID(true))
+         if (receiver__)
+            receiver__->onError("failed to register with server");
+   }
 }
 
 // start non-blocking transmission
 void SSLTransmissionDatabaseClient::transmitNonBlocking(QString fileName)
 {
-   SSLTransmissionClient::transmitNonBlocking(hostName__, port__, fileName, getUID(), verify__, compress__,
-                                              SSLTransmission::cc_transmit, receiver__);
+   QString uid = getUID();
+
+   if (uid != "")
+      SSLTransmissionClient::transmitNonBlocking(hostName__, port__, fileName, uid, verify__, compress__,
+                                                 SSLTransmission::cc_transmit, receiver__);
+   else
+      if (receiver__)
+         receiver__->onFailure(hostName__, port__, fileName, uid);
 }

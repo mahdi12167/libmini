@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
    {
       try
       {
-         QString hostName = "localhost";
+         QString hostName = "";
          if (arg.size()>0) hostName = arg[0];
 
          ClientUI main(hostName);

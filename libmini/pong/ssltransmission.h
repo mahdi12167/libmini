@@ -637,6 +637,7 @@ public:
    virtual void onFailure(QString hostName, quint16 port, QString fileName, QString uid) = 0;
    virtual void onResponse(SSLTransmission t) = 0;
    virtual void onResult(SSLTransmission t) = 0;
+   virtual void onError(QString) = 0;
 
    public slots:
 
@@ -644,6 +645,7 @@ public:
    void failure(QString, quint16, QString, QString);
    void response(SSLTransmission);
    void result(SSLTransmission);
+   void error(QString);
 };
 
 // ssl transmission client class

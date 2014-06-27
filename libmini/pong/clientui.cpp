@@ -55,7 +55,8 @@ QGroupBox *ClientUI::createEdit(QString name, QString value,
 
 void ClientUI::hostNameChanged(QString hostName)
 {
-   emit host(hostName);
+   hostName_ = hostName;
+   emit host(hostName_);
 }
 
 QString ClientUI::normalizeFile(QString file)
