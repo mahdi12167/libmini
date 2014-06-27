@@ -438,21 +438,18 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
 
    QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
-   if (settings.contains("uid") && !reset)
+   if (settings.contains("hostName") && settings.contains("port") &&
+       settings.contains("uid") && !reset)
    {
       hostName__ = settings.value("hostName").toString();
-      port__ = settings.value("port").toInt();
 
+      port__ = settings.value("port").toInt();
       uid__ = settings.value("uid").toString();
    }
    else
    {
       SSLTransmissionClient client;
       SSLTransmission t("create_uid", "", QDateTime::currentDateTimeUtc(), SSLTransmission::cc_command);
-
-      std::cout << "check1: " << hostName__ << std::endl; //!!
-      std::cout << "check1: " << port__ << std::endl; //!!
-      std::cout << "check1: " << uid__ << std::endl; //!!
 
       if (!client.transmit(hostName__, port__, t, verify__))
          return(false);
@@ -461,8 +458,6 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
             return(false);
          else
             uid__ = client.getResponse()->getData();
-
-      std::cout << "check2" << std::endl; //!!
 
       settings.setValue("hostName", hostName__);
       settings.setValue("port", port__);

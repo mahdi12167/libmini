@@ -156,6 +156,11 @@ int main(int argc, char *argv[])
 
          SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
 
+         // reset user name
+         if (reset)
+            if (!client.autoselectUID(true))
+               return(1);
+
          // client gui
          ClientUI main(&client);
          main.show();
