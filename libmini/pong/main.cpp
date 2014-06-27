@@ -115,20 +115,13 @@ int main(int argc, char *argv[])
       {
          if (gui)
          {
-            ServerUI main;
             SSLTransmissionDatabaseServer server(port, "cert.pem", "key.pem", "/usr/share/pingpong");
-
-            // connect server gui with the connection factory transmitted signal
-            QObject::connect(server.getFactory(), SIGNAL(transmitted(SSLTransmission)),
-                             &main, SLOT(transmitted(SSLTransmission)));
-
-            // connect server gui with the connection factory report signal
-            QObject::connect(server.getFactory(), SIGNAL(report(QString)),
-                             &main, SLOT(report(QString)));
 
             // start server on specified port (default 10000)
             server.start();
 
+            // server gui
+            ServerUI main(&server);
             main.show();
 
             return(app.exec());
@@ -161,17 +154,10 @@ int main(int argc, char *argv[])
          QString hostName = "";
          if (arg.size()>0) hostName = arg[0];
 
-         ClientUI main(hostName);
          SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
 
-         // connect client gui with transmit signal
-         QObject::connect(&main, SIGNAL(transmit(QString)),
-                          &client, SLOT(transmitNonBlocking(QString)));
-
-         // connect client gui with host signal
-         QObject::connect(&main, SIGNAL(host(QString)),
-                          &client, SLOT(transmitHostName(QString)));
-
+         // client gui
+         ClientUI main(&client);
          main.show();
 
          return(app.exec());

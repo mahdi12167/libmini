@@ -9,7 +9,7 @@
 #include <QtGui>
 #endif
 
-#include "ssltransmission.h"
+#include "ssldatabase.h"
 
 class ServerUI: public QWidget
 {
@@ -17,7 +17,9 @@ class ServerUI: public QWidget
 
 public:
 
-   ServerUI(QWidget *parent = NULL);
+   ServerUI(SSLTransmissionDatabaseServer *server,
+            QWidget *parent = NULL);
+
    virtual ~ServerUI();
 
 protected:

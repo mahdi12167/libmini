@@ -2,7 +2,8 @@
 
 #include "serverui.h"
 
-ServerUI::ServerUI(QWidget *parent)
+ServerUI::ServerUI(SSLTransmissionDatabaseServer *server,
+                   QWidget *parent)
    : QWidget(parent)
 {
    // set main inherited style sheet
@@ -39,6 +40,14 @@ ServerUI::ServerUI(QWidget *parent)
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
    layout->addWidget(quitButton);
+
+   // connect gui with the connection factory transmitted signal
+   QObject::connect(server->getFactory(), SIGNAL(transmitted(SSLTransmission)),
+                    this, SLOT(transmitted(SSLTransmission)));
+
+   // connect gui with the connection factory report signal
+   QObject::connect(server->getFactory(), SIGNAL(report(QString)),
+                    this, SLOT(report(QString)));
 }
 
 ServerUI::~ServerUI()

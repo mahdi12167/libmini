@@ -1,13 +1,14 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#include "ssltransmission.h"
-
 #include "clientui.h"
 
-ClientUI::ClientUI(QString hostName, //!! get host name from client
+ClientUI::ClientUI(SSLTransmissionDatabaseClient *client,
                    QWidget *parent)
-   : QWidget(parent), hostName_(hostName)
+   : QWidget(parent)
 {
+   // get host name from client
+   hostName_ = client->getHostName();
+
    // set main inherited style sheet
    QString css("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; margin: 3px; padding-top: 16px; }"
                "QGroupBox::title { subcontrol-origin: padding; subcontrol-position: top left; padding-left: 8px; padding-top: 3px; }");
@@ -37,6 +38,14 @@ ClientUI::ClientUI(QString hostName, //!! get host name from client
 
    // accept drag and drop
    setAcceptDrops(true);
+
+   // connect gui with transmit slot
+   QObject::connect(this, SIGNAL(transmit(QString)),
+                    client, SLOT(transmitNonBlocking(QString)));
+
+   // connect gui with host slot
+   QObject::connect(this, SIGNAL(host(QString)),
+                    client, SLOT(transmitHostName(QString)));
 }
 
 ClientUI::~ClientUI()

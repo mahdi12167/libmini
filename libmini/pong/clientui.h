@@ -9,13 +9,15 @@
 #include <QtGui>
 #endif
 
+#include "ssldatabase.h"
+
 class ClientUI: public QWidget
 {
    Q_OBJECT
 
 public:
 
-   ClientUI(QString hostName = "",
+   ClientUI(SSLTransmissionDatabaseClient *client,
             QWidget *parent = NULL);
 
    virtual ~ClientUI();
