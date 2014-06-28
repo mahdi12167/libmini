@@ -166,19 +166,19 @@ public:
    QString getHostName();
 
    // get port
-   quint32 getPort();
+   int getPort();
 
    // get user name
    QString getUID();
-
-   // auto-select user name
-   bool autoselectUID(bool reset=false);
 
    // get receiver
    SSLTransmissionResponseReceiver *getReceiver();
 
    // start transmission
    bool transmit(QString fileName);
+
+   // reset user name
+   bool reset();
 
 protected:
 
@@ -191,6 +191,12 @@ protected:
    bool autoselect__;
 
    SSLTransmissionResponseReceiver *receiver__;
+
+   // register user with server
+   bool registerUID();
+
+   // auto-select user name
+   bool autoselectUID(bool reset=false);
 
 public slots:
 

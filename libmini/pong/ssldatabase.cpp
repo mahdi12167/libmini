@@ -381,10 +381,7 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
      autoselect__(true),
      receiver__(NULL)
 {
-   if (hostName__ == "")
-      hostName__ = "localhost";
-
-   if (uid != "")
+   if (hostName__ != "" && uid__ != "")
       autoselect__ = false;
 
    receiver__ = new SSLTransmissionDatabaseResponseReceiver;
@@ -400,21 +397,17 @@ SSLTransmissionDatabaseClient::~SSLTransmissionDatabaseClient()
 // get host name
 QString SSLTransmissionDatabaseClient::getHostName()
 {
-   // auto-select user name
-   if (!autoselectUID())
-      if (receiver__)
-         receiver__->onError("failed to register with server");
+   if (!registerUID())
+      return("");
 
    return(hostName__);
 }
 
 // get port
-quint32 SSLTransmissionDatabaseClient::getPort()
+int SSLTransmissionDatabaseClient::getPort()
 {
-   // auto-select user name
-   if (!autoselectUID())
-      if (receiver__)
-         receiver__->onError("failed to register with server");
+   if (!registerUID())
+      return(-1);
 
    return(port__);
 }
@@ -422,10 +415,8 @@ quint32 SSLTransmissionDatabaseClient::getPort()
 // get user name
 QString SSLTransmissionDatabaseClient::getUID()
 {
-   // auto-select user name
-   if (!autoselectUID())
-      if (receiver__)
-         receiver__->onError("failed to register with server");
+   if (!registerUID())
+      return("");
 
    return(uid__);
 }
@@ -450,6 +441,9 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
    {
       SSLTransmissionClient client;
       SSLTransmission t("create_uid", "", QDateTime::currentDateTimeUtc(), SSLTransmission::cc_command);
+
+      if (hostName__ == "")
+         hostName__ = "localhost";
 
       if (!client.transmit(hostName__, port__, t, verify__))
          return(false);
@@ -485,6 +479,30 @@ bool SSLTransmissionDatabaseClient::transmit(QString fileName)
    return(false);
 }
 
+// register user with server
+bool SSLTransmissionDatabaseClient::registerUID()
+{
+   if (autoselectUID())
+      return(true);
+
+   if (receiver__)
+      receiver__->onError("failed to register with server");
+
+   return(false);
+}
+
+// reset user name
+bool SSLTransmissionDatabaseClient::reset()
+{
+   if (autoselectUID(true))
+      return(true);
+
+   if (receiver__)
+      receiver__->onError("failed to reset user name");
+
+   return(false);
+}
+
 // determine transmission host name
 void SSLTransmissionDatabaseClient::transmitHostName(QString hostName)
 {
@@ -493,9 +511,7 @@ void SSLTransmissionDatabaseClient::transmitHostName(QString hostName)
       hostName__ = hostName;
       uid__ = "";
 
-      if (!autoselectUID(true))
-         if (receiver__)
-            receiver__->onError("failed to register with server");
+      reset();
    }
 }
 

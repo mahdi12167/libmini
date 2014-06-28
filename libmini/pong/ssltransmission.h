@@ -328,7 +328,7 @@ public:
 
                // check if response code has arrived
                if (socket->bytesAvailable() < 1)
-                  if (!socket->waitForReadyRead())
+                  if (!socket->waitForReadyRead(-1)) // no time-out
                      return(false);
 
                // read response code from the ssl socket

@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#define VERSION "v0.8 as of 27.June.2014"
+#define VERSION "v0.8 as of 28.June.2014"
 
 #define LICENSE "licensed under GPL 3.0"
 #define COPYRIGHT "(c) by Stefan Roettger 2014"
@@ -147,18 +147,19 @@ int main(int argc, char *argv[])
       }
    }
    // client mode
-   else if (client && arg.size()<=1)
+   else if (client && arg.size()==0 || arg.size()==1)
    {
       try
       {
          QString hostName = "";
-         if (arg.size()>0) hostName = arg[0];
+
+         if (arg.size()==1) hostName = arg[0];
 
          SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
 
          // reset user name
          if (reset)
-            if (!client.autoselectUID(true))
+            if (!client.reset())
                return(1);
 
          // client gui
@@ -178,18 +179,26 @@ int main(int argc, char *argv[])
       }
    }
    // transmit mode
-   else if (transmit && arg.size()==2)
+   else if (transmit && arg.size()==1 || arg.size()==2)
    {
       try
       {
-         QString hostName = arg[0];
-         QString fileName = arg[1];
+         QString hostName = "";
+         QString fileName = "";
+
+         if (arg.size()==1)
+            fileName = arg[0];
+         else
+         {
+            hostName = arg[0];
+            fileName = arg[1];
+         }
 
          SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
 
          // reset user name
          if (reset)
-            if (!client.autoselectUID(true))
+            if (!client.reset())
                return(1);
 
          // transmit file
