@@ -8,7 +8,8 @@
 
 #include <QApplication>
 
-#include "ssldatabase.h"
+#include "sslserver.h"
+#include "sslclient.h"
 
 #include "serverui.h"
 #include "clientui.h"

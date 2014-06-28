@@ -9,7 +9,7 @@
 #include <QtGui>
 #endif
 
-#include "ssldatabase.h"
+#include "sslserver.h"
 
 class ServerUI: public QWidget
 {

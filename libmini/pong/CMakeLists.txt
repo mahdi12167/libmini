@@ -73,6 +73,8 @@ SET(LIB_HDRS
    sslsocket.h
    ssltransmission.h
    ssldatabase.h
+   sslserver.h
+   sslclient.h
    serverui.h
    clientui.h
    )
@@ -82,6 +84,8 @@ SET(LIB_SRCS
    sslsocket.cpp
    ssltransmission.cpp
    ssldatabase.cpp
+   sslserver.cpp
+   sslclient.cpp
    serverui.cpp
    clientui.cpp
    )
