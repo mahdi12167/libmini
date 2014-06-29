@@ -68,29 +68,42 @@ QString SSLTransmissionDatabaseClient::getUID()
 }
 
 // auto-select user name
-bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
+bool SSLTransmissionDatabaseClient::autoselectUID()
 {
    if (!autoselect_)
       return(true);
 
+   QString hostName = hostName_;
+   quint16 port = port_;
+   QString uid = uid_;
+
    QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
-   if (settings.contains("hostName") && settings.contains("port") &&
-       settings.contains("uid") && !reset)
+   if (settings.contains("hostName") &&
+       settings.contains("port") &&
+       settings.contains("uid"))
    {
-      hostName_ = settings.value("hostName").toString();
-
-      port_ = settings.value("port").toInt();
-      uid_ = settings.value("uid").toString();
+      hostName = settings.value("hostName").toString();
+      port = settings.value("port").toInt();
+      uid = settings.value("uid").toString();
    }
-   else
+
+   if ((hostName_ == "") ||
+       (hostName_ != "" && hostName_ == hostName && port_ == port))
    {
+      hostName_ = hostName;
+      port_ = port;
+      uid_ = uid;
+   }
+
+   if (hostName_ == "" || uid_ == "")
+   {
+      if (hostName_ == "")
+         hostName_ = "localhost";
+
       SSLTransmission t(QByteArray("create_uid"), "", "",
                         QDateTime::currentDateTimeUtc(),
                         false, SSLTransmission::cc_command);
-
-      if (hostName_ == "")
-         hostName_ = "localhost";
 
       if (!client_->transmit(hostName_, port_, t, verify_))
          return(false);
@@ -102,7 +115,6 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
 
       settings.setValue("hostName", hostName_);
       settings.setValue("port", port_);
-
       settings.setValue("uid", uid_);
    }
 
@@ -134,32 +146,25 @@ bool SSLTransmissionDatabaseClient::registerUID()
    if (autoselectUID())
       return(true);
 
-   emit error("failed to register with server");
-
-   return(false);
-}
-
-// reset user name
-bool SSLTransmissionDatabaseClient::reset()
-{
-   if (autoselectUID(true))
-      return(true);
-
-   emit error("failed to reset user name");
+   emit error("failed to register user");
 
    return(false);
 }
 
 // specify transmission host name
-void SSLTransmissionDatabaseClient::transmitHostName(QString hostName)
+void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 port)
 {
-   if (hostName != hostName_)
-   {
-      hostName_ = hostName;
-      uid_ = "";
+   if (!autoselect_)
+      return;
 
-      reset();
-   }
+   hostName_ = hostName;
+   port_ = port;
+   uid_ = "";
+
+   if (autoselectUID())
+      return;
+
+   emit error("failed to register with server");
 }
 
 // start non-blocking transmission

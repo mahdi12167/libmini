@@ -33,26 +33,26 @@ void usage(const char *prog)
    std::cout << " " << COPYRIGHT << std::endl;
    std::cout << " " << DISCLAIMER << std::endl;
    std::cout << "usage:" << std::endl;
-   std::cout << " " << app << " {options} [ip-address [file]]" << std::endl;
+   std::cout << " " << app << " {options} {file}" << std::endl;
    std::cout << "where options are:" << std::endl;
-   std::cout << " --server: start pong server" << std::endl;
+   std::cout << " --server: start transmission server" << std::endl;
    std::cout << " --client: use drop box gui for transmissions" << std::endl;
    std::cout << " --transmit: transmit file" << std::endl;
-   std::cout << " --dump: dump database contents" << std::endl;
-   std::cout << " --port=n: use tcp port n" << std::endl;
+   std::cout << " --dump: dump transmission database" << std::endl;
+   std::cout << " --host=\"name\": specify host name" << std::endl;
+   std::cout << " --port=n: specify tcp port n" << std::endl;
    std::cout << " --user=\"name\": specify user name" << std::endl;
-   std::cout << " --reset-user: reset auto-selected user name" << std::endl;
    std::cout << " --verify-peer: verify integrity of peer" << std::endl;
    std::cout << " --self-certified: allow self-certified certificates" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
    std::cout << " --no-gui: run without user interface" << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "example server usage:" << std::endl;
-   std::cout << " ./pong --server" << std::endl;
+   std::cout << " ./pong --no-gui &" << std::endl;
    std::cout << "example client usage:" << std::endl;
-   std::cout << " ./pong --client 127.0.0.1" << std::endl;
+   std::cout << " ./ping --host=127.0.0.1" << std::endl;
    std::cout << "example transmission usage:" << std::endl;
-   std::cout << " ./pong --transmit pong.server.org --compress file.txt" << std::endl;
+   std::cout << " ./ping --transmit --host=pong.server.org --compress *.txt" << std::endl;
    exit(1);
 }
 
@@ -76,12 +76,12 @@ int main(int argc, char *argv[])
    bool client=false;
    bool transmit=false;
    bool dump=false;
+   QString host="";
    int port=10000;
    QString user="";
-   bool reset=false;
    bool verify=false;
-   bool gui=true;
    bool compress=false;
+   bool gui=true;
 
 #ifdef HAVE_SERVER
    server=true;
@@ -99,13 +99,13 @@ int main(int argc, char *argv[])
       else if (opt[i]=="client") {client=true; server=transmit=dump=false;}
       else if (opt[i]=="transmit") {transmit=true; server=client=dump=false;}
       else if (opt[i]=="dump") {dump=true; server=client=transmit=false;}
+      else if (opt[i].startsWith("host=")) host=get_str(opt[i]);
       else if (opt[i].startsWith("port=")) port=(int)(get_opt(opt[i])+0.5);
       else if (opt[i].startsWith("user=")) user=get_str(opt[i]);
-      else if (opt[i]=="reset-user") reset=true;
       else if (opt[i]=="verify-peer") verify=true;
       else if (opt[i]=="self-certified") verify=false;
-      else if (opt[i]=="no-gui") gui=false;
       else if (opt[i]=="compress") compress=true;
+      else if (opt[i]=="no-gui") gui=false;
       else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
 
@@ -148,20 +148,11 @@ int main(int argc, char *argv[])
       }
    }
    // client mode
-   else if (client && (arg.size()==0 || arg.size()==1))
+   else if (client && arg.size()==0)
    {
       try
       {
-         QString hostName = "";
-
-         if (arg.size()==1) hostName = arg[0];
-
-         SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
-
-         // reset user name
-         if (reset)
-            if (!client.reset())
-               return(1);
+         SSLTransmissionDatabaseClient client(host, port, user, verify, compress);
 
          // client gui
          ClientUI main(&client);
@@ -180,31 +171,16 @@ int main(int argc, char *argv[])
       }
    }
    // transmit mode
-   else if (transmit && (arg.size()==1 || arg.size()==2))
+   else if (transmit && arg.size()>0)
    {
       try
       {
-         QString hostName = "";
-         QString fileName = "";
+         SSLTransmissionDatabaseClient client(host, port, user, verify, compress);
 
-         if (arg.size()==1)
-            fileName = arg[0];
-         else
-         {
-            hostName = arg[0];
-            fileName = arg[1];
-         }
-
-         SSLTransmissionDatabaseClient client(hostName, port, user, verify, compress);
-
-         // reset user name
-         if (reset)
-            if (!client.reset())
+         // transmit files
+         for (int i=0; i<arg.size(); i++)
+            if (!client.transmit(arg[i]))
                return(1);
-
-         // transmit file
-         if (!client.transmit(fileName))
-            return(1);
       }
       catch (SSLError &e)
       {

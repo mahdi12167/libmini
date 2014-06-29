@@ -33,8 +33,13 @@ public:
    // start transmission
    bool transmit(QString fileName);
 
-   // reset user name
-   bool reset();
+public slots:
+
+   // specify transmission host name
+   void transmitHostName(QString hostName, quint16 port);
+
+   // start non-blocking transmission
+   void transmitNonBlocking(QString fileName);
 
 protected:
 
@@ -53,15 +58,7 @@ protected:
    bool registerUID();
 
    // auto-select user name
-   bool autoselectUID(bool reset=false);
-
-public slots:
-
-   // specify transmission host name
-   void transmitHostName(QString hostName);
-
-   // start non-blocking transmission
-   void transmitNonBlocking(QString fileName);
+   bool autoselectUID();
 
 protected slots:
 

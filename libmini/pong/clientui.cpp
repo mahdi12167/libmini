@@ -6,8 +6,9 @@ ClientUI::ClientUI(SSLTransmissionDatabaseClient *client,
                    QWidget *parent)
    : QWidget(parent)
 {
-   // get host name from client
+   // get host name and port from client
    hostName_ = client->getHostName();
+   port_ = client->getPort();
 
    // set main inherited style sheet
    QString css("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; margin: 3px; padding-top: 16px; }"
@@ -55,8 +56,8 @@ ClientUI::ClientUI(SSLTransmissionDatabaseClient *client,
                     client, SLOT(transmitNonBlocking(QString)));
 
    // connect gui with host slot
-   QObject::connect(this, SIGNAL(host(QString)),
-                    client, SLOT(transmitHostName(QString)));
+   QObject::connect(this, SIGNAL(host(QString, quint16)),
+                    client, SLOT(transmitHostName(QString, quint16)));
 
    // connect success signal with gui
    QObject::connect(client, SIGNAL(success(QString, quint16, QString, QString)),
@@ -84,7 +85,7 @@ QGroupBox *ClientUI::createEdit(QString name, QString value,
 void ClientUI::hostNameChanged()
 {
    hostName_ = lineEdit_hostName->text();
-   emit host(hostName_);
+   emit host(hostName_, port_);
 }
 
 QString ClientUI::normalizeFile(QString file)

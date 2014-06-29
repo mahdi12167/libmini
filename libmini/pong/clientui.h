@@ -36,6 +36,8 @@ protected:
    QString hostName_;
    QLineEdit *lineEdit_hostName;
 
+   quint16 port_;
+
    unsigned int counter_;
    QLabel *counterLabel_;
 
@@ -56,7 +58,7 @@ protected slots:
 
 signals:
 
-   void host(QString hostName);
+   void host(QString hostName, quint16 port);
    void transmit(QString fileName);
 };
 
