@@ -13,7 +13,8 @@ SSLTransmissionResponder::~SSLTransmissionResponder()
 // ssl transmission server connection factory ctor
 SSLTransmissionServerConnectionFactory::SSLTransmissionServerConnectionFactory(SSLTransmissionResponder *responder,
                                                                                QObject *parent)
-   : SSLServerConnectionFactory(parent), responder_(responder)
+   : SSLServerConnectionFactory(parent),
+     responder_(responder)
 {
    qRegisterMetaType<SSLTransmission>("SSLTransmission");
 }
@@ -104,7 +105,8 @@ bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 // ssl transmission client ctor
 SSLTransmissionClient::SSLTransmissionClient(SSLTransmissionResponseReceiver *receiver,
                                              QObject *parent)
-   : SSLClient(parent), receiver_(receiver)
+   : SSLClient(parent),
+     receiver_(receiver)
 {
    qRegisterMetaType<SSLTransmission>("SSLTransmission");
 }
@@ -134,7 +136,7 @@ bool SSLTransmissionClient::transmit(QString hostName, quint16 port, const SSLTr
    return(success);
 }
 
-// start transmission
+// start file transmission
 bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QString fileName, QString uid,
                                      bool verify, bool compress, SSLTransmission::CommandCode command)
 {
@@ -171,14 +173,13 @@ bool SSLTransmissionClient::startWriting(QSslSocket *socket)
 }
 
 // start non-blocking transmission
-void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid,
-                                                bool verify, bool compress, SSLTransmission::CommandCode command)
+void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, const SSLTransmission &t, bool verify)
 {
    SSLTransmissionThread *thread;
 
-   thread = new SSLTransmissionThread(hostName, port, fileName, uid, verify, compress, command);
+   thread = new SSLTransmissionThread(hostName, port, t, verify);
 
-   if (receiver_ != NULL)
+   if (receiver_)
    {
       // signal successful transmission
       connect(thread, SIGNAL(success(QString, quint16, QString, QString)),
@@ -200,12 +201,28 @@ void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, 
    thread->start();
 }
 
+// start non-blocking file transmission
+void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid,
+                                                bool verify, bool compress, SSLTransmission::CommandCode command)
+{
+   QFile file(fileName);
+
+   if (!file.open(QIODevice::ReadOnly))
+      return;
+
+   SSLTransmission t(file, uid, command);
+
+   if (compress)
+      t.compress();
+
+   transmitNonBlocking(hostName, port, t, verify);
+}
+
 // ssl transmission thread ctor
-SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, QString fileName, QString uid,
-                                             bool verify, bool compress, SSLTransmission::CommandCode command,
+SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, const SSLTransmission &t, bool verify,
                                              QObject *parent)
-   : QThread(parent), hostName_(hostName), port_(port), fileName_(fileName),
-     uid_(uid), verify_(verify), compress_(compress), command_(command)
+   : QThread(parent),
+     hostName_(hostName), port_(port), t_(t), verify_(verify)
 {
    // self-termination after thread has finished
    connect(this, SIGNAL(finished()),
@@ -219,7 +236,7 @@ SSLTransmissionThread::~SSLTransmissionThread()
 // thread run method
 void SSLTransmissionThread::run()
 {
-   bool ok;
+   bool done;
 
    SSLTransmissionClient client;
 
@@ -232,13 +249,13 @@ void SSLTransmissionThread::run()
            this, SLOT(receive_result(SSLTransmission)));
 
    // transmit
-   ok = client.transmit(hostName_, port_, fileName_, uid_, verify_, compress_, command_);
+   done = client.transmit(hostName_, port_, t_, verify_);
 
    // signal whether or not transmission was successful
-   if (ok)
-      emit success(hostName_, port_, fileName_, uid_);
+   if (done)
+      emit success(hostName_, port_, t_.getTID(), t_.getUID());
    else
-      emit failure(hostName_, port_, fileName_, uid_);
+      emit failure(hostName_, port_, t_.getTID(), t_.getUID());
 }
 
 // receive ssl transmission response
@@ -263,15 +280,15 @@ SSLTransmissionResponseReceiver::~SSLTransmissionResponseReceiver()
 {}
 
 // ssl transmission success
-void SSLTransmissionResponseReceiver::success(QString hostName, quint16 port, QString fileName, QString uid)
+void SSLTransmissionResponseReceiver::success(QString hostName, quint16 port, QString tid, QString uid)
 {
-   emit onSuccess(hostName, port, fileName, uid);
+   emit onSuccess(hostName, port, tid, uid);
 }
 
 // ssl transmission failure
-void SSLTransmissionResponseReceiver::failure(QString hostName, quint16 port, QString fileName, QString uid)
+void SSLTransmissionResponseReceiver::failure(QString hostName, quint16 port, QString tid, QString uid)
 {
-   emit onFailure(hostName, port, fileName, uid);
+   emit onFailure(hostName, port, tid, uid);
 }
 
 // ssl transmission response

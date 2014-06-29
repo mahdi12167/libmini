@@ -66,14 +66,14 @@ public slots:
 protected slots:
 
    // ssl transmission success
-   void onSuccess(QString hostName, quint16 port, QString fileName, QString uid);
+   void onSuccess(QString hostName, quint16 port, QString tid, QString uid);
 
    // ssl transmission failure
-   void onFailure(QString hostName, quint16 port, QString fileName, QString uid);
+   void onFailure(QString hostName, quint16 port, QString tid, QString uid);
 
 signals:
 
-   void success(QString hostName, quint16 port, QString fileName, QString uid);
+   void success(QString hostName, quint16 port, QString tid, QString uid);
    void error(QString e);
 };
 

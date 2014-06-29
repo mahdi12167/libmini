@@ -647,15 +647,15 @@ public:
 
 public slots:
 
-   void success(QString hostName, quint16 port, QString fileName, QString uid);
-   void failure(QString hostName, quint16 port, QString fileName, QString uid);
+   void success(QString hostName, quint16 port, QString tid, QString uid);
+   void failure(QString hostName, quint16 port, QString tid, QString uid);
    void response(SSLTransmission t);
    void result(SSLTransmission t);
 
 signals:
 
-   void onSuccess(QString hostName, quint16 port, QString fileName, QString uid);
-   void onFailure(QString hostName, quint16 port, QString fileName, QString uid);
+   void onSuccess(QString hostName, quint16 port, QString tid, QString uid);
+   void onFailure(QString hostName, quint16 port, QString tid, QString uid);
    void onResponse(SSLTransmission t);
    void onResult(SSLTransmission t);
 };
@@ -674,7 +674,10 @@ public:
 
    // start transmission
    bool transmit(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true);
-   bool transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit);
+
+   // start file transmission
+   bool transmit(QString hostName, quint16 port, QString fileName, QString uid,
+                 bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit);
 
    // get transmission receiver
    SSLTransmissionResponseReceiver *getReceiver() const;
@@ -694,6 +697,9 @@ protected:
 public slots:
 
    // start non-blocking transmission
+   void transmitNonBlocking(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true);
+
+   // start non-blocking file transmission
    void transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid,
                             bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit);
 
@@ -710,8 +716,7 @@ class SSLTransmissionThread: public QThread
 
 public:
 
-   SSLTransmissionThread(QString hostName, quint16 port, QString fileName, QString uid,
-                         bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit,
+   SSLTransmissionThread(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true,
                          QObject *parent = NULL);
 
    virtual ~SSLTransmissionThread();
@@ -722,12 +727,8 @@ protected:
 
    QString hostName_;
    quint16 port_;
-   QString fileName_;
-   QString uid_;
+   SSLTransmission t_;
    bool verify_;
-   bool compress_;
-
-   SSLTransmission::CommandCode command_;
 
 protected slots:
 

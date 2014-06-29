@@ -77,7 +77,8 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
                                          QString certPath, QString keyPath,
                                          SSLServerConnectionFactory *factory,
                                          QObject *parent)
-   : QObject(parent), factory_(factory),
+   : QObject(parent),
+     factory_(factory),
      e_("server connection")
 {
    // create new ssl socket for each incoming connection

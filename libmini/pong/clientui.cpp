@@ -131,7 +131,7 @@ void ClientUI::dragLeaveEvent(QDragLeaveEvent *event)
    event->accept();
 }
 
-void ClientUI::success(QString hostName, quint16 port, QString fileName, QString uid)
+void ClientUI::success(QString hostName, quint16 port, QString tid, QString uid)
 {
    counter_++;
    counterLabel_->setText("Transmissions: "+QString::number(counter_));

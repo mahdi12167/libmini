@@ -168,22 +168,28 @@ void SSLTransmissionDatabaseClient::transmitNonBlocking(QString fileName)
    QString uid = getUID();
 
    if (uid != "")
-      client_->transmitNonBlocking(hostName_, port_,
-                                   fileName, uid,
-                                   verify_, compress_,
-                                   SSLTransmission::cc_transmit);
+   {
+      QFileInfo fileInfo(fileName);
+
+      if (fileInfo.isReadable())
+         client_->transmitNonBlocking(hostName_, port_,
+                                      fileName, uid,
+                                      verify_, compress_);
+      else
+         emit error("unable to read file");
+   }
    else
       emit error("transmission error");
 }
 
 // ssl transmission success
-void SSLTransmissionDatabaseClient::onSuccess(QString hostName, quint16 port, QString fileName, QString uid)
+void SSLTransmissionDatabaseClient::onSuccess(QString hostName, quint16 port, QString tid, QString uid)
 {
-   emit success(hostName, port, fileName, uid);
+   emit success(hostName, port, tid, uid);
 }
 
 // ssl transmission failure
-void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QString fileName, QString uid)
+void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QString tid, QString uid)
 {
    emit error("transmission failure");
 }
