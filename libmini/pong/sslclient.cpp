@@ -4,6 +4,35 @@
 
 #include "sslclient.h"
 
+// ssl transmission database response receiver ctor
+SSLTransmissionDatabaseResponseReceiver::SSLTransmissionDatabaseResponseReceiver(QObject *parent)
+   : SSLTransmissionResponseReceiver(parent)
+{}
+
+// ssl transmission database response receiver dtor
+SSLTransmissionDatabaseResponseReceiver::~SSLTransmissionDatabaseResponseReceiver()
+{}
+
+// successful transmission
+void SSLTransmissionDatabaseResponseReceiver::onSuccess(QString hostName, quint16 port, QString fileName, QString uid)
+{}
+
+// unsuccessful transmission
+void SSLTransmissionDatabaseResponseReceiver::onFailure(QString hostName, quint16 port, QString fileName, QString uid)
+{}
+
+// transmission response
+void SSLTransmissionDatabaseResponseReceiver::onResponse(SSLTransmission t)
+{}
+
+// command result
+void SSLTransmissionDatabaseResponseReceiver::onResult(SSLTransmission t)
+{}
+
+// general error
+void SSLTransmissionDatabaseResponseReceiver::onError(QString e)
+{}
+
 // ssl transmission database client ctor
 SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, quint16 port,
                                                              QString uid, bool verify, bool compress,

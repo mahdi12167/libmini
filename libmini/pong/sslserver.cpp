@@ -22,7 +22,7 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       else
          r->setData(uid.toAscii());
    }
-   else if (t->getTID() == "oldest")
+   else if (t->getTID() == "oldest_tid")
    {
       QString oldest = db_->oldest(t->getUID());
 
