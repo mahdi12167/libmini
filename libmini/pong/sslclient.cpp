@@ -85,7 +85,7 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
    }
    else
    {
-      SSLTransmission t("create_uid", "",
+      SSLTransmission t(QByteArray("create_uid"), "", "",
                         QDateTime::currentDateTimeUtc(),
                         SSLTransmission::cc_command);
 
