@@ -28,14 +28,17 @@ ServerUI::ServerUI(SSLTransmissionDatabaseServer *server,
    lastLabel_ = new QLabel("none");
    infoBoxLayout->addWidget(lastLabel_);
 
-   timeLabel_ = new QLabel;
-   infoBoxLayout->addWidget(timeLabel_);
-
    nameLabel_ = new QLabel;
    infoBoxLayout->addWidget(nameLabel_);
 
    userLabel_ = new QLabel;
    infoBoxLayout->addWidget(userLabel_);
+
+   timeLabel_ = new QLabel;
+   infoBoxLayout->addWidget(timeLabel_);
+
+   errorLabel_ = new QLabel;
+   infoBoxLayout->addWidget(errorLabel_);
 
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
@@ -70,13 +73,21 @@ void ServerUI::transmitted(SSLTransmission t)
    lastLabel_->setText("Last request @ "+
                        QDateTime::currentDateTimeUtc().toString()+": "+transmission);
 
-   timeLabel_->setText("Time stamp: "+t.getTime().toString());
    nameLabel_->setText("File name: \""+t.getShortTID()+"\"");
    userLabel_->setText("User name: \""+t.getShortUID()+"\"");
+   timeLabel_->setText("Time stamp: "+t.getTime().toString());
+
+   errorLabel_->setText("ok");
 }
 
 void ServerUI::report(QString error)
 {
    lastLabel_->setText("Last request @ "+
-                       QDateTime::currentDateTimeUtc().toString()+": "+error);
+                       QDateTime::currentDateTimeUtc().toString());
+
+   nameLabel_->setText("");
+   userLabel_->setText("");
+   timeLabel_->setText("");
+
+   errorLabel_->setText(error);
 }

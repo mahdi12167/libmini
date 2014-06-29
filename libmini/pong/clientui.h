@@ -36,6 +36,11 @@ protected:
    QString hostName_;
    QLineEdit *lineEdit_hostName;
 
+   unsigned int counter_;
+   QLabel *counterLabel_;
+
+   QLabel *errorLabel_;
+
 public:
 
    void dropEvent(QDropEvent *event);

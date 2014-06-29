@@ -31,6 +31,18 @@ ClientUI::ClientUI(SSLTransmissionDatabaseClient *client,
 
    layout->addWidget(lineEditGroup_hostName);
 
+   QGroupBox *infoBox = new QGroupBox("Client status");
+   QVBoxLayout *infoBoxLayout = new QVBoxLayout;
+   layout->addWidget(infoBox);
+   infoBox->setLayout(infoBoxLayout);
+
+   counter_ = 0;
+   counterLabel_ = new QLabel("Transmissions:");
+   infoBoxLayout->addWidget(counterLabel_);
+
+   errorLabel_ = new QLabel("none");
+   infoBoxLayout->addWidget(errorLabel_);
+
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
    layout->addWidget(quitButton);
@@ -121,10 +133,13 @@ void ClientUI::dragLeaveEvent(QDragLeaveEvent *event)
 
 void ClientUI::success(QString hostName, quint16 port, QString fileName, QString uid)
 {
-   std::cout << "success: " << fileName.toStdString() << std::endl; //!!
+   counter_++;
+   counterLabel_->setText("Transmissions: "+QString::number(counter_));
+
+   errorLabel_->setText("ok");
 }
 
 void ClientUI::error(QString e)
 {
-   std::cout << "error: " << e.toStdString() << std::endl; //!!
+   errorLabel_->setText(e);
 }
