@@ -4,41 +4,6 @@
 
 #include "sslclient.h"
 
-// ssl transmission database response receiver ctor
-SSLTransmissionDatabaseResponseReceiver::SSLTransmissionDatabaseResponseReceiver(QObject *parent)
-   : SSLTransmissionResponseReceiver(parent)
-{}
-
-// ssl transmission database response receiver dtor
-SSLTransmissionDatabaseResponseReceiver::~SSLTransmissionDatabaseResponseReceiver()
-{}
-
-// successful transmission
-void SSLTransmissionDatabaseResponseReceiver::onSuccess(QString hostName, quint16 port, QString fileName, QString uid)
-{
-   emit success(hostName, port, fileName, uid);
-}
-
-// unsuccessful transmission
-void SSLTransmissionDatabaseResponseReceiver::onFailure(QString hostName, quint16 port, QString fileName, QString uid)
-{
-   emit error("transmission failed");
-}
-
-// transmission response
-void SSLTransmissionDatabaseResponseReceiver::onResponse(SSLTransmission t)
-{}
-
-// command result
-void SSLTransmissionDatabaseResponseReceiver::onResult(SSLTransmission t)
-{}
-
-// general error
-void SSLTransmissionDatabaseResponseReceiver::onError(QString e)
-{
-   emit error(e);
-}
-
 // ssl transmission database client ctor
 SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, quint16 port,
                                                              QString uid, bool verify, bool compress,
@@ -53,8 +18,16 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
    if (hostName_ != "" && uid_ != "")
       autoselect_ = false;
 
-   receiver_ = new SSLTransmissionDatabaseResponseReceiver(parent);
+   receiver_ = new SSLTransmissionResponseReceiver(parent);
    client_ = new SSLTransmissionClient(receiver_, parent);
+
+   // signal ssl transmission success
+   connect(receiver_, SIGNAL(onSuccess(QString, quint16, QString, QString)),
+           this, SLOT(onSuccess(QString, quint16, QString, QString)));
+
+   // signal ssl transmission failure
+   connect(receiver_, SIGNAL(onFailure(QString, quint16, QString, QString)),
+           this, SLOT(onFailure(QString, quint16, QString, QString)));
 }
 
 // ssl transmission database client dtor
@@ -112,7 +85,9 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
    }
    else
    {
-      SSLTransmission t("create_uid", "", QDateTime::currentDateTimeUtc(), SSLTransmission::cc_command);
+      SSLTransmission t("create_uid", "",
+                        QDateTime::currentDateTimeUtc(),
+                        SSLTransmission::cc_command);
 
       if (hostName_ == "")
          hostName_ = "localhost";
@@ -146,7 +121,9 @@ bool SSLTransmissionDatabaseClient::transmit(QString fileName)
    QString uid = getUID();
 
    if (uid != "")
-      return(client_->transmit(hostName_, port_, fileName, uid, verify_, compress_));
+      return(client_->transmit(hostName_, port_,
+                               fileName, uid,
+                               verify_, compress_));
 
    return(false);
 }
@@ -157,8 +134,7 @@ bool SSLTransmissionDatabaseClient::registerUID()
    if (autoselectUID())
       return(true);
 
-   if (receiver_)
-      receiver_->onError("failed to register with server");
+   emit error("failed to register with server");
 
    return(false);
 }
@@ -169,8 +145,7 @@ bool SSLTransmissionDatabaseClient::reset()
    if (autoselectUID(true))
       return(true);
 
-   if (receiver_)
-      receiver_->onError("failed to reset user name");
+   emit error("failed to reset user name");
 
    return(false);
 }
@@ -193,9 +168,22 @@ void SSLTransmissionDatabaseClient::transmitNonBlocking(QString fileName)
    QString uid = getUID();
 
    if (uid != "")
-      client_->transmitNonBlocking(hostName_, port_, fileName, uid, verify_, compress_,
+      client_->transmitNonBlocking(hostName_, port_,
+                                   fileName, uid,
+                                   verify_, compress_,
                                    SSLTransmission::cc_transmit);
    else
-      if (receiver_)
-         receiver_->onFailure(hostName_, port_, fileName, uid);
+      emit error("transmission error");
+}
+
+// ssl transmission success
+void SSLTransmissionDatabaseClient::onSuccess(QString hostName, quint16 port, QString fileName, QString uid)
+{
+   emit success(hostName, port, fileName, uid);
+}
+
+// ssl transmission failure
+void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QString fileName, QString uid)
+{
+   emit error("transmission failure");
 }

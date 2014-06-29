@@ -5,23 +5,6 @@
 
 #include "ssldatabase.h"
 
-// ssl transmission database response receiver class
-class SSLTransmissionDatabaseResponseReceiver: public SSLTransmissionResponseReceiver
-{
-   Q_OBJECT
-
-public:
-
-   SSLTransmissionDatabaseResponseReceiver(QObject *parent = NULL);
-   virtual ~SSLTransmissionDatabaseResponseReceiver();
-
-   virtual void onSuccess(QString hostName, quint16 port, QString fileName, QString uid);
-   virtual void onFailure(QString hostName, quint16 port, QString fileName, QString uid);
-   virtual void onResponse(SSLTransmission t);
-   virtual void onResult(SSLTransmission t);
-   virtual void onError(QString e);
-};
-
 // ssl transmission database client class
 class SSLTransmissionDatabaseClient: public QObject
 {
@@ -79,6 +62,14 @@ public slots:
 
    // start non-blocking transmission
    void transmitNonBlocking(QString fileName);
+
+protected slots:
+
+   // ssl transmission success
+   void onSuccess(QString hostName, quint16 port, QString fileName, QString uid);
+
+   // ssl transmission failure
+   void onFailure(QString hostName, quint16 port, QString fileName, QString uid);
 
 signals:
 

@@ -262,32 +262,26 @@ SSLTransmissionResponseReceiver::SSLTransmissionResponseReceiver(QObject *parent
 SSLTransmissionResponseReceiver::~SSLTransmissionResponseReceiver()
 {}
 
-// successful transmission
+// ssl transmission success
 void SSLTransmissionResponseReceiver::success(QString hostName, quint16 port, QString fileName, QString uid)
 {
-   onSuccess(hostName, port, fileName, uid);
+   emit onSuccess(hostName, port, fileName, uid);
 }
 
-// unsuccessful transmission
+// ssl transmission failure
 void SSLTransmissionResponseReceiver::failure(QString hostName, quint16 port, QString fileName, QString uid)
 {
-   onFailure(hostName, port, fileName, uid);
+   emit onFailure(hostName, port, fileName, uid);
 }
 
-// transmission response
+// ssl transmission response
 void SSLTransmissionResponseReceiver::response(SSLTransmission t)
 {
-   onResponse(t);
+   emit onResponse(t);
 }
 
-// transmission response
+// ssl transmission result
 void SSLTransmissionResponseReceiver::result(SSLTransmission t)
 {
-   onResult(t);
-}
-
-// transmission error
-void SSLTransmissionResponseReceiver::error(QString e)
-{
-   onError(e);
+   emit onResult(t);
 }

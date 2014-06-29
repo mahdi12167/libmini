@@ -635,7 +635,7 @@ signals:
    void invalid(SSLTransmission);
 };
 
-// ssl transmission response receiver base class
+// ssl transmission response receiver class
 class SSLTransmissionResponseReceiver: public QObject
 {
    Q_OBJECT
@@ -645,19 +645,19 @@ public:
    SSLTransmissionResponseReceiver(QObject *parent = NULL);
    virtual ~SSLTransmissionResponseReceiver();
 
-   virtual void onSuccess(QString hostName, quint16 port, QString fileName, QString uid) = 0;
-   virtual void onFailure(QString hostName, quint16 port, QString fileName, QString uid) = 0;
-   virtual void onResponse(SSLTransmission t) = 0;
-   virtual void onResult(SSLTransmission t) = 0;
-   virtual void onError(QString) = 0;
+public slots:
 
-   public slots:
+   void success(QString hostName, quint16 port, QString fileName, QString uid);
+   void failure(QString hostName, quint16 port, QString fileName, QString uid);
+   void response(SSLTransmission t);
+   void result(SSLTransmission t);
 
-   void success(QString, quint16, QString, QString);
-   void failure(QString, quint16, QString, QString);
-   void response(SSLTransmission);
-   void result(SSLTransmission);
-   void error(QString);
+signals:
+
+   void onSuccess(QString hostName, quint16 port, QString fileName, QString uid);
+   void onFailure(QString hostName, quint16 port, QString fileName, QString uid);
+   void onResponse(SSLTransmission t);
+   void onResult(SSLTransmission t);
 };
 
 // ssl transmission client class
