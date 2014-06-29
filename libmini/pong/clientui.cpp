@@ -27,7 +27,7 @@ ClientUI::ClientUI(SSLTransmissionDatabaseClient *client,
    dropBoxLayout->addWidget(dropText);
 
    QGroupBox *lineEditGroup_hostName = createEdit("Transmit to host", hostName_, &lineEdit_hostName);
-   connect(lineEdit_hostName, SIGNAL(editingFinished(QString)), this, SLOT(hostNameChanged(QString)));
+   connect(lineEdit_hostName, SIGNAL(editingFinished()), this, SLOT(hostNameChanged()));
 
    layout->addWidget(lineEditGroup_hostName);
 
@@ -81,9 +81,9 @@ QGroupBox *ClientUI::createEdit(QString name, QString value,
    return(lineEditGroup);
 }
 
-void ClientUI::hostNameChanged(QString hostName)
+void ClientUI::hostNameChanged()
 {
-   hostName_ = hostName;
+   hostName_ = lineEdit_hostName->text();
    emit host(hostName_);
 }
 

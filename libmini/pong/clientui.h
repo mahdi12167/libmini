@@ -52,7 +52,7 @@ public slots:
 
 protected slots:
 
-   void hostNameChanged(QString hostName);
+   void hostNameChanged();
 
 signals:
 
