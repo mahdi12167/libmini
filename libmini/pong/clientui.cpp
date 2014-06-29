@@ -121,7 +121,7 @@ void ClientUI::dragLeaveEvent(QDragLeaveEvent *event)
 
 void ClientUI::success(QString hostName, quint16 port, QString fileName, QString uid)
 {
-   std::cout << "success: " << fileName << std::endl; //!!
+   std::cout << "success: " << fileName.toStdString() << std::endl; //!!
 }
 
 void ClientUI::error(QString e)
