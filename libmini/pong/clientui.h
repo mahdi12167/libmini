@@ -40,6 +40,11 @@ public:
 
    void dropEvent(QDropEvent *event);
 
+public slots:
+
+   void success(QString hostName, quint16 port, QString fileName, QString uid);
+   void error(QString e);
+
 protected slots:
 
    void hostNameChanged(QString hostName);

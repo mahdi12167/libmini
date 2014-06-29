@@ -15,11 +15,15 @@ SSLTransmissionDatabaseResponseReceiver::~SSLTransmissionDatabaseResponseReceive
 
 // successful transmission
 void SSLTransmissionDatabaseResponseReceiver::onSuccess(QString hostName, quint16 port, QString fileName, QString uid)
-{}
+{
+   emit success(hostName, port, fileName, uid);
+}
 
 // unsuccessful transmission
 void SSLTransmissionDatabaseResponseReceiver::onFailure(QString hostName, quint16 port, QString fileName, QString uid)
-{}
+{
+   emit error("transmission failed");
+}
 
 // transmission response
 void SSLTransmissionDatabaseResponseReceiver::onResponse(SSLTransmission t)
@@ -31,7 +35,9 @@ void SSLTransmissionDatabaseResponseReceiver::onResult(SSLTransmission t)
 
 // general error
 void SSLTransmissionDatabaseResponseReceiver::onError(QString e)
-{}
+{
+   emit error(e);
+}
 
 // ssl transmission database client ctor
 SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, quint16 port,

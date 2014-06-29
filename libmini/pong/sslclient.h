@@ -79,6 +79,11 @@ public slots:
 
    // start non-blocking transmission
    void transmitNonBlocking(QString fileName);
+
+signals:
+
+   void success(QString hostName, quint16 port, QString fileName, QString uid);
+   void error(QString e);
 };
 
 #endif

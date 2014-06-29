@@ -45,6 +45,14 @@ ClientUI::ClientUI(SSLTransmissionDatabaseClient *client,
    // connect gui with host slot
    QObject::connect(this, SIGNAL(host(QString)),
                     client, SLOT(transmitHostName(QString)));
+
+   // connect success signal with gui
+   QObject::connect(client, SIGNAL(success(QString, quint16, QString, QString)),
+                    this, SLOT(success(QString, quint16, QString, QString)));
+
+   // connect error signal with gui
+   QObject::connect(client, SIGNAL(error(QString)),
+                    this, SLOT(error(QString)));
 }
 
 ClientUI::~ClientUI()
@@ -109,4 +117,14 @@ void ClientUI::dropEvent(QDropEvent *event)
 void ClientUI::dragLeaveEvent(QDragLeaveEvent *event)
 {
    event->accept();
+}
+
+void ClientUI::success(QString hostName, quint16 port, QString fileName, QString uid)
+{
+   std::cout << "success: " << fileName << std::endl; //!!
+}
+
+void ClientUI::error(QString e)
+{
+   std::cout << "error: " << e.toStdString() << std::endl; //!!
 }
