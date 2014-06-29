@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
       }
    }
    // client mode
-   else if (client && arg.size()==0 || arg.size()==1)
+   else if (client && (arg.size()==0 || arg.size()==1))
    {
       try
       {
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
       }
    }
    // transmit mode
-   else if (transmit && arg.size()==1 || arg.size()==2)
+   else if (transmit && (arg.size()==1 || arg.size()==2))
    {
       try
       {
