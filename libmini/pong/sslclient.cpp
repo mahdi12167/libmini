@@ -87,7 +87,7 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
    {
       SSLTransmission t(QByteArray("create_uid"), "", "",
                         QDateTime::currentDateTimeUtc(),
-                        SSLTransmission::cc_command);
+                        false, SSLTransmission::cc_command);
 
       if (hostName_ == "")
          hostName_ = "localhost";
