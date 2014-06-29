@@ -48,6 +48,9 @@ public:
    // get database
    SSLTransmissionDatabase *getDatabase();
 
+   // get responder
+   SSLTransmissionDatabaseResponder *getResponder();
+
    // get factory
    SSLTransmissionServerConnectionFactory *getFactory();
 

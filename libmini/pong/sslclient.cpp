@@ -37,23 +37,28 @@ void SSLTransmissionDatabaseResponseReceiver::onError(QString e)
 SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, quint16 port,
                                                              QString uid, bool verify, bool compress,
                                                              QObject *parent)
-   : SSLTransmissionClient(parent),
-     hostName__(hostName), port__(port),
-     uid__(uid), verify__(verify), compress__(compress),
-     autoselect__(true),
-     receiver__(NULL)
+   : QObject(parent),
+     hostName_(hostName), port_(port),
+     uid_(uid), verify_(verify), compress_(compress),
+     autoselect_(true),
+     receiver_(NULL),
+     client_(NULL)
 {
-   if (hostName__ != "" && uid__ != "")
-      autoselect__ = false;
+   if (hostName_ != "" && uid_ != "")
+      autoselect_ = false;
 
-   receiver__ = new SSLTransmissionDatabaseResponseReceiver;
+   receiver_ = new SSLTransmissionDatabaseResponseReceiver(parent);
+   client_ = new SSLTransmissionClient(receiver_, parent);
 }
 
 // ssl transmission database client dtor
 SSLTransmissionDatabaseClient::~SSLTransmissionDatabaseClient()
 {
-   if (receiver__)
-      delete receiver__;
+   if (receiver_)
+      delete receiver_;
+
+   if (client_)
+      delete client_;
 }
 
 // get host name
@@ -62,7 +67,7 @@ QString SSLTransmissionDatabaseClient::getHostName()
    if (!registerUID())
       return("");
 
-   return(hostName__);
+   return(hostName_);
 }
 
 // get port
@@ -71,7 +76,7 @@ int SSLTransmissionDatabaseClient::getPort()
    if (!registerUID())
       return(-1);
 
-   return(port__);
+   return(port_);
 }
 
 // get user name
@@ -80,13 +85,13 @@ QString SSLTransmissionDatabaseClient::getUID()
    if (!registerUID())
       return("");
 
-   return(uid__);
+   return(uid_);
 }
 
 // auto-select user name
 bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
 {
-   if (!autoselect__)
+   if (!autoselect_)
       return(true);
 
    QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
@@ -94,31 +99,30 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
    if (settings.contains("hostName") && settings.contains("port") &&
        settings.contains("uid") && !reset)
    {
-      hostName__ = settings.value("hostName").toString();
+      hostName_ = settings.value("hostName").toString();
 
-      port__ = settings.value("port").toInt();
-      uid__ = settings.value("uid").toString();
+      port_ = settings.value("port").toInt();
+      uid_ = settings.value("uid").toString();
    }
    else
    {
-      SSLTransmissionClient client;
       SSLTransmission t("create_uid", "", QDateTime::currentDateTimeUtc(), SSLTransmission::cc_command);
 
-      if (hostName__ == "")
-         hostName__ = "localhost";
+      if (hostName_ == "")
+         hostName_ = "localhost";
 
-      if (!client.transmit(hostName__, port__, t, verify__))
+      if (!client_->transmit(hostName_, port_, t, verify_))
          return(false);
       else
-         if (!client.getResponse())
+         if (!client_->getResponse())
             return(false);
          else
-            uid__ = client.getResponse()->getData();
+            uid_ = client_->getResponse()->getData();
 
-      settings.setValue("hostName", hostName__);
-      settings.setValue("port", port__);
+      settings.setValue("hostName", hostName_);
+      settings.setValue("port", port_);
 
-      settings.setValue("uid", uid__);
+      settings.setValue("uid", uid_);
    }
 
    return(true);
@@ -127,7 +131,7 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool reset)
 // get receiver
 SSLTransmissionResponseReceiver *SSLTransmissionDatabaseClient::getReceiver()
 {
-   return(receiver__);
+   return(receiver_);
 }
 
 // start transmission
@@ -136,7 +140,7 @@ bool SSLTransmissionDatabaseClient::transmit(QString fileName)
    QString uid = getUID();
 
    if (uid != "")
-      return(SSLTransmissionClient::transmit(hostName__, port__, fileName, uid, verify__, compress__));
+      return(client_->transmit(hostName_, port_, fileName, uid, verify_, compress_));
 
    return(false);
 }
@@ -147,8 +151,8 @@ bool SSLTransmissionDatabaseClient::registerUID()
    if (autoselectUID())
       return(true);
 
-   if (receiver__)
-      receiver__->onError("failed to register with server");
+   if (receiver_)
+      receiver_->onError("failed to register with server");
 
    return(false);
 }
@@ -159,8 +163,8 @@ bool SSLTransmissionDatabaseClient::reset()
    if (autoselectUID(true))
       return(true);
 
-   if (receiver__)
-      receiver__->onError("failed to reset user name");
+   if (receiver_)
+      receiver_->onError("failed to reset user name");
 
    return(false);
 }
@@ -168,10 +172,10 @@ bool SSLTransmissionDatabaseClient::reset()
 // specify transmission host name
 void SSLTransmissionDatabaseClient::transmitHostName(QString hostName)
 {
-   if (hostName != hostName__)
+   if (hostName != hostName_)
    {
-      hostName__ = hostName;
-      uid__ = "";
+      hostName_ = hostName;
+      uid_ = "";
 
       reset();
    }
@@ -183,9 +187,9 @@ void SSLTransmissionDatabaseClient::transmitNonBlocking(QString fileName)
    QString uid = getUID();
 
    if (uid != "")
-      SSLTransmissionClient::transmitNonBlocking(hostName__, port__, fileName, uid, verify__, compress__,
-                                                 SSLTransmission::cc_transmit, receiver__);
+      client_->transmitNonBlocking(hostName_, port_, fileName, uid, verify_, compress_,
+                                   SSLTransmission::cc_transmit);
    else
-      if (receiver__)
-         receiver__->onFailure(hostName__, port__, fileName, uid);
+      if (receiver_)
+         receiver_->onFailure(hostName_, port_, fileName, uid);
 }

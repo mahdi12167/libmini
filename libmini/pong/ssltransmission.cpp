@@ -2,6 +2,14 @@
 
 #include "ssltransmission.h"
 
+// ssl transmission responder ctor
+SSLTransmissionResponder::SSLTransmissionResponder()
+{}
+
+// ssl transmission responder dtor
+SSLTransmissionResponder::~SSLTransmissionResponder()
+{}
+
 // ssl transmission server connection factory ctor
 SSLTransmissionServerConnectionFactory::SSLTransmissionServerConnectionFactory(SSLTransmissionResponder *responder,
                                                                                QObject *parent)
@@ -35,6 +43,12 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
            this, SLOT(invalid(SSLTransmission)), Qt::QueuedConnection);
 
    return(connection);
+}
+
+// get responder
+SSLTransmissionResponder *SSLTransmissionServerConnectionFactory::getResponder() const
+{
+   return(responder_);
 }
 
 // receiver of transmitted data blocks
@@ -88,8 +102,9 @@ bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 }
 
 // ssl transmission client ctor
-SSLTransmissionClient::SSLTransmissionClient(QObject *parent)
-   : SSLClient(parent)
+SSLTransmissionClient::SSLTransmissionClient(SSLTransmissionResponseReceiver *receiver,
+                                             QObject *parent)
+   : SSLClient(parent), receiver_(receiver)
 {
    qRegisterMetaType<SSLTransmission>("SSLTransmission");
 }
@@ -136,6 +151,12 @@ bool SSLTransmissionClient::transmit(QString hostName, quint16 port, QString fil
    return(transmit(hostName, port, t, verify));
 }
 
+// get transmission receiver
+SSLTransmissionResponseReceiver *SSLTransmissionClient::getReceiver() const
+{
+   return(receiver_);
+}
+
 // get transmission response
 SSLTransmission *SSLTransmissionClient::getResponse() const
 {
@@ -151,30 +172,29 @@ bool SSLTransmissionClient::startWriting(QSslSocket *socket)
 
 // start non-blocking transmission
 void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid,
-                                                bool verify, bool compress, SSLTransmission::CommandCode command,
-                                                SSLTransmissionResponseReceiver *receiver)
+                                                bool verify, bool compress, SSLTransmission::CommandCode command)
 {
    SSLTransmissionThread *thread;
 
    thread = new SSLTransmissionThread(hostName, port, fileName, uid, verify, compress, command);
 
-   if (receiver != NULL)
+   if (receiver_ != NULL)
    {
       // signal successful transmission
       connect(thread, SIGNAL(success(QString, quint16, QString, QString)),
-              receiver, SLOT(success(QString, quint16, QString, QString)), Qt::QueuedConnection);
+              receiver_, SLOT(success(QString, quint16, QString, QString)), Qt::QueuedConnection);
 
       // signal unsuccessful transmission
       connect(thread, SIGNAL(failure(QString, quint16, QString, QString)),
-              receiver, SLOT(failure(QString, quint16, QString, QString)), Qt::QueuedConnection);
+              receiver_, SLOT(failure(QString, quint16, QString, QString)), Qt::QueuedConnection);
 
       // signal transmission response
       connect(thread, SIGNAL(response(SSLTransmission)),
-              receiver, SLOT(response(SSLTransmission)), Qt::QueuedConnection);
+              receiver_, SLOT(response(SSLTransmission)), Qt::QueuedConnection);
 
       // signal command result
       connect(thread, SIGNAL(result(SSLTransmission)),
-              receiver, SLOT(result(SSLTransmission)), Qt::QueuedConnection);
+              receiver_, SLOT(result(SSLTransmission)), Qt::QueuedConnection);
    }
 
    thread->start();

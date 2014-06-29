@@ -23,7 +23,7 @@ public:
 };
 
 // ssl transmission database client class
-class SSLTransmissionDatabaseClient: public SSLTransmissionClient
+class SSLTransmissionDatabaseClient: public QObject
 {
    Q_OBJECT
 
@@ -55,15 +55,16 @@ public:
 
 protected:
 
-   QString hostName__;
-   quint16 port__;
-   QString uid__;
-   bool verify__;
-   bool compress__;
+   QString hostName_;
+   quint16 port_;
+   QString uid_;
+   bool verify_;
+   bool compress_;
 
-   bool autoselect__;
+   bool autoselect_;
 
-   SSLTransmissionResponseReceiver *receiver__;
+   SSLTransmissionResponseReceiver *receiver_;
+   SSLTransmissionClient *client_;
 
    // register user with server
    bool registerUID();

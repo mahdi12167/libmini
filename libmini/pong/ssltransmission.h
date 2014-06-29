@@ -18,8 +18,8 @@ class SSLTransmissionResponder
 {
 public:
 
-   SSLTransmissionResponder() {}
-   virtual ~SSLTransmissionResponder() {}
+   SSLTransmissionResponder();
+   virtual ~SSLTransmissionResponder();
 
    // create a transmission response
    virtual SSLTransmission *create(const SSLTransmission *t) = 0;
@@ -571,6 +571,9 @@ public:
                                        QString certPath, QString keyPath,
                                        QObject *parent);
 
+   // get responder
+   SSLTransmissionResponder *getResponder() const;
+
 protected:
 
    SSLTransmissionResponder *responder_;
@@ -664,12 +667,17 @@ class SSLTransmissionClient: public SSLClient
 
 public:
 
-   SSLTransmissionClient(QObject *parent = NULL);
+   SSLTransmissionClient(SSLTransmissionResponseReceiver *receiver = NULL,
+                         QObject *parent = NULL);
+
    virtual ~SSLTransmissionClient();
 
    // start transmission
    bool transmit(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true);
    bool transmit(QString hostName, quint16 port, QString fileName, QString uid, bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit);
+
+   // get transmission receiver
+   SSLTransmissionResponseReceiver *getReceiver() const;
 
    // get transmission response
    SSLTransmission *getResponse() const;
@@ -681,12 +689,13 @@ protected:
 
    SSLTransmission t_;
 
+   SSLTransmissionResponseReceiver *receiver_;
+
 public slots:
 
    // start non-blocking transmission
    void transmitNonBlocking(QString hostName, quint16 port, QString fileName, QString uid,
-                            bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit,
-                            SSLTransmissionResponseReceiver *receiver = NULL);
+                            bool verify=true, bool compress=false, SSLTransmission::CommandCode command = SSLTransmission::cc_transmit);
 
 signals:
 

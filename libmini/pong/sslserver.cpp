@@ -89,6 +89,12 @@ SSLTransmissionDatabase *SSLTransmissionDatabaseServer::getDatabase()
    return(db_);
 }
 
+// get responder
+SSLTransmissionDatabaseResponder *SSLTransmissionDatabaseServer::getResponder()
+{
+   return(responder_);
+}
+
 // get factory
 SSLTransmissionServerConnectionFactory *SSLTransmissionDatabaseServer::getFactory()
 {

@@ -39,6 +39,12 @@ void SSLServer::start(QString certPath, QString keyPath, quint16 port, QString a
    if (!listen(QHostAddress::Any, port)) throw e_;
 }
 
+// get factory
+SSLServerConnectionFactory *SSLServer::getFactory() const
+{
+   return(factory_);
+}
+
 // handle new incoming connection
 void SSLServer::incomingConnection(int socketDescriptor)
 {
