@@ -153,7 +153,7 @@ public:
    virtual ~SSLClient();
 
    // start transmission
-   bool transmit(QString hostName, quint16 port, bool verify=true);
+   bool transmit(QString hostName, quint16 port, bool verify=true, int timeout=3000);
 
 protected:
 
@@ -173,6 +173,7 @@ private:
    QString hostName_;
    quint16 port_;
    bool verify_;
+   int timeout_;
 
    bool success_;
 

@@ -155,7 +155,7 @@ SSLClient::~SSLClient()
 {}
 
 // start transmission
-bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
+bool SSLClient::transmit(QString hostName, quint16 port, bool verify, int timeout)
 {
    if (hostName == "")
       return(false);
@@ -163,6 +163,7 @@ bool SSLClient::transmit(QString hostName, quint16 port, bool verify)
    hostName_ = hostName;
    port_ = port;
    verify_ = verify;
+   timeout_ = timeout;
 
    // start thread
    success_ = false;
@@ -188,7 +189,7 @@ void SSLClient::run()
    socket_->connectToHostEncrypted(hostName_, port_);
 
    // wait for encryption to be established
-   if (socket_->waitForEncrypted())
+   if (socket_->waitForEncrypted(timeout_))
       success_ = startWriting();
 
    // delete ssl socket
