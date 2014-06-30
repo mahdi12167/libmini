@@ -195,11 +195,13 @@ int main(int argc, char *argv[])
    // dump mode
    else if (dump && arg.size()==0)
    {
-      std::cout << "server db:" << std::endl;
+#ifdef HAVE_SERVER
       SSLTransmissionDatabase::dump();
+#endif
 
-      std::cout << "queue db:" << std::endl;
+#ifdef HAVE_CLIENT
       SSLTransmissionDatabase::dump("queue");
+#endif
    }
    // print usage
    else usage(argv[0]);
