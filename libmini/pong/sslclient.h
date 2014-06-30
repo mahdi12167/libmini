@@ -22,7 +22,7 @@ public:
    QString getHostName();
 
    // get port
-   int getPort();
+   quint16 getPort();
 
    // get user name
    QString getUID();
@@ -53,9 +53,6 @@ protected:
 
    SSLTransmissionResponseReceiver *receiver_;
    SSLTransmissionClient *client_;
-
-   // register user with server
-   bool registerUID();
 
    // auto-select user name
    bool autoselectUID();

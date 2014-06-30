@@ -43,25 +43,19 @@ SSLTransmissionDatabaseClient::~SSLTransmissionDatabaseClient()
 // get host name
 QString SSLTransmissionDatabaseClient::getHostName()
 {
-   if (!registerUID())
-      return("");
-
    return(hostName_);
 }
 
 // get port
-int SSLTransmissionDatabaseClient::getPort()
+quint16 SSLTransmissionDatabaseClient::getPort()
 {
-   if (!registerUID())
-      return(-1);
-
    return(port_);
 }
 
 // get user name
 QString SSLTransmissionDatabaseClient::getUID()
 {
-   if (!registerUID())
+   if (!autoselectUID())
       return("");
 
    return(uid_);
@@ -140,17 +134,6 @@ bool SSLTransmissionDatabaseClient::transmit(QString fileName)
    return(false);
 }
 
-// register user with server
-bool SSLTransmissionDatabaseClient::registerUID()
-{
-   if (autoselectUID())
-      return(true);
-
-   emit error("failed to register user");
-
-   return(false);
-}
-
 // specify transmission host name
 void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 port)
 {
@@ -161,10 +144,8 @@ void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 p
    port_ = port;
    uid_ = "";
 
-   if (autoselectUID())
-      return;
-
-   emit error("failed to register with server");
+   if (!autoselectUID())
+      emit error("failed to contact host");
 }
 
 // start non-blocking transmission
@@ -184,7 +165,7 @@ void SSLTransmissionDatabaseClient::transmitNonBlocking(QString fileName)
          emit error("unable to read file");
    }
    else
-      emit error("transmission error");
+      emit error("failed to register with host");
 }
 
 // ssl transmission success
