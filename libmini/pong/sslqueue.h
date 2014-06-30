@@ -18,12 +18,6 @@ public:
 
    virtual ~SSLTransmissionQueueClient();
 
-   // queue transmission
-   bool transmit(QString fileName);
-
-   // queue file transmission
-   bool transmit(const SSLTransmission &t);
-
 protected:
 
    SSLTransmissionDatabase *db_;
@@ -35,10 +29,10 @@ public slots:
    // specify transmission host name
    void transmitHostName(QString hostName, quint16 port);
 
-   // start non-blocking transmission
+   // queue non-blocking transmission
    void transmitNonBlocking(const SSLTransmission &t);
 
-   // start non-blocking file transmission
+   // queue non-blocking file transmission
    void transmitNonBlocking(QString fileName);
 };
 

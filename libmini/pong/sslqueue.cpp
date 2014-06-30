@@ -21,20 +21,29 @@ SSLTransmissionQueueClient::~SSLTransmissionQueueClient()
       delete db_;
 }
 
-// queue transmission
-bool SSLTransmissionQueueClient::transmit(QString fileName)
-{
-   return(SSLTransmissionDatabaseClient::transmit(fileName));
-}
-
 // specify transmission host name
 void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port)
 {
-   SSLTransmissionQueueClient::transmitHostName(hostName, port);
+   SSLTransmissionDatabaseClient::transmitHostName(hostName, port);
 }
 
-// start non-blocking transmission
+// queue non-blocking transmission
+void SSLTransmissionQueueClient::transmitNonBlocking(const SSLTransmission &t)
+{
+   SSLTransmissionDatabaseClient::transmitNonBlocking(t);
+}
+
+// queue non-blocking file transmission
 void SSLTransmissionQueueClient::transmitNonBlocking(QString fileName)
 {
-   SSLTransmissionQueueClient::transmitNonBlocking(fileName);
+   QFile file(fileName);
+
+   if (!file.open(QIODevice::ReadOnly)) throw e_;
+
+   SSLTransmission t(file, uid_);
+
+   if (compress_)
+      t.compress();
+
+   transmitNonBlocking(t);
 }
