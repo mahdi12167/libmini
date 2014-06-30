@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
    {
       try
       {
-         SSLTransmissionDatabaseClient client(host, port, user, verify, compress);
+         SSLTransmissionQueueClient client(host, port, user, verify, compress);
 
          // client gui
          ClientUI main(&client);

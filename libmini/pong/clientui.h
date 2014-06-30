@@ -9,7 +9,7 @@
 #include <QtGui>
 #endif
 
-#include "sslclient.h"
+#include "sslqueue.h"
 
 class ClientUI: public QWidget
 {
@@ -17,7 +17,7 @@ class ClientUI: public QWidget
 
 public:
 
-   ClientUI(SSLTransmissionDatabaseClient *client,
+   ClientUI(SSLTransmissionQueueClient *client,
             QWidget *parent = NULL);
 
    virtual ~ClientUI();

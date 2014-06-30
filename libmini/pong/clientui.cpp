@@ -2,7 +2,7 @@
 
 #include "clientui.h"
 
-ClientUI::ClientUI(SSLTransmissionDatabaseClient *client,
+ClientUI::ClientUI(SSLTransmissionQueueClient *client,
                    QWidget *parent)
    : QWidget(parent)
 {
@@ -66,6 +66,9 @@ ClientUI::ClientUI(SSLTransmissionDatabaseClient *client,
    // connect error signal with gui
    QObject::connect(client, SIGNAL(error(QString)),
                     this, SLOT(error(QString)));
+
+   // start transmission queue
+   client->start();
 }
 
 ClientUI::~ClientUI()
