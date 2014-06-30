@@ -18,9 +18,17 @@ public:
 
    virtual ~SSLTransmissionQueueClient();
 
+   // start transmission queue
+   void start();
+
+   // stop transmission queue
+   void stop();
+
 protected:
 
    SSLTransmissionDatabase *db_;
+
+   bool stopped_;
 
    SSLError e_;
 
@@ -34,6 +42,10 @@ public slots:
 
    // queue non-blocking file transmission
    void transmitNonBlocking(QString fileName);
+
+protected slots:
+
+   void transmitted(QString hostName, quint16 port, QString tid, QString uid);
 };
 
 #endif

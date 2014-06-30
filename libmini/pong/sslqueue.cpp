@@ -7,11 +7,15 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
                                                        QString uid, bool verify, bool compress,
                                                        QObject *parent)
    : SSLTransmissionDatabaseClient(hostName, port, uid, verify, compress, parent),
+     stopped_(true),
      e_("queue client")
 {
    // open transmission database
    db_ = new SSLTransmissionDatabase("queue");
    if (!db_->openDB()) throw e_;
+
+   connect(this, SIGNAL(success(QString, quint16, QString, QString)),
+           this, SLOT(transmitted(QString, quint16, QString, QString)));
 }
 
 // ssl transmission queue client dtor
@@ -21,16 +25,48 @@ SSLTransmissionQueueClient::~SSLTransmissionQueueClient()
       delete db_;
 }
 
+// start transmission queue
+void SSLTransmissionQueueClient::start()
+{
+   stopped_ = false;
+
+   QString tid = db_->oldest(uid_);
+
+   if (tid.size()>0)
+   {
+      SSLTransmission t = db_->read(tid, uid_);
+      SSLTransmissionDatabaseClient::transmitNonBlocking(t);
+   }
+}
+
+// stop transmission queue
+void SSLTransmissionQueueClient::stop()
+{
+   stopped_ = true;
+}
+
+void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QString tid, QString uid)
+{
+   db_->remove(tid, uid);
+
+   if (!stopped_)
+      start();
+}
+
 // specify transmission host name
 void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port)
 {
+   if (!db_->removeDB()) throw e_;
+   if (!db_->openDB()) throw e_;
+
    SSLTransmissionDatabaseClient::transmitHostName(hostName, port);
 }
 
 // queue non-blocking transmission
 void SSLTransmissionQueueClient::transmitNonBlocking(const SSLTransmission &t)
 {
-   SSLTransmissionDatabaseClient::transmitNonBlocking(t);
+   db_->write(t);
+   start();
 }
 
 // queue non-blocking file transmission
