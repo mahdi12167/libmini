@@ -6,12 +6,20 @@
 SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16 port,
                                                        QString uid, bool verify, bool compress,
                                                        QObject *parent)
-   : SSLTransmissionDatabaseClient(hostName, port, uid, verify, compress, parent)
-{}
+   : SSLTransmissionDatabaseClient(hostName, port, uid, verify, compress, parent),
+     e_("queue client")
+{
+   // open transmission database
+   db_ = new SSLTransmissionDatabase("queue");
+   if (!db_->openDB()) throw e_;
+}
 
 // ssl transmission queue client dtor
 SSLTransmissionQueueClient::~SSLTransmissionQueueClient()
-{}
+{
+   if (db_)
+      delete db_;
+}
 
 // queue transmission
 bool SSLTransmissionQueueClient::transmit(QString fileName)

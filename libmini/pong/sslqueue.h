@@ -24,6 +24,12 @@ public:
    // queue file transmission
    bool transmit(const SSLTransmission &t);
 
+protected:
+
+   SSLTransmissionDatabase *db_;
+
+   SSLError e_;
+
 public slots:
 
    // specify transmission host name

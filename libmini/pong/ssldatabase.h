@@ -15,7 +15,9 @@ class SSLTransmissionDatabase: public QObject
 
 public:
 
-   SSLTransmissionDatabase(QObject *parent = NULL, QString name = "db");
+   SSLTransmissionDatabase(QString name = "db",
+                           QObject *parent = NULL);
+
    virtual ~SSLTransmissionDatabase();
 
    // open db connection

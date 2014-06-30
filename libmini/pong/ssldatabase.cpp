@@ -6,7 +6,8 @@
 
 #include "ssldatabase.h"
 
-SSLTransmissionDatabase::SSLTransmissionDatabase(QObject *parent, QString name)
+SSLTransmissionDatabase::SSLTransmissionDatabase(QString name,
+                                                 QObject *parent)
    : QObject(parent),
      e_("database")
 {
