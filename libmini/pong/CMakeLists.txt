@@ -75,6 +75,7 @@ SET(LIB_HDRS
    ssldatabase.h
    sslserver.h
    sslclient.h
+   sslqueue.h
    serverui.h
    clientui.h
    )
@@ -86,6 +87,7 @@ SET(LIB_SRCS
    ssldatabase.cpp
    sslserver.cpp
    sslclient.cpp
+   sslqueue.cpp
    serverui.cpp
    clientui.cpp
    )

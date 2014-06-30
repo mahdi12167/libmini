@@ -31,6 +31,9 @@ public:
    SSLTransmissionResponseReceiver *getReceiver();
 
    // start transmission
+   bool transmit(SSLTransmission t);
+
+   // start file transmission
    bool transmit(QString fileName);
 
 public slots:
@@ -39,6 +42,9 @@ public slots:
    void transmitHostName(QString hostName, quint16 port);
 
    // start non-blocking transmission
+   void transmitNonBlocking(SSLTransmission t);
+
+   // start non-blocking file transmission
    void transmitNonBlocking(QString fileName);
 
 protected:

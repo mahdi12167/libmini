@@ -122,6 +122,20 @@ SSLTransmissionResponseReceiver *SSLTransmissionDatabaseClient::getReceiver()
 }
 
 // start transmission
+bool SSLTransmissionDatabaseClient::transmit(SSLTransmission t)
+{
+   QString uid = getUID();
+
+   if (uid != "")
+   {
+      t.setUID(uid);
+      return(client_->transmit(hostName_, port_, t, verify_));
+   }
+
+   return(false);
+}
+
+// start file transmission
 bool SSLTransmissionDatabaseClient::transmit(QString fileName)
 {
    QString uid = getUID();
@@ -149,6 +163,20 @@ void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 p
 }
 
 // start non-blocking transmission
+void SSLTransmissionDatabaseClient::transmitNonBlocking(SSLTransmission t)
+{
+   QString uid = getUID();
+
+   if (uid != "")
+   {
+      t.setUID(uid);
+      client_->transmitNonBlocking(hostName_, port_, t, verify_);
+   }
+   else
+      emit error("failed to register with host");
+}
+
+// start non-blocking file transmission
 void SSLTransmissionDatabaseClient::transmitNonBlocking(QString fileName)
 {
    QString uid = getUID();

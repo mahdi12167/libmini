@@ -189,6 +189,11 @@ public:
       return(t.toUTC());
    }
 
+   void setTime(QDateTime time)
+   {
+      header_.time = time.toUTC().toMSecsSinceEpoch();
+   }
+
    QString getTID() const
    {
       return(tid_);
@@ -202,6 +207,12 @@ public:
          tid = tid.mid(0, len-1) + "...";
 
       return(tid);
+   }
+
+   void setTID(QString tid)
+   {
+      tid_ = tid.toAscii();
+      header_.tid_size = std::min(tid_.size(), 65535);
    }
 
    QString getUID() const
@@ -219,9 +230,25 @@ public:
       return(uid);
    }
 
+   void setUID(QString uid)
+   {
+      uid_ = uid.toAscii();
+      header_.uid_size = std::min(uid_.size(), 65535);
+   }
+
    CommandCode getCommand() const
    {
       return((CommandCode)header_.command);
+   }
+
+   void setCommand(CommandCode command)
+   {
+      header_.command = command;
+   }
+
+   SSLTransmissionResponder *getResponder()
+   {
+      return(responder_);
    }
 
    void setResponder(SSLTransmissionResponder *responder)
@@ -461,12 +488,12 @@ public:
                if (header_.command == cc_respond)
                {
                   response_ = responder_->create(this);
-                  response_->header_.command = cc_response;
+                  response_->setCommand(cc_response);
                }
                else
                {
                   response_ = responder_->command(this);
-                  response_->header_.command = cc_result;
+                  response_->setCommand(cc_result);
                }
 
                // write transmission response to the ssl socket
