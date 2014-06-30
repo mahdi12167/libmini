@@ -28,6 +28,10 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
    // signal ssl transmission failure
    connect(receiver_, SIGNAL(onFailure(QString, quint16, QString, QString)),
            this, SLOT(onFailure(QString, quint16, QString, QString)));
+
+   // signal ssl transmission response
+   connect(receiver_, SIGNAL(onResponse(SSLTransmission)),
+           this, SLOT(onResponse(SSLTransmission)));
 }
 
 // ssl transmission database client dtor
@@ -206,4 +210,10 @@ void SSLTransmissionDatabaseClient::onSuccess(QString hostName, quint16 port, QS
 void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QString tid, QString uid)
 {
    emit error("transmission failure");
+}
+
+// ssl transmission response
+void SSLTransmissionDatabaseClient::onResponse(SSLTransmission t)
+{
+   emit response(t);
 }

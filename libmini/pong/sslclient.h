@@ -71,9 +71,13 @@ protected slots:
    // ssl transmission failure
    void onFailure(QString hostName, quint16 port, QString tid, QString uid);
 
+   // ssl transmission response
+   void onResponse(SSLTransmission t);
+
 signals:
 
    void success(QString hostName, quint16 port, QString tid, QString uid);
+   void response(SSLTransmission t);
    void error(QString e);
 };
 
