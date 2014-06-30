@@ -48,14 +48,14 @@ public:
    bool remove(QString tid, QString uid);
 
    // dump the db
-   static void dump();
+   static void dump(QString name = "db");
 
 protected:
 
    // create key/value tables
    bool createTables();
 
-   QSqlDatabase db_;
+   QSqlDatabase *db_;
    QString path_;
 
    SSLError e_;

@@ -6,6 +6,7 @@
 
 #include "ssldatabase.h"
 
+// ssl database ctor
 SSLTransmissionDatabase::SSLTransmissionDatabase(QString name,
                                                  QObject *parent)
    : QObject(parent),
@@ -18,23 +19,34 @@ SSLTransmissionDatabase::SSLTransmissionDatabase(QString name,
 
    // seed random number generator
    srand(time(NULL));
+
+   // create db
+   db_ = new QSqlDatabase;
 }
 
+// ssl database dtor
 SSLTransmissionDatabase::~SSLTransmissionDatabase()
-{}
+{
+   // close db
+   db_->close();
+   delete db_;
+
+   // remove db connection
+   QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
+}
 
 // open db connection
 bool SSLTransmissionDatabase::openDB()
 {
-   // check for existing database
+   // check for existing db
    bool exists = QFileInfo(path_).exists();
 
    // open default connection with SQLite driver
-   db_ = QSqlDatabase::addDatabase("QSQLITE");
+   *db_ = QSqlDatabase::addDatabase("QSQLITE");
 
    // open db
-   db_.setDatabaseName(path_);
-   bool success = db_.open();
+   db_->setDatabaseName(path_);
+   bool success = db_->open();
 
    // create tables
    if (!exists)
@@ -44,10 +56,11 @@ bool SSLTransmissionDatabase::openDB()
    return(success);
 }
 
+// remove db
 bool SSLTransmissionDatabase::removeDB()
 {
-   // close database
-   db_.close();
+   // close db
+   db_->close();
 
    // remove db file
    return(QFile::remove(path_));
@@ -59,7 +72,7 @@ bool SSLTransmissionDatabase::createTables()
    bool success = false;
 
    // create tables
-   if (db_.isOpen())
+   if (db_->isOpen())
    {
       QString create("CREATE TABLE transmissions"
                      "("
@@ -110,7 +123,7 @@ QString SSLTransmissionDatabase::create_uid(const int len)
 
    QSqlQuery query;
 
-   if (db_.isOpen())
+   if (db_->isOpen())
    {
       do
       {
@@ -129,7 +142,7 @@ QStringList SSLTransmissionDatabase::users()
 {
    QStringList list;
 
-   if (db_.isOpen())
+   if (db_->isOpen())
    {
       QString select = QString("SELECT DISTINCT uid FROM transmissions "
                                "ORDER BY uid ASC");
@@ -148,7 +161,7 @@ QStringList SSLTransmissionDatabase::list(QString uid)
 {
    QStringList list;
 
-   if (db_.isOpen())
+   if (db_->isOpen())
    {
       QString select = QString("SELECT tid FROM transmissions "
                                "WHERE uid = '%1' "
@@ -168,7 +181,7 @@ QString SSLTransmissionDatabase::oldest(QString uid)
 {
    QString tid;
 
-   if (db_.isOpen())
+   if (db_->isOpen())
    {
       QString select = QString("SELECT tid, MIN(id) FROM transmissions "
                                "WHERE uid = '%1'").arg(uid);
@@ -185,7 +198,7 @@ QString SSLTransmissionDatabase::oldest(QString uid)
 // check for a transmission name in the db
 bool SSLTransmissionDatabase::exists(QString tid, QString uid)
 {
-   if (db_.isOpen())
+   if (db_->isOpen())
    {
       QString select = QString("SELECT id FROM transmissions "
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
@@ -203,7 +216,7 @@ SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid)
    SSLTransmission t;
    t.setError();
 
-   if (db_.isOpen())
+   if (db_->isOpen())
    {
       QString select = QString("SELECT content, isotime, compressed FROM transmissions "
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
@@ -222,7 +235,7 @@ SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid)
 // write a transmission to the db
 void SSLTransmissionDatabase::write(SSLTransmission t)
 {
-   if (db_.isOpen())
+   if (db_->isOpen())
    {
       QString insert=QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, %4)")
                      .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate)).arg(t.compressed());
@@ -237,7 +250,7 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
 // remove a transmission from the db
 bool SSLTransmissionDatabase::remove(QString tid, QString uid)
 {
-   if (db_.isOpen())
+   if (db_->isOpen())
    {
       QString remove = QString("DELETE FROM transmissions "
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
@@ -250,23 +263,26 @@ bool SSLTransmissionDatabase::remove(QString tid, QString uid)
 }
 
 // dump the db
-void SSLTransmissionDatabase::dump()
+void SSLTransmissionDatabase::dump(QString name)
 {
-   SSLTransmissionDatabase db;
+   SSLTransmissionDatabase db(name);
    if (!db.openDB()) return;
 
    QStringList users = db.users();
 
-   for (int i=0; i<users.size(); i++)
-   {
-      std::cout << "user \"" << users[i].toStdString() << "\":" << std::endl;
-
-      QStringList list = db.list(users[i]);
-
-      for (int j=0; j<list.size(); j++)
+   if (users.size()==0)
+      std::cout << "empty" << std::endl;
+   else
+      for (int i=0; i<users.size(); i++)
       {
-         SSLTransmission t = db.read(list[j], users[i]);
-         std::cout << " " << t << std::endl;
+         std::cout << "user \"" << users[i].toStdString() << "\":" << std::endl;
+
+         QStringList list = db.list(users[i]);
+
+         for (int j=0; j<list.size(); j++)
+         {
+            SSLTransmission t = db.read(list[j], users[i]);
+            std::cout << " " << t << std::endl;
+         }
       }
-   }
 }
