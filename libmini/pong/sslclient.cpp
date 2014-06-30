@@ -51,8 +51,9 @@ QString SSLTransmissionDatabaseClient::getHostName()
 
    QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
-   if (settings.contains("hostName"))
-      hostName = settings.value("hostName").toString();
+   if (autoselect_)
+      if (settings.contains("hostName"))
+         hostName = settings.value("hostName").toString();
 
    return(hostName);
 }
@@ -64,8 +65,9 @@ quint16 SSLTransmissionDatabaseClient::getPort()
 
    QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
-   if (settings.contains("port"))
-      port = settings.value("port").toInt();
+   if (autoselect_)
+      if (settings.contains("port"))
+         port = settings.value("port").toInt();
 
    return(port);
 }
