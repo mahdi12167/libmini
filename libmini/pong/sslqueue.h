@@ -24,6 +24,9 @@ public:
    // stop transmission queue
    void stop();
 
+   // is the queue empty?
+   bool empty();
+
 protected:
 
    SSLTransmissionDatabase *db_;

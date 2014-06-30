@@ -45,6 +45,12 @@ void SSLTransmissionQueueClient::stop()
    stopped_ = true;
 }
 
+// is the queue empty?
+bool SSLTransmissionQueueClient::empty()
+{
+   return(db_->oldest(uid_).size()==0);
+}
+
 void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QString tid, QString uid)
 {
    db_->remove(tid, uid);
@@ -56,8 +62,8 @@ void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QSt
 // specify transmission host name
 void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port)
 {
-   if (!db_->removeDB()) throw e_;
-   if (!db_->openDB()) throw e_;
+   if (!empty())
+      return;
 
    SSLTransmissionDatabaseClient::transmitHostName(hostName, port);
 }
