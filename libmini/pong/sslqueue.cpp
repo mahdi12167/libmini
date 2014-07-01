@@ -15,8 +15,8 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
    if (!db_->openDB()) throw e_;
 
    // signal ssl transmission pong
-   connect(getReceiver(), SIGNAL(onPong(QString, quint16)),
-           this, SLOT(alive(QString, quint16)));
+   connect(getReceiver(), SIGNAL(onPong(QString, quint16, bool)),
+           this, SLOT(alive(QString, quint16, bool)));
 
    // signal ssl transmission success
    connect(getReceiver(), SIGNAL(onSuccess(QString, quint16, QString, QString)),
@@ -77,9 +77,12 @@ int SSLTransmissionQueueClient::size()
    return(db_->list(getUID()).size());
 }
 
-void SSLTransmissionQueueClient::alive(QString hostName, quint16 port)
+void SSLTransmissionQueueClient::alive(QString hostName, quint16 port, bool ack)
 {
-   start();
+   if (ack)
+      start();
+   else
+      emit error("cannot ping host");
 }
 
 void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QString tid, QString uid)

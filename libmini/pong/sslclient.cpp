@@ -22,8 +22,8 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
    client_ = new SSLTransmissionClient(receiver_, parent);
 
    // signal ssl transmission pong
-   connect(receiver_, SIGNAL(onPong(QString, quint16)),
-           this, SLOT(onPong(QString, quint16)));
+   connect(receiver_, SIGNAL(onPong(QString, quint16, bool)),
+           this, SLOT(onPong(QString, quint16, bool)));
 
    // signal ssl transmission success
    connect(receiver_, SIGNAL(onSuccess(QString, quint16, QString, QString)),
@@ -234,9 +234,9 @@ void SSLTransmissionDatabaseClient::transmitNonBlocking(QString fileName)
 }
 
 // ssl transmission pong
-void SSLTransmissionDatabaseClient::onPong(QString hostName, quint16 port)
+void SSLTransmissionDatabaseClient::onPong(QString hostName, quint16 port, bool ack)
 {
-   emit pong(hostName, port);
+   emit pong(hostName, port, ack);
 }
 
 // ssl transmission success

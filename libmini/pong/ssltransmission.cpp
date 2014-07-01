@@ -196,8 +196,8 @@ void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, 
    if (receiver_)
    {
       // signal successful pong
-      connect(thread, SIGNAL(pong(QString, quint16)),
-              receiver_, SLOT(pong(QString, quint16)), Qt::QueuedConnection);
+      connect(thread, SIGNAL(pong(QString, quint16, bool)),
+              receiver_, SLOT(pong(QString, quint16, bool)), Qt::QueuedConnection);
 
       // signal successful transmission
       connect(thread, SIGNAL(success(QString, quint16, QString, QString)),
@@ -270,13 +270,13 @@ void SSLTransmissionThread::run()
    done = client.transmit(hostName_, port_, t_, verify_);
 
    // signal whether or not transmission was successful
-   if (done)
-      if (t_.getCommand() == SSLTransmission::cc_ping)
-         emit pong(hostName_, port_);
-      else
-         emit success(hostName_, port_, t_.getTID(), t_.getUID());
+   if (t_.getCommand() == SSLTransmission::cc_ping)
+      emit pong(hostName_, port_, done);
    else
-      emit failure(hostName_, port_, t_.getTID(), t_.getUID());
+      if (done)
+         emit success(hostName_, port_, t_.getTID(), t_.getUID());
+      else
+         emit failure(hostName_, port_, t_.getTID(), t_.getUID());
 }
 
 // receive ssl transmission response
@@ -301,9 +301,9 @@ SSLTransmissionResponseReceiver::~SSLTransmissionResponseReceiver()
 {}
 
 // ssl transmission pong
-void SSLTransmissionResponseReceiver::pong(QString hostName, quint16 port)
+void SSLTransmissionResponseReceiver::pong(QString hostName, quint16 port, bool ack)
 {
-   emit onPong(hostName, port);
+   emit onPong(hostName, port, ack);
 }
 
 // ssl transmission success
