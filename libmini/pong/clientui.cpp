@@ -47,10 +47,6 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    errorLabel_ = new QLabel;
    infoBoxLayout->addWidget(errorLabel_);
 
-   QPushButton *startButton = new QPushButton("Start");
-   connect(startButton, SIGNAL(pressed()), client, SLOT(start()));
-   layout->addWidget(startButton);
-
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
    layout->addWidget(quitButton);
