@@ -59,6 +59,7 @@ protected:
    bool compress_;
 
    bool autoselect_;
+   bool autoselecting_;
 
    SSLTransmissionResponseReceiver *receiver_;
    SSLTransmissionClient *client_;
@@ -80,12 +81,16 @@ protected slots:
    // ssl transmission response
    void onResponse(SSLTransmission t);
 
+   // ssl transmission result
+   void onResult(SSLTransmission t);
+
 signals:
 
    void pong(QString hostName, quint16 port);
    void success(QString hostName, quint16 port, QString tid, QString uid);
    void failure(QString hostName, quint16 port, QString tid, QString uid);
    void response(SSLTransmission t);
+   void result(SSLTransmission t);
    void error(QString e);
 };
 

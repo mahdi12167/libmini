@@ -11,7 +11,7 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
    : QObject(parent),
      hostName_(hostName), port_(port),
      uid_(uid), verify_(verify), compress_(compress),
-     autoselect_(true),
+     autoselect_(true), autoselecting_(false),
      receiver_(NULL),
      client_(NULL)
 {
@@ -36,6 +36,13 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
    // signal ssl transmission response
    connect(receiver_, SIGNAL(onResponse(SSLTransmission)),
            this, SLOT(onResponse(SSLTransmission)));
+
+   // signal ssl transmission result
+   connect(receiver_, SIGNAL(onResult(SSLTransmission)),
+           this, SLOT(onResult(SSLTransmission)));
+
+   // start auto-selection
+   autoselectUID();
 }
 
 // ssl transmission database client dtor
@@ -91,6 +98,9 @@ bool SSLTransmissionDatabaseClient::autoselectUID()
    if (!autoselect_)
       return(true);
 
+   if (autoselecting_)
+      return(false);
+
    QString hostName = hostName_;
    quint16 port = port_;
    QString uid = uid_;
@@ -119,21 +129,18 @@ bool SSLTransmissionDatabaseClient::autoselectUID()
       if (hostName_ == "")
          hostName_ = "localhost";
 
+      settings.setValue("hostName", hostName_);
+      settings.setValue("port", port_);
+      settings.setValue("uid", "");
+
       SSLTransmission t(QByteArray("create_uid"), "", "",
                         QDateTime::currentDateTimeUtc(),
                         false, SSLTransmission::cc_command);
 
-      if (!client_->transmit(hostName_, port_, t, verify_))
-         return(false);
-      else
-         if (!client_->getResponse())
-            return(false);
-         else
-            uid_ = client_->getResponse()->getData();
+      client_->transmitNonBlocking(hostName_, port_, t, verify_);
+      autoselecting_ = true;
 
-      settings.setValue("hostName", hostName_);
-      settings.setValue("port", port_);
-      settings.setValue("uid", uid_);
+      return(false);
    }
 
    return(true);
@@ -248,4 +255,21 @@ void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QS
 void SSLTransmissionDatabaseClient::onResponse(SSLTransmission t)
 {
    emit response(t);
+}
+
+// ssl transmission result
+void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
+{
+   if (t.getTID() == "create_uid")
+   {
+      uid_ = t.getData();
+
+      QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
+
+      settings.setValue("uid", uid_);
+
+      autoselecting_ = false;
+   }
+   else
+      emit result(t);
 }
