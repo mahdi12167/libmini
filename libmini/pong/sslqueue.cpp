@@ -80,10 +80,11 @@ int SSLTransmissionQueueClient::size()
 
 void SSLTransmissionQueueClient::alive(QString hostName, quint16 port, bool ack)
 {
-   if (ack)
-      start();
-   else
-      emit error("cannot ping host");
+   if (!stopped_)
+      if (ack)
+         start();
+      else
+         emit error("cannot ping host");
 }
 
 void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QString tid, QString uid)
