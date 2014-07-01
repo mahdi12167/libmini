@@ -281,7 +281,7 @@ void SSLTransmissionThread::run()
    // signal whether or not transmission was successful
    if (t_.getCommand() == SSLTransmission::cc_ping)
       emit pong(hostName_, port_, done);
-   else
+   else if (t_.getCommand() == SSLTransmission::cc_transmit)
       if (done)
          emit success(hostName_, port_, t_.getTID(), t_.getUID());
       else
