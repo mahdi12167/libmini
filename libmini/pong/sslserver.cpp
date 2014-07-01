@@ -5,7 +5,21 @@
 // create a transmission response from the db
 SSLTransmission *SSLTransmissionDatabaseResponder::create(const SSLTransmission *t)
 {
-   return(new SSLTransmission(db_->read(t->getTID(), t->getUID())));
+   if (t->getTID() != "")
+      return(new SSLTransmission(db_->read(t->getTID(), t->getUID())));
+   else
+   {
+      SSLTransmission *r = new SSLTransmission(t->getTID(), t->getUID());
+
+      QString oldest = db_->oldest(t->getUID());
+
+      if (oldest.size() == 0)
+         r->setError();
+      else
+         *r = db_->read(oldest, t->getUID());
+
+      return(r);
+   }
 }
 
 // create a command response from the db
@@ -13,7 +27,7 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
 {
    QString action = t->getData();
 
-   SSLTransmission *r = new SSLTransmission(t->getTID(), t->getUID());
+   SSLTransmission *r = new SSLTransmission(action, t->getUID());
 
    if (action == "create_uid")
    {
@@ -24,10 +38,6 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       else
          r->setData(uid.toAscii());
    }
-   else if (action == "t")
-   {
-      *r = db_->read(t->getTID(), t->getUID());
-   }
    else if (action == "oldest_tid")
    {
       QString oldest = db_->oldest(t->getUID());
@@ -36,15 +46,6 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
          r->setError();
       else
          r->setData(oldest.toAscii());
-   }
-   else if (action == "oldest_t")
-   {
-      QString oldest = db_->oldest(t->getUID());
-
-      if (oldest.size() == 0)
-         r->setError();
-      else
-         *r = db_->read(oldest, t->getUID());
    }
    else
       r->setError();
