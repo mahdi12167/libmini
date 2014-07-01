@@ -34,6 +34,9 @@ public slots:
    // stop transmission queue
    void stop();
 
+   // specify transmission host name
+   void transmitHostName(QString hostName, quint16 port);
+
    // queue non-blocking transmission
    void transmitNonBlocking(const SSLTransmission &t);
 

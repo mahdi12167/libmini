@@ -101,12 +101,6 @@ void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString 
 // specify transmission host name
 void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port)
 {
-   if (!empty())
-   {
-      emit error("queue not empty");
-      return;
-   }
-
    SSLTransmissionDatabaseClient::transmitHostName(hostName, port);
 }
 
