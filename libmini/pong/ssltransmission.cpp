@@ -140,17 +140,10 @@ bool SSLTransmissionClient::transmit(QString hostName, quint16 port, const SSLTr
    // check for available response
    if (success)
       if (t_.getResponse())
-      {
-         std::cout << "got response" << std::endl; //!!
-
-         if (t_.getCommand() == SSLTransmission::cc_response)
+         if (t_.getCommand() == SSLTransmission::cc_respond)
             emit response(*(t_.getResponse()));
-         else if (t_.getCommand() == SSLTransmission::cc_result)
-         {
-            std::cout << "got result" << std::endl; //!!
+         else if (t_.getCommand() == SSLTransmission::cc_command)
             emit result(*(t_.getResponse()));
-         }
-      }
 
    return(success);
 }
@@ -294,6 +287,14 @@ void SSLTransmissionThread::run()
       else
          emit failure(hostName_, port_, t_.getTID(), t_.getUID());
 
+   // check for available response
+   if (success)
+      if (t_.getResponse())
+         if (t_.getCommand() == SSLTransmission::cc_respond)
+            emit response(*(t_.getResponse()));
+         else if (t_.getCommand() == SSLTransmission::cc_command)
+            emit result(*(t_.getResponse()));
+
    threads_->release(1);
 }
 
@@ -345,7 +346,5 @@ void SSLTransmissionResponseReceiver::response(SSLTransmission t)
 // ssl transmission result
 void SSLTransmissionResponseReceiver::result(SSLTransmission t)
 {
-   std::cout << "got receiver result" << std::endl; //!!
-
    emit onResult(t);
 }
