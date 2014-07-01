@@ -37,11 +37,12 @@ void SSLTransmissionQueueClient::start()
 {
    stopped_ = false;
 
-   QString tid = db_->oldest(uid_);
+   QString uid = getUID();
+   QString tid = db_->oldest(uid);
 
    if (tid.size()>0)
    {
-      SSLTransmission t = db_->read(tid, uid_);
+      SSLTransmission t = db_->read(tid, uid);
       SSLTransmissionDatabaseClient::transmitNonBlocking(t);
    }
 }
@@ -55,12 +56,20 @@ void SSLTransmissionQueueClient::stop()
 // is the queue empty?
 bool SSLTransmissionQueueClient::empty()
 {
-   return(db_->oldest(uid_).size()==0);
+   return(db_->oldest(getUID()).size()==0);
+}
+
+// queue size
+int SSLTransmissionQueueClient::size()
+{
+   return(db_->list(getUID()).size());
 }
 
 void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QString tid, QString uid)
 {
    db_->remove(tid, uid);
+
+   emit changed();
 
    if (!stopped_)
       start();
@@ -76,7 +85,10 @@ void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString 
 void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port)
 {
    if (!empty())
+   {
+      emit error("queue not empty");
       return;
+   }
 
    SSLTransmissionDatabaseClient::transmitHostName(hostName, port);
 }
@@ -85,6 +97,9 @@ void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port
 void SSLTransmissionQueueClient::transmitNonBlocking(const SSLTransmission &t)
 {
    db_->write(t);
+
+   emit changed();
+
    start();
 }
 
@@ -93,7 +108,11 @@ void SSLTransmissionQueueClient::transmitNonBlocking(QString fileName)
 {
    QFile file(fileName);
 
-   if (!file.open(QIODevice::ReadOnly)) throw e_;
+   if (!file.open(QIODevice::ReadOnly))
+   {
+      emit error("unable to open file");
+      return;
+   }
 
    SSLTransmission t(file, uid_);
 

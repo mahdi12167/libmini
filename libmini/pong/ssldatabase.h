@@ -3,6 +3,8 @@
 #ifndef SSLDATABASE_H
 #define SSLDATABASE_H
 
+#include <QStringList>
+
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
 

@@ -4,7 +4,8 @@
 
 ClientUI::ClientUI(SSLTransmissionQueueClient *client,
                    QWidget *parent)
-   : QWidget(parent)
+   : QWidget(parent),
+     client_(client)
 {
    // get host name and port from client
    hostName_ = client->getHostName();
@@ -41,7 +42,10 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    counterLabel_ = new QLabel("Transmissions:");
    infoBoxLayout->addWidget(counterLabel_);
 
-   errorLabel_ = new QLabel("none");
+   queueLabel_ = new QLabel("none");
+   infoBoxLayout->addWidget(errorLabel_);
+
+   errorLabel_ = new QLabel;
    infoBoxLayout->addWidget(errorLabel_);
 
    QPushButton *quitButton = new QPushButton("Quit");
@@ -66,6 +70,10 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    // connect error signal with gui
    QObject::connect(client, SIGNAL(error(QString)),
                     this, SLOT(error(QString)));
+
+   // connect changed signal with gui
+   QObject::connect(client, SIGNAL(changed()),
+                    this, SLOT(queueChanged()));
 
    // start transmission queue
    client->start();
@@ -146,4 +154,9 @@ void ClientUI::success(QString hostName, quint16 port, QString tid, QString uid)
 void ClientUI::error(QString e)
 {
    errorLabel_->setText(e);
+}
+
+void ClientUI::changed()
+{
+   queueLabel_->setText("Queue: "+QString::number(client_->size()));
 }

@@ -21,6 +21,9 @@ public:
    // is the queue empty?
    bool empty();
 
+   // queue size
+   int size();
+
 public slots:
 
    // start transmission queue
@@ -50,6 +53,10 @@ protected slots:
 
    void transmitted(QString hostName, quint16 port, QString tid, QString uid);
    void failed(QString hostName, quint16 port, QString tid, QString uid);
+
+signals:
+
+   void changed();
 };
 
 #endif
