@@ -104,16 +104,21 @@ bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
 
 // ssl transmission client ctor
 SSLTransmissionClient::SSLTransmissionClient(SSLTransmissionResponseReceiver *receiver,
+                                             int maxThreads,
                                              QObject *parent)
    : SSLClient(parent),
-     receiver_(receiver)
+     receiver_(receiver),
+     threads_(maxThreads),
+     maxThreads_(maxThreads)
 {
    qRegisterMetaType<SSLTransmission>("SSLTransmission");
 }
 
 // ssl transmission client dtor
 SSLTransmissionClient::~SSLTransmissionClient()
-{}
+{
+   threads_.acquire(maxThreads_);
+}
 
 // start ping
 bool SSLTransmissionClient::ping(QString hostName, quint16 port, bool verify)
@@ -258,6 +263,8 @@ void SSLTransmissionThread::run()
 
    SSLTransmissionClient client;
 
+   threads_.acquire(1);
+
    // receive response data block
    connect(&client, SIGNAL(response(SSLTransmission)),
            this, SLOT(receive_response(SSLTransmission)));
@@ -277,6 +284,8 @@ void SSLTransmissionThread::run()
          emit success(hostName_, port_, t_.getTID(), t_.getUID());
       else
          emit failure(hostName_, port_, t_.getTID(), t_.getUID());
+
+   threads_.release(1);
 }
 
 // receive ssl transmission response

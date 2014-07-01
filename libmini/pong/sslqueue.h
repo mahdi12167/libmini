@@ -16,6 +16,7 @@ public:
 
    SSLTransmissionQueueClient(QString hostName, quint16 port=10000,
                               QString uid="", bool verify=true, bool compress=false,
+                              int maxThreads=10,
                               QObject *parent = NULL);
 
    virtual ~SSLTransmissionQueueClient();

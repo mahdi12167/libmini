@@ -5,8 +5,9 @@
 // ssl transmission queue client ctor
 SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16 port,
                                                        QString uid, bool verify, bool compress,
+                                                       int maxThreads,
                                                        QObject *parent)
-   : SSLTransmissionDatabaseClient(hostName, port, uid, verify, compress, parent),
+   : SSLTransmissionDatabaseClient(hostName, port, uid, verify, compress, maxThreads, parent),
      transmitting_(false), stopped_(true),
      e_("queue client")
 {

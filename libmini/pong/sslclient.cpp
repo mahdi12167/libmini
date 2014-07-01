@@ -7,6 +7,7 @@
 // ssl transmission database client ctor
 SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, quint16 port,
                                                              QString uid, bool verify, bool compress,
+                                                             int maxThreads,
                                                              QObject *parent)
    : QObject(parent),
      hostName_(hostName), port_(port),
@@ -19,7 +20,7 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
       autoselect_ = false;
 
    receiver_ = new SSLTransmissionResponseReceiver(parent);
-   client_ = new SSLTransmissionClient(receiver_, parent);
+   client_ = new SSLTransmissionClient(receiver_, maxThreads, parent);
 
    // signal ssl transmission pong
    connect(receiver_, SIGNAL(onPong(QString, quint16, bool)),
@@ -140,6 +141,8 @@ bool SSLTransmissionDatabaseClient::autoselectUID()
       client_->transmitNonBlocking(hostName_, port_, t, verify_);
       autoselecting_ = true;
 
+      std::cout << "creating uid" << std::endl; //!!
+
       return(false);
    }
 
@@ -155,7 +158,7 @@ SSLTransmissionResponseReceiver *SSLTransmissionDatabaseClient::getReceiver()
 // start transmission
 bool SSLTransmissionDatabaseClient::transmit(SSLTransmission t)
 {
-   QString uid = getUID();
+   QString uid = getUID(); //!! use blocking api
 
    if (uid != "")
    {
@@ -263,6 +266,8 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
    if (t.getTID() == "create_uid")
    {
       uid_ = t.getData();
+
+      std::cout << "created uid " << uid << std::endl; //!!
 
       QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 

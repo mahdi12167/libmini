@@ -716,6 +716,7 @@ class SSLTransmissionClient: public SSLClient
 public:
 
    SSLTransmissionClient(SSLTransmissionResponseReceiver *receiver = NULL,
+                         int maxThreads=10,
                          QObject *parent = NULL);
 
    virtual ~SSLTransmissionClient();
@@ -744,6 +745,9 @@ protected:
    SSLTransmission t_;
 
    SSLTransmissionResponseReceiver *receiver_;
+
+   QSemaphore threads_;
+   int maxThreads_;
 
 public slots:
 
