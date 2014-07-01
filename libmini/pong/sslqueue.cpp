@@ -1,7 +1,5 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#include <QTimer>
-
 #include "sslqueue.h"
 
 // ssl transmission queue client ctor
@@ -9,7 +7,7 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
                                                        QString uid, bool verify, bool compress,
                                                        QObject *parent)
    : SSLTransmissionDatabaseClient(hostName, port, uid, verify, compress, parent),
-     stopped_(true),
+     transmitting_(false), stopped_(true),
      e_("queue client")
 {
    // open transmission database
@@ -37,15 +35,17 @@ void SSLTransmissionQueueClient::start()
 {
    stopped_ = false;
 
-   QString uid = getUID();
-   QString tid = db_->oldest(uid);
-
-   if (tid.size()>0)
+   if (!transmitting_)
    {
-      db_->hide(tid, uid);
+      QString uid = getUID();
+      QString tid = db_->oldest(uid);
 
-      SSLTransmission t = db_->read(tid, uid);
-      SSLTransmissionDatabaseClient::transmitNonBlocking(t);
+      if (tid.size()>0)
+      {
+         SSLTransmission t = db_->read(tid, uid);
+         SSLTransmissionDatabaseClient::transmitNonBlocking(t);
+         transmitting_ = true;
+      }
    }
 }
 
@@ -70,8 +70,9 @@ int SSLTransmissionQueueClient::size()
 void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QString tid, QString uid)
 {
    db_->remove(tid, uid);
+   transmitting_ = false;
 
-   emit changed();
+   emit changed(size());
 
    if (!stopped_)
       start();
@@ -79,10 +80,7 @@ void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QSt
 
 void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString tid, QString uid)
 {
-   db_->hide(tid, uid, false);
-
-   if (!stopped_)
-      QTimer::singleShot(1000, this, SLOT(start()));
+   transmitting_ = false;
 }
 
 // specify transmission host name
@@ -102,7 +100,7 @@ void SSLTransmissionQueueClient::transmitNonBlocking(const SSLTransmission &t)
 {
    db_->write(t);
 
-   emit changed();
+   emit changed(size());
 
    start();
 }

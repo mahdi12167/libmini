@@ -45,6 +45,7 @@ protected:
 
    SSLTransmissionDatabase *db_;
 
+   bool transmitting_;
    bool stopped_;
 
    SSLError e_;
@@ -56,7 +57,7 @@ protected slots:
 
 signals:
 
-   void changed();
+   void changed(int queued);
 };
 
 #endif

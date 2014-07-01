@@ -33,8 +33,6 @@ protected:
    void dragMoveEvent(QDragMoveEvent *event);
    void dragLeaveEvent(QDragLeaveEvent *event);
 
-   SSLTransmissionQueueClient *client_;
-
    QString hostName_;
    QLineEdit *lineEdit_hostName;
 
@@ -58,7 +56,7 @@ public slots:
 
 protected slots:
 
-   void changed();
+   void changed(int queued);
    void hostNameChanged();
 
 signals:
