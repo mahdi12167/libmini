@@ -82,6 +82,7 @@ bool SSLTransmissionDatabase::createTables()
                      "isotime VARCHAR(19),"
                      "content BLOB,"
                      "compressed BIT,"
+                     "hidden BIT,"
                      "PRIMARY KEY(tid, uid)"
                      ")");
 
@@ -164,7 +165,7 @@ QStringList SSLTransmissionDatabase::list(QString uid)
    if (db_->isOpen())
    {
       QString select = QString("SELECT tid FROM transmissions "
-                               "WHERE uid = '%1' "
+                               "WHERE (uid = '%1') AND (hidden = 0) "
                                "ORDER BY id ASC").arg(uid);
 
       QSqlQuery query(select);
@@ -184,7 +185,7 @@ QString SSLTransmissionDatabase::oldest(QString uid)
    if (db_->isOpen())
    {
       QString select = QString("SELECT tid FROM transmissions "
-                               "WHERE uid = '%1' "
+                               "WHERE (uid = '%1') AND (hidden = 0) "
                                "ORDER BY id ASC LIMIT 1").arg(uid);
 
       QSqlQuery query(select);
@@ -203,6 +204,22 @@ bool SSLTransmissionDatabase::exists(QString tid, QString uid)
    {
       QString select = QString("SELECT id FROM transmissions "
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
+
+      QSqlQuery query(select);
+      if (query.next()) return(true);
+   }
+
+   return(false);
+}
+
+// hide a transmission name in the db
+bool SSLTransmissionDatabase::hide(QString tid, QString uid, bool hidden)
+{
+   if (db_->isOpen())
+   {
+      QString select = QString("UPDATE transmissions "
+                               "SET hidden = %3 "
+                               "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid).arg((int)hidden);
 
       QSqlQuery query(select);
       if (query.next()) return(true);
@@ -238,7 +255,7 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
 {
    if (db_->isOpen())
    {
-      QString insert=QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, %4)")
+      QString insert=QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, %4, 0)")
                      .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate)).arg(t.compressed());
 
       QSqlQuery query;

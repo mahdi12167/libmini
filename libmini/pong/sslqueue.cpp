@@ -42,6 +42,8 @@ void SSLTransmissionQueueClient::start()
 
    if (tid.size()>0)
    {
+      db_->hide(tid, uid);
+
       SSLTransmission t = db_->read(tid, uid);
       SSLTransmissionDatabaseClient::transmitNonBlocking(t);
    }
@@ -77,6 +79,8 @@ void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QSt
 
 void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString tid, QString uid)
 {
+   db_->hide(tid, uid, false);
+
    if (!stopped_)
       QTimer::singleShot(1000, this, SLOT(start()));
 }

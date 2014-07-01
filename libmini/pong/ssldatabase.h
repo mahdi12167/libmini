@@ -43,6 +43,9 @@ public:
    // check for a transmission name in the db
    bool exists(QString tid, QString uid);
 
+   // hide a transmission name in the db
+   bool hide(QString tid, QString uid, bool hidden=true);
+
    // read a transmission from the db
    SSLTransmission read(QString tid, QString uid);
 
