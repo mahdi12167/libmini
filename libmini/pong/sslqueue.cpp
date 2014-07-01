@@ -27,9 +27,9 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
    connect(getReceiver(), SIGNAL(onFailure(QString, quint16, QString, QString)),
            this, SLOT(failed(QString, quint16, QString, QString)));
 
+   // establish timer
    timer_ = new QTimer(this);
    connect(timer_, SIGNAL(timeout()), this, SLOT(pingNonBlocking()));
-   timer_->start(10000); // ms
 }
 
 // ssl transmission queue client dtor
@@ -43,6 +43,8 @@ SSLTransmissionQueueClient::~SSLTransmissionQueueClient()
 void SSLTransmissionQueueClient::start()
 {
    stopped_ = false;
+
+   timer_->start(10000); // ms
 
    if (!transmitting_)
    {
@@ -64,6 +66,8 @@ void SSLTransmissionQueueClient::start()
 void SSLTransmissionQueueClient::stop()
 {
    stopped_ = true;
+
+   timer_->stop();
 }
 
 // is the queue empty?
@@ -78,15 +82,16 @@ int SSLTransmissionQueueClient::size()
    return(db_->list(getUID()).size());
 }
 
+// ssl transmission pong
 void SSLTransmissionQueueClient::alive(QString hostName, quint16 port, bool ack)
 {
-   if (!stopped_)
-      if (ack)
-         start();
-      else
-         emit error("cannot ping host");
+   if (ack)
+      start();
+   else
+      emit error("cannot ping host");
 }
 
+// ssl transmission success
 void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QString tid, QString uid)
 {
    db_->remove(tid, uid);
@@ -98,6 +103,7 @@ void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QSt
       start();
 }
 
+// ssl transmission failure
 void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString tid, QString uid)
 {
    transmitting_ = false;
@@ -116,7 +122,8 @@ void SSLTransmissionQueueClient::transmitNonBlocking(const SSLTransmission &t)
 
    emit changed(size());
 
-   start();
+   if (!stopped_)
+      start();
 }
 
 // queue non-blocking file transmission
