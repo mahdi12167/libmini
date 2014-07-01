@@ -139,8 +139,6 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
                         QDateTime::currentDateTimeUtc(),
                         false, SSLTransmission::cc_command);
 
-      std::cout << "new host " << t << std::endl; //!!
-
       if (blocking)
       {
          if (!client_->transmit(hostName_, port_, t, verify_))
@@ -278,13 +276,9 @@ void SSLTransmissionDatabaseClient::onResponse(SSLTransmission t)
 // ssl transmission result
 void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
 {
-   std::cout << "got client result" << std::endl; //!!
-
    if (t.getTID() == "create_uid")
    {
       uid_ = t.getData();
-
-      std::cout << "new uid " << uid_.toStdString() << std::endl; //!!
 
       QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
