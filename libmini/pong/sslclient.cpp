@@ -267,7 +267,7 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
    {
       uid_ = t.getData();
 
-      std::cout << "created uid " << uid << std::endl; //!!
+      std::cout << "created uid " << uid_ << std::endl; //!!
 
       QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 

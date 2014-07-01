@@ -196,7 +196,7 @@ void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, 
 {
    SSLTransmissionThread *thread;
 
-   thread = new SSLTransmissionThread(hostName, port, t, verify);
+   thread = new SSLTransmissionThread(hostName, port, t, verify, &threads_);
 
    if (receiver_)
    {
@@ -243,9 +243,11 @@ void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, 
 
 // ssl transmission thread ctor
 SSLTransmissionThread::SSLTransmissionThread(QString hostName, quint16 port, const SSLTransmission &t, bool verify,
+                                             QSemaphore *threads,
                                              QObject *parent)
    : QThread(parent),
-     hostName_(hostName), port_(port), t_(t), verify_(verify)
+     hostName_(hostName), port_(port), t_(t), verify_(verify),
+     threads_(threads)
 {
    // self-termination after thread has finished
    connect(this, SIGNAL(finished()),
@@ -263,7 +265,7 @@ void SSLTransmissionThread::run()
 
    SSLTransmissionClient client;
 
-   threads_.acquire(1);
+   threads_->acquire(1);
 
    // receive response data block
    connect(&client, SIGNAL(response(SSLTransmission)),
@@ -285,7 +287,7 @@ void SSLTransmissionThread::run()
       else
          emit failure(hostName_, port_, t_.getTID(), t_.getUID());
 
-   threads_.release(1);
+   threads_->release(1);
 }
 
 // receive ssl transmission response

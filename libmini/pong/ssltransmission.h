@@ -9,6 +9,9 @@
 #include <QFileInfo>
 #include <QDateTime>
 
+#include <QThread>
+#include <QSemaphore>
+
 #include "sslsocket.h"
 
 class SSLTransmission;
@@ -775,6 +778,7 @@ class SSLTransmissionThread: public QThread
 public:
 
    SSLTransmissionThread(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true,
+                         QSemaphore *threads = NULL,
                          QObject *parent = NULL);
 
    virtual ~SSLTransmissionThread();
@@ -787,6 +791,8 @@ protected:
    quint16 port_;
    SSLTransmission t_;
    bool verify_;
+
+   QSemaphore *threads_;
 
 protected slots:
 
