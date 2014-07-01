@@ -39,10 +39,10 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    infoBox->setLayout(infoBoxLayout);
 
    counter_ = 0;
-   counterLabel_ = new QLabel("Transmissions:");
+   counterLabel_ = new QLabel("Transmissions: none");
    infoBoxLayout->addWidget(counterLabel_);
 
-   queueLabel_ = new QLabel("none");
+   queueLabel_ = new QLabel;
    infoBoxLayout->addWidget(queueLabel_);
 
    errorLabel_ = new QLabel;
@@ -73,7 +73,7 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
 
    // connect changed signal with gui
    QObject::connect(client, SIGNAL(changed()),
-                    this, SLOT(queueChanged()));
+                    this, SLOT(changed()));
 
    // start transmission queue
    client->start();

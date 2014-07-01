@@ -22,10 +22,10 @@ ServerUI::ServerUI(SSLTransmissionDatabaseServer *server,
    infoBox->setLayout(infoBoxLayout);
 
    counter_ = 0;
-   counterLabel_ = new QLabel("Transmissions:");
+   counterLabel_ = new QLabel("Transmissions: none");
    infoBoxLayout->addWidget(counterLabel_);
 
-   lastLabel_ = new QLabel("none");
+   lastLabel_ = new QLabel;
    infoBoxLayout->addWidget(lastLabel_);
 
    nameLabel_ = new QLabel;
