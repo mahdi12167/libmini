@@ -43,7 +43,7 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    infoBoxLayout->addWidget(counterLabel_);
 
    queueLabel_ = new QLabel("none");
-   infoBoxLayout->addWidget(errorLabel_);
+   infoBoxLayout->addWidget(queueLabel_);
 
    errorLabel_ = new QLabel;
    infoBoxLayout->addWidget(errorLabel_);
