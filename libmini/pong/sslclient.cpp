@@ -41,9 +41,6 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
    // signal ssl transmission result
    connect(receiver_, SIGNAL(onResult(SSLTransmission)),
            this, SLOT(onResult(SSLTransmission)));
-
-   // start auto-selection
-   autoselectUID();
 }
 
 // ssl transmission database client dtor
@@ -94,7 +91,7 @@ QString SSLTransmissionDatabaseClient::getUID()
 }
 
 // auto-select user name
-bool SSLTransmissionDatabaseClient::autoselectUID()
+bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
 {
    if (!autoselect_)
       return(true);
@@ -130,20 +127,36 @@ bool SSLTransmissionDatabaseClient::autoselectUID()
       if (hostName_ == "")
          hostName_ = "localhost";
 
+      uid_ = "";
+
       settings.setValue("hostName", hostName_);
       settings.setValue("port", port_);
-      settings.setValue("uid", "");
+      settings.setValue("uid", uid);
 
       SSLTransmission t(QByteArray("create_uid"), "", "",
                         QDateTime::currentDateTimeUtc(),
                         false, SSLTransmission::cc_command);
 
-      client_->transmitNonBlocking(hostName_, port_, t, verify_);
-      autoselecting_ = true;
+      if (blocking)
+      {
+         if (!client_->transmit(hostName_, port_, t, verify_))
+            return(false);
+         else
+            if (!client_->getResponse())
+               return(false);
+            else
+            {
+               uid_ = client_->getResponse()->getData();
+               settings.setValue("uid", uid);
+            }
+      }
+      else
+      {
+         client_->transmitNonBlocking(hostName_, port_, t, verify_);
+         autoselecting_ = true;
 
-      std::cout << "creating uid" << std::endl; //!!
-
-      return(false);
+         return(false);
+      }
    }
 
    return(true);
@@ -158,7 +171,7 @@ SSLTransmissionResponseReceiver *SSLTransmissionDatabaseClient::getReceiver()
 // start transmission
 bool SSLTransmissionDatabaseClient::transmit(SSLTransmission t)
 {
-   QString uid = getUID(); //!! use blocking api
+   QString uid = getUID();
 
    if (uid != "")
    {
@@ -190,10 +203,8 @@ void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 p
 
    hostName_ = hostName;
    port_ = port;
-   uid_ = "";
 
-   if (!autoselectUID())
-      emit error("failed to contact host");
+   autoselectUID(false);
 }
 
 // start non-blocking ping

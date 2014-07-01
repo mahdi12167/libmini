@@ -66,7 +66,7 @@ protected:
    SSLTransmissionClient *client_;
 
    // auto-select user name
-   bool autoselectUID();
+   bool autoselectUID(bool blocking=true);
 
 protected slots:
 
