@@ -141,12 +141,12 @@ bool SSLTransmissionClient::transmit(QString hostName, quint16 port, const SSLTr
    if (success)
       if (t_.getResponse())
          if (t_.getCommand() == SSLTransmission::cc_response)
-         {
-            std::cout << "got response" << std::endl; //!!
             emit response(*(t_.getResponse()));
-         }
          else if (t_.getCommand() == SSLTransmission::cc_result)
+         {
+            std::cout << "got result" << std::endl; //!!
             emit result(*(t_.getResponse()));
+         }
 
    return(success);
 }
@@ -335,13 +335,13 @@ void SSLTransmissionResponseReceiver::failure(QString hostName, quint16 port, QS
 // ssl transmission response
 void SSLTransmissionResponseReceiver::response(SSLTransmission t)
 {
-   std::cout << "got receiver response" << std::endl; //!!
-
    emit onResponse(t);
 }
 
 // ssl transmission result
 void SSLTransmissionResponseReceiver::result(SSLTransmission t)
 {
+   std::cout << "got receiver result" << std::endl; //!!
+
    emit onResult(t);
 }
