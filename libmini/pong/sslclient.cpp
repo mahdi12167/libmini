@@ -131,7 +131,7 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
 
       settings.setValue("hostName", hostName_);
       settings.setValue("port", port_);
-      settings.setValue("uid", uid);
+      settings.setValue("uid", uid_);
 
       SSLTransmission t(QByteArray("create_uid"), "", "",
                         QDateTime::currentDateTimeUtc(),
@@ -147,7 +147,7 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
             else
             {
                uid_ = client_->getResponse()->getData();
-               settings.setValue("uid", uid);
+               settings.setValue("uid", uid_);
             }
       }
       else
