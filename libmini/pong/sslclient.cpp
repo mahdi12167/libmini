@@ -41,11 +41,11 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
 // ssl transmission database client dtor
 SSLTransmissionDatabaseClient::~SSLTransmissionDatabaseClient()
 {
-   if (receiver_)
-      delete receiver_;
-
    if (client_)
       delete client_;
+
+   if (receiver_)
+      delete receiver_;
 }
 
 // get host name

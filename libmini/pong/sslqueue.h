@@ -3,6 +3,8 @@
 #ifndef SSLQUEUE_H
 #define SSLQUEUE_H
 
+#include <QTimer>
+
 #include "sslclient.h"
 
 // ssl transmission queue client class
@@ -47,6 +49,8 @@ protected:
 
    bool transmitting_;
    bool stopped_;
+
+   QTimer *timer_;
 
    SSLError e_;
 

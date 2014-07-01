@@ -25,13 +25,17 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
    // signal ssl transmission failure
    connect(getReceiver(), SIGNAL(onFailure(QString, quint16, QString, QString)),
            this, SLOT(failed(QString, quint16, QString, QString)));
+
+   timer_ = new QTimer(this);
+   connect(timer_, SIGNAL(timeout()), this, SLOT(pingNonBlocking()));
+   timer_->start(10000); // ms
 }
 
 // ssl transmission queue client dtor
 SSLTransmissionQueueClient::~SSLTransmissionQueueClient()
 {
-   if (db_)
-      delete db_;
+   delete db_;
+   delete timer_;
 }
 
 // start transmission queue
