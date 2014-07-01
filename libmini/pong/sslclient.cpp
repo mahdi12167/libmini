@@ -241,7 +241,7 @@ void SSLTransmissionDatabaseClient::onSuccess(QString hostName, quint16 port, QS
 // ssl transmission failure
 void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QString tid, QString uid)
 {
-   emit error("transmission failure");
+   emit failure(hostName, port, tid, uid);
 }
 
 // ssl transmission response
