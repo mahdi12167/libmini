@@ -115,6 +115,13 @@ SSLTransmissionClient::SSLTransmissionClient(SSLTransmissionResponseReceiver *re
 SSLTransmissionClient::~SSLTransmissionClient()
 {}
 
+// start ping
+bool SSLTransmissionClient::ping(QString hostName, quint16 port, bool verify)
+{
+   SSLTransmission t(SSLTransmission::cc_ping);
+   return(transmit(hostName, port, t, verify));
+}
+
 // start transmission
 bool SSLTransmissionClient::transmit(QString hostName, quint16 port, const SSLTransmission &t, bool verify)
 {
@@ -172,6 +179,13 @@ bool SSLTransmissionClient::startWriting(QSslSocket *socket)
    return(t_.write(socket));
 }
 
+// start non-blocking ping
+void SSLTransmissionClient::pingNonBlocking(QString hostName, quint16 port, bool verify)
+{
+   SSLTransmission t(SSLTransmission::cc_ping);
+   transmitNonBlocking(hostName, port, t, verify);
+}
+
 // start non-blocking transmission
 void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, const SSLTransmission &t, bool verify)
 {
@@ -181,6 +195,10 @@ void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, 
 
    if (receiver_)
    {
+      // signal successful pong
+      connect(thread, SIGNAL(pong(QString, quint16)),
+              receiver_, SLOT(pong(QString, quint16)), Qt::QueuedConnection);
+
       // signal successful transmission
       connect(thread, SIGNAL(success(QString, quint16, QString, QString)),
               receiver_, SLOT(success(QString, quint16, QString, QString)), Qt::QueuedConnection);
@@ -253,7 +271,10 @@ void SSLTransmissionThread::run()
 
    // signal whether or not transmission was successful
    if (done)
-      emit success(hostName_, port_, t_.getTID(), t_.getUID());
+      if (t_.getCommand() == SSLTransmission::cc_ping)
+         emit pong(hostName_, port_);
+      else
+         emit success(hostName_, port_, t_.getTID(), t_.getUID());
    else
       emit failure(hostName_, port_, t_.getTID(), t_.getUID());
 }
@@ -278,6 +299,12 @@ SSLTransmissionResponseReceiver::SSLTransmissionResponseReceiver(QObject *parent
 // ssl transmission response receiver dtor
 SSLTransmissionResponseReceiver::~SSLTransmissionResponseReceiver()
 {}
+
+// ssl transmission pong
+void SSLTransmissionResponseReceiver::pong(QString hostName, quint16 port)
+{
+   emit onPong(hostName, port);
+}
 
 // ssl transmission success
 void SSLTransmissionResponseReceiver::success(QString hostName, quint16 port, QString tid, QString uid)

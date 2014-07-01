@@ -61,12 +61,29 @@ public:
 
    enum CommandCode
    {
-      cc_transmit = 0,
-      cc_respond  = 1,
-      cc_response = 2,
-      cc_command = 3,
-      cc_result = 4
+      cc_ping = 0,
+      cc_transmit = 1,
+      cc_respond  = 2,
+      cc_response = 3,
+      cc_command = 4,
+      cc_result = 5
    };
+
+   SSLTransmission(const CommandCode command,
+                   const QDateTime time = QDateTime::currentDateTimeUtc())
+      : data_(),
+        tid_(), uid_(),
+        transmitState_(0), response_(NULL), responder_(NULL)
+   {
+      header_.magic = magic_number;
+      header_.command = command;
+      header_.size = 0;
+      header_.compressed = false;
+      header_.time = time.toUTC().toMSecsSinceEpoch();
+      header_.tid_size = 0;
+      header_.uid_size = 0;
+      header_.valid = true;
+   }
 
    SSLTransmission(const QString tid="", const QString uid="",
                    const QDateTime time = QDateTime::currentDateTimeUtc(),
@@ -347,7 +364,8 @@ public:
       {
          if (ack)
          {
-            if (header_.command == cc_transmit ||
+            if (header_.command == cc_ping ||
+                header_.command == cc_transmit ||
                 header_.command == cc_response ||
                 header_.command == cc_result)
             {
@@ -462,7 +480,8 @@ public:
 
       if (transmitState_ == 4)
       {
-         if (header_.command == cc_transmit ||
+         if (header_.command == cc_ping ||
+             header_.command == cc_transmit ||
              header_.command == cc_response ||
              header_.command == cc_result)
          {
@@ -674,6 +693,7 @@ public:
 
 public slots:
 
+   void pong(QString hostName, quint16 port);
    void success(QString hostName, quint16 port, QString tid, QString uid);
    void failure(QString hostName, quint16 port, QString tid, QString uid);
    void response(SSLTransmission t);
@@ -681,6 +701,7 @@ public slots:
 
 signals:
 
+   void onPong(QString hostName, quint16 port);
    void onSuccess(QString hostName, quint16 port, QString tid, QString uid);
    void onFailure(QString hostName, quint16 port, QString tid, QString uid);
    void onResponse(SSLTransmission t);
@@ -698,6 +719,9 @@ public:
                          QObject *parent = NULL);
 
    virtual ~SSLTransmissionClient();
+
+   // start ping
+   bool ping(QString hostName, quint16 port, bool verify=true);
 
    // start transmission
    bool transmit(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true);
@@ -722,6 +746,9 @@ protected:
    SSLTransmissionResponseReceiver *receiver_;
 
 public slots:
+
+   // start non-blocking ping
+   void pingNonBlocking(QString hostName, quint16 port, bool verify=true);
 
    // start non-blocking transmission
    void transmitNonBlocking(QString hostName, quint16 port, const SSLTransmission &t, bool verify=true);
@@ -764,6 +791,7 @@ protected slots:
 
 signals:
 
+   void pong(QString, quint16);
    void success(QString, quint16, QString, QString);
    void failure(QString, quint16, QString, QString);
    void response(SSLTransmission);

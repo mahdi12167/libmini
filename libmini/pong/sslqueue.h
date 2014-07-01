@@ -52,6 +52,7 @@ protected:
 
 protected slots:
 
+   void alive(QString hostName, quint16 port);
    void transmitted(QString hostName, quint16 port, QString tid, QString uid);
    void failed(QString hostName, quint16 port, QString tid, QString uid);
 

@@ -41,6 +41,9 @@ public slots:
    // specify transmission host name
    void transmitHostName(QString hostName, quint16 port);
 
+   // start non-blocking ping
+   void pingNonBlocking();
+
    // start non-blocking transmission
    void transmitNonBlocking(SSLTransmission t);
 
@@ -65,6 +68,9 @@ protected:
 
 protected slots:
 
+   // ssl transmission pong
+   void onPong(QString hostName, quint16 port);
+
    // ssl transmission success
    void onSuccess(QString hostName, quint16 port, QString tid, QString uid);
 
@@ -76,6 +82,7 @@ protected slots:
 
 signals:
 
+   void pong(QString hostName, quint16 port);
    void success(QString hostName, quint16 port, QString tid, QString uid);
    void response(SSLTransmission t);
    void error(QString e);

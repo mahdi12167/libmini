@@ -14,6 +14,10 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
    db_ = new SSLTransmissionDatabase("queue");
    if (!db_->openDB()) throw e_;
 
+   // signal ssl transmission pong
+   connect(getReceiver(), SIGNAL(onPong(QString, quint16)),
+           this, SLOT(alive(QString, quint16)));
+
    // signal ssl transmission success
    connect(getReceiver(), SIGNAL(onSuccess(QString, quint16, QString, QString)),
            this, SLOT(transmitted(QString, quint16, QString, QString)));
@@ -65,6 +69,11 @@ bool SSLTransmissionQueueClient::empty()
 int SSLTransmissionQueueClient::size()
 {
    return(db_->list(getUID()).size());
+}
+
+void SSLTransmissionQueueClient::alive(QString hostName, quint16 port)
+{
+   start();
 }
 
 void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QString tid, QString uid)

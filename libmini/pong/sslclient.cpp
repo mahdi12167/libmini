@@ -21,6 +21,10 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
    receiver_ = new SSLTransmissionResponseReceiver(parent);
    client_ = new SSLTransmissionClient(receiver_, parent);
 
+   // signal ssl transmission pong
+   connect(receiver_, SIGNAL(onPong(QString, quint16)),
+           this, SLOT(onPong(QString, quint16)));
+
    // signal ssl transmission success
    connect(receiver_, SIGNAL(onSuccess(QString, quint16, QString, QString)),
            this, SLOT(onSuccess(QString, quint16, QString, QString)));
@@ -182,6 +186,12 @@ void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 p
       emit error("failed to contact host");
 }
 
+// start non-blocking ping
+void SSLTransmissionDatabaseClient::pingNonBlocking()
+{
+   client_->pingNonBlocking(hostName_, port_, verify_);
+}
+
 // start non-blocking transmission
 void SSLTransmissionDatabaseClient::transmitNonBlocking(SSLTransmission t)
 {
@@ -214,6 +224,12 @@ void SSLTransmissionDatabaseClient::transmitNonBlocking(QString fileName)
    }
    else
       emit error("failed to register with host");
+}
+
+// ssl transmission pong
+void SSLTransmissionDatabaseClient::onPong(QString hostName, quint16 port)
+{
+   emit pong(hostName, port);
 }
 
 // ssl transmission success
