@@ -278,6 +278,8 @@ void SSLTransmissionDatabaseClient::onResponse(SSLTransmission t)
 // ssl transmission result
 void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
 {
+   std::cout << "got client response" << std::endl; //!!
+
    if (t.getTID() == "create_uid")
    {
       uid_ = t.getData();
