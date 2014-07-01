@@ -183,8 +183,9 @@ QString SSLTransmissionDatabase::oldest(QString uid)
 
    if (db_->isOpen())
    {
-      QString select = QString("SELECT tid, MIN(id) FROM transmissions "
-                               "WHERE uid = '%1'").arg(uid);
+      QString select = QString("SELECT tid FROM transmissions "
+                               "WHERE uid = '%1' "
+                               "ORDER BY id ASC LIMIT 1").arg(uid);
 
       QSqlQuery query(select);
 
