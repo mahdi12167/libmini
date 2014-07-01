@@ -121,6 +121,8 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
       port_ = port;
       uid_ = uid;
    }
+   else
+      uid_ = "";
 
    if (hostName_ == "" || uid_ == "")
    {
