@@ -29,6 +29,8 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
    timer_ = new QTimer(this);
    connect(timer_, SIGNAL(timeout()), this, SLOT(pingNonBlocking()));
    timer_->start(10000); // ms
+
+   emit changed(size());
 }
 
 // ssl transmission queue client dtor
