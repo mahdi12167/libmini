@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
+#include <QTimer>
+
 #include "sslqueue.h"
 
 // ssl transmission queue client ctor
@@ -14,8 +16,13 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
    db_ = new SSLTransmissionDatabase("queue");
    if (!db_->openDB()) throw e_;
 
-   connect(this, SIGNAL(success(QString, quint16, QString, QString)),
+   // signal ssl transmission success
+   connect(getReceiver(), SIGNAL(onSuccess(QString, quint16, QString, QString)),
            this, SLOT(transmitted(QString, quint16, QString, QString)));
+
+   // signal ssl transmission failure
+   connect(getReceiver(), SIGNAL(onFailure(QString, quint16, QString, QString)),
+           this, SLOT(failed(QString, quint16, QString, QString)));
 }
 
 // ssl transmission queue client dtor
@@ -57,6 +64,12 @@ void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QSt
 
    if (!stopped_)
       start();
+}
+
+void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString tid, QString uid)
+{
+   if (!stopped_)
+      QTimer::singleShot(1000, this, SLOT(start()));
 }
 
 // specify transmission host name

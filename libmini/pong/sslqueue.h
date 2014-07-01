@@ -18,24 +18,16 @@ public:
 
    virtual ~SSLTransmissionQueueClient();
 
+   // is the queue empty?
+   bool empty();
+
+public slots:
+
    // start transmission queue
    void start();
 
    // stop transmission queue
    void stop();
-
-   // is the queue empty?
-   bool empty();
-
-protected:
-
-   SSLTransmissionDatabase *db_;
-
-   bool stopped_;
-
-   SSLError e_;
-
-public slots:
 
    // specify transmission host name
    void transmitHostName(QString hostName, quint16 port);
@@ -46,9 +38,18 @@ public slots:
    // queue non-blocking file transmission
    void transmitNonBlocking(QString fileName);
 
+protected:
+
+   SSLTransmissionDatabase *db_;
+
+   bool stopped_;
+
+   SSLError e_;
+
 protected slots:
 
    void transmitted(QString hostName, quint16 port, QString tid, QString uid);
+   void failed(QString hostName, quint16 port, QString tid, QString uid);
 };
 
 #endif
