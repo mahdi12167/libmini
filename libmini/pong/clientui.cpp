@@ -158,5 +158,5 @@ void ClientUI::error(QString e)
 
 void ClientUI::changed()
 {
-   queueLabel_->setText("Queue: "+QString::number(client_->size()));
+   queueLabel_->setText("Queued: "+QString::number(client_->size()));
 }
