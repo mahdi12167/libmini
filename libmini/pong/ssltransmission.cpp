@@ -288,7 +288,7 @@ void SSLTransmissionThread::run()
          emit failure(hostName_, port_, t_.getTID(), t_.getUID());
 
    // check for available response
-   if (success)
+   if (done)
       if (t_.getResponse())
          if (t_.getCommand() == SSLTransmission::cc_respond)
             emit response(*(t_.getResponse()));
