@@ -95,10 +95,10 @@ int main(int argc, char *argv[])
 
    // scan option list
    for (int i=0; i<opt.size(); i++)
-      if (opt[i]=="server") {server=true; client=transmit=dump=false;}
-      else if (opt[i]=="client") {client=true; server=transmit=dump=false;}
+      if (opt[i]=="server") {server=true; client=transmit=false;}
+      else if (opt[i]=="client") {client=true; server=transmit=false;}
       else if (opt[i]=="transmit") {transmit=true; server=client=dump=false;}
-      else if (opt[i]=="dump") {dump=true; server=client=transmit=false;}
+      else if (opt[i]=="dump") {dump=true; transmit=false;}
       else if (opt[i].startsWith("host=")) host=get_str(opt[i]);
       else if (opt[i].startsWith("port=")) port=(int)(get_opt(opt[i])+0.5);
       else if (opt[i].startsWith("user=")) user=get_str(opt[i]);
@@ -109,8 +109,16 @@ int main(int argc, char *argv[])
       else if (opt[i]=="help") usage(argv[0]);
       else usage(argv[0]);
 
+   // dump mode
+   if (dump && arg.size()==0)
+   {
+      if (server)
+         SSLTransmissionDatabase::dump();
+      else
+         SSLTransmissionDatabase::dump("queue");
+   }
    // server mode
-   if (server && arg.size()==0)
+   else if (server && arg.size()==0)
    {
       try
       {
@@ -191,17 +199,6 @@ int main(int argc, char *argv[])
       {
          return(1);
       }
-   }
-   // dump mode
-   else if (dump && arg.size()==0)
-   {
-#ifdef HAVE_SERVER
-      SSLTransmissionDatabase::dump();
-#endif
-
-#ifdef HAVE_CLIENT
-      SSLTransmissionDatabase::dump("queue");
-#endif
    }
    // print usage
    else usage(argv[0]);
