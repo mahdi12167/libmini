@@ -606,9 +606,10 @@ public:
       return(SSLTransmission(tid, uid, QDateTime::currentDateTimeUtc(), cc_respond));
    }
 
-   static SSLTransmission ssl_command(const QByteArray &a, const QString tid="", const QString uid="", bool compressed=false)
+   static SSLTransmission ssl_command(const QString action, const QString tid="", const QString uid="")
    {
-      return(SSLTransmission(a, tid, uid, QDateTime::currentDateTimeUtc(), compressed, cc_command));
+      QByteArray a(action.toAscii());
+      return(SSLTransmission(a, tid, uid, QDateTime::currentDateTimeUtc(), false, cc_command));
    }
 
 protected:

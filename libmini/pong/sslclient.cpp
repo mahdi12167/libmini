@@ -135,9 +135,7 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
       settings.setValue("port", port_);
       settings.setValue("uid", uid_);
 
-      SSLTransmission t(QByteArray("create_uid"), "", "",
-                        QDateTime::currentDateTimeUtc(),
-                        false, SSLTransmission::cc_command);
+      SSLTransmission t = SSLTransmission::ssl_command("create_uid");
 
       if (blocking)
       {
@@ -148,8 +146,16 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
                return(false);
             else
             {
-               uid_ = client_->getResponse()->getData();
-               settings.setValue("uid", uid_);
+               QString response = client_->getResponse()->getData();
+
+               if (!response.startsWith("create_uid:"))
+                  return(false);
+               else
+               {
+                  uid_ = response.mid(response.indexOf(":")+1);
+
+                  settings.setValue("uid", uid_);
+               }
             }
       }
       else
@@ -276,9 +282,11 @@ void SSLTransmissionDatabaseClient::onResponse(SSLTransmission t)
 // ssl transmission result
 void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
 {
-   if (t.getTID() == "create_uid")
+   QString response = t.getData();
+
+   if (response.startsWith("create_uid:"))
    {
-      uid_ = t.getData();
+      uid_ = response.mid(response.indexOf(":")+1);
 
       QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 

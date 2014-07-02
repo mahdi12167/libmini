@@ -27,7 +27,9 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
 {
    QString action = t->getData();
 
-   SSLTransmission *r = new SSLTransmission(action, t->getUID());
+   SSLTransmission *r = new SSLTransmission(t->getData(), t->getTID(), t->getUID());
+
+   r->append(":");
 
    if (action == "create_uid")
    {
@@ -36,7 +38,7 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       if (uid.size() == 0)
          r->setError();
       else
-         r->setData(uid.toAscii());
+         r->append(uid.toAscii());
    }
    else if (action == "oldest_tid")
    {
@@ -45,7 +47,7 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       if (oldest.size() == 0)
          r->setError();
       else
-         r->setData(oldest.toAscii());
+         r->append(oldest.toAscii());
    }
    else
       r->setError();
