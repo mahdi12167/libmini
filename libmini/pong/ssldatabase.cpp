@@ -138,6 +138,25 @@ QString SSLTransmissionDatabase::create_uid(const int len)
    return(uid);
 }
 
+// get all unique user names
+QStringList SSLTransmissionDatabase::get_uids()
+{
+   QStringList list;
+
+   if (db_->isOpen())
+   {
+      QString select = QString("SELECT DISTINCT uid FROM users "
+                               "ORDER BY uid ASC");
+
+      QSqlQuery query(select);
+
+      while (query.next())
+         list.append(query.value(0).toString());
+   }
+
+   return(list);
+}
+
 // list user names in the db
 QStringList SSLTransmissionDatabase::users()
 {
@@ -286,10 +305,15 @@ void SSLTransmissionDatabase::dump(QString name)
    SSLTransmissionDatabase db(name);
    if (!db.openDB()) return;
 
+   QStringList uids = db.get_uids();
+
+   if (uids.size()>0)
+      std::cout << "registered users: " << uids.size() << std::endl;
+
    QStringList users = db.users();
 
    if (users.size()==0)
-      std::cout << "empty" << std::endl;
+      std::cout << "no transmissions" << std::endl;
    else
       for (int i=0; i<users.size(); i++)
       {

@@ -31,6 +31,9 @@ public:
    // create a unique user name
    QString create_uid(const int len=1024);
 
+   // get all unique user names
+   QStringList get_uids();
+
    // list user names in the db
    QStringList users();
 
