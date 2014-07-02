@@ -70,6 +70,7 @@ FIND_PACKAGE(Threads)
 
 SET(LIB_HDRS
    # module headers
+   ssldata.h
    sslsocket.h
    ssltransmission.h
    ssldatabase.h

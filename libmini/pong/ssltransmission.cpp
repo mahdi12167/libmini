@@ -2,14 +2,6 @@
 
 #include "ssltransmission.h"
 
-// ssl transmission responder ctor
-SSLTransmissionResponder::SSLTransmissionResponder()
-{}
-
-// ssl transmission responder dtor
-SSLTransmissionResponder::~SSLTransmissionResponder()
-{}
-
 // ssl transmission server connection factory ctor
 SSLTransmissionServerConnectionFactory::SSLTransmissionServerConnectionFactory(SSLTransmissionResponder *responder,
                                                                                QObject *parent)
