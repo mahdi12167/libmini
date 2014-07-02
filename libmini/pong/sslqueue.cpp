@@ -113,6 +113,8 @@ void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString 
 void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port)
 {
    SSLTransmissionDatabaseClient::transmitHostName(hostName, port);
+
+   emit changed(size());
 }
 
 // queue non-blocking transmission

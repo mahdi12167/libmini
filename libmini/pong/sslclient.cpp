@@ -155,6 +155,8 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
                   uid_ = response.mid(response.indexOf(":")+1);
 
                   settings.setValue("uid", uid_);
+
+                  emit registration();
                }
             }
       }
@@ -166,8 +168,6 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
          return(false);
       }
    }
-
-   emit registration();
 
    return(true);
 }
