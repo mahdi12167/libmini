@@ -44,7 +44,7 @@ SSLTransmissionQueueClient::~SSLTransmissionQueueClient()
 }
 
 // start transmission queue
-void SSLTransmissionQueueClient::start()
+void SSLTransmissionQueueClient::send()
 {
    stopped_ = false;
 
@@ -64,6 +64,12 @@ void SSLTransmissionQueueClient::start()
    }
 
    emit changed(size());
+}
+
+// start transmission queue
+void SSLTransmissionQueueClient::receive()
+{
+   //!!
 }
 
 // stop transmission queue
@@ -90,7 +96,7 @@ int SSLTransmissionQueueClient::size()
 void SSLTransmissionQueueClient::alive(QString hostName, quint16 port, bool ack)
 {
    if (ack)
-      start();
+      send();
    else
       emit error("cannot ping host");
 }
@@ -104,7 +110,7 @@ void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QSt
    emit changed(size());
 
    if (!stopped_)
-      start();
+      send();
 }
 
 // ssl transmission failure
@@ -135,7 +141,7 @@ void SSLTransmissionQueueClient::transmitNonBlocking(const SSLTransmission &t)
    emit changed(size());
 
    if (!stopped_)
-      start();
+      send();
 }
 
 // queue non-blocking file transmission

@@ -83,7 +83,7 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
                     this, SLOT(changed(int)));
 
    // start transmission queue
-   client->start();
+   client->send();
 }
 
 ClientUI::~ClientUI()

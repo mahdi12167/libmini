@@ -30,7 +30,10 @@ public:
 public slots:
 
    // start transmission queue
-   void start();
+   void send();
+
+   // start transmission queue
+   void receive();
 
    // stop transmission queue
    void stop();
