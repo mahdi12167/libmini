@@ -140,7 +140,7 @@ public:
    SSLTransmission(const SSLTransmission &t)
       : header_(t.header_), data_(t.data_),
         tid_(t.tid_), uid_(t.uid_),
-        transmitState_(t.transmitState_), response_(NULL), responder_(t.responder_)
+        transmitState_(0), response_(NULL), responder_(t.responder_)
    {
       if (t.response_)
          response_ = new SSLTransmission(*t.response_);
@@ -154,7 +154,7 @@ public:
       tid_ = t.tid_;
       uid_ = t.uid_;
 
-      transmitState_ = t.transmitState_;
+      transmitState_ = 0;
       response_ = NULL;
       responder_ = t.responder_;
 
