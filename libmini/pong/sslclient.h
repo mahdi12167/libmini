@@ -91,7 +91,6 @@ signals:
    void success(QString hostName, quint16 port, QString tid, QString uid);
    void failure(QString hostName, quint16 port, QString tid, QString uid);
    void response(SSLTransmission t);
-   void result(SSLTransmission t);
 
    void registration();
    void error(QString e);

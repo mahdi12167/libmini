@@ -60,6 +60,7 @@ protected slots:
    void alive(QString hostName, quint16 port, bool ack);
    void transmitted(QString hostName, quint16 port, QString tid, QString uid);
    void failed(QString hostName, quint16 port, QString tid, QString uid);
+   void received(SSLTransmission t);
 
 signals:
 

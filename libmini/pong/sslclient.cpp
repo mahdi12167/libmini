@@ -273,8 +273,16 @@ void SSLTransmissionDatabaseClient::onSuccess(QString hostName, quint16 port, QS
 // ssl transmission failure
 void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QString tid, QString uid, int command)
 {
+   if (command == SSLTransmission::cc_respond)
+   {
+      emit error("cannot contact host");
+   }
    if (command == SSLTransmission::cc_command)
+   {
       autoselecting_ = false;
+
+      emit error("cannot contact host");
+   }
    else if (command == SSLTransmission::cc_transmit)
       emit failure(hostName, port, tid, uid);
 }
@@ -302,6 +310,4 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
 
       emit registration();
    }
-   else
-      emit result(t);
 }

@@ -27,6 +27,10 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
    connect(this, SIGNAL(failure(QString, quint16, QString, QString)),
            this, SLOT(failed(QString, quint16, QString, QString)));
 
+   // signal ssl transmission response
+   connect(this, SIGNAL(response(SSLTransmission)),
+           this, SLOT(received(SSLTransmission)));
+
    // establish timer
    timer_ = new QTimer(this);
    connect(timer_, SIGNAL(timeout()), this, SLOT(pingNonBlocking()));
@@ -107,6 +111,12 @@ void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QSt
 void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString tid, QString uid)
 {
    transmitting_ = false;
+}
+
+// ssl transmission response
+void SSLTransmissionQueueClient::received(SSLTransmission t)
+{
+   db_->write(t);
 }
 
 // specify transmission host name
