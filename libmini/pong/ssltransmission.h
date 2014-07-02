@@ -570,6 +570,50 @@ public:
       return(true);
    }
 
+   static SSLTransmission ssl_ping()
+   {
+      return(SSLTransmission(SSLTransmission::cc_ping));
+   }
+
+   static SSLTransmission ssl_transmission(const QString tid, const QString uid, const QByteArray &a, bool compressed=false)
+   {
+      return(SSLTransmission(a, tid, uid, QDateTime::currentDateTimeUtc(), compressed));
+   }
+
+   static SSLTransmission ssl_file(const QString fileName, const QString uid, bool compress=false)
+   {
+      SSLTransmission t;
+
+      QFile file(fileName);
+
+      if (!file.open(QIODevice::ReadOnly))
+         t.setError();
+      else
+      {
+         t = SSLTransmission(file, uid);
+
+         if (compress)
+            t.compress();
+      }
+
+      return(t);
+   }
+
+   static SSLTransmission ssl_respond(const QString uid)
+   {
+      return(ssl_respond("", uid));
+   }
+
+   static SSLTransmission ssl_respond(const QString tid, const QString uid)
+   {
+      return(SSLTransmission(tid, uid, QDateTime::currentDateTimeUtc(), cc_respond));
+   }
+
+   static SSLTransmission ssl_command(const QByteArray &a, const QString tid="", const QString uid="", bool compressed=false)
+   {
+      return(SSLTransmission(a, tid, uid, QDateTime::currentDateTimeUtc(), compressed, cc_command));
+   }
+
 protected:
 
    struct SSLTransmissionHeader header_; // transmission header
