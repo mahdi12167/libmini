@@ -167,6 +167,8 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
       }
    }
 
+   emit registration();
+
    return(true);
 }
 
@@ -293,6 +295,8 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
       settings.setValue("uid", uid_);
 
       autoselecting_ = false;
+
+      emit registration();
    }
    else
       emit result(t);

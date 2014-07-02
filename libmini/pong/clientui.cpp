@@ -70,6 +70,10 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    QObject::connect(client, SIGNAL(failure(QString, quint16, QString, QString)),
                     this, SLOT(failure(QString, quint16, QString, QString)));
 
+   // connect registration signal with gui
+   QObject::connect(client, SIGNAL(registration()),
+                    this, SLOT(registration()));
+
    // connect error signal with gui
    QObject::connect(client, SIGNAL(error(QString)),
                     this, SLOT(error(QString)));
@@ -157,6 +161,11 @@ void ClientUI::success(QString hostName, quint16 port, QString tid, QString uid)
 void ClientUI::failure(QString hostName, quint16 port, QString tid, QString uid)
 {
    errorLabel_->setText("cannot connect to host");
+}
+
+void ClientUI::registration()
+{
+   errorLabel_->setText("host ok");
 }
 
 void ClientUI::error(QString e)

@@ -35,7 +35,7 @@ protected:
 
    QLabel *errorLabel_;
 
-public slots:
+protected slots:
 
    void transmitted(SSLTransmission);
    void report(QString);
