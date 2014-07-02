@@ -103,16 +103,16 @@ public:
 public slots:
 
    void pong(QString hostName, quint16 port, bool ack);
-   void success(QString hostName, quint16 port, QString tid, QString uid);
-   void failure(QString hostName, quint16 port, QString tid, QString uid);
+   void success(QString hostName, quint16 port, QString tid, QString uid, int command);
+   void failure(QString hostName, quint16 port, QString tid, QString uid, int command);
    void response(SSLTransmission t);
    void result(SSLTransmission t);
 
 signals:
 
    void onPong(QString hostName, quint16 port, bool ack);
-   void onSuccess(QString hostName, quint16 port, QString tid, QString uid);
-   void onFailure(QString hostName, quint16 port, QString tid, QString uid);
+   void onSuccess(QString hostName, quint16 port, QString tid, QString uid, int command);
+   void onFailure(QString hostName, quint16 port, QString tid, QString uid, int command);
    void onResponse(SSLTransmission t);
    void onResult(SSLTransmission t);
 };
@@ -208,8 +208,8 @@ protected slots:
 signals:
 
    void pong(QString, quint16, bool);
-   void success(QString, quint16, QString, QString);
-   void failure(QString, quint16, QString, QString);
+   void success(QString, quint16, QString, QString, int);
+   void failure(QString, quint16, QString, QString, int);
    void response(SSLTransmission);
    void result(SSLTransmission);
 };

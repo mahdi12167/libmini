@@ -197,12 +197,12 @@ void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, 
               receiver_, SLOT(pong(QString, quint16, bool)), Qt::QueuedConnection);
 
       // signal successful transmission
-      connect(thread, SIGNAL(success(QString, quint16, QString, QString)),
-              receiver_, SLOT(success(QString, quint16, QString, QString)), Qt::QueuedConnection);
+      connect(thread, SIGNAL(success(QString, quint16, QString, QString, int)),
+              receiver_, SLOT(success(QString, quint16, QString, QString, int)), Qt::QueuedConnection);
 
       // signal unsuccessful transmission
-      connect(thread, SIGNAL(failure(QString, quint16, QString, QString)),
-              receiver_, SLOT(failure(QString, quint16, QString, QString)), Qt::QueuedConnection);
+      connect(thread, SIGNAL(failure(QString, quint16, QString, QString, int)),
+              receiver_, SLOT(failure(QString, quint16, QString, QString, int)), Qt::QueuedConnection);
 
       // signal transmission response
       connect(thread, SIGNAL(response(SSLTransmission)),
@@ -273,11 +273,11 @@ void SSLTransmissionThread::run()
    // signal whether or not transmission was successful
    if (t_.getCommand() == SSLTransmission::cc_ping)
       emit pong(hostName_, port_, done);
-   else if (t_.getCommand() == SSLTransmission::cc_transmit)
+   else
       if (done)
-         emit success(hostName_, port_, t_.getTID(), t_.getUID());
+         emit success(hostName_, port_, t_.getTID(), t_.getUID(), t_.getCommand());
       else
-         emit failure(hostName_, port_, t_.getTID(), t_.getUID());
+         emit failure(hostName_, port_, t_.getTID(), t_.getUID(), t_.getCommand());
 
    // check for available response
    if (done)
@@ -318,15 +318,15 @@ void SSLTransmissionResponseReceiver::pong(QString hostName, quint16 port, bool 
 }
 
 // ssl transmission success
-void SSLTransmissionResponseReceiver::success(QString hostName, quint16 port, QString tid, QString uid)
+void SSLTransmissionResponseReceiver::success(QString hostName, quint16 port, QString tid, QString uid, int command)
 {
-   emit onSuccess(hostName, port, tid, uid);
+   emit onSuccess(hostName, port, tid, uid, command);
 }
 
 // ssl transmission failure
-void SSLTransmissionResponseReceiver::failure(QString hostName, quint16 port, QString tid, QString uid)
+void SSLTransmissionResponseReceiver::failure(QString hostName, quint16 port, QString tid, QString uid, int command)
 {
-   emit onFailure(hostName, port, tid, uid);
+   emit onFailure(hostName, port, tid, uid, command);
 }
 
 // ssl transmission response

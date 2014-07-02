@@ -74,10 +74,10 @@ protected slots:
    void onPong(QString hostName, quint16 port, bool ack);
 
    // ssl transmission success
-   void onSuccess(QString hostName, quint16 port, QString tid, QString uid);
+   void onSuccess(QString hostName, quint16 port, QString tid, QString uid, int command);
 
    // ssl transmission failure
-   void onFailure(QString hostName, quint16 port, QString tid, QString uid);
+   void onFailure(QString hostName, quint16 port, QString tid, QString uid, int command);
 
    // ssl transmission response
    void onResponse(SSLTransmission t);

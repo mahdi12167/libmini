@@ -27,12 +27,12 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
            this, SLOT(onPong(QString, quint16, bool)));
 
    // signal ssl transmission success
-   connect(receiver_, SIGNAL(onSuccess(QString, quint16, QString, QString)),
-           this, SLOT(onSuccess(QString, quint16, QString, QString)));
+   connect(receiver_, SIGNAL(onSuccess(QString, quint16, QString, QString, int)),
+           this, SLOT(onSuccess(QString, quint16, QString, QString, int)));
 
    // signal ssl transmission failure
-   connect(receiver_, SIGNAL(onFailure(QString, quint16, QString, QString)),
-           this, SLOT(onFailure(QString, quint16, QString, QString)));
+   connect(receiver_, SIGNAL(onFailure(QString, quint16, QString, QString, int)),
+           this, SLOT(onFailure(QString, quint16, QString, QString, int)));
 
    // signal ssl transmission response
    connect(receiver_, SIGNAL(onResponse(SSLTransmission)),
@@ -264,15 +264,19 @@ void SSLTransmissionDatabaseClient::onPong(QString hostName, quint16 port, bool 
 }
 
 // ssl transmission success
-void SSLTransmissionDatabaseClient::onSuccess(QString hostName, quint16 port, QString tid, QString uid)
+void SSLTransmissionDatabaseClient::onSuccess(QString hostName, quint16 port, QString tid, QString uid, int command)
 {
-   emit success(hostName, port, tid, uid);
+   if (command == SSLTransmission::cc_transmit)
+      emit success(hostName, port, tid, uid);
 }
 
 // ssl transmission failure
-void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QString tid, QString uid)
+void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QString tid, QString uid, int command)
 {
-   emit failure(hostName, port, tid, uid);
+   if (command == SSLTransmission::cc_command)
+      autoselecting_ = false;
+   else if (command == SSLTransmission::cc_transmit)
+      emit failure(hostName, port, tid, uid);
 }
 
 // ssl transmission response
