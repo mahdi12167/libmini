@@ -9,7 +9,7 @@ SSLTransmission *SSLTransmissionDatabaseResponder::create(const SSLTransmission 
       return(new SSLTransmission(db_->read(t->getTID(), t->getUID())));
    else
    {
-      SSLTransmission *r = new SSLTransmission(t->getTID(), t->getUID());
+      SSLTransmission *r = new SSLTransmission(*t);
 
       QString oldest = db_->oldest(t->getUID());
 
@@ -27,7 +27,7 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
 {
    QString action = t->getData();
 
-   SSLTransmission *r = new SSLTransmission(t->getData(), t->getTID(), t->getUID());
+   SSLTransmission *r = new SSLTransmission(*t);
 
    r->append(":");
 
