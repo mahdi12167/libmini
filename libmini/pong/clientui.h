@@ -49,7 +49,7 @@ public:
 
    void dropEvent(QDropEvent *event);
 
-protected slots:
+public slots:
 
    void success(QString hostName, quint16 port, QString tid, QString uid);
    void failure(QString hostName, quint16 port, QString tid, QString uid);
@@ -57,7 +57,9 @@ protected slots:
    void registration();
    void error(QString e);
 
-   void status(int queued);
+   void status_send(int queued);
+   void status_receive(int stored);
+
    void hostNameChanged();
 
 signals:

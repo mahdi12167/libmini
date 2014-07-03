@@ -78,9 +78,13 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    QObject::connect(client, SIGNAL(error(QString)),
                     this, SLOT(error(QString)));
 
-   // connect changed signal with gui
-   QObject::connect(client, SIGNAL(status(int)),
-                    this, SLOT(status(int)));
+   // connect send status signal with gui
+   QObject::connect(client, SIGNAL(status_send(int)),
+                    this, SLOT(status_send(int)));
+
+   // connect receive status signal with gui
+   QObject::connect(client, SIGNAL(status_receive(int)),
+                    this, SLOT(status_receive(int)));
 
    // start transmission queue
    client->send();
@@ -173,7 +177,12 @@ void ClientUI::error(QString e)
    errorLabel_->setText(e);
 }
 
-void ClientUI::status(int queued)
+void ClientUI::status_send(int queued)
 {
    queueLabel_->setText("Queued: "+QString::number(queued));
+}
+
+void ClientUI::status_receive(int stored)
+{
+   queueLabel_->setText("Stored: "+QString::number(stored));
 }

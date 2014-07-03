@@ -21,9 +21,16 @@ ServerUI::ServerUI(SSLTransmissionDatabaseServer *server,
    layout->addWidget(infoBox);
    infoBox->setLayout(infoBoxLayout);
 
-   counter_ = 0;
-   counterLabel_ = new QLabel("Transmissions: none");
-   infoBoxLayout->addWidget(counterLabel_);
+   counterIn_ = 0;
+   counterInLabel_ = new QLabel("Incoming Transmissions: none");
+   infoBoxLayout->addWidget(counterInLabel_);
+
+   counterOut_ = 0;
+   counterOutLabel_ = new QLabel("Outgoing Transmissions: none");
+   infoBoxLayout->addWidget(counterOutLabel_);
+
+   queueLabel_ = new QLabel;
+   infoBoxLayout->addWidget(queueLabel_);
 
    lastLabel_ = new QLabel;
    infoBoxLayout->addWidget(lastLabel_);
@@ -48,9 +55,21 @@ ServerUI::ServerUI(SSLTransmissionDatabaseServer *server,
    QObject::connect(server->getFactory(), SIGNAL(transmitted(SSLTransmission)),
                     this, SLOT(transmitted(SSLTransmission)));
 
+   // connect gui with the connection factory responded signal
+   QObject::connect(server->getFactory(), SIGNAL(responded(SSLTransmission)),
+                    this, SLOT(responded(SSLTransmission)));
+
    // connect gui with the connection factory report signal
    QObject::connect(server->getFactory(), SIGNAL(report(QString)),
                     this, SLOT(report(QString)));
+
+   // connect gui with the server send status signal
+   QObject::connect(server, SIGNAL(status_send(int)),
+                    this, SLOT(status_send(int)));
+
+   // connect gui with the server receive status signal
+   QObject::connect(server, SIGNAL(status_receive(int)),
+                    this, SLOT(status_receive(int)));
 }
 
 ServerUI::~ServerUI()
@@ -58,8 +77,35 @@ ServerUI::~ServerUI()
 
 void ServerUI::transmitted(SSLTransmission t)
 {
-   counter_++;
-   counterLabel_->setText("Transmissions: "+QString::number(counter_));
+   counterIn_++;
+   counterInLabel_->setText("Incoming Transmissions: "+QString::number(counterIn_));
+
+   QString transmission;
+
+   if (t.getSize() < 1024)
+      transmission = QString::number(t.getSize())+" bytes";
+   else if (t.getSize() < 1024*1024)
+      transmission = QString::number((double)t.getSize()/1024, 'g', 3)+" kbytes";
+   else
+      transmission = QString::number((double)t.getSize()/(1024*1024), 'g', 3)+" mbytes";
+
+   lastLabel_->setText("Last request @ "+
+                       QDateTime::currentDateTimeUtc().toString()+": "+transmission);
+
+   nameLabel_->setText("File name: \""+t.getShortTID()+"\"");
+   userLabel_->setText("User name: \""+t.getShortUID()+"\"");
+   timeLabel_->setText("Time stamp: "+t.getTime().toString());
+
+   errorLabel_->setText("ok");
+}
+
+void ServerUI::responded(SSLTransmission t)
+{
+   counterOut_++;
+   counterOutLabel_->setText("Outgoing Transmissions: "+QString::number(counterOut_));
+
+   if (t.getResponse())
+      t = *(t.getResponse());
 
    QString transmission;
 
@@ -90,4 +136,14 @@ void ServerUI::report(QString error)
    timeLabel_->setText("");
 
    errorLabel_->setText(error);
+}
+
+void ServerUI::status_send(int stored)
+{
+   queueLabel_->setText("Stored Transmissions: "+QString::number(stored));
+}
+
+void ServerUI::status_receive(int stored)
+{
+   queueLabel_->setText("Stored Transmissions: "+QString::number(stored));
 }

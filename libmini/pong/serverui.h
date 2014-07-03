@@ -24,8 +24,13 @@ public:
 
 protected:
 
-   unsigned int counter_;
-   QLabel *counterLabel_;
+   unsigned int counterIn_;
+   QLabel *counterInLabel_;
+
+   unsigned int counterOut_;
+   QLabel *counterOutLabel_;
+
+   QLabel *queueLabel_;
 
    QLabel *lastLabel_;
 
@@ -35,10 +40,14 @@ protected:
 
    QLabel *errorLabel_;
 
-protected slots:
+public slots:
 
    void transmitted(SSLTransmission);
+   void responded(SSLTransmission);
    void report(QString);
+
+   void status_send(int stored);
+   void status_receive(int stored);
 };
 
 #endif

@@ -73,7 +73,7 @@ protected:
 
    SSLError e_;
 
-protected slots:
+public  slots:
 
    void send();
    void receive();
