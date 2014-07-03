@@ -28,6 +28,9 @@ public:
    // get user name
    QString getUID();
 
+   // pair user name
+   QString pairUID();
+
    // get receiver
    SSLTransmissionResponseReceiver *getReceiver();
 

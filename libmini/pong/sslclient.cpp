@@ -90,6 +90,12 @@ QString SSLTransmissionDatabaseClient::getUID()
    return(uid_);
 }
 
+// pair user name
+QString SSLTransmissionDatabaseClient::pairUID()
+{
+   return("tbd"); //!!
+}
+
 // auto-select user name
 bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
 {

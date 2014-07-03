@@ -16,6 +16,7 @@ public:
 
    SSLTransmissionQueueClient(QString hostName, quint16 port=10000,
                               QString uid="", bool verify=true, bool compress=false,
+                              bool uploadMode=true,
                               int maxThreads=10,
                               QObject *parent = NULL);
 
@@ -50,6 +51,8 @@ public slots:
 protected:
 
    SSLTransmissionDatabase *db_;
+
+   bool uploadMode_;
 
    bool transmitting_;
    bool stopped_;

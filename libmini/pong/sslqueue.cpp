@@ -5,14 +5,16 @@
 // ssl transmission queue client ctor
 SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16 port,
                                                        QString uid, bool verify, bool compress,
+                                                       bool uploadMode,
                                                        int maxThreads,
                                                        QObject *parent)
    : SSLTransmissionDatabaseClient(hostName, port, uid, verify, compress, maxThreads, parent),
+     uploadMode_(uploadMode),
      transmitting_(false), stopped_(true),
      e_("queue client")
 {
    // open transmission database
-   db_ = new SSLTransmissionDatabase("queue");
+   db_ = new SSLTransmissionDatabase(uploadMode_?"queue":"eueuq");
    if (!db_->openDB()) throw e_;
 
    // signal ssl transmission pong
@@ -46,6 +48,8 @@ SSLTransmissionQueueClient::~SSLTransmissionQueueClient()
 // start transmission queue
 void SSLTransmissionQueueClient::send()
 {
+   if (!uploadMode_) throw e_;
+
    stopped_ = false;
 
    timer_->start(10000); // ms
@@ -57,7 +61,7 @@ void SSLTransmissionQueueClient::send()
 
       if (tid.size()>0)
       {
-         SSLTransmission t = db_->read(tid, uid); //!! use different sql connection than write
+         SSLTransmission t = db_->read(tid, uid);
          SSLTransmissionDatabaseClient::transmitNonBlocking(t);
          transmitting_ = true;
       }
@@ -69,7 +73,21 @@ void SSLTransmissionQueueClient::send()
 // start transmission queue
 void SSLTransmissionQueueClient::receive()
 {
-   //!!
+   if (uploadMode_) throw e_;
+
+   stopped_ = false;
+
+   timer_->start(10000); // ms
+
+   if (!transmitting_)
+   {
+      QString uid = pairUID();
+      SSLTransmission t = SSLTransmission::ssl_respond(uid);
+      SSLTransmissionDatabaseClient::transmitNonBlocking(t);
+      transmitting_ = true;
+   }
+
+   emit status_receive(size());
 }
 
 // stop transmission queue
@@ -96,7 +114,10 @@ int SSLTransmissionQueueClient::size()
 void SSLTransmissionQueueClient::alive(QString hostName, quint16 port, bool ack)
 {
    if (ack)
-      send();
+      if (uploadMode_)
+         send();
+      else
+         receive();
    else
       emit error("cannot ping host");
 }
@@ -122,7 +143,8 @@ void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString 
 // ssl transmission response
 void SSLTransmissionQueueClient::received(SSLTransmission t)
 {
-   db_->write(t); //!! use different sql connection than read
+   db_->write(t);
+   transmitting_ = false;
 
    emit status_receive(size());
 }
@@ -132,12 +154,17 @@ void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port
 {
    SSLTransmissionDatabaseClient::transmitHostName(hostName, port);
 
-   emit status_send(size());
+   if (uploadMode_)
+      emit status_send(size());
+   else
+      emit status_receive(size());
 }
 
 // queue non-blocking transmission
 void SSLTransmissionQueueClient::transmitNonBlocking(const SSLTransmission &t)
 {
+   if (!uploadMode_) throw e_;
+
    db_->write(t);
 
    emit status_send(size());
