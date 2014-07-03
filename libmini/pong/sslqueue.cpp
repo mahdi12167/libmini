@@ -57,7 +57,7 @@ void SSLTransmissionQueueClient::send()
 
       if (tid.size()>0)
       {
-         SSLTransmission t = db_->read(tid, uid);
+         SSLTransmission t = db_->read(tid, uid); //!! use different sql connection than write
          SSLTransmissionDatabaseClient::transmitNonBlocking(t);
          transmitting_ = true;
       }
@@ -122,7 +122,7 @@ void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString 
 // ssl transmission response
 void SSLTransmissionQueueClient::received(SSLTransmission t)
 {
-   db_->write(t);
+   db_->write(t); //!! use different sql connection than read
 
    emit status_receive(size());
 }
