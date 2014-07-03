@@ -79,8 +79,8 @@ SSLTransmissionDatabaseServer::SSLTransmissionDatabaseServer(quint16 port,
            db_, SLOT(write(SSLTransmission)));
 
    // connect transmission database with the connection factory responded signal
-   //!!connect(factory_, SIGNAL(responded(SSLTransmission)),
-   //!!        db_, SLOT(remove(SSLTransmission)));
+   connect(factory_, SIGNAL(responded(SSLTransmission)),
+           db_, SLOT(remove(SSLTransmission)));
 
    // connect server status with the connection factory transmitted signal
    connect(factory_, SIGNAL(transmitted()),

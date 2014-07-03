@@ -74,7 +74,10 @@ protected:
    public slots:
 
    // write a transmission to the db
-   void write(SSLTransmission);
+   void write(SSLTransmission t);
+
+   // remove a transmission from the db
+   void remove(SSLTransmission t);
 
 private:
 

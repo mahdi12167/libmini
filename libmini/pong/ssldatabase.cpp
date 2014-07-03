@@ -315,6 +315,12 @@ bool SSLTransmissionDatabase::remove(QString tid, QString uid)
    return(false);
 }
 
+// remove a transmission from the db
+void SSLTransmissionDatabase::remove(SSLTransmission t)
+{
+   remove(t.getTID(), t.getUID());
+}
+
 // dump the db
 void SSLTransmissionDatabase::dump(QString name)
 {
