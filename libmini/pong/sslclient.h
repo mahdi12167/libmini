@@ -28,9 +28,6 @@ public:
    // get user name
    QString getUID();
 
-   // pair user name
-   QString pairUID();
-
    // get receiver
    SSLTransmissionResponseReceiver *getReceiver();
 
@@ -44,6 +41,12 @@ public slots:
 
    // specify transmission host name
    void transmitHostName(QString hostName, quint16 port);
+
+   // send transmission pair uid
+   void transmitPairUID();
+
+   // send transmission pair code
+   void transmitPairCode(QString code);
 
    // start non-blocking ping
    void pingNonBlocking();
@@ -64,12 +67,19 @@ protected:
 
    bool autoselect_;
    bool autoselecting_;
+   bool pairing_;
 
    SSLTransmissionResponseReceiver *receiver_;
    SSLTransmissionClient *client_;
 
    // auto-select user name
    bool autoselectUID(bool blocking=true);
+
+   // pair user name by sending uid and receiving code
+   void pairUID();
+
+   // sync user name by sending code and receiving uid
+   void pairCode(QString code);
 
 protected slots:
 
@@ -96,6 +106,8 @@ signals:
    void response(SSLTransmission t);
 
    void registration();
+   void gotPairCode(QString code);
+   void gotPairUID(QString uid);
    void error(QString e);
 };
 

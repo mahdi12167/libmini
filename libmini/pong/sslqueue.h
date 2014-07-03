@@ -22,6 +22,9 @@ public:
 
    virtual ~SSLTransmissionQueueClient();
 
+   // client mode (upload/download)
+   bool uploadMode();
+
    // is the queue empty?
    bool empty();
 

@@ -10,6 +10,9 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    hostName_ = client->getHostName();
    port_ = client->getPort();
 
+   // get client mode
+   uploadMode_ = client->uploadMode();
+
    // set main inherited style sheet
    QString css("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; margin: 3px; padding-top: 16px; }"
                "QGroupBox::title { subcontrol-origin: padding; subcontrol-position: top left; padding-left: 8px; padding-top: 3px; }");
@@ -17,20 +20,28 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
 
    QVBoxLayout *layout = new QVBoxLayout;
    setLayout(layout);
-
    layout->addWidget(new QLabel("Ping Client"));
 
-   QGroupBox *dropBox = new QGroupBox("To transmit files");
-   QVBoxLayout *dropBoxLayout = new QVBoxLayout;
-   layout->addWidget(dropBox);
-   dropBox->setLayout(dropBoxLayout);
-   QLabel *dropText = new QLabel("drag&drop them here!");
-   dropBoxLayout->addWidget(dropText);
+   if (uploadMode_)
+   {
+      QGroupBox *dropBox = new QGroupBox("To transmit files");
+      QVBoxLayout *dropBoxLayout = new QVBoxLayout;
+      layout->addWidget(dropBox);
+      dropBox->setLayout(dropBoxLayout);
+      QLabel *dropText = new QLabel("drag&drop them here!");
+      dropBoxLayout->addWidget(dropText);
+   }
 
-   QGroupBox *lineEditGroup_hostName = createEdit("Transmit to host", hostName_, &lineEdit_hostName);
-   connect(lineEdit_hostName, SIGNAL(editingFinished()), this, SLOT(hostNameChanged()));
-
+   QGroupBox *lineEditGroup_hostName = createEdit("Transmit to host", hostName_, &lineEdit_hostName_);
+   connect(lineEdit_hostName_, SIGNAL(editingFinished()), this, SLOT(hostNameChanged()));
    layout->addWidget(lineEditGroup_hostName);
+
+   if (!uploadMode_)
+   {
+      QPushButton *pairButton = new QPushButton("Pair Client");
+      connect(pairButton, SIGNAL(pressed()), client, SLOT((transmitPairUID())));
+      layout->addWidget(pairButton);
+   }
 
    QGroupBox *infoBox = new QGroupBox("Client status");
    QVBoxLayout *infoBoxLayout = new QVBoxLayout;
@@ -47,20 +58,32 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    errorLabel_ = new QLabel;
    infoBoxLayout->addWidget(errorLabel_);
 
+   if (uploadMode_)
+   {
+      QGroupBox *lineEditGroup_pairCode = createEdit("Enter pair code", "", &lineEdit_pairCode_);
+      connect(lineEdit_pairCode_, SIGNAL(editingFinished()), this, SLOT(pairCodeChanged()));
+      layout->addWidget(lineEditGroup_pairCode);
+   }
+
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
    layout->addWidget(quitButton);
 
    // accept drag and drop
-   setAcceptDrops(true);
-
-   // connect gui with transmit slot
-   QObject::connect(this, SIGNAL(transmit(QString)),
-                    client, SLOT(transmitNonBlocking(QString)));
+   if (uploadMode_)
+      setAcceptDrops(true);
 
    // connect gui with host slot
    QObject::connect(this, SIGNAL(host(QString, quint16)),
                     client, SLOT(transmitHostName(QString, quint16)));
+
+   // connect gui with code slot
+   QObject::connect(this, SIGNAL(code(QString)),
+                    client, SLOT(transmitPairCode(QString)));
+
+   // connect gui with transmit slot
+   QObject::connect(this, SIGNAL(transmit(QString)),
+                    client, SLOT(transmitNonBlocking(QString)));
 
    // connect success signal with gui
    QObject::connect(client, SIGNAL(success(QString, quint16, QString, QString)),
@@ -73,6 +96,14 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    // connect registration signal with gui
    QObject::connect(client, SIGNAL(registration()),
                     this, SLOT(registration()));
+
+   // connect pair code signal with gui
+   QObject::connect(client, SIGNAL(gotPairCode()),
+                    this, SLOT(gotPairCode()));
+
+   // connect pair uid signal with gui
+   QObject::connect(client, SIGNAL(gotPairUID()),
+                    this, SLOT(gotPairUID()));
 
    // connect error signal with gui
    QObject::connect(client, SIGNAL(error(QString)),
@@ -87,7 +118,10 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
                     this, SLOT(status_receive(int)));
 
    // start transmission queue
-   client->send();
+   if (uploadMode_)
+      client->send();
+   else
+      client->receive();
 }
 
 ClientUI::~ClientUI()
@@ -106,8 +140,13 @@ QGroupBox *ClientUI::createEdit(QString name, QString value,
 
 void ClientUI::hostNameChanged()
 {
-   hostName_ = lineEdit_hostName->text();
+   hostName_ = lineEdit_hostName_->text();
    emit host(hostName_, port_);
+}
+
+void ClientUI::pairCodeChanged()
+{
+   emit code(lineEdit_pairCode_->text());
 }
 
 QString ClientUI::normalizeFile(QString file)
@@ -170,6 +209,16 @@ void ClientUI::failure(QString hostName, quint16 port, QString tid, QString uid)
 void ClientUI::registration()
 {
    errorLabel_->setText("host ok");
+}
+
+void ClientUI::gotPairCode(QString code)
+{
+   codeLabel_->setText("Pair code: "+code);
+}
+
+void ClientUI::gotPairUID(QString uid)
+{
+   lineEdit_pairCode_->setText("client paired");
 }
 
 void ClientUI::error(QString e)

@@ -45,6 +45,12 @@ SSLTransmissionQueueClient::~SSLTransmissionQueueClient()
    delete timer_;
 }
 
+// client mode (upload/download)
+bool SSLTransmissionQueueClient::uploadMode()
+{
+   return(uploadMode_);
+}
+
 // start transmission queue
 void SSLTransmissionQueueClient::send()
 {
@@ -81,7 +87,7 @@ void SSLTransmissionQueueClient::receive()
 
    if (!transmitting_)
    {
-      QString uid = pairUID();
+      QString uid = getUID();
       SSLTransmission t = SSLTransmission::ssl_respond(uid);
       SSLTransmissionDatabaseClient::transmitNonBlocking(t);
       transmitting_ = true;

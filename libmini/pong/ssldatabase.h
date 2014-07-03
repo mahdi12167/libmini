@@ -34,6 +34,12 @@ public:
    // create a unique user name
    QString create_uid(const int len=1024);
 
+   // create code to pair user name
+   QString create_code(QString uid);
+
+   // apply code to pair user name
+   QString apply_code(QString code);
+
    // get all unique user names
    QStringList get_uids();
 

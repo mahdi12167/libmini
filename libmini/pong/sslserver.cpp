@@ -40,6 +40,25 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       else
          r->append(uid.toAscii());
    }
+   else if (action == "pair_uid")
+   {
+      QString code = db_->create_code(t->getUID());
+
+      if (code.size() == 0)
+         r->setError();
+      else
+         r->append(code.toAscii());
+   }
+   else if (action.startsWith("pair_code:"))
+   {
+      QString code = action.mid(action.indexOf(":")+1);
+      QString uid = db_->apply_code(code);
+
+      if (uid.size() == 0)
+         r->setError();
+      else
+         r->append(uid.toAscii());
+   }
    else if (action == "oldest_tid")
    {
       QString oldest = db_->oldest(t->getUID());

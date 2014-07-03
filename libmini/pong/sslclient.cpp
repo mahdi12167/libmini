@@ -12,7 +12,7 @@ SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, q
    : QObject(parent),
      hostName_(hostName), port_(port),
      uid_(uid), verify_(verify), compress_(compress),
-     autoselect_(true), autoselecting_(false),
+     autoselect_(true), autoselecting_(false), pairing_(false),
      receiver_(NULL),
      client_(NULL)
 {
@@ -88,12 +88,6 @@ QString SSLTransmissionDatabaseClient::getUID()
       return("");
 
    return(uid_);
-}
-
-// pair user name
-QString SSLTransmissionDatabaseClient::pairUID()
-{
-   return(getUID()); //!! uid for testing
 }
 
 // auto-select user name
@@ -178,6 +172,31 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
    return(true);
 }
 
+// pair user name by sending uid and receiving code
+void SSLTransmissionDatabaseClient::pairUID()
+{
+   if (!pairing_)
+   {
+      SSLTransmission t = SSLTransmission::ssl_command("pair_uid", "", getUID());
+
+      client_->transmitNonBlocking(hostName_, port_, t, verify_);
+      pairing_ = true;
+   }
+}
+
+// sync user name by sending code and receiving uid
+void SSLTransmissionDatabaseClient::pairCode(QString code)
+{
+   if (!pairing_)
+   {
+      SSLTransmission t = SSLTransmission::ssl_command("pair_code:");
+      t.append(code.toAscii());
+
+      client_->transmitNonBlocking(hostName_, port_, t, verify_);
+      pairing_ = true;
+   }
+}
+
 // get receiver
 SSLTransmissionResponseReceiver *SSLTransmissionDatabaseClient::getReceiver()
 {
@@ -221,6 +240,18 @@ void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 p
    port_ = port;
 
    autoselectUID(false);
+}
+
+// send transmission pair uid
+void SSLTransmissionDatabaseClient::transmitPairUID()
+{
+   pairUID();
+}
+
+// send transmission pair code
+void SSLTransmissionDatabaseClient::transmitPairCode(QString code)
+{
+   pairCode(code);
 }
 
 // start non-blocking ping
@@ -286,6 +317,7 @@ void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QS
    if (command == SSLTransmission::cc_command)
    {
       autoselecting_ = false;
+      pairing_ = false;
 
       emit error("cannot contact host");
    }
@@ -315,5 +347,26 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
       autoselecting_ = false;
 
       emit registration();
+   }
+   else if (response.startsWith("pair_uid:"))
+   {
+      QString code = response.mid(response.indexOf(":")+1);
+
+      pairing_ = false;
+
+      emit gotPairCode(code);
+   }
+   else if (response.startsWith("pair_code:"))
+   {
+      QString code = response.mid(response.indexOf(":")+1);
+      uid_ = code.mid(code.indexOf(":")+1);
+
+      QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
+
+      settings.setValue("uid", uid_);
+
+      pairing_ = false;
+
+      emit gotPairUID(uid_);
    }
 }

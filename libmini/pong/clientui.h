@@ -34,9 +34,14 @@ protected:
    void dragLeaveEvent(QDragLeaveEvent *event);
 
    QString hostName_;
-   QLineEdit *lineEdit_hostName;
+   QLineEdit *lineEdit_hostName_;
 
    quint16 port_;
+
+   bool uploadMode_;
+
+   QLabel *codeLabel_;
+   QLineEdit *lineEdit_pairCode_;
 
    unsigned int counter_;
    QLabel *counterLabel_;
@@ -55,16 +60,20 @@ public slots:
    void failure(QString hostName, quint16 port, QString tid, QString uid);
 
    void registration();
+   void gotPairCode(QString code);
+   void gotPairUID(QString uid);
    void error(QString e);
 
    void status_send(int queued);
    void status_receive(int stored);
 
    void hostNameChanged();
+   void pairCodeChanged();
 
 signals:
 
    void host(QString hostName, quint16 port);
+   void code(QString code);
    void transmit(QString fileName);
 };
 

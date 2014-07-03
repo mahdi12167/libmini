@@ -156,6 +156,20 @@ QString SSLTransmissionDatabase::create_uid(const int len)
    return(uid);
 }
 
+// create code to pair user name
+QString SSLTransmissionDatabase::create_code(QString uid)
+{
+   // return code for uid
+   return("code"); //!!
+}
+
+// apply code to pair user name
+QString SSLTransmissionDatabase::apply_code(QString code)
+{
+   // return uid for code
+   return("test"); //!!
+}
+
 // get all unique user names
 QStringList SSLTransmissionDatabase::get_uids()
 {

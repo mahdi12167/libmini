@@ -6,7 +6,7 @@ the transmission of data over an ssl encrypted channel.
 
 The main use case of the system is a central data storage server at
 home, that receives data from clients at various locations, for
-example while travelling abroad and sending live data back home from
+example while traveling abroad and sending live data back home from
 multiple devices.
 
 The server acts as a gateway in the middle, storing uploaded data in a
@@ -32,7 +32,7 @@ varying locations. This allows for convenient searching and easy
 backup. It also minimizes copying data around, avoids double copies,
 and prevents data being forgotten or lost.
 
-Project Pong aimes to provide a platform for automating the latter use
+Project Pong aims to provide a platform for automating the latter use
 case. So the goal of the project is to automate the task of
 classifying data (by gps-location, acquisition time, importance and
 user tag) and sending the classified data back to a central storage
