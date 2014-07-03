@@ -104,7 +104,17 @@ bool SSLTransmissionDatabase::createTables()
 // get stored transmissions in the db
 int SSLTransmissionDatabase::size()
 {
-   return(0); //!!
+   if (db_->isOpen())
+   {
+      QString count = QString("SELECT COUNT(*) FROM transmissions");
+
+      QSqlQuery query(count);
+
+      if (query.next())
+         return(query.value(0).toInt());
+   }
+
+   return(0);
 }
 
 // generate a random string
