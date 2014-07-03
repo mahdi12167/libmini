@@ -36,8 +36,9 @@ void usage(const char *prog)
    std::cout << " " << app << " {options} {file}" << std::endl;
    std::cout << "where options are:" << std::endl;
    std::cout << " --server: start transmission server" << std::endl;
-   std::cout << " --client: use drop box gui for transmissions" << std::endl;
-   std::cout << " --transmit: transmit file" << std::endl;
+   std::cout << " --up: start client with drop box gui to upload transmission to server" << std::endl;
+   std::cout << " --down: start client to download transmissions from server" << std::endl;
+   std::cout << " --transmit: transmit files to server" << std::endl;
    std::cout << " --dump: dump transmission database" << std::endl;
    std::cout << " --host=\"name\": specify host name" << std::endl;
    std::cout << " --port=n: specify tcp port n" << std::endl;
@@ -49,8 +50,10 @@ void usage(const char *prog)
    std::cout << " --help: this help text" << std::endl;
    std::cout << "example server usage:" << std::endl;
    std::cout << " ./pong --no-gui &" << std::endl;
-   std::cout << "example client usage:" << std::endl;
-   std::cout << " ./ping --host=127.0.0.1" << std::endl;
+   std::cout << "example client upload usage:" << std::endl;
+   std::cout << " ./ping --up --host=127.0.0.1" << std::endl;
+   std::cout << "example client download usage:" << std::endl;
+   std::cout << " ./ping --down --host=127.0.0.1" << std::endl;
    std::cout << "example transmission usage:" << std::endl;
    std::cout << " ./ping --transmit --host=pong.server.org --compress *.txt" << std::endl;
    exit(1);
@@ -73,7 +76,8 @@ int main(int argc, char *argv[])
       else arg.push_back(args[i]);
 
    bool server=true;
-   bool client=false;
+   bool client_up=false;
+   bool client_down=false;
    bool transmit=false;
    bool dump=false;
    QString host="";
@@ -85,19 +89,22 @@ int main(int argc, char *argv[])
 
 #ifdef HAVE_SERVER
    server=true;
-   client=false;
+   client_up=false;
+   client_down=false;
 #endif
 
 #ifdef HAVE_CLIENT
    server=false;
-   client=true;
+   client_up=true;
+   client_down=false;
 #endif
 
    // scan option list
    for (int i=0; i<opt.size(); i++)
-      if (opt[i]=="server") {server=true; client=transmit=false;}
-      else if (opt[i]=="client") {client=true; server=transmit=false;}
-      else if (opt[i]=="transmit") {transmit=true; server=client=dump=false;}
+      if (opt[i]=="server") {server=true; client_up=client_down=transmit=false;}
+      else if (opt[i]=="up") {client_up=true; client_down=false; server=transmit=false;}
+      else if (opt[i]=="down") {client_down=true; client_up=false; server=transmit=false;}
+      else if (opt[i]=="transmit") {transmit=true; server=client_up=client_down=dump=false;}
       else if (opt[i]=="dump") {dump=true; transmit=false;}
       else if (opt[i].startsWith("host=")) host=get_str(opt[i]);
       else if (opt[i].startsWith("port=")) port=(int)(get_opt(opt[i])+0.5);
@@ -114,8 +121,10 @@ int main(int argc, char *argv[])
    {
       if (server)
          SSLTransmissionDatabase::dump();
-      else
+      else if (client_up)
          SSLTransmissionDatabase::dump("queue");
+      else
+         SSLTransmissionDatabase::dump("eueuq");
    }
    // server mode
    else if (server && arg.size()==0)
@@ -156,15 +165,15 @@ int main(int argc, char *argv[])
       }
    }
    // client mode
-   else if (client && arg.size()==0)
+   else if ((client_up || client_down) && arg.size()==0)
    {
       try
       {
-         SSLTransmissionQueueClient client(host, port, user, verify, compress);
+         SSLTransmissionQueueClient client(host, port, user, verify, compress, client_up);
 
          // client gui
          ClientUI main(&client);
-         main.show();
+         if (client_up || gui) main.show();
 
          return(app.exec());
       }

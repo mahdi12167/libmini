@@ -42,6 +42,12 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
       connect(pairButton, SIGNAL(pressed()), client, SLOT((transmitPairUID())));
       layout->addWidget(pairButton);
    }
+   else
+   {
+      QGroupBox *lineEditGroup_pairCode = createEdit("Enter pair code", "", &lineEdit_pairCode_);
+      connect(lineEdit_pairCode_, SIGNAL(editingFinished()), this, SLOT(pairCodeChanged()));
+      layout->addWidget(lineEditGroup_pairCode);
+   }
 
    QGroupBox *infoBox = new QGroupBox("Client status");
    QVBoxLayout *infoBoxLayout = new QVBoxLayout;
@@ -57,13 +63,6 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
 
    errorLabel_ = new QLabel;
    infoBoxLayout->addWidget(errorLabel_);
-
-   if (uploadMode_)
-   {
-      QGroupBox *lineEditGroup_pairCode = createEdit("Enter pair code", "", &lineEdit_pairCode_);
-      connect(lineEdit_pairCode_, SIGNAL(editingFinished()), this, SLOT(pairCodeChanged()));
-      layout->addWidget(lineEditGroup_pairCode);
-   }
 
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
