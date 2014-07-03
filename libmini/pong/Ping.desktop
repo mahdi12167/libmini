@@ -5,5 +5,5 @@ Icon=/usr/share/pingpong/ping.png
 Terminal=false
 Name=Ping
 GenericName=Ping Transmission Client
-Comment=Transfers data to the Pong transmission server
+Comment=Uploads data to the Pong transmission server
 Categories=Application;Client;

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=poing
+Icon=/usr/share/pingpong/poing.png
+Terminal=false
+Name=Poing
+GenericName=Poing Transmission Client
+Comment=Downloads data from the Pong transmission server
+Categories=Application;Client;

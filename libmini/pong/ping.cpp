@@ -1,2 +1,2 @@
-#define HAVE_CLIENT
+#define HAVE_CLIENT_UP
 #include "main.cpp"
