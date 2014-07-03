@@ -3,7 +3,7 @@
 #include "sslserver.h"
 
 // create a transmission response from the db
-SSLTransmission *SSLTransmissionDatabaseResponder::create(const SSLTransmission *t)
+SSLTransmission *SSLTransmissionDatabaseResponder::respond(const SSLTransmission *t)
 {
    if (t->getTID() != "")
       return(new SSLTransmission(db_->read(t->getTID(), t->getUID())));
@@ -77,6 +77,18 @@ SSLTransmissionDatabaseServer::SSLTransmissionDatabaseServer(quint16 port,
    // connect transmission database with the connection factory transmitted signal
    connect(factory_, SIGNAL(transmitted(SSLTransmission)),
            db_, SLOT(write(SSLTransmission)));
+
+   // connect transmission database with the connection factory responded signal
+   //!!connect(factory_, SIGNAL(responded(SSLTransmission)),
+   //!!        db_, SLOT(remove(SSLTransmission)));
+
+   // connect server status with the connection factory transmitted signal
+   connect(factory_, SIGNAL(transmitted()),
+           this, SLOT(receive()));
+
+   // connect server status with the connection factory responded signal
+   connect(factory_, SIGNAL(responded()),
+           this, SLOT(send()));
 }
 
 // ssl transmission database server dtor
@@ -124,4 +136,22 @@ void SSLTransmissionDatabaseServer::start()
 {
    // start server on specified port (default 10000)
    server_->start(certPath_, keyPath_, port_, altPath_);
+}
+
+// store size
+int SSLTransmissionDatabaseServer::size()
+{
+   return(db_->size());
+}
+
+// receive responded signal
+void SSLTransmissionDatabaseServer::send()
+{
+   emit status_send(size());
+}
+
+// receive transmission signal
+void SSLTransmissionDatabaseServer::receive()
+{
+   emit status_receive(size());
 }

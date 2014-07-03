@@ -66,7 +66,19 @@ SSLServerConnectionFactory::SSLServerConnectionFactory(QObject *parent)
 SSLServerConnectionFactory::~SSLServerConnectionFactory()
 {}
 
-// receive error report
+// receive connected signal
+void SSLServerConnectionFactory::receiveConnected()
+{
+   emit connected();
+}
+
+// receive disconnected signal
+void SSLServerConnectionFactory::receiveDisconnected()
+{
+   emit disconnected();
+}
+
+// receive error status
 void SSLServerConnectionFactory::receiveReport(QString error)
 {
    emit report(error);
@@ -87,6 +99,14 @@ SSLServerConnection::SSLServerConnection(int socketDescriptor,
    // assign descriptor to ssl socket
    if (socket_->setSocketDescriptor(socketDescriptor))
    {
+      // signal a connection
+      connect(socket_, SIGNAL(connected()),
+              factory_, SLOT(receiveConnected()));
+
+      // signal end of a connection
+      connect(socket_, SIGNAL(disconnected()),
+              factory_, SLOT(receiveDisconnected()));
+
       // catch socket errors
       connect(socket_, SIGNAL(error(QAbstractSocket::SocketError)),
               this, SLOT(error(QAbstractSocket::SocketError)));

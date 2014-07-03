@@ -22,7 +22,7 @@ public:
    virtual ~SSLTransmissionResponder() {}
 
    // create a transmission response
-   virtual SSLTransmission *create(const SSLTransmission *t) = 0;
+   virtual SSLTransmission *respond(const SSLTransmission *t) = 0;
 
    // create a command response
    virtual SSLTransmission *command(const SSLTransmission *t) = 0;
@@ -506,7 +506,7 @@ public:
                // create transmission response
                if (header_.command == cc_respond)
                {
-                  response_ = responder_->create(this);
+                  response_ = responder_->respond(this);
                   response_->setCommand(cc_response);
                }
                else

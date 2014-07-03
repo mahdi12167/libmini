@@ -133,12 +133,24 @@ protected:
 
 public slots:
 
+   // receive connected signal
+   void receiveConnected();
+
+   // receive disconnected signal
+   void receiveDisconnected();
+
    // receive error report
    void receiveReport(QString);
 
 signals:
 
-   // report errors
+   // signal connected status
+   void connected();
+
+   // signal disconnected status
+   void disconnected();
+
+   // report error status
    void report(QString);
 };
 

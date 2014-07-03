@@ -68,7 +68,7 @@ protected slots:
 signals:
 
    void status_send(int queued);
-   void status_receive(int queued, int stored); //!!
+   void status_receive(int stored);
 };
 
 #endif

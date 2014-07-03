@@ -18,7 +18,7 @@ public:
    {}
 
    // create a transmission response from the db
-   virtual SSLTransmission *create(const SSLTransmission *t);
+   virtual SSLTransmission *respond(const SSLTransmission *t);
 
    // create a command response from the db
    virtual SSLTransmission *command(const SSLTransmission *t);
@@ -57,6 +57,9 @@ public:
    // start listening
    void start();
 
+   // store size
+   int size();
+
 protected:
 
    quint16 port_;
@@ -70,10 +73,15 @@ protected:
 
    SSLError e_;
 
+protected slots:
+
+   void send();
+   void receive();
+
 signals:
 
-   void status_send(bool activ);
-   void status_receive(bool activ); //!!
+   void status_send(int stored);
+   void status_receive(int stored);
 };
 
 #endif

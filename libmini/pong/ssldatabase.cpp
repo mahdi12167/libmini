@@ -101,6 +101,12 @@ bool SSLTransmissionDatabase::createTables()
    return(success);
 }
 
+// get stored transmissions in the db
+int SSLTransmissionDatabase::size()
+{
+   return(0); //!!
+}
+
 // generate a random string
 QString SSLTransmissionDatabase::random(const int len)
 {

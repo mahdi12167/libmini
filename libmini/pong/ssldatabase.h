@@ -28,6 +28,9 @@ public:
    // remove db
    bool removeDB();
 
+   // get stored transmissions in the db
+   int size();
+
    // create a unique user name
    QString create_uid(const int len=1024);
 

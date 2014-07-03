@@ -123,6 +123,8 @@ void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString 
 void SSLTransmissionQueueClient::received(SSLTransmission t)
 {
    db_->write(t);
+
+   emit status_receive(size());
 }
 
 // specify transmission host name
