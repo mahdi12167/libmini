@@ -120,6 +120,8 @@ int SSLTransmissionDatabase::size()
 // generate a random string
 QString SSLTransmissionDatabase::random(const int len)
 {
+   return("test"); //!! uid for testing
+
    static const char alphanum[] =
        "0123456789"
        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
