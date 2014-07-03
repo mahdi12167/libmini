@@ -67,7 +67,7 @@ protected slots:
 
 signals:
 
-   void changed(int queued);
+   void status(int queued);
 };
 
 #endif

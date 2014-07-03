@@ -63,7 +63,7 @@ void SSLTransmissionQueueClient::send()
       }
    }
 
-   emit changed(size());
+   emit status(size());
 }
 
 // start transmission queue
@@ -107,7 +107,7 @@ void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QSt
    db_->remove(tid, uid);
    transmitting_ = false;
 
-   emit changed(size());
+   emit status(size());
 
    if (!stopped_)
       send();
@@ -130,7 +130,7 @@ void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port
 {
    SSLTransmissionDatabaseClient::transmitHostName(hostName, port);
 
-   emit changed(size());
+   emit status(size());
 }
 
 // queue non-blocking transmission
@@ -138,7 +138,7 @@ void SSLTransmissionQueueClient::transmitNonBlocking(const SSLTransmission &t)
 {
    db_->write(t);
 
-   emit changed(size());
+   emit status(size());
 
    if (!stopped_)
       send();
