@@ -32,17 +32,11 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
       dropBoxLayout->addWidget(dropText);
    }
 
-   QGroupBox *lineEditGroup_hostName = createEdit("Transmit to host", hostName_, &lineEdit_hostName_);
+   QGroupBox *lineEditGroup_hostName = createEdit(uploadMode_?"Transmit to host":"Receive from host", hostName_, &lineEdit_hostName_);
    connect(lineEdit_hostName_, SIGNAL(editingFinished()), this, SLOT(hostNameChanged()));
    layout->addWidget(lineEditGroup_hostName);
 
-   if (!uploadMode_)
-   {
-      QPushButton *pairButton = new QPushButton("Pair Client");
-      connect(pairButton, SIGNAL(pressed()), client, SLOT((transmitPairUID())));
-      layout->addWidget(pairButton);
-   }
-   else
+   if (uploadMode_)
    {
       QGroupBox *lineEditGroup_pairCode = createEdit("Enter pair code", "", &lineEdit_pairCode_);
       connect(lineEdit_pairCode_, SIGNAL(editingFinished()), this, SLOT(pairCodeChanged()));
@@ -63,6 +57,13 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
 
    errorLabel_ = new QLabel;
    infoBoxLayout->addWidget(errorLabel_);
+
+   if (!uploadMode_)
+   {
+      QPushButton *pairButton = new QPushButton("Pair Client");
+      connect(pairButton, SIGNAL(pressed()), client, SLOT(transmitPairUID()));
+      layout->addWidget(pairButton);
+   }
 
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
@@ -97,12 +98,12 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
                     this, SLOT(registration()));
 
    // connect pair code signal with gui
-   QObject::connect(client, SIGNAL(gotPairCode()),
-                    this, SLOT(gotPairCode()));
+   QObject::connect(client, SIGNAL(gotPairCode(QString)),
+                    this, SLOT(gotPairCode(QString)));
 
    // connect pair uid signal with gui
-   QObject::connect(client, SIGNAL(gotPairUID()),
-                    this, SLOT(gotPairUID()));
+   QObject::connect(client, SIGNAL(gotPairUID(QString)),
+                    this, SLOT(gotPairUID(QString)));
 
    // connect error signal with gui
    QObject::connect(client, SIGNAL(error(QString)),
