@@ -93,10 +93,16 @@ int main(int argc, char *argv[])
    client_down=false;
 #endif
 
-#ifdef HAVE_CLIENT
+#ifdef HAVE_CLIENT_UP
    server=false;
    client_up=true;
    client_down=false;
+#endif
+
+#ifdef HAVE_CLIENT_DOWN
+   server=false;
+   client_up=false;
+   client_down=true;
 #endif
 
    // scan option list

@@ -155,6 +155,7 @@ ENDMACRO(MAKE_EXECUTABLE name main)
 # build executables
 MAKE_EXECUTABLE(pong pong.cpp)
 MAKE_EXECUTABLE(ping ping.cpp)
+MAKE_EXECUTABLE(poing poing.cpp)
 
 # install .desktop file and icon for KDE4 (and Gnome)
 IF (UNIX AND NOT APPLE)
