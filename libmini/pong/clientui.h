@@ -57,7 +57,7 @@ protected slots:
    void registration();
    void error(QString e);
 
-   void changed(int queued);
+   void status(int queued);
    void hostNameChanged();
 
 signals:
