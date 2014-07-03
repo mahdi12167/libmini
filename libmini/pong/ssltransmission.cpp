@@ -28,6 +28,10 @@ SSLServerConnection *SSLTransmissionServerConnectionFactory::create(int socketDe
            this, SLOT(transmit(SSLTransmission)), Qt::QueuedConnection);
 
    // signal command
+   connect(connection, SIGNAL(respond(SSLTransmission)),
+           this, SLOT(respond(SSLTransmission)), Qt::QueuedConnection);
+
+   // signal command
    connect(connection, SIGNAL(command(SSLTransmission)),
            this, SLOT(command(SSLTransmission)), Qt::QueuedConnection);
 
@@ -54,6 +58,12 @@ void SSLTransmissionServerConnectionFactory::transmit(SSLTransmission t)
 void SSLTransmissionServerConnectionFactory::command(SSLTransmission t)
 {
    emit execute(t);
+}
+
+// receiver of respond data blocks
+void SSLTransmissionServerConnectionFactory::respond(SSLTransmission t)
+{
+   emit responded(t);
 }
 
 // receiver of invalid data blocks
@@ -87,6 +97,7 @@ bool SSLTransmissionServerConnection::startReading(QSslSocket *socket)
    if (t_.valid())
    {
       if (t_.getCommand() == SSLTransmission::cc_transmit) emit transmit(t_);
+      else if (t_.getCommand() == SSLTransmission::cc_respond) emit respond(t_);
       else if (t_.getCommand() == SSLTransmission::cc_command) emit command(t_);
    }
    else emit invalid(t_);

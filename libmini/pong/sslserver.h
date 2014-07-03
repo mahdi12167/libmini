@@ -69,6 +69,11 @@ protected:
    SSLServer *server_;
 
    SSLError e_;
+
+signals:
+
+   void status_send(bool activ);
+   void status_receive(bool activ); //!!
 };
 
 #endif

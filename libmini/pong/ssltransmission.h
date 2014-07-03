@@ -38,6 +38,9 @@ public slots:
    // receiver of transmitted data blocks
    void transmit(SSLTransmission);
 
+   // receiver of respond data blocks
+   void respond(SSLTransmission);
+
    // receiver of command data blocks
    void command(SSLTransmission);
 
@@ -48,6 +51,9 @@ signals:
 
    // signal transmission
    void transmitted(SSLTransmission);
+
+   // signal response
+   void responded(SSLTransmission);
 
    // signal command
    void execute(SSLTransmission);
@@ -82,6 +88,9 @@ signals:
 
    // signal transmission of data block
    void transmit(SSLTransmission);
+
+   // signal transmission of respond block
+   void respond(SSLTransmission);
 
    // signal command data block
    void command(SSLTransmission);
