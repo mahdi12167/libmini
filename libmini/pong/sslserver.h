@@ -57,6 +57,9 @@ public:
    // start listening
    void start();
 
+   // stop listening
+   void stop();
+
    // store size
    int size();
 

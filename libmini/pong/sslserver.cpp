@@ -157,6 +157,12 @@ void SSLTransmissionDatabaseServer::start()
    server_->start(certPath_, keyPath_, port_, altPath_);
 }
 
+// stop listening
+void SSLTransmissionDatabaseServer::stop()
+{
+   server_->stop();
+}
+
 // store size
 int SSLTransmissionDatabaseServer::size()
 {

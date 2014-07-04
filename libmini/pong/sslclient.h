@@ -37,6 +37,9 @@ public:
    // start file transmission
    bool transmit(QString fileName);
 
+   // finish non-blocking threads
+   void finish();
+
 public slots:
 
    // specify transmission host name

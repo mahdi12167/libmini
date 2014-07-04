@@ -230,6 +230,12 @@ bool SSLTransmissionDatabaseClient::transmit(QString fileName)
    return(false);
 }
 
+// finish non-blocking threads
+void SSLTransmissionDatabaseClient::finish()
+{
+   client_->finish();
+}
+
 // specify transmission host name
 void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 port)
 {
