@@ -22,11 +22,11 @@ ServerUI::ServerUI(SSLTransmissionDatabaseServer *server,
    infoBox->setLayout(infoBoxLayout);
 
    counterIn_ = 0;
-   counterInLabel_ = new QLabel("Incoming Transmissions: none");
+   counterInLabel_ = new QLabel("Incoming: none");
    infoBoxLayout->addWidget(counterInLabel_);
 
    counterOut_ = 0;
-   counterOutLabel_ = new QLabel("Outgoing Transmissions: none");
+   counterOutLabel_ = new QLabel("Outgoing: none");
    infoBoxLayout->addWidget(counterOutLabel_);
 
    queueLabel_ = new QLabel;
@@ -78,7 +78,7 @@ ServerUI::~ServerUI()
 void ServerUI::transmitted(SSLTransmission t)
 {
    counterIn_++;
-   counterInLabel_->setText("Incoming Transmissions: "+QString::number(counterIn_));
+   counterInLabel_->setText("Incoming: "+QString::number(counterIn_));
 
    QString transmission;
 
@@ -102,7 +102,7 @@ void ServerUI::transmitted(SSLTransmission t)
 void ServerUI::responded(SSLTransmission t)
 {
    counterOut_++;
-   counterOutLabel_->setText("Outgoing Transmissions: "+QString::number(counterOut_));
+   counterOutLabel_->setText("Outgoing: "+QString::number(counterOut_));
 
    if (t.getResponse())
       t = *(t.getResponse());
@@ -140,10 +140,10 @@ void ServerUI::report(QString error)
 
 void ServerUI::status_send(int stored)
 {
-   queueLabel_->setText("Stored Transmissions: "+QString::number(stored));
+   queueLabel_->setText("Stored: "+QString::number(stored));
 }
 
 void ServerUI::status_receive(int stored)
 {
-   queueLabel_->setText("Stored Transmissions: "+QString::number(stored));
+   queueLabel_->setText("Stored: "+QString::number(stored));
 }

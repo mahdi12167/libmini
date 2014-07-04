@@ -14,8 +14,8 @@ queue until the data is delivered to be stored in its final
 destination at home. On the destination side the data ends up being
 stored safely in a SQLite database.
 
-As an example use case, for example think about a world-wide journey
-where you shoot thousands of pictures with multiple cameras and
+As an example use case, think about a world-wide journey where you
+shoot thousands of pictures with multiple cameras and
 smartphones. After the journey you need to download all your data,
 delete duplicates and bad pictures, organize your data depending on
 importance and location and finally make a backup. Do you remember how
@@ -44,11 +44,14 @@ For the installation of the Project Pong client/server system, the
 installation of the following Unix tools is required:
 * cmake
 * gnu/c++
-* qt/qmake
 * subversion
+* qt/qmake
 
-It is recommended that you install Qt from source, e.g. grab the
-source tar ball from
+On Ubuntu 14.04, for example, this is achieved on the command line:
+ sudo apt-get install g++ cmake cmake-curses-gui subversion
+
+To install Qt, it is recommended to build it from source, e.g. grab
+the source tar ball from
 
  http://download.qt-project.org/official_releases/qt/5.3/5.3.0/single/qt-everywhere-opensource-src-5.3.0.tar.gz/.zip
 
@@ -60,7 +63,7 @@ you will be asked to enter your root password for installation of Qt.
 
 !! Checkout and Compilation
 
-To install the software, type the following on the terminal:
+To install the Project Pong software, type the following on the terminal:
  svn co http://libmini.googlecode.com/svn/libmini/pong pong
  (cd pong; cmake . && make && sudo make install)
 
@@ -69,9 +72,14 @@ If you installed Qt5, be sure to enable the BUILD_WITH_QT5 option:
 
 !! Usage
 
-The client and server is available as "pong" and "ping" command line
-tools on the terminal. In the Linux desktop manager, the client and
-server applications are available as "Ping" and "Pong", respectively.
+The client and server applications are available as "ping", "poing"
+and "pong" command line tools on the command line. In the Linux
+desktop manager, search for the applications with the respective name
+and drag them into the side bar.
+
+!! Example Use Case
+
+tbd ...
 
 That's it!
 

@@ -49,7 +49,7 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    infoBox->setLayout(infoBoxLayout);
 
    counter_ = 0;
-   counterLabel_ = new QLabel("Transmissions: none");
+   counterLabel_ = new QLabel(uploadMode_?"Outgoing: none":"Incoming: none");
    infoBoxLayout->addWidget(counterLabel_);
 
    queueLabel_ = new QLabel;
@@ -196,7 +196,7 @@ void ClientUI::dragLeaveEvent(QDragLeaveEvent *event)
 void ClientUI::success(QString hostName, quint16 port, QString tid, QString uid)
 {
    counter_++;
-   counterLabel_->setText("Transmissions: "+QString::number(counter_));
+   counterLabel_ = new QLabel(uploadMode_?"Outgoing: none":"Incoming: none"+QString::number(counter_));
 
    errorLabel_->setText("ok");
 }
