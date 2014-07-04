@@ -79,8 +79,6 @@ void SSLTransmissionQueueClient::send()
 // start transmission queue
 void SSLTransmissionQueueClient::receive()
 {
-   std::cout << "receive" << std::endl; //!! debug
-
    if (uploadMode_) throw e_;
 
    stopped_ = false;
@@ -153,6 +151,8 @@ void SSLTransmissionQueueClient::received(SSLTransmission t)
 {
    db_->write(t);
    transmitting_ = false;
+
+   std::cout << "received" << std::endl; //!! debug
 
    emit status_receive(size());
 

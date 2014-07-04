@@ -93,13 +93,13 @@ SSLTransmissionDatabaseServer::SSLTransmissionDatabaseServer(quint16 port,
    factory_ = new SSLTransmissionServerConnectionFactory(responder_);
    server_ = new SSLServer(factory_);
 
-   // connect transmission database with the connection factory transmitted signal
+   // connect server with the connection factory transmitted signal
    connect(factory_, SIGNAL(transmitted(SSLTransmission)),
-           db_, SLOT(write(SSLTransmission)));
+           this, SLOT(transmitted(SSLTransmission)));
 
-   // connect transmission database with the connection factory responded signal
+   // connect server with the connection factory responded signal
    connect(factory_, SIGNAL(responded(SSLTransmission)),
-           db_, SLOT(remove(SSLTransmission)));
+           this, SLOT(responded(SSLTransmission)));
 
    // connect server status with the connection factory transmitted signal
    connect(factory_, SIGNAL(transmitted()),
@@ -167,6 +167,20 @@ void SSLTransmissionDatabaseServer::stop()
 int SSLTransmissionDatabaseServer::size()
 {
    return(db_->size());
+}
+
+// receive transmitted signal
+void SSLTransmissionDatabaseServer::transmitted(SSLTransmission t)
+{
+   db_->write(t);
+}
+
+// receive responded signal
+void SSLTransmissionDatabaseServer::responded(SSLTransmission t)
+{
+  db_->remove(t.getTID(), t.getUID());
+
+  std::cout << "responded" << std::endl; //!! debug
 }
 
 // receive responded signal

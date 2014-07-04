@@ -49,6 +49,9 @@ public:
    // list transmission names in the db
    QStringList list(QString uid);
 
+   // write a transmission to the db
+   void write(SSLTransmission t);
+
    // retrieve oldest transmission name in the db
    QString oldest(QString uid);
 
@@ -76,14 +79,6 @@ protected:
    QString path_;
 
    SSLError e_;
-
-   public slots:
-
-   // write a transmission to the db
-   void write(SSLTransmission t);
-
-   // remove a transmission from the db
-   void remove(SSLTransmission t);
 
 private:
 

@@ -76,7 +76,10 @@ protected:
 
    SSLError e_;
 
-public  slots:
+protected slots:
+
+   void transmitted(SSLTransmission t);
+   void responded(SSLTransmission t);
 
    void send();
    void receive();
