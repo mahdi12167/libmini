@@ -54,8 +54,6 @@ bool SSLTransmissionQueueClient::uploadMode()
 // start transmission queue
 void SSLTransmissionQueueClient::send()
 {
-   std::cout << "send" << std::endl; //!! debug
-
    if (!uploadMode_) throw e_;
 
    stopped_ = false;
@@ -157,6 +155,9 @@ void SSLTransmissionQueueClient::received(SSLTransmission t)
    transmitting_ = false;
 
    emit status_receive(size());
+
+   if (!stopped_)
+      receive();
 }
 
 // specify transmission host name
@@ -173,8 +174,6 @@ void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port
 // queue non-blocking transmission
 void SSLTransmissionQueueClient::transmitNonBlocking(const SSLTransmission &t)
 {
-   std::cout << "transmitNonBlocking" << std::endl; //!! debug
-
    if (!uploadMode_) throw e_;
 
    db_->write(t);

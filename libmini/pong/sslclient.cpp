@@ -309,8 +309,7 @@ void SSLTransmissionDatabaseClient::onPong(QString hostName, quint16 port, bool 
 // ssl transmission success
 void SSLTransmissionDatabaseClient::onSuccess(QString hostName, quint16 port, QString tid, QString uid, int command)
 {
-   if (command == SSLTransmission::cc_transmit ||
-       command == SSLTransmission::cc_respond)
+   if (command == SSLTransmission::cc_transmit)
       emit success(hostName, port, tid, uid);
 }
 
