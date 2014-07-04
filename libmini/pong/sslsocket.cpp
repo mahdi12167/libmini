@@ -39,6 +39,12 @@ void SSLServer::start(QString certPath, QString keyPath, quint16 port, QString a
    if (!listen(QHostAddress::Any, port)) throw e_;
 }
 
+// stop listening
+void SSLServer::stop()
+{
+   close();
+}
+
 // get factory
 SSLServerConnectionFactory *SSLServer::getFactory() const
 {

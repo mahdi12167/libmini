@@ -155,6 +155,9 @@ public:
    // get transmission response
    SSLTransmission *getResponse() const;
 
+   // finish non-blocking threads
+   void finish();
+
 protected:
 
    // start writing to ssl socket

@@ -50,6 +50,9 @@ public:
    // start listening
    void start(QString certPath, QString keyPath, quint16 port = 0, QString altPath = "");
 
+   // stop listening
+   void stop();
+
    // get factory
    SSLServerConnectionFactory *getFactory() const;
 

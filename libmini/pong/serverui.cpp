@@ -4,7 +4,8 @@
 
 ServerUI::ServerUI(SSLTransmissionDatabaseServer *server,
                    QWidget *parent)
-   : QWidget(parent)
+   : QWidget(parent),
+     server_(server)
 {
    // set main inherited style sheet
    QString css("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; margin: 3px; padding-top: 16px; }"
@@ -52,28 +53,30 @@ ServerUI::ServerUI(SSLTransmissionDatabaseServer *server,
    layout->addWidget(quitButton);
 
    // connect gui with the connection factory transmitted signal
-   QObject::connect(server->getFactory(), SIGNAL(transmitted(SSLTransmission)),
+   QObject::connect(server_->getFactory(), SIGNAL(transmitted(SSLTransmission)),
                     this, SLOT(transmitted(SSLTransmission)));
 
    // connect gui with the connection factory responded signal
-   QObject::connect(server->getFactory(), SIGNAL(responded(SSLTransmission)),
+   QObject::connect(server_->getFactory(), SIGNAL(responded(SSLTransmission)),
                     this, SLOT(responded(SSLTransmission)));
 
    // connect gui with the connection factory report signal
-   QObject::connect(server->getFactory(), SIGNAL(report(QString)),
+   QObject::connect(server_->getFactory(), SIGNAL(report(QString)),
                     this, SLOT(report(QString)));
 
    // connect gui with the server send status signal
-   QObject::connect(server, SIGNAL(status_send(int)),
+   QObject::connect(server_, SIGNAL(status_send(int)),
                     this, SLOT(status_send(int)));
 
    // connect gui with the server receive status signal
-   QObject::connect(server, SIGNAL(status_receive(int)),
+   QObject::connect(server_, SIGNAL(status_receive(int)),
                     this, SLOT(status_receive(int)));
 }
 
 ServerUI::~ServerUI()
-{}
+{
+   server_->stop();
+}
 
 void ServerUI::transmitted(SSLTransmission t)
 {

@@ -24,6 +24,8 @@ public:
 
 protected:
 
+   SSLTransmissionDatabaseServer *server_;
+
    unsigned int counterIn_;
    QLabel *counterInLabel_;
 

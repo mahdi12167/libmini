@@ -120,7 +120,7 @@ SSLTransmissionClient::SSLTransmissionClient(SSLTransmissionResponseReceiver *re
 // ssl transmission client dtor
 SSLTransmissionClient::~SSLTransmissionClient()
 {
-   threads_.acquire(maxThreads_);
+   finish();
 }
 
 // start ping
@@ -242,6 +242,13 @@ void SSLTransmissionClient::transmitNonBlocking(QString hostName, quint16 port, 
       t.compress();
 
    transmitNonBlocking(hostName, port, t, verify);
+}
+
+// finish non-blocking threads
+void SSLTransmissionClient::finish()
+{
+   threads_.acquire(maxThreads_);
+   threads_.release(maxThreads_);
 }
 
 // ssl transmission thread ctor

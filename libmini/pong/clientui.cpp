@@ -4,14 +4,15 @@
 
 ClientUI::ClientUI(SSLTransmissionQueueClient *client,
                    QWidget *parent)
-   : QWidget(parent)
+   : QWidget(parent),
+     client_(client)
 {
    // get host name and port from client
-   hostName_ = client->getHostName();
-   port_ = client->getPort();
+   hostName_ = client_->getHostName();
+   port_ = client_->getPort();
 
    // get client mode
-   uploadMode_ = client->uploadMode();
+   uploadMode_ = client_->uploadMode();
 
    // set main inherited style sheet
    QString css("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; margin: 3px; padding-top: 16px; }"
@@ -55,7 +56,7 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    queueLabel_ = new QLabel;
    infoBoxLayout->addWidget(queueLabel_);
 
-   if (uploadMode_)
+   if (!uploadMode_)
    {
       codeLabel_ = new QLabel;
       infoBoxLayout->addWidget(codeLabel_);
@@ -131,7 +132,9 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
 }
 
 ClientUI::~ClientUI()
-{}
+{
+   client_->finish();
+}
 
 QGroupBox *ClientUI::createEdit(QString name, QString value,
                                 QLineEdit **lineEdit)

@@ -33,6 +33,8 @@ protected:
    void dragMoveEvent(QDragMoveEvent *event);
    void dragLeaveEvent(QDragLeaveEvent *event);
 
+   SSLTransmissionQueueClient *client_;
+
    QString hostName_;
    QLineEdit *lineEdit_hostName_;
 
