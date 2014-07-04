@@ -213,13 +213,11 @@ void ClientUI::success(QString hostName, quint16 port, QString tid, QString uid)
 void ClientUI::failure(QString hostName, quint16 port, QString tid, QString uid)
 {
    errorLabel_->setText("cannot connect to host");
-   codeLabel_->setText("");
 }
 
 void ClientUI::registration()
 {
    errorLabel_->setText("host ok");
-   codeLabel_->setText("");
 }
 
 void ClientUI::gotPairCode(QString code)
@@ -231,12 +229,12 @@ void ClientUI::gotPairCode(QString code)
 void ClientUI::gotPairUID(QString uid)
 {
    lineEdit_pairCode_->setText("client paired");
+   errorLabel_->setText("host ok");
 }
 
 void ClientUI::error(QString e)
 {
    errorLabel_->setText(e);
-   codeLabel_->setText("");
 }
 
 void ClientUI::status_send(int queued)
@@ -247,5 +245,4 @@ void ClientUI::status_send(int queued)
 void ClientUI::status_receive(int stored)
 {
    queueLabel_->setText("Stored: "+QString::number(stored));
-   codeLabel_->setText("");
 }
