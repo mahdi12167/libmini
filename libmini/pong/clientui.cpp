@@ -55,6 +55,12 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    queueLabel_ = new QLabel;
    infoBoxLayout->addWidget(queueLabel_);
 
+   if (uploadMode_)
+   {
+      codeLabel_ = new QLabel;
+      infoBoxLayout->addWidget(codeLabel_);
+   }
+
    errorLabel_ = new QLabel;
    infoBoxLayout->addWidget(errorLabel_);
 
@@ -204,16 +210,19 @@ void ClientUI::success(QString hostName, quint16 port, QString tid, QString uid)
 void ClientUI::failure(QString hostName, quint16 port, QString tid, QString uid)
 {
    errorLabel_->setText("cannot connect to host");
+   codeLabel_->setText("");
 }
 
 void ClientUI::registration()
 {
    errorLabel_->setText("host ok");
+   codeLabel_->setText("");
 }
 
 void ClientUI::gotPairCode(QString code)
 {
    codeLabel_->setText("Pair code: "+code);
+   errorLabel_->setText("host ok");
 }
 
 void ClientUI::gotPairUID(QString uid)
@@ -224,6 +233,7 @@ void ClientUI::gotPairUID(QString uid)
 void ClientUI::error(QString e)
 {
    errorLabel_->setText(e);
+   codeLabel_->setText("");
 }
 
 void ClientUI::status_send(int queued)
@@ -234,4 +244,5 @@ void ClientUI::status_send(int queued)
 void ClientUI::status_receive(int stored)
 {
    queueLabel_->setText("Stored: "+QString::number(stored));
+   codeLabel_->setText("");
 }
