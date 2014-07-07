@@ -73,7 +73,8 @@ public:
                    const QDateTime time = QDateTime::currentDateTimeUtc())
       : data_(),
         tid_(), uid_(),
-        transmitState_(0), response_(NULL), responder_(NULL)
+        transmitState_(0), transmitFailure_(false),
+        response_(NULL), responder_(NULL)
    {
       header_.magic = magic_number;
       header_.command = command;
@@ -90,7 +91,8 @@ public:
                    const CommandCode command = cc_transmit)
       : data_(),
         tid_(tid.toAscii()), uid_(uid.toAscii()),
-        transmitState_(0), response_(NULL), responder_(NULL)
+        transmitState_(0), transmitFailure_(false),
+        response_(NULL), responder_(NULL)
    {
       header_.magic = magic_number;
       header_.command = command;
@@ -107,7 +109,8 @@ public:
                    const CommandCode command = cc_transmit)
       : data_(data),
         tid_(tid.toAscii()), uid_(uid.toAscii()),
-        transmitState_(0), response_(NULL), responder_(NULL)
+        transmitState_(0), transmitFailure_(false),
+        response_(NULL), responder_(NULL)
    {
       header_.magic = magic_number;
       header_.command = command;
@@ -123,7 +126,8 @@ public:
                    const CommandCode command = cc_transmit)
       : data_(file.readAll()),
         tid_(file.fileName().toAscii()), uid_(uid.toAscii()),
-        transmitState_(0), response_(NULL), responder_(NULL)
+        transmitState_(0), transmitFailure_(false),
+        response_(NULL), responder_(NULL)
    {
       QFileInfo fileInfo(file);
 
@@ -140,7 +144,8 @@ public:
    SSLTransmission(const SSLTransmission &t)
       : header_(t.header_), data_(t.data_),
         tid_(t.tid_), uid_(t.uid_),
-        transmitState_(0), response_(NULL), responder_(t.responder_)
+        transmitState_(0), transmitFailure_(false),
+        response_(NULL), responder_(t.responder_)
    {
       if (t.response_)
          response_ = new SSLTransmission(*t.response_);
@@ -155,6 +160,8 @@ public:
       uid_ = t.uid_;
 
       transmitState_ = 0;
+      transmitFailure_ = false;
+
       response_ = NULL;
       responder_ = t.responder_;
 
@@ -317,6 +324,20 @@ public:
       }
    }
 
+protected:
+
+   void setFailure()
+   {
+      transmitFailure_ = true;
+   }
+
+public:
+
+   bool success() const
+   {
+      return(!transmitFailure_);
+   }
+
    bool write(QSslSocket *socket, bool ack=true)
    {
       if (transmitState_ == 0)
@@ -352,7 +373,10 @@ public:
 
          // wait until entire data block has been written
          if (!socket->waitForBytesWritten(-1)) // no time-out
+         {
+            setFailure();
             return(false);
+         }
 
          // clear data block
          data_.clear();
@@ -374,14 +398,20 @@ public:
                // check if response code has arrived
                if (socket->bytesAvailable() < 1)
                   if (!socket->waitForReadyRead(-1)) // no time-out
+                  {
+                     setFailure();
                      return(false);
+                  }
 
                // read response code from the ssl socket
                socket->read(&code, 1);
 
                // check for correct response code
                if (code != response_ok)
+               {
+                  setFailure();
                   return(false);
+               }
             }
             else if (header_.command == cc_respond ||
                      header_.command == cc_command)
@@ -392,11 +422,17 @@ public:
                // check if entire response block has arrived
                while (!response_->read(socket))
                   if (!socket->waitForReadyRead())
+                  {
+                     setFailure();
                      return(false);
+                  }
 
-               // check for correct response block
-               if (!response_->valid())
+               // check for correct transmission of response block
+               if (!response_->success())
+               {
+                  setFailure();
                   return(false);
+               }
             }
          }
 
@@ -420,7 +456,7 @@ public:
          in >> header_.magic;
          if (header_.magic != magic_number)
          {
-            setError();
+            setFailure();
             return(true);
          }
 
@@ -493,7 +529,7 @@ public:
             // wait until response code has been written
             if (!socket->waitForBytesWritten())
             {
-               setError();
+               setFailure();
                return(true);
             }
          }
@@ -518,7 +554,7 @@ public:
                // write transmission response to the ssl socket
                if (!response_->write(socket, false))
                {
-                  setError();
+                  setFailure();
                   return(true);
                }
 
@@ -546,7 +582,7 @@ public:
             if (socket->bytesAvailable() < 1)
                if (!socket->waitForReadyRead())
                {
-                  setError();
+                  setFailure();
                   return(true);
                }
 
@@ -556,7 +592,7 @@ public:
             // check for correct response code
             if (code != response_ok)
             {
-               setError();
+               setFailure();
                return(true);
             }
          }
@@ -620,6 +656,8 @@ protected:
    QByteArray uid_; // user id
 
    int transmitState_; // actual state of transmission
+   bool transmitFailure_; // actual failure status of transmission
+
    SSLTransmission *response_; // received transmission response
    SSLTransmissionResponder *responder_; // transmission responder
 };
