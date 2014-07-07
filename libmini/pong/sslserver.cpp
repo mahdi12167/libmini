@@ -175,7 +175,7 @@ void SSLTransmissionDatabaseServer::transmitted(SSLTransmission t)
 void SSLTransmissionDatabaseServer::responded(SSLTransmission t)
 {
    if (t.getResponse())
-      if (t.getResponse().valid())
+      if (t.getResponse()->valid())
       {
          db_->remove(t.getResponse()->getTID(), t.getResponse()->getUID());
 

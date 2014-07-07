@@ -104,14 +104,14 @@ void ServerUI::transmitted(SSLTransmission t)
 
 void ServerUI::responded(SSLTransmission t)
 {
-   counterOut_++;
-   counterOutLabel_->setText("Outgoing: "+QString::number(counterOut_));
-
    if (t.getResponse())
       t = *(t.getResponse());
 
    if (!t.valid())
       return;
+
+   counterOut_++;
+   counterOutLabel_->setText("Outgoing: "+QString::number(counterOut_));
 
    QString transmission;
 
