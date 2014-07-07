@@ -201,11 +201,16 @@ int main(int argc, char *argv[])
    {
       try
       {
-         SSLTransmissionDatabaseClient client(host, port, "", verify);
+         SSLTransmissionDatabaseClient client(host, port, user, verify);
 
          // ping server
          if (!client.ping())
+         {
+            std::cout << "cannot ping host: " << client.getHostName().toStdString() << std::endl;
             return(1);
+         }
+         else
+            std::cout << "contacted host: " << client.getHostName().toStdString() << std::endl;
       }
       catch (SSLError &e)
       {
