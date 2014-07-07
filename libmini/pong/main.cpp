@@ -141,12 +141,12 @@ int main(int argc, char *argv[])
          {
             SSLTransmissionDatabaseServer server(port, "cert.pem", "key.pem", "/usr/share/pingpong");
 
-            // start server on specified port (default 10000)
-            server.start();
-
             // server gui
             ServerUI main(&server);
             main.show();
+
+            // start server on specified port (default 10000)
+            server.start();
 
             return(app.exec());
          }

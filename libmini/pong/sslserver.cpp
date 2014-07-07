@@ -147,6 +147,8 @@ void SSLTransmissionDatabaseServer::start()
 {
    // start server on specified port (default 10000)
    server_->start(certPath_, keyPath_, port_, altPath_);
+
+   emit status_receive(size());
 }
 
 // stop listening
@@ -158,8 +160,6 @@ void SSLTransmissionDatabaseServer::stop()
 // store size
 int SSLTransmissionDatabaseServer::size()
 {
-   return(42); //!! debug
-
    return(db_->size());
 }
 
