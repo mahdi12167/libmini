@@ -168,15 +168,16 @@ void SSLTransmissionDatabaseServer::transmitted(SSLTransmission t)
 {
    db_->write(t);
 
-   emit status_send(size());
+   emit status_receive(size());
 }
 
 // receive responded signal
 void SSLTransmissionDatabaseServer::responded(SSLTransmission t)
 {
-   db_->remove(t.getTID(), t.getUID());
+   if (t.getResponse())
+   {
+      db_->remove(t.getResponse()->getTID(), t.getResponse()->getUID());
 
-   std::cout << "responded" << std::endl; //!! debug
-
-   emit status_receive(size());
+      emit status_send(size());
+   }
 }
