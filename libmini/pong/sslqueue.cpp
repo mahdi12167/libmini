@@ -131,8 +131,9 @@ void SSLTransmissionQueueClient::alive(QString hostName, quint16 port, bool ack)
 // ssl transmission success
 void SSLTransmissionQueueClient::transmitted(QString hostName, quint16 port, QString tid, QString uid)
 {
-   db_->remove(tid, uid);
    transmitting_ = false;
+
+   db_->remove(tid, uid);
 
    emit status_send(size());
 
@@ -149,8 +150,12 @@ void SSLTransmissionQueueClient::failed(QString hostName, quint16 port, QString 
 // ssl transmission response
 void SSLTransmissionQueueClient::received(SSLTransmission t)
 {
-   db_->write(t);
    transmitting_ = false;
+
+   if (!t.valid())
+      return;
+
+   db_->write(t);
 
    emit status_receive(size());
 
