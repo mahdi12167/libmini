@@ -203,6 +203,12 @@ SSLTransmissionResponseReceiver *SSLTransmissionDatabaseClient::getReceiver()
    return(receiver_);
 }
 
+// start ping
+bool SSLTransmissionDatabaseClient::ping()
+{
+   return(client_->ping(hostName_, port_, verify_));
+}
+
 // start transmission
 bool SSLTransmissionDatabaseClient::transmit(SSLTransmission t)
 {

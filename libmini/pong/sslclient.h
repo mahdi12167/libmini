@@ -31,6 +31,9 @@ public:
    // get receiver
    SSLTransmissionResponseReceiver *getReceiver();
 
+   // start ping
+   bool ping();
+
    // start transmission
    bool transmit(SSLTransmission t);
 

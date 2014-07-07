@@ -38,6 +38,7 @@ void usage(const char *prog)
    std::cout << " --server: start transmission server" << std::endl;
    std::cout << " --up: start client with drop box gui to upload transmission to server" << std::endl;
    std::cout << " --down: start client to download transmissions from server" << std::endl;
+   std::cout << " --ping: ping server" << std::endl;
    std::cout << " --transmit: transmit files to server" << std::endl;
    std::cout << " --dump: dump transmission database" << std::endl;
    std::cout << " --host=\"name\": specify host name" << std::endl;
@@ -78,6 +79,7 @@ int main(int argc, char *argv[])
    bool server=true;
    bool client_up=false;
    bool client_down=false;
+   bool ping=false;
    bool transmit=false;
    bool dump=false;
    QString host="";
@@ -110,6 +112,7 @@ int main(int argc, char *argv[])
       if (opt[i]=="server") {server=true; client_up=client_down=transmit=false;}
       else if (opt[i]=="up") {client_up=true; client_down=false; server=transmit=false;}
       else if (opt[i]=="down") {client_down=true; client_up=false; server=transmit=false;}
+      else if (opt[i]=="ping") {ping=true; server=client_up=client_down=transmit=dump=false;}
       else if (opt[i]=="transmit") {transmit=true; server=client_up=client_down=dump=false;}
       else if (opt[i]=="dump") {dump=true; transmit=false;}
       else if (opt[i].startsWith("host=")) host=get_str(opt[i]);
@@ -182,6 +185,27 @@ int main(int argc, char *argv[])
          if (client_up || gui) main.show();
 
          return(app.exec());
+      }
+      catch (SSLError &e)
+      {
+         std::cout << e.what() << std::endl;
+         return(1);
+      }
+      catch (...)
+      {
+         return(1);
+      }
+   }
+   // ping mode
+   else if (ping && arg.size()==0)
+   {
+      try
+      {
+         SSLTransmissionDatabaseClient client(host, port, "", verify);
+
+         // ping server
+         if (!client.ping())
+            return(1);
       }
       catch (SSLError &e)
       {
