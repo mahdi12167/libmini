@@ -44,8 +44,8 @@ public slots:
    // receiver of command data blocks
    void command(SSLTransmission);
 
-   // receiver of invalid data blocks
-   void invalid(SSLTransmission);
+   // receiver of transmission failures
+   void failure(SSLTransmission);
 
 signals:
 
@@ -95,8 +95,8 @@ signals:
    // signal command data block
    void command(SSLTransmission);
 
-   // signal invalid data block
-   void invalid(SSLTransmission);
+   // signal transmission failures
+   void failure(SSLTransmission);
 };
 
 // ssl transmission response receiver class
