@@ -221,6 +221,9 @@ void ClientUI::failure(QString hostName, quint16 port, QString tid, QString uid)
 
 void ClientUI::response(SSLTransmission t)
 {
+   if (!t.valid())
+      return;
+
    counter_++;
    counterLabel_->setText("Incoming: "+QString::number(counter_));
 
