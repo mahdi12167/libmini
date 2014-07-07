@@ -206,7 +206,12 @@ SSLTransmissionResponseReceiver *SSLTransmissionDatabaseClient::getReceiver()
 // start ping
 bool SSLTransmissionDatabaseClient::ping()
 {
-   return(client_->ping(hostName_, port_, verify_));
+   QString uid = getUID();
+
+   if (uid != "")
+      return(client_->ping(hostName_, port_, verify_));
+
+   return(false);
 }
 
 // start transmission
@@ -269,7 +274,12 @@ void SSLTransmissionDatabaseClient::transmitPairCode(QString code)
 // start non-blocking ping
 void SSLTransmissionDatabaseClient::pingNonBlocking()
 {
-   client_->pingNonBlocking(hostName_, port_, verify_);
+   QString uid = getUID();
+
+   if (uid != "")
+      client_->pingNonBlocking(hostName_, port_, verify_);
+   else
+      emit error("failed to register with host");
 }
 
 // start non-blocking transmission
