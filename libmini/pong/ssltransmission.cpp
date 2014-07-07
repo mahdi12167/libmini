@@ -57,7 +57,7 @@ void SSLTransmissionServerConnectionFactory::transmit(SSLTransmission t)
 // receiver of command data blocks
 void SSLTransmissionServerConnectionFactory::command(SSLTransmission t)
 {
-   emit execute(t);
+   emit executed(t);
 }
 
 // receiver of respond data blocks

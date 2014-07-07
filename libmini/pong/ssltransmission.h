@@ -56,7 +56,7 @@ signals:
    void responded(SSLTransmission);
 
    // signal command
-   void execute(SSLTransmission);
+   void executed(SSLTransmission);
 
    // signal error
    void error(SSLTransmission);

@@ -81,9 +81,6 @@ protected slots:
    void transmitted(SSLTransmission t);
    void responded(SSLTransmission t);
 
-   void send();
-   void receive();
-
 signals:
 
    void status_send(int stored);

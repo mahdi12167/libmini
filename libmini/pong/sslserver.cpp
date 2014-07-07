@@ -100,14 +100,6 @@ SSLTransmissionDatabaseServer::SSLTransmissionDatabaseServer(quint16 port,
    // connect server with the connection factory responded signal
    connect(factory_, SIGNAL(responded(SSLTransmission)),
            this, SLOT(responded(SSLTransmission)));
-
-   // connect server status with the connection factory transmitted signal
-   connect(factory_, SIGNAL(transmitted()),
-           this, SLOT(receive()));
-
-   // connect server status with the connection factory responded signal
-   connect(factory_, SIGNAL(responded()),
-           this, SLOT(send()));
 }
 
 // ssl transmission database server dtor
@@ -166,6 +158,8 @@ void SSLTransmissionDatabaseServer::stop()
 // store size
 int SSLTransmissionDatabaseServer::size()
 {
+   return(42); //!! debug
+
    return(db_->size());
 }
 
@@ -173,24 +167,16 @@ int SSLTransmissionDatabaseServer::size()
 void SSLTransmissionDatabaseServer::transmitted(SSLTransmission t)
 {
    db_->write(t);
+
+   emit status_send(size());
 }
 
 // receive responded signal
 void SSLTransmissionDatabaseServer::responded(SSLTransmission t)
 {
-  db_->remove(t.getTID(), t.getUID());
+   db_->remove(t.getTID(), t.getUID());
 
-  std::cout << "responded" << std::endl; //!! debug
-}
+   std::cout << "responded" << std::endl; //!! debug
 
-// receive responded signal
-void SSLTransmissionDatabaseServer::send()
-{
-   emit status_send(size());
-}
-
-// receive transmission signal
-void SSLTransmissionDatabaseServer::receive()
-{
    emit status_receive(size());
 }
