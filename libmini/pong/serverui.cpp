@@ -110,6 +110,9 @@ void ServerUI::responded(SSLTransmission t)
    if (t.getResponse())
       t = *(t.getResponse());
 
+   if (!t.valid())
+      return;
+
    QString transmission;
 
    if (t.getSize() < 1024)

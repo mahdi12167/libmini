@@ -175,9 +175,10 @@ void SSLTransmissionDatabaseServer::transmitted(SSLTransmission t)
 void SSLTransmissionDatabaseServer::responded(SSLTransmission t)
 {
    if (t.getResponse())
-   {
-      db_->remove(t.getResponse()->getTID(), t.getResponse()->getUID());
+      if (t.getResponse().valid())
+      {
+         db_->remove(t.getResponse()->getTID(), t.getResponse()->getUID());
 
-      emit status_send(size());
-   }
+         emit status_send(size());
+      }
 }
