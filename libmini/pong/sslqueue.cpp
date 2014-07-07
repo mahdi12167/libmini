@@ -152,8 +152,6 @@ void SSLTransmissionQueueClient::received(SSLTransmission t)
    db_->write(t);
    transmitting_ = false;
 
-   std::cout << "received" << std::endl; //!! debug
-
    emit status_receive(size());
 
    if (!stopped_)
