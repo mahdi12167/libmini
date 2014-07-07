@@ -100,6 +100,10 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    QObject::connect(client, SIGNAL(failure(QString, quint16, QString, QString)),
                     this, SLOT(failure(QString, quint16, QString, QString)));
 
+   // connect response signal with gui
+   QObject::connect(client, SIGNAL(response(SSLTransmission)),
+                    this, SLOT(response(SSLTransmission)));
+
    // connect registration signal with gui
    QObject::connect(client, SIGNAL(registration()),
                     this, SLOT(registration()));
@@ -205,7 +209,7 @@ void ClientUI::dragLeaveEvent(QDragLeaveEvent *event)
 void ClientUI::success(QString hostName, quint16 port, QString tid, QString uid)
 {
    counter_++;
-   counterLabel_ = new QLabel(uploadMode_?"Outgoing: none":"Incoming: none"+QString::number(counter_));
+   counterLabel_->setText("Outgoing: "+QString::number(counter_));
 
    errorLabel_->setText("ok");
 }
@@ -213,6 +217,14 @@ void ClientUI::success(QString hostName, quint16 port, QString tid, QString uid)
 void ClientUI::failure(QString hostName, quint16 port, QString tid, QString uid)
 {
    errorLabel_->setText("cannot connect to host");
+}
+
+void ClientUI::response(SSLTransmission t)
+{
+   counter_++;
+   counterLabel_->setText("Incoming: "+QString::number(counter_));
+
+   errorLabel_->setText("ok");
 }
 
 void ClientUI::registration()
