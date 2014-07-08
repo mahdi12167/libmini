@@ -18,7 +18,7 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
 
    QVBoxLayout *layout = new QVBoxLayout;
    setLayout(layout);
-   layout->addWidget(new QLabel("Ping Client"));
+   layout->addWidget(new QLabel(uploadMode_?"Ping Client":"Poing Client"));
 
    if (uploadMode_)
    {
