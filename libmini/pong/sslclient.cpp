@@ -188,8 +188,6 @@ void SSLTransmissionDatabaseClient::pairUID()
 // sync user name by sending code and receiving uid
 void SSLTransmissionDatabaseClient::pairCode(QString code)
 {
-   std::cout << "pairCode: " << code.toStdString() << " " << pairing_ << std::endl; //!!
-
    if (!pairing_)
    {
       SSLTransmission t = SSLTransmission::ssl_command("pair_code:");
