@@ -35,7 +35,7 @@ public:
    QString create_uid(const int len=1024);
 
    // create code to pair user name
-   QString create_code(QString uid);
+   QString create_code(QString uid, int len=16);
 
    // apply code to pair user name
    QString apply_code(QString code);

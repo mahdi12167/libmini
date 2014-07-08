@@ -93,9 +93,18 @@ bool SSLTransmissionDatabase::createTables()
                            "PRIMARY KEY(uid)"
                            ")");
 
+      QString create_codes("CREATE TABLE codes"
+                           "("
+                           "id INT,"
+                           "code TEXT NOT NULL,"
+                           "uid TEXT NOT NULL,"
+                           "PRIMARY KEY(code)"
+                           ")");
+
       QSqlQuery query;
       success = query.exec(create);
       success &= query.exec(create_users);
+      success &= query.exec(create_codes);
    }
 
    return(success);
@@ -120,8 +129,6 @@ int SSLTransmissionDatabase::size()
 // generate a random string
 QString SSLTransmissionDatabase::random(const int len)
 {
-   return("test"); //!! uid for testing
-
    static const char alphanum[] =
        "0123456789"
        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -147,7 +154,7 @@ QString SSLTransmissionDatabase::create_uid(const int len)
       do
       {
          uid = random(len);
-         QString insert=QString("INSERT INTO users VALUES(NULL, '%1')").arg(uid);
+         QString insert = QString("INSERT INTO users VALUES(NULL, '%1')").arg(uid);
          query.prepare(insert);
       }
       while (!query.exec());
@@ -157,17 +164,45 @@ QString SSLTransmissionDatabase::create_uid(const int len)
 }
 
 // create code to pair user name
-QString SSLTransmissionDatabase::create_code(QString uid)
+QString SSLTransmissionDatabase::create_code(QString uid, int len)
 {
-   // return code for uid
-   return("code"); //!!
+   QString code;
+
+   QSqlQuery query;
+
+   if (db_->isOpen())
+   {
+      do
+      {
+         code = random(len);
+         QString insert = QString("INSERT INTO codes VALUES(NULL, '%1', '%2')").arg(code).arg(uid);
+         query.prepare(insert);
+      }
+      while (!query.exec());
+   }
+
+   // return unique pair code for uid
+   return(code);
 }
 
 // apply code to pair user name
 QString SSLTransmissionDatabase::apply_code(QString code)
 {
-   // return uid for code
-   return("test"); //!!
+   QString uid;
+
+   if (db_->isOpen())
+   {
+      QString select = QString("SELECT uid FROM codes "
+                               "WHERE code = '%1'").arg(code);
+
+      QSqlQuery query(select);
+
+      if (query.next())
+         uid = query.value(0).toString();
+   }
+
+   // return uid for unique pair code
+   return(uid);
 }
 
 // get all unique user names
