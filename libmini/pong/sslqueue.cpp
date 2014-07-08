@@ -56,9 +56,11 @@ void SSLTransmissionQueueClient::send()
 {
    if (!uploadMode_) throw e_;
 
+   if (stopped_)
+      pingNonBlocking();
+
    stopped_ = false;
 
-   pingNonBlocking();
    timer_->start(10000); // ms
 
    if (!transmitting_)
@@ -82,9 +84,11 @@ void SSLTransmissionQueueClient::receive()
 {
    if (uploadMode_) throw e_;
 
+   if (stopped_)
+      pingNonBlocking();
+
    stopped_ = false;
 
-   pingNonBlocking();
    timer_->start(10000); // ms
 
    if (!transmitting_)
