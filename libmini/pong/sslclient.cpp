@@ -54,18 +54,18 @@ SSLTransmissionDatabaseClient::~SSLTransmissionDatabaseClient()
 }
 
 // get host name
-QString SSLTransmissionDatabaseClient::getHostName()
+QString SSLTransmissionDatabaseClient::getHostName(bool blocking)
 {
-   if (!autoselectUID())
+   if (!autoselectUID(blocking))
       return("");
 
    return(hostName_);
 }
 
 // get port
-quint16 SSLTransmissionDatabaseClient::getPort()
+quint16 SSLTransmissionDatabaseClient::getPort(bool blocking)
 {
-   if (!autoselectUID())
+   if (!autoselectUID(blocking))
       return(0);
 
    return(port_);
@@ -115,8 +115,7 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
       uid = settings.value("uid").toString();
    }
 
-   if ((hostName_ == "") ||
-       (hostName_ != "" && hostName_ == hostName && port_ == port))
+   if (hostName_ == hostName && port_ == port)
    {
       hostName_ = hostName;
       port_ = port;
@@ -125,13 +124,11 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
    else
       uid_ = "";
 
-   if (hostName_ == "" || uid_ == "")
+   if (hostName_ == "" || port_ == 0)
+      return(false);
+
+   if (uid_ == "")
    {
-      if (hostName_ == "")
-         hostName_ = "localhost";
-
-      uid_ = "";
-
       settings.setValue("hostName", hostName_);
       settings.setValue("port", port_);
       settings.setValue("uid", uid_);
@@ -251,12 +248,6 @@ void SSLTransmissionDatabaseClient::finish()
 // specify transmission host name
 void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 port)
 {
-   if (!autoselect_)
-      return;
-
-   if (hostName == "" || port == 0)
-      return;
-
    hostName_ = hostName;
    port_ = port;
 
@@ -278,12 +269,10 @@ void SSLTransmissionDatabaseClient::transmitPairCode(QString code)
 // start non-blocking ping
 void SSLTransmissionDatabaseClient::pingNonBlocking()
 {
-   QString uid = getUID();
+   QString hostName = getHostName(false);
 
-   if (uid != "")
+   if (hostName != "")
       client_->pingNonBlocking(hostName_, port_, verify_);
-   else
-      emit error("failed to register with host");
 }
 
 // start non-blocking transmission

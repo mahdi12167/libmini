@@ -20,10 +20,10 @@ public:
    virtual ~SSLTransmissionDatabaseClient();
 
    // get host name
-   QString getHostName();
+   QString getHostName(bool blocking=true);
 
    // get port
-   quint16 getPort();
+   quint16 getPort(bool blocking=true);
 
    // get user name
    QString getUID();
