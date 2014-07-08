@@ -40,6 +40,9 @@ public:
    // apply code to pair user name
    QString apply_code(QString code);
 
+   // remove code to pair user name
+   bool remove_code(QString code);
+
    // get all unique user names
    QStringList get_uids();
 

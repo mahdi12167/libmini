@@ -205,6 +205,21 @@ QString SSLTransmissionDatabase::apply_code(QString code)
    return(uid);
 }
 
+// remove code to pair user name
+bool SSLTransmissionDatabase::remove_code(QString code)
+{
+   if (db_->isOpen())
+   {
+      QString remove = QString("DELETE FROM codes "
+                               "WHERE code = '%1'").arg(code);
+
+      QSqlQuery query(remove);
+      if (query.exec()) return(true);
+   }
+
+   return(false);
+}
+
 // get all unique user names
 QStringList SSLTransmissionDatabase::get_uids()
 {

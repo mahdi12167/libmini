@@ -57,7 +57,10 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       if (uid.size() == 0)
          r->setError();
       else
+      {
+         db_->remove_code(code);
          r->append(uid.toAscii());
+      }
    }
    else if (action == "oldest_tid")
    {
