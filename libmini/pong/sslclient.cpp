@@ -188,6 +188,8 @@ void SSLTransmissionDatabaseClient::pairUID()
 // sync user name by sending code and receiving uid
 void SSLTransmissionDatabaseClient::pairCode(QString code)
 {
+   std::cout << "pairCode: " << code.toStdString() << " " << pairing_ << std::endl; //!!
+
    if (!pairing_)
    {
       SSLTransmission t = SSLTransmission::ssl_command("pair_code:");
@@ -357,45 +359,50 @@ void SSLTransmissionDatabaseClient::onResponse(SSLTransmission t)
 // ssl transmission result
 void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
 {
-   if (!t.valid())
-   {
-      emit error("action failed");
-      return;
-   }
-
    QString response = t.getData();
 
    if (response.startsWith("create_uid:"))
    {
-      uid_ = response.mid(response.indexOf(":")+1);
+      if (t.valid())
+      {
+         uid_ = response.mid(response.indexOf(":")+1);
 
-      QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
+         QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
-      settings.setValue("uid", uid_);
+         settings.setValue("uid", uid_);
+
+         emit registration();
+      }
 
       autoselecting_ = false;
-
-      emit registration();
    }
    else if (response.startsWith("pair_code:"))
    {
-      QString code = response.mid(response.indexOf(":")+1);
-      uid_ = code.mid(code.indexOf(":")+1);
+      if (t.valid())
+      {
+         QString code = response.mid(response.indexOf(":")+1);
+         uid_ = code.mid(code.indexOf(":")+1);
 
-      QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
+         QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
 
-      settings.setValue("uid", uid_);
+         settings.setValue("uid", uid_);
+
+         emit gotPairUID(uid_);
+      }
 
       pairing_ = false;
-
-      emit gotPairUID(uid_);
    }
    else if (response.startsWith("pair_uid:"))
    {
-      QString code = response.mid(response.indexOf(":")+1);
+      if (t.valid())
+      {
+         QString code = response.mid(response.indexOf(":")+1);
+
+         emit gotPairCode(code);
+      }
+      else
+         emit error("pairing failed");
 
       pairing_ = false;
-
-      emit gotPairCode(code);
    }
 }
