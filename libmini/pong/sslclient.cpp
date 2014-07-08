@@ -251,6 +251,8 @@ void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 p
    hostName_ = hostName;
    port_ = port;
 
+   std::cout << "transmitHostName: " << hostName_.toStdString() << std::endl; //!!
+
    autoselectUID(false);
 }
 
@@ -345,6 +347,8 @@ void SSLTransmissionDatabaseClient::onResponse(SSLTransmission t)
 void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
 {
    QString response = t.getData();
+
+   std::cout << "onResult: " << response.toStdString() << std::endl; //!!
 
    if (response.startsWith("create_uid:"))
    {
