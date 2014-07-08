@@ -216,6 +216,8 @@ void ClientUI::alive(QString hostName, quint16 port, bool ack)
       port_ = port;
 
       lineEdit_hostName_->setText(hostName);
+
+      errorLabel_->setText("ok");
    }
    else
       errorLabel_->setText("cannot connect to host");
@@ -231,7 +233,10 @@ void ClientUI::transmitted(QString hostName, quint16 port, QString tid, QString 
 
 void ClientUI::failed(QString hostName, quint16 port, QString tid, QString uid)
 {
-   errorLabel_->setText("transmission failure");
+   if (uploadMode_)
+      errorLabel_->setText("transmission failure");
+   else
+      errorLabel_->setText("cannot connect to host");
 }
 
 void ClientUI::received(SSLTransmission t)
