@@ -11,6 +11,10 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    // get client mode
    uploadMode_ = client_->uploadMode();
 
+   // get host name and port
+   hostName_ = client_->getHostName(false);
+   port_ = client_->getPort(false);
+
    // set main inherited style sheet
    QString css("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; margin: 3px; padding-top: 16px; }"
                "QGroupBox::title { subcontrol-origin: padding; subcontrol-position: top left; padding-left: 8px; padding-top: 3px; }");
@@ -30,7 +34,7 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
       dropBoxLayout->addWidget(dropText);
    }
 
-   QGroupBox *lineEditGroup_hostName = createEdit(uploadMode_?"Transmit to host":"Receive from host", "", &lineEdit_hostName_);
+   QGroupBox *lineEditGroup_hostName = createEdit(uploadMode_?"Transmit to host":"Receive from host", hostName_, &lineEdit_hostName_);
    connect(lineEdit_hostName_, SIGNAL(editingFinished()), this, SLOT(hostNameChanged()));
    layout->addWidget(lineEditGroup_hostName);
 
