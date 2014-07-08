@@ -5,12 +5,9 @@
 ClientUI::ClientUI(SSLTransmissionQueueClient *client,
                    QWidget *parent)
    : QWidget(parent),
-     client_(client)
+     client_(client),
+     hostName_(""), port_(0)
 {
-   // get host name and port from client
-   hostName_ = client_->getHostName();
-   port_ = client_->getPort();
-
    // get client mode
    uploadMode_ = client_->uploadMode();
 
@@ -33,7 +30,7 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
       dropBoxLayout->addWidget(dropText);
    }
 
-   QGroupBox *lineEditGroup_hostName = createEdit(uploadMode_?"Transmit to host":"Receive from host", hostName_, &lineEdit_hostName_);
+   QGroupBox *lineEditGroup_hostName = createEdit(uploadMode_?"Transmit to host":"Receive from host", "", &lineEdit_hostName_);
    connect(lineEdit_hostName_, SIGNAL(editingFinished()), this, SLOT(hostNameChanged()));
    layout->addWidget(lineEditGroup_hostName);
 
@@ -92,17 +89,21 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    QObject::connect(this, SIGNAL(transmit(QString)),
                     client, SLOT(transmitNonBlocking(QString)));
 
+   // connect alive signal with gui
+   QObject::connect(client, SIGNAL(alive(QString, quint16, bool)),
+                    this, SLOT(alive(QString, quint16, bool)));
+
    // connect success signal with gui
    QObject::connect(client, SIGNAL(success(QString, quint16, QString, QString)),
-                    this, SLOT(success(QString, quint16, QString, QString)));
+                    this, SLOT(transmitted(QString, quint16, QString, QString)));
 
    // connect failure signal with gui
    QObject::connect(client, SIGNAL(failure(QString, quint16, QString, QString)),
-                    this, SLOT(failure(QString, quint16, QString, QString)));
+                    this, SLOT(failed(QString, quint16, QString, QString)));
 
    // connect response signal with gui
    QObject::connect(client, SIGNAL(response(SSLTransmission)),
-                    this, SLOT(response(SSLTransmission)));
+                    this, SLOT(received(SSLTransmission)));
 
    // connect registration signal with gui
    QObject::connect(client, SIGNAL(registration()),
@@ -154,6 +155,7 @@ QGroupBox *ClientUI::createEdit(QString name, QString value,
 void ClientUI::hostNameChanged()
 {
    hostName_ = lineEdit_hostName_->text();
+
    emit host(hostName_, port_);
 }
 
@@ -206,7 +208,20 @@ void ClientUI::dragLeaveEvent(QDragLeaveEvent *event)
    event->accept();
 }
 
-void ClientUI::success(QString hostName, quint16 port, QString tid, QString uid)
+void ClientUI::alive(QString hostName, quint16 port, bool ack)
+{
+   if (ack)
+   {
+      hostName_ = hostName;
+      port_ = port;
+
+      lineEdit_hostName_->setText(hostName);
+   }
+   else
+      errorLabel_->setText("cannot connect to host");
+}
+
+void ClientUI::transmitted(QString hostName, quint16 port, QString tid, QString uid)
 {
    counter_++;
    counterLabel_->setText("Outgoing: "+QString::number(counter_));
@@ -214,12 +229,12 @@ void ClientUI::success(QString hostName, quint16 port, QString tid, QString uid)
    errorLabel_->setText("ok");
 }
 
-void ClientUI::failure(QString hostName, quint16 port, QString tid, QString uid)
+void ClientUI::failed(QString hostName, quint16 port, QString tid, QString uid)
 {
-   errorLabel_->setText("cannot connect to host");
+   errorLabel_->setText("transmission failure");
 }
 
-void ClientUI::response(SSLTransmission t)
+void ClientUI::received(SSLTransmission t)
 {
    if (!t.valid())
       return;
@@ -232,19 +247,19 @@ void ClientUI::response(SSLTransmission t)
 
 void ClientUI::registration()
 {
-   errorLabel_->setText("host ok");
+   errorLabel_->setText("registered with host");
 }
 
 void ClientUI::gotPairCode(QString code)
 {
    codeLabel_->setText("Pair code: "+code);
-   errorLabel_->setText("host ok");
+   errorLabel_->setText("ready for pairing");
 }
 
 void ClientUI::gotPairUID(QString uid)
 {
-   lineEdit_pairCode_->setText("client paired");
-   errorLabel_->setText("host ok");
+   lineEdit_pairCode_->setText("");
+   errorLabel_->setText("client paired");
 }
 
 void ClientUI::error(QString e)

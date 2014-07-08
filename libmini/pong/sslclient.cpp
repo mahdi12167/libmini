@@ -56,29 +56,19 @@ SSLTransmissionDatabaseClient::~SSLTransmissionDatabaseClient()
 // get host name
 QString SSLTransmissionDatabaseClient::getHostName()
 {
-   QString hostName = hostName_;
+   if (!autoselectUID())
+      return("");
 
-   QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
-
-   if (autoselect_)
-      if (settings.contains("hostName"))
-         hostName = settings.value("hostName").toString();
-
-   return(hostName);
+   return(hostName_);
 }
 
 // get port
 quint16 SSLTransmissionDatabaseClient::getPort()
 {
-   quint16 port = port_;
+   if (!autoselectUID())
+      return(0);
 
-   QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
-
-   if (autoselect_)
-      if (settings.contains("port"))
-         port = settings.value("port").toInt();
-
-   return(port);
+   return(port_);
 }
 
 // get user name
@@ -262,6 +252,9 @@ void SSLTransmissionDatabaseClient::finish()
 void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 port)
 {
    if (!autoselect_)
+      return;
+
+   if (hostName == "" || port == 0)
       return;
 
    hostName_ = hostName;

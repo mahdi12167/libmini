@@ -19,7 +19,7 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
 
    // signal ssl transmission pong
    connect(this, SIGNAL(pong(QString, quint16, bool)),
-           this, SLOT(alive(QString, quint16, bool)));
+           this, SLOT(pong(QString, quint16, bool)));
 
    // signal ssl transmission success
    connect(this, SIGNAL(success(QString, quint16, QString, QString)),
@@ -58,6 +58,7 @@ void SSLTransmissionQueueClient::send()
 
    stopped_ = false;
 
+   pingNonBlocking();
    timer_->start(10000); // ms
 
    if (!transmitting_)
@@ -83,6 +84,7 @@ void SSLTransmissionQueueClient::receive()
 
    stopped_ = false;
 
+   pingNonBlocking();
    timer_->start(10000); // ms
 
    if (!transmitting_)
@@ -117,15 +119,15 @@ int SSLTransmissionQueueClient::size()
 }
 
 // ssl transmission pong
-void SSLTransmissionQueueClient::alive(QString hostName, quint16 port, bool ack)
+void SSLTransmissionQueueClient::pong(QString hostName, quint16 port, bool ack)
 {
    if (ack)
       if (uploadMode_)
          send();
       else
          receive();
-   else
-      emit error("cannot ping host");
+
+   emit alive(hostName, port, ack);
 }
 
 // ssl transmission success

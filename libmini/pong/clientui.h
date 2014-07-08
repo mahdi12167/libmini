@@ -34,13 +34,12 @@ protected:
    void dragLeaveEvent(QDragLeaveEvent *event);
 
    SSLTransmissionQueueClient *client_;
+   bool uploadMode_;
 
    QString hostName_;
-   QLineEdit *lineEdit_hostName_;
-
    quint16 port_;
 
-   bool uploadMode_;
+   QLineEdit *lineEdit_hostName_;
 
    QLabel *codeLabel_;
    QLineEdit *lineEdit_pairCode_;
@@ -58,9 +57,10 @@ public:
 
 public slots:
 
-   void success(QString hostName, quint16 port, QString tid, QString uid);
-   void failure(QString hostName, quint16 port, QString tid, QString uid);
-   void response(SSLTransmission t);
+   void alive(QString hostName, quint16 port, bool ack);
+   void transmitted(QString hostName, quint16 port, QString tid, QString uid);
+   void failed(QString hostName, quint16 port, QString tid, QString uid);
+   void received(SSLTransmission t);
 
    void registration();
    void gotPairCode(QString code);
