@@ -285,8 +285,6 @@ void SSLTransmissionDatabaseClient::transmitNonBlocking(SSLTransmission t)
       t.setUID(uid);
       client_->transmitNonBlocking(hostName_, port_, t, verify_);
    }
-   else
-      emit error("failed to register with host");
 }
 
 // start non-blocking file transmission
