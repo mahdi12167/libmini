@@ -100,6 +100,9 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
    if (autoselecting_)
       return(false);
 
+   if (port_ == 0)
+      port_ = SSLTransmission::default_port;
+
    QString hostName = hostName_;
    quint16 port = port_;
    QString uid = uid_;
@@ -113,6 +116,9 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
       hostName = settings.value("hostName").toString();
       port = settings.value("port").toInt();
       uid = settings.value("uid").toString();
+
+      if (port == 0)
+         port = SSLTransmission::default_port;
    }
 
    if (hostName_ == hostName && port_ == port)
@@ -124,7 +130,7 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
    else
       uid_ = "";
 
-   if (hostName_ == "" || port_ == 0)
+   if (hostName_ == "")
       return(false);
 
    if (uid_ == "")
@@ -204,10 +210,10 @@ SSLTransmissionResponseReceiver *SSLTransmissionDatabaseClient::getReceiver()
 // start ping
 bool SSLTransmissionDatabaseClient::ping()
 {
-   QString uid = getUID();
+   QString hostName = getHostName();
 
-   if (uid != "")
-      return(client_->ping(hostName_, port_, verify_));
+   if (hostName != "")
+      return(client_->ping(hostName, port_, verify_));
 
    return(false);
 }
@@ -251,8 +257,6 @@ void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 p
    hostName_ = hostName;
    port_ = port;
 
-   std::cout << "transmitHostName: " << hostName_.toStdString() << std::endl; //!!
-
    autoselectUID(false);
 }
 
@@ -274,7 +278,7 @@ void SSLTransmissionDatabaseClient::pingNonBlocking()
    QString hostName = getHostName(false);
 
    if (hostName != "")
-      client_->pingNonBlocking(hostName_, port_, verify_);
+      client_->pingNonBlocking(hostName, port_, verify_);
 }
 
 // start non-blocking transmission
@@ -347,8 +351,6 @@ void SSLTransmissionDatabaseClient::onResponse(SSLTransmission t)
 void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
 {
    QString response = t.getData();
-
-   std::cout << "onResult: " << response.toStdString() << std::endl; //!!
 
    if (response.startsWith("create_uid:"))
    {

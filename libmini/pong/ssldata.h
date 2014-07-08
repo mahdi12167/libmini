@@ -33,6 +33,9 @@ class SSLTransmission
 {
 public:
 
+   // default ssl transmission port
+   static const quint16 default_port = 10000;
+
    // ssl transmission header structure
    struct SSLTransmissionHeader
    {

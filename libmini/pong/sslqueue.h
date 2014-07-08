@@ -14,7 +14,7 @@ class SSLTransmissionQueueClient: public SSLTransmissionDatabaseClient
 
 public:
 
-   SSLTransmissionQueueClient(QString hostName, quint16 port=10000,
+   SSLTransmissionQueueClient(QString hostName, quint16 port = SSLTransmission::default_port,
                               QString uid="", bool verify=true, bool compress=false,
                               bool uploadMode=true,
                               int maxThreads=10,
@@ -60,7 +60,8 @@ protected:
    bool transmitting_;
    bool stopped_;
 
-   QTimer *timer_;
+   QTimer *ping_timer_;
+   static const int ping_interval = 10000; // ms
 
    SSLError e_;
 

@@ -148,7 +148,7 @@ SSLTransmissionServerConnectionFactory *SSLTransmissionDatabaseServer::getFactor
 // start listening
 void SSLTransmissionDatabaseServer::start()
 {
-   // start server on specified port (default 10000)
+   // start server on specified port
    server_->start(certPath_, keyPath_, port_, altPath_);
 
    emit status_receive(size());

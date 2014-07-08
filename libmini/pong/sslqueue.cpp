@@ -33,16 +33,16 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
    connect(this, SIGNAL(response(SSLTransmission)),
            this, SLOT(received(SSLTransmission)));
 
-   // establish timer
-   timer_ = new QTimer(this);
-   connect(timer_, SIGNAL(timeout()), this, SLOT(pingNonBlocking()));
+   // establish ping timer
+   ping_timer_ = new QTimer(this);
+   connect(ping_timer_, SIGNAL(timeout()), this, SLOT(pingNonBlocking()));
 }
 
 // ssl transmission queue client dtor
 SSLTransmissionQueueClient::~SSLTransmissionQueueClient()
 {
    delete db_;
-   delete timer_;
+   delete ping_timer_;
 }
 
 // client mode (upload/download)
@@ -61,7 +61,7 @@ void SSLTransmissionQueueClient::send()
 
    stopped_ = false;
 
-   timer_->start(10000); // ms
+   ping_timer_->start(ping_interval);
 
    if (!transmitting_)
    {
@@ -89,7 +89,7 @@ void SSLTransmissionQueueClient::receive()
 
    stopped_ = false;
 
-   timer_->start(10000); // ms
+   ping_timer_->start(ping_interval);
 
    if (!transmitting_)
    {
@@ -107,7 +107,7 @@ void SSLTransmissionQueueClient::stop()
 {
    stopped_ = true;
 
-   timer_->stop();
+   ping_timer_->stop();
 }
 
 // is the queue empty?

@@ -35,7 +35,7 @@ class SSLTransmissionDatabaseServer: public QObject
 
 public:
 
-   SSLTransmissionDatabaseServer(quint16 port = 10000,
+   SSLTransmissionDatabaseServer(quint16 port = SSLTransmission::default_port,
                                  QString certPath = "cert.pem", QString keyPath = "key.pem",
                                  QString altPath = "/usr/share/pong",
                                  QObject *parent = NULL);

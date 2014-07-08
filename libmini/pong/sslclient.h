@@ -12,7 +12,7 @@ class SSLTransmissionDatabaseClient: public QObject
 
 public:
 
-   SSLTransmissionDatabaseClient(QString hostName, quint16 port=10000,
+   SSLTransmissionDatabaseClient(QString hostName, quint16 port = SSLTransmission::default_port,
                                  QString uid="", bool verify=true, bool compress=false,
                                  int maxThreads=10,
                                  QObject *parent = NULL);
