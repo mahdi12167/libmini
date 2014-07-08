@@ -253,18 +253,27 @@ void ClientUI::received(SSLTransmission t)
 void ClientUI::registration()
 {
    errorLabel_->setText("registered with host");
+
+   if (uploadMode_)
+      client_->send();
+   else
+      client_->receive();
 }
 
 void ClientUI::gotPairCode(QString code)
 {
    codeLabel_->setText("Pair code: "+code);
    errorLabel_->setText("ready for pairing");
+
+   client_->receive();
 }
 
 void ClientUI::gotPairUID(QString uid)
 {
    lineEdit_pairCode_->setText("");
    errorLabel_->setText("client paired");
+
+   client_->send();
 }
 
 void ClientUI::error(QString e)
