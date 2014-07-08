@@ -29,7 +29,7 @@ public:
    QString getUID();
 
    // get short user name
-   QString getShortUID(int len=8);
+   QString getShortUID(int len=50);
 
    // get receiver
    SSLTransmissionResponseReceiver *getReceiver();
