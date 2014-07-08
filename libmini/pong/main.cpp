@@ -210,13 +210,18 @@ int main(int argc, char *argv[])
          if (!client.ping())
          {
             if (!quiet)
-               std::cout << "cannot ping host: " << client.getHostName().toStdString() << std::endl;
+               std::cout << "cannot ping host \"" << client.getHostName().toStdString() << "\"" << std::endl;
 
             return(1);
          }
          else
             if (!quiet)
-               std::cout << "contacted host: " << client.getHostName().toStdString() << std::endl;
+            {
+               std::cout << "connection established: " << std::endl;
+               std::cout << " host: " << client.getHostName().toStdString() << std::endl;
+               std::cout << " port: " << client.getPort() << std::endl;
+               std::cout << " uid: " << client.getShortUID().toStdString() << std::endl;
+            }
       }
       catch (SSLError &e)
       {

@@ -33,12 +33,16 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
 
    if (action == "create_uid")
    {
+      std::cout << "create uid" << std::endl; //!!
+
       QString uid = db_->create_uid();
 
       if (uid.size() == 0)
          r->setError();
       else
          r->append(uid.toAscii());
+
+      std::cout << "created uid" << std::endl; //!!
    }
    else if (action == "pair_uid")
    {

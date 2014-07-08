@@ -90,6 +90,12 @@ QString SSLTransmissionDatabaseClient::getUID()
    return(uid_);
 }
 
+// get short user name
+QString SSLTransmissionDatabaseClient::getShortUID(int len)
+{
+   return(getUID().mid(0,len-1));
+}
+
 // auto-select user name
 bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
 {
