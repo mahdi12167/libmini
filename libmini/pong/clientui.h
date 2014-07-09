@@ -62,7 +62,7 @@ public slots:
    void failed(QString hostName, quint16 port, QString tid, QString uid);
    void received(SSLTransmission t);
 
-   void registration();
+   void registration(QString uid);
    void gotPairCode(QString code);
    void gotPairUID(QString uid);
    void error(QString e);

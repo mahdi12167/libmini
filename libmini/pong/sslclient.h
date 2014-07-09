@@ -114,7 +114,7 @@ signals:
    void failure(QString hostName, quint16 port, QString tid, QString uid);
    void response(SSLTransmission t);
 
-   void registration();
+   void registration(QString uid);
    void gotPairCode(QString code);
    void gotPairUID(QString uid);
    void error(QString e);

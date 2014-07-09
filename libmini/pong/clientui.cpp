@@ -110,8 +110,8 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
                     this, SLOT(received(SSLTransmission)));
 
    // connect registration signal with gui
-   QObject::connect(client, SIGNAL(registration()),
-                    this, SLOT(registration()));
+   QObject::connect(client, SIGNAL(registration(QString)),
+                    this, SLOT(registration(QString)));
 
    // connect pair code signal with gui
    QObject::connect(client, SIGNAL(gotPairCode(QString)),
@@ -254,7 +254,7 @@ void ClientUI::received(SSLTransmission t)
    errorLabel_->setText("ok");
 }
 
-void ClientUI::registration()
+void ClientUI::registration(QString uid)
 {
    errorLabel_->setText("registered with host");
 

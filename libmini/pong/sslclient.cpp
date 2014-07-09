@@ -116,9 +116,6 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
       hostName = settings.value("hostName").toString();
       port = settings.value("port").toInt();
       uid = settings.value("uid").toString();
-
-      if (port == 0)
-         port = SSLTransmission::default_port;
    }
 
    if (hostName_ == "" ||
@@ -150,20 +147,23 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
             if (!client_->getResponse())
                return(false);
             else
-            {
-               QString response = client_->getResponse()->getData();
-
-               if (!response.startsWith("create_uid:"))
+               if (!client_->getResponse()->valid())
                   return(false);
                else
                {
-                  uid_ = response.mid(response.indexOf(":")+1);
+                  QString response = client_->getResponse()->getData();
 
-                  settings.setValue("uid", uid_);
+                  if (!response.startsWith("create_uid:"))
+                     return(false);
+                  else
+                  {
+                     uid_ = response.mid(response.indexOf(":")+1);
 
-                  emit registration();
+                     settings.setValue("uid", uid_);
+
+                     emit registration(uid_);
+                  }
                }
-            }
       }
       else
       {
@@ -268,13 +268,13 @@ void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 p
    if (autoselecting_)
       return;
 
-   if (hostName == "")
-      return;
+   if (hostName != "")
+   {
+      hostName_ = hostName;
+      port_ = port;
 
-   hostName_ = hostName;
-   port_ = port;
-
-   autoselectUID(false);
+      autoselectUID(false);
+   }
 }
 
 // send transmission pair uid
@@ -308,6 +308,8 @@ void SSLTransmissionDatabaseClient::transmitNonBlocking(SSLTransmission t)
       t.setUID(uid);
       client_->transmitNonBlocking(hostName_, port_, t, verify_);
    }
+   else
+      emit error("failed to register with host");
 }
 
 // start non-blocking file transmission
@@ -379,7 +381,7 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
 
          settings.setValue("uid", uid_);
 
-         emit registration();
+         emit registration(uid_);
       }
 
       autoselecting_ = false;
