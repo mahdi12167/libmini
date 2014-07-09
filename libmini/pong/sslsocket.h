@@ -168,7 +168,7 @@ public:
    virtual ~SSLClient();
 
    // start transmission
-   bool transmit(QString hostName, quint16 port, bool verify=true, int timeout=3000);
+   bool transmit(QString hostName, quint16 port, bool verify=true, int timeout = connect_timeout);
 
 protected:
 
@@ -193,6 +193,8 @@ private:
    bool success_;
 
 protected:
+
+   static const int connect_timeout = 3000; // ms
 
    SSLError e_;
 };
