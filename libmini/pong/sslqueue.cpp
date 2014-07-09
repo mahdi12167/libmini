@@ -68,13 +68,17 @@ void SSLTransmissionQueueClient::send()
    if (!transmitting_)
    {
       QString uid = getUID();
-      QString tid = db_->oldest(uid);
 
-      if (tid.size()>0)
+      if (uid != "")
       {
-         SSLTransmission t = db_->read(tid, uid);
-         SSLTransmissionDatabaseClient::transmitNonBlocking(t);
-         transmitting_ = true;
+         QString tid = db_->oldest(uid);
+
+         if (tid != "")
+         {
+            SSLTransmission t = db_->read(tid, uid);
+            SSLTransmissionDatabaseClient::transmitNonBlocking(t);
+            transmitting_ = true;
+         }
       }
    }
 
@@ -96,9 +100,13 @@ void SSLTransmissionQueueClient::receive()
    if (!transmitting_)
    {
       QString uid = getUID();
-      SSLTransmission t = SSLTransmission::ssl_respond(uid);
-      SSLTransmissionDatabaseClient::transmitNonBlocking(t);
-      transmitting_ = true;
+
+      if (uid != "")
+      {
+         SSLTransmission t = SSLTransmission::ssl_respond(uid);
+         SSLTransmissionDatabaseClient::transmitNonBlocking(t);
+         transmitting_ = true;
+      }
    }
 
    emit status_receive(size());
@@ -115,13 +123,23 @@ void SSLTransmissionQueueClient::stop()
 // is the queue empty?
 bool SSLTransmissionQueueClient::empty()
 {
-   return(db_->oldest(getUID()).size()==0);
+   QString uid = getUID();
+
+   if (uid != "")
+      return(db_->oldest(uid) == "");
+
+   return(true);
 }
 
 // queue size
 int SSLTransmissionQueueClient::size()
 {
-   return(db_->list(getUID()).size());
+   QString uid = getUID();
+
+   if (uid != "")
+      return(db_->list(uid).size());
+
+   return(0);
 }
 
 // ssl transmission pong

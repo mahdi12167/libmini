@@ -237,10 +237,7 @@ void ClientUI::transmitted(QString hostName, quint16 port, QString tid, QString 
 
 void ClientUI::failed(QString hostName, quint16 port, QString tid, QString uid)
 {
-   if (uploadMode_)
-      errorLabel_->setText("transmission failure");
-   else
-      errorLabel_->setText("cannot connect to host");
+   errorLabel_->setText("cannot connect to host");
 }
 
 void ClientUI::received(SSLTransmission t)

@@ -182,35 +182,42 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
 // pair user name by sending uid and receiving code
 void SSLTransmissionDatabaseClient::pairUID()
 {
-   if (!pairing_)
+   if (pairing_)
+      return;
+
+   QString uid = getUID();
+
+   if (uid != "")
    {
-      QString uid = getUID();
+      SSLTransmission t = SSLTransmission::ssl_command("pair_uid", "", uid);
 
-      if (uid != "")
-      {
-         SSLTransmission t = SSLTransmission::ssl_command("pair_uid", "", uid);
-
-         client_->transmitNonBlocking(hostName_, port_, t, verify_);
-         pairing_ = true;
-      }
-      else
-         emit error("unable to pair client");
+      client_->transmitNonBlocking(hostName_, port_, t, verify_);
+      pairing_ = true;
    }
+   else
+      emit error("unable to pair client");
 }
 
 // sync user name by sending code and receiving uid
 void SSLTransmissionDatabaseClient::pairCode(QString code)
 {
-   if (!pairing_)
+   if (pairing_)
+      return;
+
+   if (code != "")
    {
-      if (code != "")
+      QString hostName = getHostName();
+
+      if (hostName != "")
       {
          SSLTransmission t = SSLTransmission::ssl_command("pair_code:");
          t.append(code.toAscii());
 
-         client_->transmitNonBlocking(hostName_, port_, t, verify_);
+         client_->transmitNonBlocking(hostName, port_, t, verify_);
          pairing_ = true;
       }
+      else
+         emit error("unable to pair client");
    }
 }
 
