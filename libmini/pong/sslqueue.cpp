@@ -8,13 +8,15 @@ SSLTransmissionQueueClient::SSLTransmissionQueueClient(QString hostName, quint16
                                                        bool uploadMode,
                                                        int maxThreads,
                                                        QObject *parent)
-   : SSLTransmissionDatabaseClient(hostName, port, uid, verify, compress, maxThreads, parent),
+   : SSLTransmissionDatabaseClient(hostName, port, uid, verify, compress,
+                                   "open-terrain.org", uploadMode?"Upload":"Download",
+                                   maxThreads, parent),
      uploadMode_(uploadMode),
      transmitting_(false), stopped_(true),
      e_("queue client")
 {
    // open transmission database
-   db_ = new SSLTransmissionDatabase(uploadMode_?"queue":"eueuq");
+   db_ = new SSLTransmissionDatabase(uploadMode_?"upload":"download");
    if (!db_->openDB()) throw e_;
 
    // signal ssl transmission pong

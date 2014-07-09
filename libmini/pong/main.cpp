@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
    {
       try
       {
-         SSLTransmissionDatabaseClient client(host, port, user, verify);
+         SSLTransmissionQueueClient client(host, port, user, verify);
 
          // ping server
          if (!client.ping())
@@ -238,7 +238,7 @@ int main(int argc, char *argv[])
    {
       try
       {
-         SSLTransmissionDatabaseClient client(host, port, user, verify, compress);
+         SSLTransmissionQueueClient client(host, port, user, verify, compress);
 
          // transmit files
          for (int i=0; i<arg.size(); i++)

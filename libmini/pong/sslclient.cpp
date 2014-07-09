@@ -7,12 +7,14 @@
 // ssl transmission database client ctor
 SSLTransmissionDatabaseClient::SSLTransmissionDatabaseClient(QString hostName, quint16 port,
                                                              QString uid, bool verify, bool compress,
+                                                             QString orgName, QString appName,
                                                              int maxThreads,
                                                              QObject *parent)
    : QObject(parent),
      hostName_(hostName), port_(port),
      uid_(uid), verify_(verify), compress_(compress),
      autoselect_(true), autoselecting_(false), pairing_(false),
+     orgName_(orgName), appName_("SSLTransmissionDatabaseClient"+appName),
      receiver_(NULL),
      client_(NULL)
 {
@@ -107,7 +109,7 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
    quint16 port = port_;
    QString uid = uid_;
 
-   QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
+   QSettings settings(orgName_, appName_);
 
    if (settings.contains("hostName") &&
        settings.contains("port") &&
@@ -377,7 +379,7 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
       {
          uid_ = response.mid(response.indexOf(":")+1);
 
-         QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
+         QSettings settings(orgName_, appName_);
 
          settings.setValue("uid", uid_);
 
@@ -404,7 +406,7 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
          QString code = response.mid(response.indexOf(":")+1);
          uid_ = code.mid(code.indexOf(":")+1);
 
-         QSettings settings("www.open-terrain.org", "SSLTransmissionDatabaseClient");
+         QSettings settings(orgName_, appName_);
 
          settings.setValue("uid", uid_);
 

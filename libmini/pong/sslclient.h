@@ -14,6 +14,7 @@ public:
 
    SSLTransmissionDatabaseClient(QString hostName, quint16 port = SSLTransmission::default_port,
                                  QString uid="", bool verify=true, bool compress=false,
+                                 QString orgName="open-terrain.org", QString appName="",
                                  int maxThreads=10,
                                  QObject *parent = NULL);
 
@@ -77,6 +78,9 @@ protected:
    bool autoselect_;
    bool autoselecting_;
    bool pairing_;
+
+   QString orgName_;
+   QString appName_;
 
    SSLTransmissionResponseReceiver *receiver_;
    SSLTransmissionClient *client_;
