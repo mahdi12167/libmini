@@ -166,9 +166,10 @@ void SSLServerConnection::startReading()
 }
 
 // catch socket errors
-void SSLServerConnection::error(QAbstractSocket::SocketError)
+void SSLServerConnection::error(QAbstractSocket::SocketError socketError)
 {
-   emit report(socket_->errorString());
+   if (socketError != QAbstractSocket::RemoteHostClosedError)
+      emit report(socket_->errorString());
 }
 
 // ssl client ctor
