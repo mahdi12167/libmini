@@ -368,6 +368,17 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
 
       autoselecting_ = false;
    }
+   else if (response.startsWith("pair_uid:"))
+   {
+      if (t.valid())
+      {
+         QString code = response.mid(response.indexOf(":")+1);
+
+         emit gotPairCode(code);
+      }
+
+      pairing_ = false;
+   }
    else if (response.startsWith("pair_code:"))
    {
       if (t.valid())
@@ -380,17 +391,6 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
          settings.setValue("uid", uid_);
 
          emit gotPairUID(uid_);
-      }
-
-      pairing_ = false;
-   }
-   else if (response.startsWith("pair_uid:"))
-   {
-      if (t.valid())
-      {
-         QString code = response.mid(response.indexOf(":")+1);
-
-         emit gotPairCode(code);
       }
       else
          emit error("pairing failed");
