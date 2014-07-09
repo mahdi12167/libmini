@@ -134,9 +134,9 @@ int main(int argc, char *argv[])
       if (server)
          SSLTransmissionDatabase::dump();
       else if (client_up)
-         SSLTransmissionDatabase::dump("queue");
+         SSLTransmissionDatabase::dump("upload");
       else
-         SSLTransmissionDatabase::dump("eueuq");
+         SSLTransmissionDatabase::dump("download");
    }
    // server mode
    else if (server && arg.size()==0)
