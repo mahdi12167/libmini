@@ -255,6 +255,12 @@ void SSLTransmissionDatabaseClient::finish()
 // specify transmission host name
 void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 port)
 {
+   if (autoselecting_)
+      return;
+
+   if (hostName == "")
+      return;
+
    hostName_ = hostName;
    port_ = port;
 
