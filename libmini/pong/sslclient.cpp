@@ -362,8 +362,17 @@ void SSLTransmissionDatabaseClient::onFailure(QString hostName, quint16 port, QS
       emit failure(hostName, port, tid, uid);
    else if (command == SSLTransmission::cc_command)
    {
-      autoselecting_ = false;
-      pairing_ = false;
+      if (autoselecting_)
+      {
+         QSettings settings(orgName_, appName_);
+
+         settings.setValue("hostName", "");
+
+         autoselecting_ = false;
+      }
+
+      if (pairing_)
+         pairing_ = false;
 
       emit error("cannot contact host");
    }

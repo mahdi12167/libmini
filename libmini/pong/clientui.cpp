@@ -59,7 +59,7 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
 
    if (!uploadMode_)
    {
-      codeLabel_ = new QLabel;
+      codeLabel_ = new QLabel("Pair code: none");
       infoBoxLayout->addWidget(codeLabel_);
    }
 
@@ -247,6 +247,8 @@ void ClientUI::received(SSLTransmission t)
 
    counter_++;
    counterLabel_->setText("Incoming: "+QString::number(counter_));
+
+   codeLabel_->setText("Pair code: none");
 
    errorLabel_->setText("ok");
 }
