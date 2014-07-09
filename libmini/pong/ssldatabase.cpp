@@ -209,8 +209,10 @@ bool SSLTransmissionDatabase::remove_code(QString code)
 {
    if (db_->isOpen())
    {
+      QString uid = apply_code(code);
+
       QString remove = QString("DELETE FROM codes "
-                               "WHERE code = '%1'").arg(code);
+                               "WHERE uid = '%1'").arg(uid);
 
       QSqlQuery query(remove);
       if (query.exec()) return(true);
@@ -355,8 +357,8 @@ void SSLTransmissionDatabase::write(SSLTransmission t)
 {
    if (db_->isOpen())
    {
-      QString insert=QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, %4, 0)")
-                     .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate)).arg(t.compressed());
+      QString insert = QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, %4, 0)")
+                       .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate)).arg(t.compressed());
 
       QSqlQuery query;
       query.prepare(insert);
