@@ -130,8 +130,7 @@ int SSLTransmissionDatabase::size()
 QString SSLTransmissionDatabase::random(const int len)
 {
    static const char alphanum[] =
-       "0123456789"
-       "ABCDEFGHJKLMNOPQRSTUVWXYZ"
+       "123456789"
        "abcdefghijkmnopqrstuvwxyz";
 
    QString s;
