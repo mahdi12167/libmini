@@ -60,8 +60,8 @@ public:
    // stop listening
    void stop();
 
-   // store size
-   int size();
+   // total store size
+   int total();
 
 protected:
 

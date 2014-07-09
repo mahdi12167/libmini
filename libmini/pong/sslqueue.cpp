@@ -109,7 +109,7 @@ void SSLTransmissionQueueClient::receive()
       }
    }
 
-   emit status_receive(size());
+   emit status_receive(total());
 }
 
 // stop transmission queue
@@ -140,6 +140,12 @@ int SSLTransmissionQueueClient::size()
       return(db_->list(uid).size());
 
    return(0);
+}
+
+// total store size
+int SSLTransmissionQueueClient::total()
+{
+   return(db_->size());
 }
 
 // ssl transmission pong
@@ -183,7 +189,7 @@ void SSLTransmissionQueueClient::received(SSLTransmission t)
 
    db_->write(t);
 
-   emit status_receive(size());
+   emit status_receive(total());
 
    if (!stopped_)
       receive();
@@ -197,7 +203,7 @@ void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port
    if (uploadMode_)
       emit status_send(size());
    else
-      emit status_receive(size());
+      emit status_receive(total());
 }
 
 // queue non-blocking transmission

@@ -31,6 +31,9 @@ public:
    // queue size
    int size();
 
+   // total store size
+   int total();
+
 public slots:
 
    // start transmission queue

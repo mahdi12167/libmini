@@ -151,7 +151,7 @@ void SSLTransmissionDatabaseServer::start()
    // start server on specified port
    server_->start(certPath_, keyPath_, port_, altPath_);
 
-   emit status_receive(size());
+   emit status_receive(total());
 }
 
 // stop listening
@@ -160,8 +160,8 @@ void SSLTransmissionDatabaseServer::stop()
    server_->stop();
 }
 
-// store size
-int SSLTransmissionDatabaseServer::size()
+// total store size
+int SSLTransmissionDatabaseServer::total()
 {
    return(db_->size());
 }
@@ -171,7 +171,7 @@ void SSLTransmissionDatabaseServer::transmitted(SSLTransmission t)
 {
    db_->write(t);
 
-   emit status_receive(size());
+   emit status_receive(total());
 }
 
 // receive responded signal
@@ -182,6 +182,6 @@ void SSLTransmissionDatabaseServer::responded(SSLTransmission t)
       {
          db_->remove(t.getResponse()->getTID(), t.getResponse()->getUID());
 
-         emit status_send(size());
+         emit status_send(total());
       }
 }
