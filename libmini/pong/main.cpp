@@ -130,6 +130,7 @@ int main(int argc, char *argv[])
       else if (opt[i]=="down") {client_down=true; client_up=false; server=ping=transmit=receive=pair=false;}
       else if (opt[i]=="ping") {ping=true; server=client_up=client_down=transmit=receive=dump=pair=false;}
       else if (opt[i]=="transmit") {transmit=true; server=client_up=client_down=ping=receive=dump=pair=false;}
+      else if (opt[i]=="receive") {receive=true; server=client_up=client_down=ping=transmit=dump=pair=false;}
       else if (opt[i]=="dump") {dump=true; ping=transmit=receive=pair=false;}
       else if (opt[i].startsWith("host=")) host=get_str(opt[i]);
       else if (opt[i].startsWith("port=")) port=(int)(get_opt(opt[i])+0.5);
