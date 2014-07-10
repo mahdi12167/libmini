@@ -25,6 +25,9 @@ public:
    // client mode (upload/download)
    bool uploadMode();
 
+   // receive transmissions
+   int receive();
+
    // is the queue empty?
    bool empty();
 
@@ -36,11 +39,11 @@ public:
 
 public slots:
 
-   // start transmission queue
+   // start send queue
    void send();
 
-   // start transmission queue
-   void receive();
+   // start fetch queue
+   void fetch();
 
    // start transmission queue
    void start();

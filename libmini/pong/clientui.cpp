@@ -176,7 +176,7 @@ void ClientUI::hostNameChanged()
       if (client_->size()>0)
          if (QMessageBox::information(this, "Warning",
                                       "Your are about to switch to a different host. "
-                                      "This will empty the upload queue!",
+                                      "This will clear the upload queue!",
                                       QMessageBox::Cancel | QMessageBox::Ok) == QMessageBox::Cancel)
          {
             lineEdit_hostName_->setText(hostName_);

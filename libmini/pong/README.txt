@@ -77,9 +77,18 @@ and "pong" command line tools on the command line. In the Linux
 desktop manager, search for the applications with the respective name
 and drag them into the side bar.
 
-!! Example Use Case
+!! Example Transmission Use Case
 
-tbd ...
+At server.org:
+ ./pong --no-gui &
+At home:
+  ./poing --pair --code="pairing code" --host=server.org
+While abroad:
+ ./ping --pair --code="pairing code" --host=server.org
+ ./ping --transmit --compress *.txt
+Back home:
+ ./poing --receive
+ ./poing --dump
 
 That's it!
 

@@ -53,7 +53,36 @@ bool SSLTransmissionQueueClient::uploadMode()
    return(uploadMode_);
 }
 
-// start transmission queue
+// receive transmissions
+int SSLTransmissionQueueClient::receive()
+{
+   int count = 0;
+
+   QString uid = getUID();
+
+   if (uid != "")
+   {
+      SSLTransmission t = SSLTransmission::ssl_respond(uid);
+
+      while (transmit(t))
+         if (getResponse())
+         {
+            SSLTransmission t(*getResponse());
+
+            if (t.valid())
+            {
+               db_->write(t);
+               count++;
+            }
+            else
+               break;
+         }
+   }
+
+   return(count);
+}
+
+// start send queue
 void SSLTransmissionQueueClient::send()
 {
    if (!uploadMode_) throw e_;
@@ -85,8 +114,8 @@ void SSLTransmissionQueueClient::send()
    emit status_send(size());
 }
 
-// start transmission queue
-void SSLTransmissionQueueClient::receive()
+// start fetch queue
+void SSLTransmissionQueueClient::fetch()
 {
    if (uploadMode_) throw e_;
 
@@ -118,7 +147,7 @@ void SSLTransmissionQueueClient::start()
    if (uploadMode_)
       send();
    else
-      receive();
+      fetch();
 }
 
 // stop transmission queue
@@ -218,7 +247,7 @@ void SSLTransmissionQueueClient::received(SSLTransmission t)
    emit status_receive(total());
 
    if (!stopped_)
-      receive();
+      fetch();
 }
 
 // specify transmission host name

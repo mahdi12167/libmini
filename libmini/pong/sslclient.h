@@ -38,11 +38,20 @@ public:
    // start ping
    bool ping();
 
+   // pair user name by sending uid and receiving code
+   QString pairUID(QString code="");
+
+   // sync user name by sending code and receiving uid
+   QString pairCode(QString code);
+
    // start transmission
    bool transmit(SSLTransmission t);
 
    // start file transmission
    bool transmit(QString fileName);
+
+   // get transmission response
+   SSLTransmission *getResponse() const;
 
    // finish non-blocking threads
    void finish();
@@ -53,7 +62,7 @@ public slots:
    void transmitHostName(QString hostName, quint16 port);
 
    // send transmission pair uid
-   void transmitPairUID();
+   void transmitPairUID(QString code="");
 
    // send transmission pair code
    void transmitPairCode(QString code);
@@ -88,11 +97,11 @@ protected:
    // auto-select user name
    bool autoselectUID(bool blocking=true);
 
-   // pair user name by sending uid and receiving code
-   void pairUID();
+   // pair user name by sending uid non-blocking
+   void pairUIDNonBlocking(QString code="");
 
-   // sync user name by sending code and receiving uid
-   void pairCode(QString code);
+   // sync user name by sending code non-blocking
+   void pairCodeNonBlocking(QString code);
 
 protected slots:
 

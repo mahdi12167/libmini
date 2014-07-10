@@ -37,6 +37,9 @@ public:
    // create code to pair user name
    QString create_code(QString uid, int len=16);
 
+   // add code to pair user name
+   bool add_code(QString uid, QString code);
+
    // apply code to pair user name
    QString apply_code(QString code);
 

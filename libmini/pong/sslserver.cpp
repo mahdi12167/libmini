@@ -49,6 +49,16 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       else
          r->append(code.toAscii());
    }
+   else if (action.startsWith("pair_uid:"))
+   {
+      QString code = action.mid(action.indexOf(":")+1);
+
+      if (code.size() == 0)
+         r->setError();
+      else
+         if (!db_->add_code(t->getUID(), code))
+            r->setError();
+   }
    else if (action.startsWith("pair_code:"))
    {
       QString code = action.mid(action.indexOf(":")+1);

@@ -40,10 +40,12 @@ void usage(const char *prog)
    std::cout << " --down: start client to download transmissions from server" << std::endl;
    std::cout << " --ping: ping server" << std::endl;
    std::cout << " --transmit: transmit files to server" << std::endl;
+   std::cout << " --receive: receive files from server" << std::endl;
    std::cout << " --dump: dump transmission database" << std::endl;
    std::cout << " --host=\"name\": specify host name" << std::endl;
    std::cout << " --port=n: specify tcp port n" << std::endl;
    std::cout << " --user=\"name\": specify user name" << std::endl;
+   std::cout << " --pair=\"code\": specify pairing code" << std::endl;
    std::cout << " --verify-peer: verify integrity of peer" << std::endl;
    std::cout << " --self-certified: allow self-certified certificates" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
@@ -51,13 +53,22 @@ void usage(const char *prog)
    std::cout << " --no-gui: run without user interface" << std::endl;
    std::cout << " --help: this help text" << std::endl;
    std::cout << "example server usage:" << std::endl;
-   std::cout << " ./pong --no-gui &" << std::endl;
+   std::cout << " ./pong &" << std::endl;
    std::cout << "example client upload usage:" << std::endl;
    std::cout << " ./ping --up --host=127.0.0.1" << std::endl;
    std::cout << "example client download usage:" << std::endl;
-   std::cout << " ./ping --down --host=127.0.0.1" << std::endl;
-   std::cout << "example transmission usage:" << std::endl;
-   std::cout << " ./ping --transmit --host=pong.server.org --compress *.txt" << std::endl;
+   std::cout << " ./poing --down --host=127.0.0.1" << std::endl;
+   std::cout << "example transmission use case:" << std::endl;
+   std::cout << " at server.org:" << std::endl;
+   std::cout << "  ./pong --no-gui &" << std::endl;
+   std::cout << " at home:" << std::endl;
+   std::cout << "  ./poing --pair --code=\"pairing code\" --host=server.org" << std::endl;
+   std::cout << " while abroad:" << std::endl;
+   std::cout << " ./ping --pair --code=\"pairing code\" --host=server.org" << std::endl;
+   std::cout << " ./ping --transmit --compress *.txt" << std::endl;
+   std::cout << " back home:" << std::endl;
+   std::cout << " ./poing --receive" << std::endl;
+   std::cout << " ./poing --dump" << std::endl;
    exit(1);
 }
 
@@ -82,10 +93,13 @@ int main(int argc, char *argv[])
    bool client_down=false;
    bool ping=false;
    bool transmit=false;
+   bool receive=false;
    bool dump=false;
    QString host="";
    int port=SSLTransmission::default_port;
    QString user="";
+   bool pair=false;
+   QString code="";
    bool verify=false;
    bool compress=false;
    bool quiet=false;
@@ -111,15 +125,17 @@ int main(int argc, char *argv[])
 
    // scan option list
    for (int i=0; i<opt.size(); i++)
-      if (opt[i]=="server") {server=true; client_up=client_down=transmit=false;}
-      else if (opt[i]=="up") {client_up=true; client_down=false; server=transmit=false;}
-      else if (opt[i]=="down") {client_down=true; client_up=false; server=transmit=false;}
-      else if (opt[i]=="ping") {ping=true; server=client_up=client_down=transmit=dump=false;}
-      else if (opt[i]=="transmit") {transmit=true; server=client_up=client_down=dump=false;}
-      else if (opt[i]=="dump") {dump=true; transmit=false;}
+      if (opt[i]=="server") {server=true; client_up=client_down=ping=transmit=receive=pair=false;}
+      else if (opt[i]=="up") {client_up=true; client_down=false; server=ping=transmit=receive=pair=false;}
+      else if (opt[i]=="down") {client_down=true; client_up=false; server=ping=transmit=receive=pair=false;}
+      else if (opt[i]=="ping") {ping=true; server=client_up=client_down=transmit=receive=dump=pair=false;}
+      else if (opt[i]=="transmit") {transmit=true; server=client_up=client_down=ping=receive=dump=pair=false;}
+      else if (opt[i]=="dump") {dump=true; ping=transmit=receive=pair=false;}
       else if (opt[i].startsWith("host=")) host=get_str(opt[i]);
       else if (opt[i].startsWith("port=")) port=(int)(get_opt(opt[i])+0.5);
       else if (opt[i].startsWith("user=")) user=get_str(opt[i]);
+      else if (opt[i].startsWith("pair")) {pair=true; server=ping=transmit=receive=dump=false;}
+      else if (opt[i].startsWith("code=")) code=get_str(opt[i]);
       else if (opt[i]=="verify-peer") verify=true;
       else if (opt[i]=="self-certified") verify=false;
       else if (opt[i]=="compress") compress=true;
@@ -174,35 +190,12 @@ int main(int argc, char *argv[])
          server.start(); // does not return from event loop
       }
    }
-   // client mode
-   else if ((client_up || client_down) && arg.size()==0)
-   {
-      try
-      {
-         SSLTransmissionQueueClient client(host, port, user, verify, compress, client_up);
-
-         // client gui
-         ClientUI main(&client);
-         if (client_up || gui) main.show();
-
-         return(app.exec());
-      }
-      catch (SSLError &e)
-      {
-         std::cout << e.what() << std::endl;
-         return(1);
-      }
-      catch (...)
-      {
-         return(1);
-      }
-   }
    // ping mode
    else if (ping && arg.size()==0)
    {
       try
       {
-         SSLTransmissionQueueClient client(host, port, user, verify);
+         SSLTransmissionQueueClient client(host, port, user, verify, compress, client_up);
 
          // ping server
          if (!client.ping())
@@ -231,12 +224,100 @@ int main(int argc, char *argv[])
          return(1);
       }
    }
+   // pair mode
+   else if (pair && arg.size()==0)
+   {
+      try
+      {
+         SSLTransmissionQueueClient client(host, port, user, verify, compress, client_up);
+
+         if (!client_up)
+         {
+            // pair download client
+            QString result = client.pairUID(code);
+
+            if (result == "")
+            {
+               if (!quiet)
+                  std::cout << "cannot pair client" << std::endl;
+
+               return(1);
+            }
+            else
+            {
+               if (code == "")
+                  if (!quiet)
+                     std::cout << "pairing client" << std::endl;
+            }
+         }
+         else
+         {
+            if (code == "")
+            {
+               if (!quiet)
+                  std::cout << "please specify a pair code" << std::endl;
+
+               return(1);
+            }
+            else
+            {
+               // pair upload client
+               QString result = client.pairCode(code);
+
+               if (result == "")
+               {
+                  if (!quiet)
+                     std::cout << "cannot pair client" << std::endl;
+
+                  return(1);
+               }
+               else
+               {
+                  if (!quiet)
+                     std::cout << "paired client" << std::endl;
+               }
+            }
+         }
+      }
+      catch (SSLError &e)
+      {
+         std::cout << e.what() << std::endl;
+         return(1);
+      }
+      catch (...)
+      {
+         return(1);
+      }
+   }
+   // receive mode
+   else if (receive && arg.size()==0)
+   {
+      try
+      {
+         SSLTransmissionQueueClient client(host, port, user, verify, compress, false);
+
+         // receive files
+         int count = client.receive();
+
+         if (!quiet)
+            std::cout << "received files: " << count << std::endl;
+      }
+      catch (SSLError &e)
+      {
+         std::cout << e.what() << std::endl;
+         return(1);
+      }
+      catch (...)
+      {
+         return(1);
+      }
+   }
    // transmit mode
    else if (transmit && arg.size()>0)
    {
       try
       {
-         SSLTransmissionQueueClient client(host, port, user, verify, compress);
+         SSLTransmissionQueueClient client(host, port, user, verify, compress, true);
 
          // transmit files
          for (int i=0; i<arg.size(); i++)
@@ -250,6 +331,29 @@ int main(int argc, char *argv[])
             else
                if (!quiet)
                   std::cout << "transmitted file: " << arg[i].toStdString() << std::endl;
+      }
+      catch (SSLError &e)
+      {
+         std::cout << e.what() << std::endl;
+         return(1);
+      }
+      catch (...)
+      {
+         return(1);
+      }
+   }
+   // client mode
+   else if ((client_up || client_down) && arg.size()==0)
+   {
+      try
+      {
+         SSLTransmissionQueueClient client(host, port, user, verify, compress, client_up);
+
+         // client gui
+         ClientUI main(&client);
+         main.show();
+
+         return(app.exec());
       }
       catch (SSLError &e)
       {

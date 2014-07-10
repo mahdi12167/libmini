@@ -146,10 +146,10 @@ QString SSLTransmissionDatabase::create_uid(const int len)
 {
    QString uid;
 
-   QSqlQuery query;
-
    if (db_->isOpen())
    {
+      QSqlQuery query;
+
       do
       {
          uid = random(len);
@@ -167,10 +167,10 @@ QString SSLTransmissionDatabase::create_code(QString uid, int len)
 {
    QString code;
 
-   QSqlQuery query;
-
    if (db_->isOpen())
    {
+      QSqlQuery query;
+
       do
       {
          code = random(len);
@@ -182,6 +182,20 @@ QString SSLTransmissionDatabase::create_code(QString uid, int len)
 
    // return unique pair code for uid
    return(code);
+}
+
+// add code to pair user name
+bool SSLTransmissionDatabase::add_code(QString uid, QString code)
+{
+   if (db_->isOpen())
+   {
+      QString insert = QString("INSERT INTO codes VALUES(NULL, '%1', '%2')").arg(code).arg(uid);
+
+      QSqlQuery query(insert);
+      if (query.exec()) return(true);
+   }
+
+   return(false);
 }
 
 // apply code to pair user name

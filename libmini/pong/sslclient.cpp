@@ -180,7 +180,76 @@ bool SSLTransmissionDatabaseClient::autoselectUID(bool blocking)
 }
 
 // pair user name by sending uid and receiving code
-void SSLTransmissionDatabaseClient::pairUID()
+QString SSLTransmissionDatabaseClient::pairUID(QString code)
+{
+   QString uid = getUID();
+
+   if (uid != "")
+   {
+      SSLTransmission t = SSLTransmission::ssl_command("pair_uid", "", uid);
+
+      if (code != "")
+      {
+         t.append(":");
+         t.append(code.toAscii());
+      }
+
+      if (client_->transmit(hostName_, port_, t, verify_))
+         if (client_->getResponse())
+         {
+            SSLTransmission t(*client_->getResponse());
+
+            if (t.valid())
+            {
+               QString response = t.getData();
+
+               return(response.mid(response.indexOf(":")+1));
+            }
+         }
+   }
+
+   return("");
+}
+
+// sync user name by sending code and receiving uid
+QString SSLTransmissionDatabaseClient::pairCode(QString code)
+{
+   if (code != "")
+   {
+      QString hostName = getHostName();
+
+      if (hostName != "")
+      {
+         SSLTransmission t = SSLTransmission::ssl_command("pair_code:");
+         t.append(code.toAscii());
+
+         if (client_->transmit(hostName, port_, t, verify_))
+            if (client_->getResponse())
+            {
+               SSLTransmission t(*client_->getResponse());
+
+               if (t.valid())
+               {
+                  QString response = t.getData();
+                  QString argument = response.mid(response.indexOf(":")+1);
+
+                  uid_ = argument.mid(code.indexOf(":")+1);
+
+                  QSettings settings(orgName_, appName_);
+
+                  settings.setValue("uid", uid_);
+
+                  return(uid_);
+               }
+            }
+      }
+   }
+
+   return("");
+}
+
+// pair user name by sending uid non-blocking
+void SSLTransmissionDatabaseClient::pairUIDNonBlocking(QString code)
 {
    if (pairing_)
       return;
@@ -191,6 +260,12 @@ void SSLTransmissionDatabaseClient::pairUID()
    {
       SSLTransmission t = SSLTransmission::ssl_command("pair_uid", "", uid);
 
+      if (code != "")
+      {
+         t.append(":");
+         t.append(code.toAscii());
+      }
+
       client_->transmitNonBlocking(hostName_, port_, t, verify_);
       pairing_ = true;
    }
@@ -198,8 +273,8 @@ void SSLTransmissionDatabaseClient::pairUID()
       emit error("unable to pair client");
 }
 
-// sync user name by sending code and receiving uid
-void SSLTransmissionDatabaseClient::pairCode(QString code)
+// sync user name by sending code non-blocking
+void SSLTransmissionDatabaseClient::pairCodeNonBlocking(QString code)
 {
    if (pairing_)
       return;
@@ -265,6 +340,12 @@ bool SSLTransmissionDatabaseClient::transmit(QString fileName)
    return(false);
 }
 
+// get transmission response
+SSLTransmission *SSLTransmissionDatabaseClient::getResponse() const
+{
+   return(client_->getResponse());
+}
+
 // finish non-blocking threads
 void SSLTransmissionDatabaseClient::finish()
 {
@@ -287,15 +368,15 @@ void SSLTransmissionDatabaseClient::transmitHostName(QString hostName, quint16 p
 }
 
 // send transmission pair uid
-void SSLTransmissionDatabaseClient::transmitPairUID()
+void SSLTransmissionDatabaseClient::transmitPairUID(QString code)
 {
-   pairUID();
+   pairUIDNonBlocking(code);
 }
 
 // send transmission pair code
 void SSLTransmissionDatabaseClient::transmitPairCode(QString code)
 {
-   pairCode(code);
+   pairCodeNonBlocking(code);
 }
 
 // start non-blocking ping
@@ -419,8 +500,9 @@ void SSLTransmissionDatabaseClient::onResult(SSLTransmission t)
    {
       if (t.valid())
       {
-         QString code = response.mid(response.indexOf(":")+1);
-         uid_ = code.mid(code.indexOf(":")+1);
+         QString argument = response.mid(response.indexOf(":")+1);
+
+         uid_ = argument.mid(argument.indexOf(":")+1);
 
          QSettings settings(orgName_, appName_);
 
