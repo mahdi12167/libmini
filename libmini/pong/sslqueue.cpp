@@ -224,6 +224,9 @@ void SSLTransmissionQueueClient::received(SSLTransmission t)
 // specify transmission host name
 void SSLTransmissionQueueClient::transmitHostName(QString hostName, quint16 port)
 {
+   if (uploadMode_)
+      clear();
+
    SSLTransmissionDatabaseClient::transmitHostName(hostName, port);
 
    if (uploadMode_)

@@ -163,12 +163,25 @@ void ClientUI::hostNameChanged()
 {
    if (hostName_ != "")
       if (lineEdit_hostName_->text() != hostName_)
-      {
-         QMessageBox::information(this, "Warning",
-                                  "Do you really want to switch to a different host?\n"
-                                  "In this case the client pairing will be disassociated!",
-                                  QMessageBox::Ok);
-      }
+         if (QMessageBox::information(this, "Warning",
+                                      "Do you really want to switch to a different host? "
+                                      "In this case the client pairing will be disassociated!",
+                                      QMessageBox::Cancel | QMessageBox::Ok) == QMessageBox::Cancel)
+         {
+            lineEdit_hostName_->setText(hostName_);
+            return;
+         }
+
+   if (uploadMode_)
+      if (client_->size()>0)
+         if (QMessageBox::information(this, "Warning",
+                                      "Your are about to switch to a different host. "
+                                      "This will empty the upload queue!",
+                                      QMessageBox::Cancel | QMessageBox::Ok) == QMessageBox::Cancel)
+         {
+            lineEdit_hostName_->setText(hostName_);
+            return;
+         }
 
    hostName_ = lineEdit_hostName_->text();
 
