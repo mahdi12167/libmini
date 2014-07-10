@@ -112,6 +112,15 @@ void SSLTransmissionQueueClient::receive()
    emit status_receive(total());
 }
 
+// start transmission queue
+void SSLTransmissionQueueClient::start()
+{
+   if (uploadMode_)
+      send();
+   else
+      receive();
+}
+
 // stop transmission queue
 void SSLTransmissionQueueClient::stop()
 {
@@ -148,14 +157,31 @@ int SSLTransmissionQueueClient::total()
    return(db_->size());
 }
 
+// clear transmissions
+void SSLTransmissionQueueClient::clear()
+{
+   if (uploadMode_)
+   {
+      QString uid = getUID();
+
+      if (uid != "")
+         db_->clear(uid);
+
+      emit status_send(size());
+   }
+   else
+   {
+      db_->removeDB();
+
+      emit status_receive(total());
+   }
+}
+
 // ssl transmission pong
 void SSLTransmissionQueueClient::pong(QString hostName, quint16 port, bool ack)
 {
    if (ack)
-      if (uploadMode_)
-         send();
-      else
-         receive();
+      start();
 
    emit alive(hostName, port, ack);
 }

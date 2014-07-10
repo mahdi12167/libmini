@@ -72,6 +72,12 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
       connect(pairButton, SIGNAL(pressed()), client, SLOT(transmitPairUID()));
       layout->addWidget(pairButton);
    }
+   else
+   {
+      QPushButton *clearButton = new QPushButton("Clear Uploads");
+      connect(clearButton, SIGNAL(pressed()), client, SLOT(clear()));
+      layout->addWidget(clearButton);
+   }
 
    QPushButton *quitButton = new QPushButton("Quit");
    connect(quitButton, SIGNAL(pressed()), this, SLOT(close()));
@@ -134,10 +140,7 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
                     this, SLOT(status_receive(int)));
 
    // start transmission queue
-   if (uploadMode_)
-      client->send();
-   else
-      client->receive();
+   client->start();
 }
 
 ClientUI::~ClientUI()
@@ -292,4 +295,9 @@ void ClientUI::status_send(int queued)
 void ClientUI::status_receive(int stored)
 {
    queueLabel_->setText("Stored: "+QString::number(stored));
+}
+
+void ClientUI::clear()
+{
+   client_->clear();
 }

@@ -382,6 +382,18 @@ bool SSLTransmissionDatabase::remove(QString tid, QString uid)
    return(false);
 }
 
+// remove all transmissions of a user from the db
+bool SSLTransmissionDatabase::clear(QString uid)
+{
+   QStringList all = list(uid);
+
+   for (int i=0; i<all.size(); i++)
+      if (!remove(all[i], uid))
+         return(false);
+
+   return(true);
+}
+
 // dump the db
 void SSLTransmissionDatabase::dump(QString name)
 {

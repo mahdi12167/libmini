@@ -42,8 +42,14 @@ public slots:
    // start transmission queue
    void receive();
 
+   // start transmission queue
+   void start();
+
    // stop transmission queue
    void stop();
+
+   // clear transmissions
+   void clear();
 
    // specify transmission host name
    void transmitHostName(QString hostName, quint16 port);

@@ -73,6 +73,8 @@ public slots:
    void hostNameChanged();
    void pairCodeChanged();
 
+   void clear();
+
 signals:
 
    void host(QString hostName, quint16 port);

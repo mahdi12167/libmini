@@ -70,6 +70,9 @@ public:
    // remove a transmission from the db
    bool remove(QString tid, QString uid);
 
+   // remove all transmissions of a user from the db
+   bool clear(QString uid);
+
    // dump the db
    static void dump(QString name = "db");
 
