@@ -4,15 +4,15 @@ Copyright (c) 2014 by Stefan Roettger.
 Project Pong is my work title for a client/server system which allows
 the transmission of data over an ssl encrypted channel.
 
-The main use case of the system is a central data storage server at
-home, that receives data from clients at various locations, for
-example while traveling abroad and sending live data back home from
-multiple devices.
+The main use case of the system is a central data storage at home,
+that receives data from clients at various locations, for example
+while traveling abroad and sending live data back home from multiple
+devices.
 
-The server acts as a gateway in the middle, storing uploaded data in a
-queue until the data is delivered to be stored in its final
-destination at home. On the destination side the data ends up being
-stored safely in a SQLite database.
+For that purpose, a server is requried that acts as a gateway in the
+middle, storing uploaded data in a queue until the data is delivered
+to be stored in its final destination at home. On the destination side
+the data ends up being stored safely in a SQLite database.
 
 As an example use case, think about a world-wide journey where you
 shoot thousands of pictures with multiple cameras and
@@ -72,19 +72,27 @@ If you installed Qt5, be sure to enable the BUILD_WITH_QT5 option:
 
 !! Usage
 
-The client and server applications are available as "ping", "poing"
-and "pong" command line tools on the command line. In the Linux
-desktop manager, search for the applications with the respective name
-and drag them into the side bar.
+The client and server applications are available as command line tools:
+* The "pong" application is the server acting as a gateway in the middle.
+* The "ping" application is the client that takes care of uploading data to the server.
+* The "poing" client takes care of downloading data from the server.
+
+In the Linux desktop manager, search for the above applications with
+the respective names and drag them into the side bar.
 
 !! Example Transmission Use Case
+
+Supposed, we would like to run the pong server at "server.org" and
+upload data while being abroad and download the data again, when we
+are back home. Then we can do so with the following command lines on
+the Unix terminal:
 
 At server.org:
  ./pong --no-gui &
 At home:
-  ./poing --pair --code="pair code" --host=server.org
+  ./poing --pair --code="my secret pair code" --host=server.org
 While abroad:
- ./ping --pair --code="pair code" --host=server.org
+ ./ping --pair --code="my secret pair code" --host=server.org
  ./ping --transmit --compress *.txt
 Back home:
  ./poing --receive
