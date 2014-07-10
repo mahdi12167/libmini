@@ -35,13 +35,13 @@ ClientUI::ClientUI(SSLTransmissionQueueClient *client,
    }
 
    QGroupBox *lineEditGroup_hostName = createEdit(uploadMode_?"Transmit to host":"Receive from host", hostName_, &lineEdit_hostName_);
-   connect(lineEdit_hostName_, SIGNAL(editingFinished()), this, SLOT(hostNameChanged()));
+   connect(lineEdit_hostName_, SIGNAL(returnPressed()), this, SLOT(hostNameChanged()));
    layout->addWidget(lineEditGroup_hostName);
 
    if (uploadMode_)
    {
       QGroupBox *lineEditGroup_pairCode = createEdit("Enter pair code", "", &lineEdit_pairCode_);
-      connect(lineEdit_pairCode_, SIGNAL(editingFinished()), this, SLOT(pairCodeChanged()));
+      connect(lineEdit_pairCode_, SIGNAL(returnPressed()), this, SLOT(pairCodeChanged()));
       layout->addWidget(lineEditGroup_pairCode);
    }
 
@@ -161,6 +161,15 @@ QGroupBox *ClientUI::createEdit(QString name, QString value,
 
 void ClientUI::hostNameChanged()
 {
+   if (hostName_ != "")
+      if (lineEdit_hostName_->text() != hostName_)
+      {
+         QMessageBox::information(this, "Warning",
+                                  "Do you really want to switch to a different host?\n"
+                                  "In this case the client pairing will be disassociated!",
+                                  QMessageBox::Ok);
+      }
+
    hostName_ = lineEdit_hostName_->text();
 
    emit host(hostName_, port_);
