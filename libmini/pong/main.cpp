@@ -1,6 +1,6 @@
 // (c) by Stefan Roettger, licensed under GPL 3.0
 
-#define VERSION "v0.9.9 as of 10.July.2014"
+#define VERSION "v1.0 as of 10.July.2014"
 
 #define LICENSE "licensed under GPL 3.0"
 #define COPYRIGHT "(c) by Stefan Roettger 2014"
@@ -8,8 +8,8 @@
 
 #include <QApplication>
 
-#include "sslserver.h"
-#include "sslclient.h"
+#include "sslloop.h"
+#include "sslqueue.h"
 
 #include "serverui.h"
 #include "clientui.h"
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
    bool transmit=false;
    bool dump=false;
    QString host="";
-   int port=10000;
+   int port=SSLTransmission::default_port;
    QString user="";
    bool verify=false;
    bool compress=false;
@@ -141,9 +141,9 @@ int main(int argc, char *argv[])
    // server mode
    else if (server && arg.size()==0)
    {
-      try
+      if (gui)
       {
-         if (gui)
+         try
          {
             SSLTransmissionDatabaseServer server(port, "cert.pem", "key.pem", "/usr/share/pingpong");
 
@@ -156,24 +156,22 @@ int main(int argc, char *argv[])
 
             return(app.exec());
          }
-         else
+         catch (SSLError &e)
          {
-            SSLTransmissionDatabaseServer server(port, "cert.pem", "key.pem", "/usr/share/pingpong");
-
-            // start server on specified port (default 10000)
-            server.start();
-
-            return(app.exec());
+            std::cout << e.what() << std::endl;
+            return(1);
+         }
+         catch (...)
+         {
+            return(1);
          }
       }
-      catch (SSLError &e)
+      else
       {
-         std::cout << e.what() << std::endl;
-         return(1);
-      }
-      catch (...)
-      {
-         return(1);
+         SSLTransmissionDatabaseServerLoop server(port, "cert.pem", "key.pem", "/usr/share/pingpong");
+
+         // start server on specified port (default 10000)
+         server.start(); // does not return from event loop
       }
    }
    // client mode
