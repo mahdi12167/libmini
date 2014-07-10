@@ -1,0 +1,116 @@
+# standard luna header
+
+var PI=3.14159265358979323846;
+
+# factorial number
+func fac(par n)
+   {
+   if (n>1) return(n*fac(n-1));
+   else return(1);
+   }
+
+# fibonacci number
+func fib(par n)
+   {
+   var i;
+
+   var a,b,c;
+
+   a=1;
+   b=1;
+
+   for (i=1, i<n, i++)
+      {
+      c=a+b;
+      a=b;
+      b=c;
+      }
+
+   return(b);
+   }
+
+# implicit sphere function
+func sphere(par x, par y, par z)
+   {
+   return(2*sqrt(sqr(x)+sqr(y)+sqr(z)));
+   }
+
+# implicit half sphere function
+func half_sphere(par x, par y, par z)
+   {
+   if (z<0) return(1);
+   else return(2*sqrt(sqr(x)+sqr(y)+sqr(z)));
+   }
+
+# implicit cone function
+func cone(par x, par y, par z)
+   {
+   if (z>0.25) return(1);
+   else return(sqrt(sqr(x)+sqr(y))-z/2+0.25);
+   }
+
+# implicit cylinder function
+func cylinder(par x, par y, par z)
+   {
+   if (z<-0.4 or z>0.4) return(1);
+   return(sqrt(sqr(x)+sqr(y))+0.4);
+   }
+
+# implicit checker board function
+func checker(par x, par y)
+   {
+   return(((x*7.999)%2<1) ^ ((y*7.999)%2<1));
+   }
+
+# procedural marble
+func marble(par x, par y, par z)
+   {
+   var t,n,m;
+
+   t = 4*PI*x;
+   n = 8*(pow(noise(x, y, z), 2)-0.5);
+   m = pow(sin(t+n), 3);
+
+   var v;
+
+   m = m-0.2;
+   if (m<0) m=0;
+   v = 0.2*noise2(x, y, z, 1);
+
+   return(m+v, m+v, m+0.5*v);
+   }
+
+# procedural wood
+func wood(par x, par y, par z)
+   {
+   var t,n,w;
+
+   t = 300*sqrt(x*x+y*y);
+   n = 10*(sqr(noise(x, y, 0.3*z))-0.5);
+   w = sin(t+n)+0.01*t*noise2(x, y, z, 1);
+
+   var r=0.4,g=0.2,b=0.1;
+
+   if (w>0)
+      {
+      r = r+w*0.5;
+      g = g+w*0.5;
+      b = b+w*0.4;
+      }
+
+   return(r, g, b);
+   }
+
+# find smallest factor
+func factorize(par x)
+   {
+   var f,r;
+
+   x=floor(x);
+   r=floor(sqrt(x));
+
+   for (f=2, f<=r, f++)
+      if (x%f==0) return(f);
+
+   return(1);
+   }

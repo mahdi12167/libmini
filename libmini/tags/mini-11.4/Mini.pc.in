@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libMini
+Description: Mini terrain rendering library
+Requires: @PKGCONFIG_REQUIRES@
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} -lMini -lMiniSFX -lglut
+Cflags:
