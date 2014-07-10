@@ -82,9 +82,9 @@ and drag them into the side bar.
 At server.org:
  ./pong --no-gui &
 At home:
-  ./poing --pair --code="pairing code" --host=server.org
+  ./poing --pair --code="pair code" --host=server.org
 While abroad:
- ./ping --pair --code="pairing code" --host=server.org
+ ./ping --pair --code="pair code" --host=server.org
  ./ping --transmit --compress *.txt
 Back home:
  ./poing --receive

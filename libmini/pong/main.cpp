@@ -45,7 +45,7 @@ void usage(const char *prog)
    std::cout << " --host=\"name\": specify host name" << std::endl;
    std::cout << " --port=n: specify tcp port n" << std::endl;
    std::cout << " --user=\"name\": specify user name" << std::endl;
-   std::cout << " --pair=\"code\": specify pairing code" << std::endl;
+   std::cout << " --pair=\"code\": specify pair code" << std::endl;
    std::cout << " --verify-peer: verify integrity of peer" << std::endl;
    std::cout << " --self-certified: allow self-certified certificates" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
@@ -62,9 +62,9 @@ void usage(const char *prog)
    std::cout << " at server.org:" << std::endl;
    std::cout << "  ./pong --no-gui &" << std::endl;
    std::cout << " at home:" << std::endl;
-   std::cout << "  ./poing --pair --code=\"pairing code\" --host=server.org" << std::endl;
+   std::cout << "  ./poing --pair --code=\"pair code\" --host=server.org" << std::endl;
    std::cout << " while abroad:" << std::endl;
-   std::cout << " ./ping --pair --code=\"pairing code\" --host=server.org" << std::endl;
+   std::cout << " ./ping --pair --code=\"pair code\" --host=server.org" << std::endl;
    std::cout << " ./ping --transmit --compress *.txt" << std::endl;
    std::cout << " back home:" << std::endl;
    std::cout << " ./poing --receive" << std::endl;
@@ -245,9 +245,12 @@ int main(int argc, char *argv[])
             }
             else
             {
+               if (!quiet)
+                  std::cout << "pairing client" << std::endl;
+
                if (code == "")
                   if (!quiet)
-                     std::cout << "pairing client" << std::endl;
+                     std::cout << "pair code: \"" << result.toStdString() << "\"" << std::endl;
             }
          }
          else

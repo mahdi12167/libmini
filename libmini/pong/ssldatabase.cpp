@@ -191,8 +191,8 @@ bool SSLTransmissionDatabase::add_code(QString uid, QString code)
    {
       QString insert = QString("INSERT INTO codes VALUES(NULL, '%1', '%2')").arg(code).arg(uid);
 
-      QSqlQuery query(insert);
-      if (query.exec()) return(true);
+      QSqlQuery query;
+      if (query.exec(insert)) return(true);
    }
 
    return(false);
@@ -228,8 +228,8 @@ bool SSLTransmissionDatabase::remove_code(QString code)
       QString remove = QString("DELETE FROM codes "
                                "WHERE uid = '%1'").arg(uid);
 
-      QSqlQuery query(remove);
-      if (query.exec()) return(true);
+      QSqlQuery query;
+      if (query.exec(remove)) return(true);
    }
 
    return(false);
@@ -389,8 +389,8 @@ bool SSLTransmissionDatabase::remove(QString tid, QString uid)
       QString remove = QString("DELETE FROM transmissions "
                                "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
 
-      QSqlQuery query(remove);
-      if (query.exec()) return(true);
+      QSqlQuery query;
+      if (query.exec(remove)) return(true);
    }
 
    return(false);

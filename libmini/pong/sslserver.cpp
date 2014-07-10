@@ -29,8 +29,6 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
 
    SSLTransmission *r = new SSLTransmission(*t);
 
-   r->append(":");
-
    if (action == "create_uid")
    {
       QString uid = db_->create_uid();
@@ -38,7 +36,10 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       if (uid.size() == 0)
          r->setError();
       else
+      {
+         r->append(":");
          r->append(uid.toAscii());
+      }
    }
    else if (action == "pair_uid")
    {
@@ -47,7 +48,10 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       if (code.size() == 0)
          r->setError();
       else
+      {
+         r->append(":");
          r->append(code.toAscii());
+      }
    }
    else if (action.startsWith("pair_uid:"))
    {
@@ -69,6 +73,8 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       else
       {
          db_->remove_code(code);
+
+         r->append(":");
          r->append(uid.toAscii());
       }
    }
@@ -79,7 +85,10 @@ SSLTransmission *SSLTransmissionDatabaseResponder::command(const SSLTransmission
       if (oldest.size() == 0)
          r->setError();
       else
+      {
+         r->append(":");
          r->append(oldest.toAscii());
+      }
    }
    else
       r->setError();
