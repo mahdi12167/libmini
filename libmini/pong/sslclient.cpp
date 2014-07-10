@@ -233,7 +233,7 @@ QString SSLTransmissionDatabaseClient::pairCode(QString code)
                   QString response = t.getData();
                   QString argument = response.mid(response.indexOf(":")+1);
 
-                  uid_ = argument.mid(code.indexOf(":")+1);
+                  uid_ = argument.mid(argument.indexOf(":")+1);
 
                   QSettings settings(orgName_, appName_);
 
