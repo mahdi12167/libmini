@@ -210,6 +210,8 @@ void SSLTransmissionDatabaseServer::responded(SSLTransmission t)
          else
             db_->hide(t.getResponse()->getTID(), t.getResponse()->getUID());
 
+         db_->remove_codes(t.getResponse()->getUID());
+
          emit status_send(total());
       }
 }
