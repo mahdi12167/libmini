@@ -19,6 +19,12 @@ SSLTransmissionDatabaseServerLoop::SSLTransmissionDatabaseServerLoop(quint16 por
 SSLTransmissionDatabaseServerLoop::~SSLTransmissionDatabaseServerLoop()
 {}
 
+// keep transmission responses as backup
+void SSLTransmissionDatabaseServerLoop::keepBackup()
+{
+   SSLTransmissionDatabaseServer::keepBackup();
+}
+
 // start the server loop
 void SSLTransmissionDatabaseServerLoop::start()
 {

@@ -49,6 +49,7 @@ void usage(const char *prog)
    std::cout << " --verify-peer: verify integrity of peer" << std::endl;
    std::cout << " --self-certified: allow self-certified certificates" << std::endl;
    std::cout << " --compress: compress files" << std::endl;
+   std::cout << " --backup: keep transferred files as backup on server " << std::endl;
    std::cout << " --quiet: run silently" << std::endl;
    std::cout << " --no-gui: run without user interface" << std::endl;
    std::cout << " --help: this help text" << std::endl;
@@ -102,6 +103,7 @@ int main(int argc, char *argv[])
    QString code="";
    bool verify=false;
    bool compress=false;
+   bool backup=false;
    bool quiet=false;
    bool gui=true;
 
@@ -140,6 +142,7 @@ int main(int argc, char *argv[])
       else if (opt[i]=="verify-peer") verify=true;
       else if (opt[i]=="self-certified") verify=false;
       else if (opt[i]=="compress") compress=true;
+      else if (opt[i]=="backup") backup=true;
       else if (opt[i]=="quiet") quiet=true;
       else if (opt[i]=="no-gui") gui=false;
       else if (opt[i]=="help") usage(argv[0]);
@@ -164,6 +167,9 @@ int main(int argc, char *argv[])
          {
             SSLTransmissionDatabaseServer server(port, "cert.pem", "key.pem", "/usr/share/pingpong");
 
+            if (backup)
+               server.keepBackup();
+
             // server gui
             ServerUI main(&server);
             main.show();
@@ -186,6 +192,9 @@ int main(int argc, char *argv[])
       else
       {
          SSLTransmissionDatabaseServerLoop server(port, "cert.pem", "key.pem", "/usr/share/pingpong");
+
+         if (backup)
+            server.keepBackup();
 
          // start server on specified port (default 10000)
          server.start(); // does not return from event loop

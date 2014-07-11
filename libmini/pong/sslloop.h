@@ -19,6 +19,9 @@ public:
 
    virtual ~SSLTransmissionDatabaseServerLoop();
 
+   // keep transmission responses as backup
+   void keepBackup();
+
    // start the server loop
    void start();
 };
