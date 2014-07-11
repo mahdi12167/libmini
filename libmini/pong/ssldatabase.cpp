@@ -162,7 +162,7 @@ QString SSLTransmissionDatabase::create_uid(const int len)
    return(uid);
 }
 
-// create code to pair user name
+// create a pair code to pair user name
 QString SSLTransmissionDatabase::create_code(QString uid, int len)
 {
    QString code;
@@ -223,8 +223,21 @@ bool SSLTransmissionDatabase::remove_code(QString code)
 {
    if (db_->isOpen())
    {
-      QString uid = apply_code(code);
+      QString remove = QString("DELETE FROM codes "
+                               "WHERE code = '%1'").arg(code);
 
+      QSqlQuery query;
+      if (query.exec(remove)) return(true);
+   }
+
+   return(false);
+}
+
+// remove all pair codes for user name
+bool SSLTransmissionDatabase::remove_codes(QString uid)
+{
+   if (db_->isOpen())
+   {
       QString remove = QString("DELETE FROM codes "
                                "WHERE uid = '%1'").arg(uid);
 

@@ -103,7 +103,7 @@ SSLTransmissionDatabaseServer::SSLTransmissionDatabaseServer(quint16 port,
                                                              QObject *parent)
    : QObject(parent),
      port_(port), certPath_(certPath), keyPath_(keyPath), altPath_(altPath),
-     db_(NULL), responder_(NULL), factory_(NULL), server_(NULL),
+     db_(NULL), responder_(NULL), factory_(NULL), server_(NULL), keep_(false),
      e_("database server")
 {
    // open transmission database
@@ -164,6 +164,12 @@ SSLTransmissionServerConnectionFactory *SSLTransmissionDatabaseServer::getFactor
    return(factory_);
 }
 
+// keep transmission responses as backup
+void SSLTransmissionDatabaseServer::keepBackup()
+{
+   keep_ = true;
+}
+
 // start listening
 void SSLTransmissionDatabaseServer::start()
 {
@@ -199,7 +205,10 @@ void SSLTransmissionDatabaseServer::responded(SSLTransmission t)
    if (t.getResponse())
       if (t.getResponse()->valid())
       {
-         db_->remove(t.getResponse()->getTID(), t.getResponse()->getUID());
+         if (!keep_)
+            db_->remove(t.getResponse()->getTID(), t.getResponse()->getUID());
+         else
+            db_->hide(t.getResponse()->getTID(), t.getResponse()->getUID());
 
          emit status_send(total());
       }

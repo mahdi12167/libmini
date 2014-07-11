@@ -34,7 +34,7 @@ public:
    // create a unique user name
    QString create_uid(const int len=1024);
 
-   // create code to pair user name
+   // create a pair code to pair user name
    QString create_code(QString uid, int len=16);
 
    // add code to pair user name
@@ -45,6 +45,9 @@ public:
 
    // remove code to pair user name
    bool remove_code(QString code);
+
+   // remove all pair codes for user name
+   bool remove_codes(QString uid);
 
    // get all unique user names
    QStringList get_uids();

@@ -54,6 +54,9 @@ public:
    // get factory
    SSLTransmissionServerConnectionFactory *getFactory();
 
+   // keep transmission responses as backup
+   void keepBackup();
+
    // start listening
    void start();
 
@@ -73,6 +76,8 @@ protected:
    SSLTransmissionDatabaseResponder *responder_;
    SSLTransmissionServerConnectionFactory *factory_;
    SSLServer *server_;
+
+   bool keep_;
 
    SSLError e_;
 
