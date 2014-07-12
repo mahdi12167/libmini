@@ -366,6 +366,23 @@ bool SSLTransmissionDatabase::exists(QString tid, QString uid, bool hidden)
    return(false);
 }
 
+// get the unique transmission id from the db
+int SSLTransmissionDatabase::id(QString tid, QString uid)
+{
+   if (db_->isOpen())
+   {
+      QString select = QString("SELECT id FROM transmissions "
+                               "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
+
+      QSqlQuery query(select);
+
+      if (query.next())
+         return(query.value(0).toInt());
+   }
+
+   return(-1);
+}
+
 // hide a transmission name in the db
 bool SSLTransmissionDatabase::hide(QString tid, QString uid, bool hidden)
 {
@@ -508,14 +525,15 @@ bool SSLTransmissionDatabase::dumpDir(QString name, QString uid, QString dir)
          for (int i=0; i<list.size(); i++)
          {
             SSLTransmission t = db.read(list[i], uid, true);
+            int id = db.id(list[i], uid);
 
-            if (t.valid())
-            {
-               QString path = dump.path() + QString::number(i) + "_" + t.getTID().replace(QRegExp("[^a-ZA-Z0-9_-.]"), "");
+            QString path = dump.path() +
+                           t.getTime().toString(Qt::ISODate) + "_" +
+                           t.getTID() + "_" +
+                           QString::number(id);
 
-               if (!t.save(path))
-                  return(false);
-            }
+            if (!t.save(path.replace(QRegExp("[^a-ZA-Z0-9_-.]"), "")))
+               return(false);
          }
       }
       else
