@@ -63,6 +63,9 @@ public slots:
    // queue non-blocking file transmission
    void transmitNonBlocking(QString fileName);
 
+   // get database
+   SSLTransmissionDatabase *getDatabase();
+
 protected:
 
    SSLTransmissionDatabase *db_;

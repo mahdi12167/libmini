@@ -295,3 +295,9 @@ void SSLTransmissionQueueClient::transmitNonBlocking(QString fileName)
 
    transmitNonBlocking(t);
 }
+
+// get database
+SSLTransmissionDatabase *SSLTransmissionQueueClient::getDatabase()
+{
+   return(db_);
+}

@@ -42,6 +42,7 @@ void usage(const char *prog)
    std::cout << " --transmit: transmit files to server" << std::endl;
    std::cout << " --receive: receive files from server" << std::endl;
    std::cout << " --dump: dump transmission database" << std::endl;
+   std::cout << " --dump2dir: dump transmission database to directory" << std::endl;
    std::cout << " --host=\"name\": specify host name" << std::endl;
    std::cout << " --port=n: specify tcp port n" << std::endl;
    std::cout << " --user=\"name\": specify user name" << std::endl;
@@ -96,6 +97,7 @@ int main(int argc, char *argv[])
    bool transmit=false;
    bool receive=false;
    bool dump=false;
+   bool dump2dir=false;
    QString host="";
    int port=SSLTransmission::default_port;
    QString user="";
@@ -134,6 +136,7 @@ int main(int argc, char *argv[])
       else if (opt[i]=="transmit") {transmit=true; server=client_up=client_down=ping=receive=dump=pair=false;}
       else if (opt[i]=="receive") {receive=true; server=client_up=client_down=ping=transmit=dump=pair=false;}
       else if (opt[i]=="dump") {dump=true; ping=transmit=receive=pair=false;}
+      else if (opt[i]=="dump2dir") {dump=true; dump2dir=true; ping=transmit=receive=pair=false;}
       else if (opt[i].startsWith("host=")) host=get_str(opt[i]);
       else if (opt[i].startsWith("port=")) port=(int)(get_opt(opt[i])+0.5);
       else if (opt[i].startsWith("user=")) user=get_str(opt[i]);
@@ -151,12 +154,20 @@ int main(int argc, char *argv[])
    // dump mode
    if (dump && arg.size()==0)
    {
-      if (server)
-         SSLTransmissionDatabase::dump();
-      else if (client_up)
-         SSLTransmissionDatabase::dump("upload");
+      if (!dump2dir)
+         if (server)
+            SSLTransmissionDatabase::dump();
+         else if (client_up)
+            SSLTransmissionDatabase::dump("upload");
+         else
+            SSLTransmissionDatabase::dump("download");
       else
-         SSLTransmissionDatabase::dump("download");
+         if (server)
+            SSLTransmissionDatabase::dumpDir();
+         else if (client_up)
+            SSLTransmissionDatabase::dumpDir("upload");
+         else
+            SSLTransmissionDatabase::dumpDir("download");
    }
    // server mode
    else if (server && arg.size()==0)

@@ -478,6 +478,12 @@ bool SSLTransmissionDatabase::clear(QString uid)
    return(true);
 }
 
+// get sqlite database
+QSqlDatabase *SSLTransmissionDatabase::getDB()
+{
+   return(db_);
+}
+
 // dump the db
 void SSLTransmissionDatabase::dump(QString name)
 {
@@ -508,17 +514,29 @@ void SSLTransmissionDatabase::dump(QString name)
       }
 }
 
-// dump the db to a directory
-bool SSLTransmissionDatabase::dumpDir(QString name, QString uid, QString dir)
+// dump the entire db to a directory
+bool SSLTransmissionDatabase::dumpDir(QString name)
 {
    SSLTransmissionDatabase db(name);
    if (!db.openDB()) return(false);
 
+   QStringList users = db.users();
+
+   for (int i=0; i<users.size(); i++)
+      if (!dumpDir(db, users[i], name))
+         return(false);
+
+   return(true);
+}
+
+// dump the db contents of a user to a directory
+bool SSLTransmissionDatabase::dumpDir(SSLTransmissionDatabase &db, QString uid, QString dir)
+{
    QStringList list = db.list(uid, true);
 
    if (list.size()>0)
    {
-      QDir dump(QDir::home().path()+QDir::separator()+name);
+      QDir dump(QDir::home().path()+QDir::separator()+dir);
 
       if (dump.mkpath("."))
       {

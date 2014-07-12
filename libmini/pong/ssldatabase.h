@@ -82,11 +82,17 @@ public:
    // remove all transmissions of a user from the db
    bool clear(QString uid);
 
+   // get sqlite database
+   QSqlDatabase *getDB();
+
    // dump the db
    static void dump(QString name = "db");
 
-   // dump the db to a directory
-   static bool dumpDir(QString name, QString uid, QString dir);
+   // dump the entire db to a directory
+   static bool dumpDir(QString name = "db");
+
+   // dump the db contents of a user to a directory
+   static bool dumpDir(SSLTransmissionDatabase &db, QString uid, QString dir);
 
 protected:
 
