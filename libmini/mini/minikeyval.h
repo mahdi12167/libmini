@@ -80,7 +80,7 @@ class minikeyval
       {
       ministring key;
 
-      key=".0x";
+      key="#0x";
       key.append_uint_hex(idx);
 
       return(key);
