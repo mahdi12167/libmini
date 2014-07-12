@@ -287,20 +287,34 @@ QStringList SSLTransmissionDatabase::users()
 }
 
 // list transmission names in the db
-QStringList SSLTransmissionDatabase::list(QString uid)
+QStringList SSLTransmissionDatabase::list(QString uid, bool hidden)
 {
    QStringList list;
 
    if (db_->isOpen())
    {
-      QString select = QString("SELECT tid FROM transmissions "
-                               "WHERE (uid = '%1') AND (hidden = 0) "
-                               "ORDER BY id ASC").arg(uid);
+      if (!hidden)
+      {
+         QString select = QString("SELECT tid FROM transmissions "
+                                  "WHERE (uid = '%1') AND (hidden = 0) "
+                                  "ORDER BY id ASC").arg(uid);
 
-      QSqlQuery query(select);
+         QSqlQuery query(select);
 
-      while (query.next())
-         list.append(query.value(0).toString());
+         while (query.next())
+            list.append(query.value(0).toString());
+      }
+      else
+      {
+         QString select = QString("SELECT tid FROM transmissions "
+                                  "WHERE uid = '%1' "
+                                  "ORDER BY id ASC").arg(uid);
+
+         QSqlQuery query(select);
+
+         while (query.next())
+            list.append(query.value(0).toString());
+      }
    }
 
    return(list);
@@ -327,15 +341,26 @@ QString SSLTransmissionDatabase::oldest(QString uid)
 }
 
 // check for a transmission name in the db
-bool SSLTransmissionDatabase::exists(QString tid, QString uid)
+bool SSLTransmissionDatabase::exists(QString tid, QString uid, bool hidden)
 {
    if (db_->isOpen())
    {
-      QString select = QString("SELECT id FROM transmissions "
-                               "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
+      if (!hidden)
+      {
+         QString select = QString("SELECT id FROM transmissions "
+                                  "WHERE (tid = '%1') AND (uid = '%2') AND (hidden = 0)").arg(tid).arg(uid);
 
-      QSqlQuery query(select);
-      if (query.next()) return(true);
+         QSqlQuery query(select);
+         if (query.next()) return(true);
+      }
+      else
+      {
+         QString select = QString("SELECT id FROM transmissions "
+                                  "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
+
+         QSqlQuery query(select);
+         if (query.next()) return(true);
+      }
    }
 
    return(false);
@@ -358,34 +383,49 @@ bool SSLTransmissionDatabase::hide(QString tid, QString uid, bool hidden)
 }
 
 // read a transmission from the db
-SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid)
+SSLTransmission SSLTransmissionDatabase::read(QString tid, QString uid, bool hidden)
 {
    SSLTransmission t;
    t.setError();
 
    if (db_->isOpen())
    {
-      QString select = QString("SELECT content, isotime, compressed FROM transmissions "
-                               "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
+      if (!hidden)
+      {
+         QString select = QString("SELECT content, isotime, compressed FROM transmissions "
+                                  "WHERE (tid = '%1') AND (uid = '%2') AND (hidden = 0)").arg(tid).arg(uid);
 
-      QSqlQuery query(select);
+         QSqlQuery query(select);
 
-      if (query.next())
-         t = SSLTransmission(query.value(0).toByteArray(), tid, uid,
-                             QDateTime::fromString(query.value(1).toString(), Qt::ISODate),
-                             query.value(2).toInt());
+         if (query.next())
+            t = SSLTransmission(query.value(0).toByteArray(), tid, uid,
+                                QDateTime::fromString(query.value(1).toString(), Qt::ISODate),
+                                query.value(2).toInt());
+      }
+      else
+      {
+         QString select = QString("SELECT content, isotime, compressed FROM transmissions "
+                                  "WHERE (tid = '%1') AND (uid = '%2')").arg(tid).arg(uid);
+
+         QSqlQuery query(select);
+
+         if (query.next())
+            t = SSLTransmission(query.value(0).toByteArray(), tid, uid,
+                                QDateTime::fromString(query.value(1).toString(), Qt::ISODate),
+                                query.value(2).toInt());
+      }
    }
 
    return(t);
 }
 
 // write a transmission to the db
-void SSLTransmissionDatabase::write(SSLTransmission t)
+void SSLTransmissionDatabase::write(SSLTransmission t, bool hidden)
 {
    if (db_->isOpen())
    {
-      QString insert = QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, %4, 0)")
-                       .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate)).arg(t.compressed());
+      QString insert = QString("INSERT OR REPLACE INTO transmissions VALUES(NULL, '%1', '%2', '%3', ?, %4, %5)")
+                       .arg(t.getTID()).arg(t.getUID()).arg(t.getTime().toString(Qt::ISODate)).arg(t.compressed()).arg(hidden);
 
       QSqlQuery query;
       query.prepare(insert);
@@ -445,8 +485,42 @@ void SSLTransmissionDatabase::dump(QString name)
 
          for (int j=0; j<list.size(); j++)
          {
-            SSLTransmission t = db.read(list[j], users[i]);
+            SSLTransmission t = db.read(list[j], users[i], true);
             std::cout << " " << t << std::endl;
          }
       }
+}
+
+// dump the db to a directory
+bool SSLTransmissionDatabase::dumpDir(QString name, QString uid, QString dir)
+{
+   SSLTransmissionDatabase db(name);
+   if (!db.openDB()) return(false);
+
+   QStringList list = db.list(uid, true);
+
+   if (list.size()>0)
+   {
+      QDir dump(QDir::home().path()+QDir::separator()+name);
+
+      if (dump.mkpath("."))
+      {
+         for (int i=0; i<list.size(); i++)
+         {
+            SSLTransmission t = db.read(list[i], uid, true);
+
+            if (t.valid())
+            {
+               QString path = dump.path() + QString::number(i) + "_" + t.getTID().replace(QRegExp("[^a-ZA-Z0-9_-.]"), "");
+
+               if (!t.save(path))
+                  return(false);
+            }
+         }
+      }
+      else
+         return(false);
+   }
+
+   return(true);
 }

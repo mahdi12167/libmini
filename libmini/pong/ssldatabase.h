@@ -56,22 +56,22 @@ public:
    QStringList users();
 
    // list transmission names in the db
-   QStringList list(QString uid);
+   QStringList list(QString uid, bool hidden=false);
 
    // write a transmission to the db
-   void write(SSLTransmission t);
+   void write(SSLTransmission t, bool hidden=false);
 
    // retrieve oldest transmission name in the db
    QString oldest(QString uid);
 
    // check for a transmission name in the db
-   bool exists(QString tid, QString uid);
+   bool exists(QString tid, QString uid, bool hidden=false);
 
    // hide a transmission name in the db
    bool hide(QString tid, QString uid, bool hidden=true);
 
    // read a transmission from the db
-   SSLTransmission read(QString tid, QString uid);
+   SSLTransmission read(QString tid, QString uid, bool hidden=false);
 
    // remove a transmission from the db
    bool remove(QString tid, QString uid);
@@ -81,6 +81,9 @@ public:
 
    // dump the db
    static void dump(QString name = "db");
+
+   // dump the db to a directory
+   static bool dumpDir(QString name, QString uid, QString dir);
 
 protected:
 

@@ -327,6 +327,21 @@ public:
       }
    }
 
+   bool save(QString path)
+   {
+      QFile out(path);
+
+      if (!out.open(QIODevice::WriteOnly))
+         return(false);
+
+      uncompress();
+
+      if (out.write(getData()) != getSize())
+         return(false);
+
+      return(true);
+   }
+
 protected:
 
    void setFailure()
