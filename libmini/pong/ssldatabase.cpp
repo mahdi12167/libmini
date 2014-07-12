@@ -545,12 +545,13 @@ bool SSLTransmissionDatabase::dumpDir(SSLTransmissionDatabase &db, QString uid, 
             SSLTransmission t = db.read(list[i], uid, true);
             int id = db.id(list[i], uid);
 
-            QString path = dump.path() +
-                           t.getTime().toString(Qt::ISODate) + "_" +
-                           t.getTID() + "_" +
-                           QString::number(id);
+            QString file = t.getTime().toString(Qt::ISODate).replace(QRegExp("[^\\d]"), "") + "_" +
+                           QString::number(id) + "_" +
+                           t.getTID().replace(QRegExp("[^\\w\\d\\.]"), ";");
 
-            if (!t.save(path.replace(QRegExp("[^a-ZA-Z0-9_-.]"), "")))
+            QString path = dump.path() + QDir::separator() + file;
+
+            if (!t.save(path))
                return(false);
          }
       }
