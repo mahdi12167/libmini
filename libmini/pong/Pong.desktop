@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Exec=pong
-Icon=/usr/share/pingpong/pong.png
-Terminal=false
-Name=Pong
-GenericName=Pong Transmission Server
-Comment=Receives data from the Ping transmission client
-Categories=Application;Server;
