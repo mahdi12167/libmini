@@ -765,8 +765,10 @@ minicoord::operator ministring() const
 // serialization
 ministring minicoord::to_string() const
    {
-   if ((((type==MINICOORD_LLH || type==MINICOORD_UTM) && vec.z==vec.w==0.0) ||
-        (type==MINICOORD_ECEF && vec.w==0.0)) &&
+   if ((type==MINICOORD_LLH ||
+        type==MINICOORD_UTM ||
+        type==MINICOORD_ECEF) &&
+       vec.w==0.0 &&
        crs_datum==MINICOORD_DATUM_WGS84 &&
        crs_orb==MINICOORD_ORB_EARTH)
       {
@@ -774,11 +776,13 @@ ministring minicoord::to_string() const
 
       if (type==MINICOORD_LLH)
          {
-         info.append("LL");
+         info.append("LLH");
          info.append("(");
          info.append(vec.y/3600.0);
          info.append(",");
          info.append(vec.x/3600.0);
+         info.append(",");
+         info.append(vec.z);
          info.append(")");
          }
       else if (type==MINICOORD_UTM)
@@ -789,12 +793,14 @@ ministring minicoord::to_string() const
          info.append(",");
          info.append(vec.y);
          info.append(",");
+         info.append(vec.z);
+         info.append(",");
          info.append_int(crs_zone);
          info.append(")");
          }
       else if (type==MINICOORD_ECEF)
          {
-         info.append("UTM");
+         info.append("ECEF");
          info.append("(");
          info.append(vec.x);
          info.append(",");
@@ -843,16 +849,18 @@ void minicoord::from_string(ministring &info)
       crs_orb=info.prefix(")").value_int();
       info=info.tail(")");
       }
-   else if (info.startswith("LL"))
+   else if (info.startswith("LLH"))
       {
-      info=info.tail("LL(");
+      info=info.tail("LLH(");
       double y=info.prefix(",").value()*3600.0;
       info=info.tail(",");
-      double x=info.prefix(")").value()*3600.0;
+      double x=info.prefix(",").value()*3600.0;
+      info=info.tail(",");
+      double h=info.prefix(")").value();
       info=info.tail(")");
 
       type=MINICOORD_LLH;
-      vec=miniv4d(x,y,0.0,0.0);
+      vec=miniv4d(x,y,h,0.0);
 
       crs_zone=0;
       crs_datum=MINICOORD_DATUM_WGS84;
@@ -861,15 +869,17 @@ void minicoord::from_string(ministring &info)
    else if (info.startswith("UTM"))
       {
       info=info.tail("UTM(");
+      double x=info.prefix(",").value();
+      info=info.tail(",");
       double y=info.prefix(",").value();
       info=info.tail(",");
-      double x=info.prefix(",").value();
+      double h=info.prefix(",").value();
       info=info.tail(",");
       int z=info.prefix(")").value_int();
       info=info.tail(")");
 
       type=MINICOORD_UTM;
-      vec=miniv4d(x,y,0.0,0.0);
+      vec=miniv4d(x,y,h,0.0);
 
       crs_zone=z;
       crs_datum=MINICOORD_DATUM_WGS84;

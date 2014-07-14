@@ -8,7 +8,8 @@ int main(int argc,char *argv[])
    {
    if (argc!=1)
       {
-      printf("usage: echo \"LL(x,y)\" | %s\n",argv[0]);
+      printf("usage: echo <coord> | %s\n",argv[0]);
+      printf(" with coord = LLH(lat,lon,h) / ECEF(x,y,z) / UTM(x,y,h,zone)");
       exit(1);
       }
 
@@ -19,6 +20,8 @@ int main(int argc,char *argv[])
 
    minicoord c;
    c.from_string(t);
+
+   if (!t.empty()) return(1);
 
    if (c.type==minicoord::MINICOORD_UTM)
       c.convert2llh();
