@@ -119,6 +119,16 @@ class ministring: public ministring_base
          }
       }
 
+   //! append double value
+   void append_double(double v,int p)
+      {
+      static const int len=32;
+      static char str[len];
+
+      snprintf(str,len,"%.*g",p,v);
+      append(str);
+      }
+
    //! append integer value
    void append_int(int v)
       {

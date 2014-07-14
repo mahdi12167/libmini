@@ -778,22 +778,22 @@ ministring minicoord::to_string() const
          {
          info.append("LLH");
          info.append("(");
-         info.append(vec.y/3600.0);
+         info.append_double(vec.y/3600.0,9);
          info.append(",");
-         info.append(vec.x/3600.0);
+         info.append_double(vec.x/3600.0,9);
          info.append(",");
-         info.append(vec.z);
+         info.append_double(vec.z,9);
          info.append(")");
          }
       else if (type==MINICOORD_UTM)
          {
          info.append("UTM");
          info.append("(");
-         info.append(vec.x);
+         info.append_double(vec.x,9);
          info.append(",");
-         info.append(vec.y);
+         info.append_double(vec.y,9);
          info.append(",");
-         info.append(vec.z);
+         info.append_double(vec.z,9);
          info.append(",");
          info.append_int(crs_zone);
          info.append(")");
@@ -802,11 +802,11 @@ ministring minicoord::to_string() const
          {
          info.append("ECEF");
          info.append("(");
-         info.append(vec.x);
+         info.append_double(vec.x,9);
          info.append(",");
-         info.append(vec.y);
+         info.append_double(vec.y,9);
          info.append(",");
-         info.append(vec.z);
+         info.append_double(vec.z,9);
          info.append(")");
          }
 
