@@ -89,7 +89,7 @@ if (-X svn) then
    svn up freeglut -r 1504 # svn external
 endif
 
-# other libraries to pull:
+# misc libraries to pull:
 
 # gdal 1.9.2
 if (-X svn) then
@@ -118,5 +118,14 @@ if (-X wget) then
       wget dicom.offis.de/download/dcmtk/dcmtk360/dcmtk-3.6.0.tar.gz
       tar zxf dcmtk-3.6.0.tar.gz
       mv dcmtk-3.6.0 dcmtk
+   endif
+endif
+
+# sqlite 3.8.5 amalgamation
+if (-X wget) then
+   if (! -e sqlite-amalgamation-3080500.zip) then
+      wget http://www.sqlite.org/2014/sqlite-amalgamation-3080500.zip
+      unzip sqlite-amalgamation-3080500.zip
+      mv sqlite-amalgamation-3080500 sqlite
    endif
 endif

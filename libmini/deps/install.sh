@@ -121,3 +121,10 @@ if (-e dcmtk) then
        make -j 2; $sudo make install-lib)
    endif
 endif
+
+# sqlite amalgamation
+if (-e sqlite) then
+   echo BUILDING SQLite
+   (cd sqlite;\
+    gcc -DSQLITE_ENABLE_RTREE=1 shell.c sqlite3.c -lpthread -ldl -o sqlite3)
+endif
