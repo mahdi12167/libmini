@@ -131,6 +131,9 @@ class minicoord
    //! convert 2 llh
    void convert2llh();
 
+   //! convert 2 utm
+   void convert2utm();
+
    //! linear conversion defined by 3x3 matrix and offset
    void convert(const miniv3d mtx[3],const miniv3d offset);
 
