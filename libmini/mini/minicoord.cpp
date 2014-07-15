@@ -765,25 +765,69 @@ minicoord::operator ministring() const
 // serialization
 ministring minicoord::to_string() const
    {
-   if ((type==MINICOORD_LLH ||
-        type==MINICOORD_UTM ||
-        type==MINICOORD_ECEF) &&
-       vec.w==0.0 &&
-       crs_datum==MINICOORD_DATUM_WGS84 &&
-       crs_orb==MINICOORD_ORB_EARTH)
+   if (type==MINICOORD_LINEAR && vec.w==0.0)
+      {
+      ministring info;
+
+      info.append("VEC3");
+      info.append("(");
+      info.append_double(vec.x,9);
+      info.append(",");
+      info.append_double(vec.y,9);
+      info.append(",");
+      info.append_double(vec.z,9);
+      info.append(")");
+
+      return(info);
+      }
+   else if (type==MINICOORD_LINEAR)
+      {
+      ministring info;
+
+      info.append("VEC4");
+      info.append("(");
+      info.append_double(vec.x,9);
+      info.append(",");
+      info.append_double(vec.y,9);
+      info.append(",");
+      info.append_double(vec.z,9);
+      info.append(",");
+      info.append_double(vec.w,9);
+      info.append(")");
+
+      return(info);
+      }
+   else if ((type==MINICOORD_LLH ||
+             type==MINICOORD_UTM ||
+             type==MINICOORD_ECEF) &&
+            vec.w==0.0 &&
+            crs_datum==MINICOORD_DATUM_WGS84 &&
+            crs_orb==MINICOORD_ORB_EARTH)
       {
       ministring info;
 
       if (type==MINICOORD_LLH)
          {
-         info.append("LLH");
-         info.append("(");
-         info.append_double(vec.y/3600.0,9);
-         info.append(",");
-         info.append_double(vec.x/3600.0,9);
-         info.append(",");
-         info.append_double(vec.z,9);
-         info.append(")");
+         if (vec.z==0.0)
+            {
+            info.append("LL");
+            info.append("(");
+            info.append_double(vec.y/3600.0,9);
+            info.append(",");
+            info.append_double(vec.x/3600.0,9);
+            info.append(")");
+            }
+         else
+            {
+            info.append("LLH");
+            info.append("(");
+            info.append_double(vec.y/3600.0,9);
+            info.append(",");
+            info.append_double(vec.x/3600.0,9);
+            info.append(",");
+            info.append_double(vec.z,9);
+            info.append(")");
+            }
          }
       else if (type==MINICOORD_UTM)
          {
@@ -849,14 +893,77 @@ void minicoord::from_string(ministring &info)
       crs_orb=info.prefix(")").value_int();
       info=info.tail(")");
       }
+   else if (info.startswith("VEC3"))
+      {
+      info=info.tail("VEC3(");
+      double x=info.prefix(",").value();
+      if (isNAN(x)) return;
+      info=info.tail(",");
+      double y=info.prefix(",").value();
+      if (isNAN(y)) return;
+      info=info.tail(",");
+      double z=info.prefix(")").value();
+      if (isNAN(z)) return;
+      info=info.tail(")");
+
+      type=MINICOORD_LINEAR;
+      vec=miniv4d(x,y,z,0.0);
+
+      crs_zone=0;
+      crs_datum=MINICOORD_DATUM_NONE;
+      crs_orb=MINICOORD_ORB_NONE;
+      }
+   else if (info.startswith("VEC4"))
+      {
+      info=info.tail("VEC4(");
+      double x=info.prefix(",").value();
+      if (isNAN(x)) return;
+      info=info.tail(",");
+      double y=info.prefix(",").value();
+      if (isNAN(y)) return;
+      info=info.tail(",");
+      double z=info.prefix(",").value();
+      if (isNAN(z)) return;
+      info=info.tail(",");
+      double w=info.prefix(")").value();
+      if (isNAN(w)) return;
+      info=info.tail(")");
+
+      type=MINICOORD_LINEAR;
+      vec=miniv4d(x,y,z,w);
+
+      crs_zone=0;
+      crs_datum=MINICOORD_DATUM_NONE;
+      crs_orb=MINICOORD_ORB_NONE;
+      }
+   else if (info.startswith("LL"))
+      {
+      info=info.tail("LL(");
+      double y=info.prefix(",").value()*3600.0;
+      if (isNAN(y)) return;
+      info=info.tail(",");
+      double x=info.prefix(")").value()*3600.0;
+      if (isNAN(x)) return;
+      info=info.tail(")");
+
+      type=MINICOORD_LLH;
+      vec=miniv4d(x,y,0.0,0.0);
+
+      crs_zone=0;
+      crs_datum=MINICOORD_DATUM_WGS84;
+      crs_orb=MINICOORD_ORB_EARTH;
+      }
    else if (info.startswith("LLH"))
       {
       info=info.tail("LLH(");
       double y=info.prefix(",").value()*3600.0;
+      if (isNAN(y)) return;
       info=info.tail(",");
       double x=info.prefix(",").value()*3600.0;
+      if (isNAN(x)) return;
       info=info.tail(",");
       double h=info.prefix(")").value();
+      if (isNAN(h)) return;
       info=info.tail(")");
 
       type=MINICOORD_LLH;
@@ -870,12 +977,16 @@ void minicoord::from_string(ministring &info)
       {
       info=info.tail("UTM(");
       double x=info.prefix(",").value();
+      if (isNAN(x)) return;
       info=info.tail(",");
       double y=info.prefix(",").value();
+      if (isNAN(y)) return;
       info=info.tail(",");
       double h=info.prefix(",").value();
+      if (isNAN(h)) return;
       info=info.tail(",");
       int z=info.prefix(")").value_int();
+      if (z==0) return;
       info=info.tail(")");
 
       type=MINICOORD_UTM;
@@ -889,10 +1000,13 @@ void minicoord::from_string(ministring &info)
       {
       info=info.tail("ECEF(");
       double x=info.prefix(",").value();
+      if (isNAN(x)) return;
       info=info.tail(",");
       double y=info.prefix(",").value();
+      if (isNAN(y)) return;
       info=info.tail(",");
       double z=info.prefix(")").value();
+      if (isNAN(z)) return;
       info=info.tail(")");
 
       type=MINICOORD_ECEF;
