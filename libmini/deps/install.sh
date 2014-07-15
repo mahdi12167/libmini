@@ -123,8 +123,16 @@ if (-e dcmtk) then
 endif
 
 # sqlite amalgamation
-if (-e sqlite) then
-   echo BUILDING SQLite
-   (cd sqlite;\
+if (-e sqlite-amalgamation) then
+   echo "BUILDING SQLite (amalgamation)"
+   (cd sqlite-amalgamation;\
     gcc -DSQLITE_ENABLE_RTREE=1 shell.c sqlite3.c -lpthread -ldl -o sqlite3)
+endif
+
+# sqlite autoconf
+if (-e sqlite-autoconf) then
+   echo "BUILDING SQLite (autoconf)"
+   (cd sqlite-autoconf;\
+    ./configure --prefix=$prefix --disable-shared --enable-static;\
+    make -j 2; $sudo make install)
 endif

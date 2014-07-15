@@ -126,6 +126,15 @@ if (-X wget) then
    if (! -e sqlite-amalgamation-3080500.zip) then
       wget http://www.sqlite.org/2014/sqlite-amalgamation-3080500.zip
       unzip sqlite-amalgamation-3080500.zip
-      mv sqlite-amalgamation-3080500 sqlite
+      mv sqlite-amalgamation-3080500 sqlite-amalgamation
+   endif
+endif
+
+# sqlite 3.8.5 autoconf
+if (-X wget) then
+   if (! -e sqlite-autoconf-3080500.tar.gz) then
+      wget http://www.sqlite.org/2014/sqlite-autoconf-3080500.tar.gz
+      tar zxf sqlite-autoconf-3080500.tar.gz
+      mv sqlite-autoconf-3080500 sqlite-autoconf
    endif
 endif
