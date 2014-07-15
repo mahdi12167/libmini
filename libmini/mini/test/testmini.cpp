@@ -100,6 +100,8 @@ void keyboardfunc(unsigned char key,int x,int y)
 
 int main(int argc,char *argv[])
    {
+   int failure=0;
+
    if (argc!=1)
       {
       printf("usage: %s\n",argv[0]);
@@ -133,7 +135,7 @@ int main(int argc,char *argv[])
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
    if (get_unsupported_glexts()==0) std::cout << "OPENGL SUCCESS" << std::endl;
-   else std::cout << "OPENGL FAILURE" << std::endl;
+   else {std::cout << "OPENGL FAILURE" << std::endl; failure++;}
 #endif
 
 #ifdef MINICRS_TEST
@@ -143,7 +145,7 @@ int main(int argc,char *argv[])
    std::cout << z0 << " -> " << lon/3600 << std::endl;
    int z=minicrs::LL2UTMZ(0,lon);
    if (z==z0) std::cout << "SUCCESS" << std::endl;
-   else std::cout << "FAILURE" << std::endl;
+   else {std::cout << "FAILURE" << std::endl; failure++;}
 #endif
 
 #ifdef MINICOORD_TEST
@@ -164,7 +166,7 @@ int main(int argc,char *argv[])
    if (c3.vec.getlength()<1e-5) c3.vec=miniv3d(0,0,0);
    c3+=c1;
    if (c3==c1) std::cout << "SUCCESS" << std::endl;
-   else std::cout << "FAILURE" << std::endl;
+   else {std::cout << "FAILURE" << std::endl; failure++;}
 
    std::cout << "minicoord:" << std::endl;
    minicoord u(miniv4d(500000,0,0),minicoord::MINICOORD_UTM,4,minicoord::MINICOORD_DATUM_WGS84);
@@ -174,7 +176,7 @@ int main(int argc,char *argv[])
    u.convert2(minicoord::MINICOORD_UTM);
    std::cout << " " << u << std::endl;
    if (u.vec.x==500000) std::cout << "SUCCESS" << std::endl;
-   else std::cout << "FAILURE" << std::endl;
+   else {std::cout << "FAILURE" << std::endl; failure++;}
 #endif
 
 #ifdef MINISTRING_TEST
@@ -188,7 +190,7 @@ int main(int argc,char *argv[])
    unsigned int count=0;
    for (unsigned int i=0; i<check1.getsize(); i++) if (check1[i]!=check2[i]) count++;
    if (count==1) std::cout << "SUCCESS" << std::endl;
-   else std::cout << "FAILURE" << std::endl;
+   else {std::cout << "FAILURE" << std::endl; failure++;}
 #endif
 
 #ifdef MINISTRIP_TEST
@@ -225,7 +227,7 @@ int main(int argc,char *argv[])
        bboxmin1==bboxmin2 && bboxmax1==bboxmax2)
       std::cout << "SUCCESS" << std::endl;
    else
-      std::cout << "FAILURE" << std::endl;
+      {std::cout << "FAILURE" << std::endl; failure++;}
 #endif
 
 #ifdef MINITIME_TEST
@@ -245,7 +247,7 @@ int main(int argc,char *argv[])
        utcd==0.0)
       std::cout << "SUCCESS" << std::endl;
    else
-      std::cout << "FAILURE" << std::endl;
+      {std::cout << "FAILURE" << std::endl; failure++;}
 #endif
 
 #ifdef MINIPATH_TEST
@@ -257,7 +259,7 @@ int main(int argc,char *argv[])
    double length=path.get_length();
    std::cout << "minipath: length=" << length << std::endl;
    if (dabs(length-1.15704e+07)<1E1) std::cout << "SUCCESS" << std::endl;
-   else std::cout << "FAILURE" << std::endl;
+   else {std::cout << "FAILURE" << std::endl; failure++;}
 #endif
 
 #ifdef MINIXML_TEST
@@ -266,13 +268,13 @@ int main(int argc,char *argv[])
    minixml xml;
    xml.from_strings(txt);
    if (txt.empty()) std::cout << "SUCCESS" << std::endl;
-   else std::cout << "FAILURE" << std::endl;
+   else {std::cout << "FAILURE" << std::endl; failure++;}
 #endif
 
 #ifdef GLSLMATH_TEST
    std::cout << "glslmath:" << std::endl;
    if (test_glslmath()==0) std::cout << "SUCCESS" << std::endl;
-   else std::cout << "FAILURE" << std::endl;
+   else {std::cout << "FAILURE" << std::endl; failure++;}
 #endif
 
    // end of test code
@@ -283,5 +285,5 @@ int main(int argc,char *argv[])
    glutMainLoop();
 #endif
 
-   return(0);
+   return(failure);
    }
