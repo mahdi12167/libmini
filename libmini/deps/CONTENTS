@@ -4,15 +4,17 @@ Therefore, the original copyright and licensing terms of the dependencies remain
 
 The original source code of the libMini dependencies is available here:
 
-openthreads:         http://www.openscenegraph.org/svn/osg/OpenThreads
 libjpeg:             http://www.ijg.org
 libpng:              http://www.libpng.org
 zlib:                http://www.zlib.net
 libcurl:             http://curl.haxx.se
 squish:              http://libsquish.googlecode.com
 CImg/GREYCstoration: http://cimg.sourceforge.net
+openthreads:         http://www.openscenegraph.org/svn/osg/OpenThreads
 freeglut:            http://freeglut.sourceforge.net
 gdal:                http://gdal.org
 proj:                http://trac.osgeo.org/proj
 libiconv:            http://www.gnu.org/software/libiconv
 dcmtk:               http://dicom.offis.de/dcmtk.php.en
+sqlite:              http://www.sqlite.org
+qt:                  http://download.qt-project.org

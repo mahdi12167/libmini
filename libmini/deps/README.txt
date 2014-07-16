@@ -2,7 +2,7 @@ LIBMINI INSTALL SCRIPT
 
 To pull and install all required libMini dependencies, run the libmini install script:
 
- sudo ./build.sh
+ ./build.sh
 
 It downloads the source code of the dependencies from the according svn, git, cvs or http repositories.
 Then the respective source code is configured, compiled and installed the usual unix way using autotools or cmake.
