@@ -19,7 +19,15 @@ cd qt-*/
 make -j 2
 sudo make install
 
+if (! -e $SQLITE/lib/libsqlite3.a) then
+   wget http://www.sqlite.org/2014/sqlite-autoconf-3080500.tar.gz
+   tar zxf sqlite-autoconf-3080500.tar.gz
+   (cd sqlite-autoconf-3080500;\
+    ./configure --prefix=$SQLITE --disable-shared --enable-static;\
+    make -j 2; sudo make install)
+endif
+
 if (-e $SQLITE/lib/libsqlite3.a) then
    (cd src/plugins/sqldrivers/sqlite;\
-    qmake "INCLUDEPATH=$SQLITE/include" "LIBS=$SQLITE/lib/libsqlite3.a" && make && sudo make install)
+    qmake "INCLUDEPATH+=$SQLITE/include" "LIBS+=$SQLITE/lib/libsqlite3.a" && make clean && make && sudo make install)
 endif
