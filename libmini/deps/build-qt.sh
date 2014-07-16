@@ -8,9 +8,14 @@ set qt5=http://download.qt-project.org/official_releases/qt/5.3/5.3.0/single/qt-
 
 set qt=$qt4
 
+set SQLITE=/usr/local
+
 if (! -e $qt:t) wget $qt
 tar zxf qt-*.tar.gz
 cd qt-*/
 ./configure -opengl -openssl -qt-sql-sqlite -release -no-webkit -no-svg -no-phonon -no-declarative -nomake examples -nomake tests -opensource -confirm-license
+(cd src/plugins/sqldrivers/sqlite;\
+ qmake "INCLUDEPATH=$SQLITE/include" "LIBS=$SQLITE/lib/libsqlite3.a")
+
 make -j 2
 sudo make install
