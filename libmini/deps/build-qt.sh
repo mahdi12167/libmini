@@ -14,12 +14,12 @@ if (! -e $qt:t) wget $qt
 tar zxf qt-*.tar.gz
 cd qt-*/
 
-./configure -opengl -openssl -qt-sql-sqlite -release -no-webkit -no-svg -no-phonon -no-declarative -nomake examples -nomake tests -opensource -confirm-license
-
-if (-e $SQLITE/lib/libsqlite3.a) then
-   (cd src/plugins/sqldrivers/sqlite;\
-    qmake "INCLUDEPATH=$SQLITE/include" "LIBS=$SQLITE/lib/libsqlite3.a")
-endif
+./configure -opengl -openssl -plugin-sql-sqlite -release -no-webkit -no-svg -no-phonon -no-declarative -nomake examples -nomake tests -opensource -confirm-license
 
 make -j 2
 sudo make install
+
+if (-e $SQLITE/lib/libsqlite3.a) then
+   (cd src/plugins/sqldrivers/sqlite;\
+    qmake "INCLUDEPATH=$SQLITE/include" "LIBS=$SQLITE/lib/libsqlite3.a" && make && sudo make install)
+endif
