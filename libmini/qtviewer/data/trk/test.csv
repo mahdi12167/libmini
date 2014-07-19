@@ -1,0 +1,9 @@
+"Name", "Activity", "Description"
+"test", "testing", "a test"
+
+"minX", "maxX", "minY", "maxY", "minZ", "maxZ", "minT", "maxT"
+"-5559677.618", "4115408.1", "-2023557.165", "799954.2988", "2374412.895", "4790558.747", "2014-07-18T23:14:15", "2014-07-18T23:14:15"
+
+"Segment", "Point", "Longitude", "Latitude", "Height", "Heading", "Accuracy", "Velocity", "Time", "Power", "Frequency", "Heartbeat", "Inclination", "Description", "Metadata"
+"1", "1", "11", "49", "0", "nan", "nan", "nan", "2014-07-18T23:14:15", "nan", "nan", "nan", "nan", "", ""
+"1", "2", "-160", "22", "0", "nan", "nan", "nan", "2014-07-18T23:14:15", "nan", "nan", "nan", "nan", "", ""
