@@ -82,6 +82,26 @@ ministrings minipath::to_csv()
       line.append_double(meas.vec.w);
       line.append("\"");
 
+      // inclination
+      line.append(",\"");
+      line.append_double(meas.inclination);
+      line.append("\"");
+
+      // power
+      line.append(",\"");
+      line.append_double(meas.power);
+      line.append("\"");
+
+      // frequency
+      line.append(",\"");
+      line.append_double(meas.frequency);
+      line.append("\"");
+
+      // heartbeat
+      line.append(",\"");
+      line.append_double(meas.heartbeat);
+      line.append("\"");
+
       csv.append(line);
       }
 
@@ -138,6 +158,18 @@ void minipath::from_csv(ministrings &csv)
          meas.accuracy=values[6].value();
          meas.velocity=values[7].value();
          meas.heading=values[5].value();
+
+	 if (values.getsize()>=10)
+	     meas.inclination=values[9].value();
+
+	 if (values.getsize()>=11)
+	     meas.power=values[10].value();
+
+	 if (values.getsize()>=12)
+	     meas.frequency=values[11].value();
+
+	 if (values.getsize()>=13)
+	     meas.heartbeat=values[12].value();
 
          nextseg=values[0].value_uint();
          if (nextseg!=segment) meas.start=TRUE;

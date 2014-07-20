@@ -13,18 +13,21 @@ class minimeas: public minicoord
    //! default constructor
    minimeas()
       : minicoord(),
-        accuracy(NAN), velocity(NAN), heading(NAN),
+        accuracy(NAN), velocity(NAN), heading(NAN),inclination(NAN),
         start(FALSE),
+        power(NAN), frequency(NAN), heartbeat(NAN),
         description(NULL), metadata(NULL)
       {}
 
    //! constructor
    minimeas(const minicoord &c,
-            float a=NAN,float v=NAN,float h=NAN,
-            BOOLINT s=FALSE)
+            float a=NAN,float v=NAN,float h=NAN,float i=NAN,
+            BOOLINT s=FALSE,
+            float p=NAN,float f=NAN,float b=NAN)
       : minicoord(c),
-        accuracy(a), velocity(v), heading(h),
+        accuracy(a), velocity(v), heading(h),inclination(i),
         start(s),
+        power(p),frequency(f),heartbeat(b),
         description(NULL), metadata(NULL)
       {
       if (heading<-180.0) heading+=360.0;
@@ -34,8 +37,9 @@ class minimeas: public minicoord
    //! copy constructor
    minimeas(const minimeas &m)
       : minicoord((minicoord)m),
-        accuracy(m.accuracy), velocity(m.velocity), heading(m.heading),
-        start(m.start)
+        accuracy(m.accuracy), velocity(m.velocity), heading(m.heading),inclination(m.inclination),
+        start(m.start),
+        power(m.power),frequency(m.frequency),heartbeat(m.heartbeat)
       {
       if (m.description) description=new ministring(*m.description);
       else description=NULL;
@@ -62,8 +66,13 @@ class minimeas: public minicoord
       accuracy=m.accuracy;
       velocity=m.velocity;
       heading=m.heading;
+      inclination=m.inclination;
 
       start=m.start;
+
+      power=m.power;
+      frequency=m.frequency;
+      heartbeat=m.heartbeat;
 
       if (m.description) description=new ministring(*m.description);
       else description=NULL;
@@ -137,8 +146,13 @@ class minimeas: public minicoord
    float accuracy;
    float velocity;
    float heading;
+   float inclination;
 
    BOOLINT start;
+
+   float power;
+   float frequency;
+   float heartbeat;
 
    protected:
 
@@ -162,35 +176,35 @@ inline std::ostream& operator << (std::ostream &out,const minimeas &m);
 inline minimeas operator + (const minimeas &a,const minimeas &b)
    {
    return(minimeas(minicoord(a.vec+b.vec,a.type,a.crs_zone,a.crs_datum),
-                   a.accuracy+b.accuracy,a.velocity+b.velocity,a.heading+b.heading,
+                   a.accuracy+b.accuracy,a.velocity+b.velocity,a.heading+b.heading,a.inclination+b.inclination,
                    a.start));
    }
 
 inline minimeas operator - (const minimeas &a,const minimeas &b)
    {
    return(minimeas(minicoord(a.vec-b.vec,a.type,a.crs_zone,a.crs_datum),
-                   a.accuracy+b.accuracy,a.velocity+b.velocity,a.heading-b.heading,
+                   a.accuracy+b.accuracy,a.velocity+b.velocity,a.heading-b.heading,a.inclination-b.inclination,
                    a.start));
    }
 
 inline minimeas operator * (const double a,const minimeas &b)
    {
    return(minimeas(minicoord(a*b.vec,b.type,b.crs_zone,b.crs_datum),
-                   a*b.accuracy,a*b.velocity,a*b.heading,
+                   a*b.accuracy,a*b.velocity,a*b.heading,a*b.inclination,
                    b.start));
    }
 
 inline minimeas operator * (const minimeas &a,const double b)
    {
    return(minimeas(minicoord(a.vec*b,a.type,a.crs_zone,a.crs_datum),
-                   a.accuracy*b,a.velocity*b,a.heading*b,
+                   a.accuracy*b,a.velocity*b,a.heading*b,a.inclination*b,
                    a.start));
    }
 
 inline minimeas operator / (const minimeas &a,const double b)
    {
    return(minimeas(minicoord(a.vec/b,a.type,a.crs_zone,a.crs_datum),
-                   a.accuracy/b,a.velocity/b,a.heading/b,
+                   a.accuracy/b,a.velocity/b,a.heading/b,a.inclination/b,
                    a.start));
    }
 
