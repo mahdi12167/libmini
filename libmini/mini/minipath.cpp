@@ -126,84 +126,96 @@ ministrings minipath::to_csv()
 // deserialization
 void minipath::from_csv(ministrings &csv)
    {
-   unsigned int i,j;
+   unsigned int i;
+
+   unsigned int line;
 
    ministrings values;
 
    unsigned int segment=0,nextseg;
 
-   if (csv.getsize()<2) return;
+   line=0;
 
-   values.from_string(csv[0],",");
+   while (line+2<=csv.getsize())
+      {
+      values.clear();
+      values.from_string(csv[line],",");
 
-   if (values.getsize()<3) return;
+      line++;
 
-   values.clear();
-   values.from_string(csv[1],",");
-
-   if (values.getsize()<3) return;
-
-   name=values[0].tail("\"").head("\"");
-   activity=values[1].tail("\"").head("\"");
-   description=values[2].tail("\"").head("\"");
-
-   for (i=2; i<csv.getsize(); i++)
-      if (!csv[i].empty()) break;
-
-   values.clear();
-   values.from_string(csv[i],",");
-
-   if (values.getsize()<9) return;
-
-   for (i++; i<csv.getsize(); i++)
-      if (!csv[i].empty())
+      if (values.getsize()==3)
          {
-         minimeas meas;
-
          values.clear();
-         values.from_string(csv[i],",");
+         values.from_string(csv[line],",");
 
-         if (values.getsize()<9) return;
+         if (values.getsize()==3)
+            {
+            name=values[0].tail("\"").head("\"");
+            activity=values[1].tail("\"").head("\"");
+            description=values[2].tail("\"").head("\"");
 
-         for (j=0; j<values.getsize(); j++)
-            values[j]=values[j].tail("\"").head("\"");
-
-         // lat/lon/h /w time
-         meas.set_llh(values[2].value(),values[3].value(),values[4].value(),utc2unixtime(values[8]));
-
-         // physical properties
-         meas.accuracy=values[6].value();
-         meas.velocity=values[7].value();
-         meas.heading=values[5].value();
-
-         // optional inclination
-         if (values.getsize()>=10)
-            meas.inclination=values[9].value();
-
-         // optional health properties
-         if (values.getsize()>=11)
-            meas.power=values[10].value();
-         if (values.getsize()>=12)
-            meas.frequency=values[11].value();
-         if (values.getsize()>=13)
-            meas.heartbeat=values[12].value();
-
-         // optional description
-         if (values.getsize()>=14)
-            meas.set_description(values[13]);
-
-         // optional metadata
-         if (values.getsize()>=15)
-            meas.set_metadata(values[14]);
-
-         nextseg=values[0].value_uint();
-         if (nextseg!=segment) meas.start=TRUE;
-         segment=nextseg;
-
-         append(meas);
-
-         csv[i].clear();
+            line++;
+            }
          }
+      else if (values.getsize()>=9)
+         while (line<csv.getsize())
+            {
+            if (csv[line].empty()) break;
+
+            minimeas meas;
+
+            values.clear();
+            values.from_string(csv[line],",");
+
+            if (values.getsize()<9) break;
+
+            for (i=0; i<values.getsize(); i++)
+               values[i]=values[i].tail("\"").head("\"");
+
+            // lat/lon/h /w time
+            meas.set_llh(values[2].value(),values[3].value(),values[4].value(),utc2unixtime(values[8]));
+
+            // physical properties
+            meas.accuracy=values[6].value();
+            meas.velocity=values[7].value();
+            meas.heading=values[5].value();
+
+            // optional inclination
+            if (values.getsize()>=10)
+               meas.inclination=values[9].value();
+
+            // optional health properties
+            if (values.getsize()>=11)
+               meas.power=values[10].value();
+            if (values.getsize()>=12)
+               meas.frequency=values[11].value();
+            if (values.getsize()>=13)
+               meas.heartbeat=values[12].value();
+
+            // optional description
+            if (values.getsize()>=14)
+               meas.set_description(values[13]);
+
+            // optional metadata
+            if (values.getsize()>=15)
+               meas.set_metadata(values[14]);
+
+            nextseg=values[0].value_uint();
+            if (nextseg!=segment) meas.start=TRUE;
+            segment=nextseg;
+
+            append(meas);
+
+            csv[line].clear();
+
+            line++;
+            }
+      else
+         line++;
+
+      for (line++; line<csv.getsize(); line++)
+         if (!csv[line].empty()) break;
+      }
 
    csv.clear();
    }
