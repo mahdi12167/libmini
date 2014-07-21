@@ -168,6 +168,18 @@ void minicurve::validate()
                      }
             }
 
+      // check for maximum travelled distance
+      for (i=1; i+1<getsize(); i++)
+         if (!get(i).start)
+            {
+            miniv3d p1=get(i-1).getpos();
+            miniv3d p2=get(i).getpos();
+
+            double d=(p2-p1).getlength();
+
+            if (d>max_length) ref(i).start=TRUE;
+            }
+
       // apply constraints
       for (i=1; i+1<getsize();)
          if (!get(i).start)
@@ -556,7 +568,9 @@ double minicurve::compute_velocity(unsigned int i)
          return(0.0);
    // central difference
    else
-      return((get(i+1).getpos()-get(i-1).getpos()).getlength()/(get(i+1).vec.w-get(i-1).vec.w));
+      return(((get(i).getpos()-get(i-1).getpos()).getlength()+
+              (get(i+1).getpos()-get(i).getpos()).getlength())/
+             (get(i+1).vec.w-get(i-1).vec.w));
    }
 
 // check constraints
@@ -566,9 +580,6 @@ BOOLINT minicurve::check_constraints(double d,double dt,
    {
    // check for minimum accuracy threshold
    if (a2>min_accuracy) return(FALSE);
-
-   // check for maximum travelled distance
-   if (d>max_length) return(FALSE);
 
    // check for maximum acceleration threshold
    if (dabs(v2-v1)/dt>max_acceleration) return(FALSE);
