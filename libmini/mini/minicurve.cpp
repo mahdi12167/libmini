@@ -183,6 +183,7 @@ void minicurve::validate()
       // remove trailing points
       while (!empty())
          if (last().start) pop_back();
+         else break;
 
       // apply constraints
       for (i=1; i+1<getsize();)
