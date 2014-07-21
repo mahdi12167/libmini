@@ -13,7 +13,7 @@ class minipath : public minicurve
    minipath(double start=0.0,double stop=1.0)
       : minicurve(start,stop),
       name("path"), activity("none"), description("created by libmini")
-      {set_constraints(50.0,5.0);}
+      {set_constraints(50.0,minicrs::EARTH_radius/100,5.0);}
 
    //! constructor
    minipath(ministring filename,

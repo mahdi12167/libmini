@@ -567,6 +567,9 @@ BOOLINT minicurve::check_constraints(double d,double dt,
    // check for minimum accuracy threshold
    if (a2>min_accuracy) return(FALSE);
 
+   // check for maximum travelled distance
+   if (d>max_length) return(FALSE);
+
    // check for maximum acceleration threshold
    if (dabs(v2-v1)/dt>max_acceleration) return(FALSE);
 

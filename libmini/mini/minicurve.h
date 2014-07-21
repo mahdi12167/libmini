@@ -66,11 +66,13 @@ class minicurve : public minidyna<minimeas>
    void set_time_mapping(double map_start,double map_stop);
    void set_time_repeat(double repeat_start,double repeat_stop);
 
-   void set_constraints(double min_accuracy=0.0,
+   void set_constraints(double min_accuracy=MAXFLOAT,
+                        double max_length=MAXFLOAT,
                         double max_acceleration=MAXFLOAT,
                         double max_tolerance=2.0)
       {
       minicurve::min_accuracy=min_accuracy;
+      minicurve::max_length=max_length;
       minicurve::max_acceleration=max_acceleration;
       minicurve::max_tolerance=max_tolerance;
       }
@@ -111,6 +113,7 @@ class minicurve : public minidyna<minimeas>
    double curve_repeat_start,curve_repeat_stop;
 
    double min_accuracy;
+   double max_length;
    double max_acceleration;
    double max_tolerance;
 

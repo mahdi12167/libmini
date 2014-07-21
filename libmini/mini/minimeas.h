@@ -190,21 +190,21 @@ inline minimeas operator - (const minimeas &a,const minimeas &b)
 inline minimeas operator * (const double a,const minimeas &b)
    {
    return(minimeas(minicoord(a*b.vec,b.type,b.crs_zone,b.crs_datum),
-                   a*b.accuracy,a*b.velocity,a*b.heading,a*b.inclination,
+                   a*b.accuracy,a*b.velocity,b.heading,b.inclination,
                    b.start));
    }
 
 inline minimeas operator * (const minimeas &a,const double b)
    {
    return(minimeas(minicoord(a.vec*b,a.type,a.crs_zone,a.crs_datum),
-                   a.accuracy*b,a.velocity*b,a.heading*b,a.inclination*b,
+                   a.accuracy*b,a.velocity*b,a.heading,a.inclination,
                    a.start));
    }
 
 inline minimeas operator / (const minimeas &a,const double b)
    {
    return(minimeas(minicoord(a.vec/b,a.type,a.crs_zone,a.crs_datum),
-                   a.accuracy/b,a.velocity/b,a.heading/b,a.inclination/b,
+                   a.accuracy/b,a.velocity/b,a.heading,a.inclination,
                    a.start));
    }
 
