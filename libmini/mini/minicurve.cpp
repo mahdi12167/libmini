@@ -180,6 +180,10 @@ void minicurve::validate()
             if (d>max_length) ref(i).start=TRUE;
             }
 
+      // remove trailing points
+      while (!empty())
+         if (last().start) pop_back();
+
       // apply constraints
       for (i=1; i+1<getsize();)
          if (!get(i).start)
