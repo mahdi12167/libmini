@@ -33,7 +33,7 @@ void minicurve::merge(minicurve &c)
 
    minidyna<minimeas>::append(c);
 
-   for (i=0; i<getsize(); i++) ref(i).start=0;
+   for (i=0; i<getsize(); i++) ref(i).start=FALSE;
 
    valid=FALSE;
    }
@@ -169,7 +169,7 @@ void minicurve::validate()
             }
 
       // check for maximum travelled distance
-      for (i=1; i+1<getsize(); i++)
+      for (i=1; i<getsize(); i++)
          if (!get(i).start)
             {
             miniv3d p1=get(i-1).getpos();
