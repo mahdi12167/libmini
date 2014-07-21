@@ -1218,7 +1218,7 @@ inline ministrings get_cmdline_opts(unsigned int argc,char *argv[])
 //! convert from utc to unix time
 inline double utc2unixtime(ministring utc)
    {
-   if (utc.contains("T") && utc.endswith("Z"))
+   if (utc.contains("T"))
       {
       utc.substitute("T",":");
       utc.substitute("Z","");
