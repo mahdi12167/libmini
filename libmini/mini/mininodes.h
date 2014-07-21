@@ -2024,6 +2024,7 @@ class mininode_geometry_base: public mininode_color, public ministrip
                           const miniv3d &org,const miniv3d &nrm);
 
    static miniv3d get_halfdir(const miniv3d &dir1,const miniv3d &dir2);
+   static miniv3d get_halfdir(const miniv3d &dir1,const miniv3d &dir2,const miniv3d &up);
    static miniv3d get_right(const miniv3d &dir);
    };
 

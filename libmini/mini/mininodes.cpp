@@ -508,6 +508,22 @@ miniv3d mininode_geometry_base::get_halfdir(const miniv3d &dir1,const miniv3d &d
    return(d1+d2);
    }
 
+miniv3d mininode_geometry_base::get_halfdir(const miniv3d &dir1,const miniv3d &dir2,const miniv3d &up)
+   {
+   miniv3d d1=dir1,d2=dir2,u=up;
+
+   d1.normalize();
+   d2.normalize();
+   u.normalize();
+
+   miniv3d r1,r2;
+   r1=d1/u;
+   r2=d2/u;
+
+   if (r1*r2>0.0) return(u/(r1+r2));
+   return(u/(r2-r1));
+   }
+
 miniv3d mininode_geometry_base::get_right(const miniv3d &dir)
    {
    miniv3d right;
@@ -751,7 +767,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
 
       if (i==0) dir=pos[i+1]-pos[i];
       else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
-      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
+      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i],nrm[i]);
       dir.normalize();
 
       miniv3d right=dir/nrm[i];
@@ -776,7 +792,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
 
       if (i==0) dir=pos[i+1]-pos[i];
       else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
-      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
+      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i],nrm[i]);
       dir.normalize();
 
       miniv3d right=dir/nrm[i];
@@ -801,7 +817,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
 
       if (i==0) dir=pos[i+1]-pos[i];
       else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
-      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
+      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i],nrm[i]);
       dir.normalize();
 
       miniv3d right=dir/nrm[i];
@@ -828,7 +844,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
 
       if (i==0) dir=pos[i+1]-pos[i];
       else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
-      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
+      else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i],nrm[i]);
       dir.normalize();
 
       miniv3d right=dir/nrm[i];
