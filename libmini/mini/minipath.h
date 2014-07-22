@@ -19,7 +19,7 @@ class minipath : public minicurve
    //! constructor
    minipath(ministring filename,
             double start=0.0,double stop=1.0,
-            double max_length=50000.0,double min_accuracy=50.0,max_accel=2.0)
+            double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0)
       : minicurve(start,stop),
         name("path"), activity("none"), description("created by libmini")
       {
