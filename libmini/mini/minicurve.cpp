@@ -180,7 +180,12 @@ void minicurve::validate()
             if (d>max_length) ref(i).start=TRUE;
             }
 
-      // remove trailing points
+      // remove consecutive start points
+      for (i=0; i+1<getsize();)
+         if (get(i).start && get(i+1).start) dispose(i);
+         else i++;
+
+      // remove trailing start points
       while (!empty())
          if (last().start) pop_back();
          else break;
@@ -573,9 +578,7 @@ double minicurve::compute_velocity(unsigned int i)
          return(0.0);
    // central difference
    else
-      return(((get(i).getpos()-get(i-1).getpos()).getlength()+
-              (get(i+1).getpos()-get(i).getpos()).getlength())/
-             (get(i+1).vec.w-get(i-1).vec.w));
+      return((get(i+1).getpos()-get(i-1).getpos()).getlength()/(get(i+1).vec.w-get(i-1).vec.w));
    }
 
 // check constraints
