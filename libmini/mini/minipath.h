@@ -11,19 +11,19 @@ class minipath : public minicurve
 
    //! default constructor
    minipath(double start=0.0,double stop=1.0,
-            double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0)
+            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0)
       : minicurve(start,stop),
         name("path"), activity("none"), description("created by libmini")
-      {set_constraints(max_length,min_accuracy,max_accel);}
+      {set_constraints(max_delta,max_length,min_accuracy,max_accel);}
 
    //! constructor
    minipath(ministring filename,
             double start=0.0,double stop=1.0,
-            double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0)
+            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0)
       : minicurve(start,stop),
         name("path"), activity("none"), description("created by libmini")
       {
-      set_constraints(max_length,min_accuracy,max_accel);
+      set_constraints(max_delta,max_length,min_accuracy,max_accel);
       load(filename);
       }
 

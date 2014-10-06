@@ -168,10 +168,15 @@ void minicurve::validate()
                      }
             }
 
-      // check for maximum travelled distance
+      // check for maximum time difference and travelled distance
       for (i=1; i<getsize(); i++)
          if (!get(i).start)
             {
+            double t1=get(i-1).vec.w;
+            double t2=get(i).vec.w;
+
+            if (t2-t1>max_delta) ref(i).start=TRUE;
+
             miniv3d p1=get(i-1).getpos();
             miniv3d p2=get(i).getpos();
 
