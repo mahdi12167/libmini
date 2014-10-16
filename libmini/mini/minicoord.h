@@ -147,6 +147,9 @@ class minicoord
    //! normalize wraparound coordinates
    minicoord &normalize(BOOLINT symmetric=TRUE);
 
+   //! normalize wraparound coordinates
+   minicoord &normalize(const minicoord &ref,BOOLINT symmetric=TRUE);
+
    //! normalize coordinates symmetrically
    minicoord &symm() {return(this->normalize(TRUE));}
 

@@ -556,6 +556,32 @@ minicoord &minicoord::normalize(BOOLINT symmetric)
    return(*this);
    }
 
+// normalize wraparound coordinates
+minicoord &minicoord::normalize(const minicoord &ref,BOOLINT symmetric)
+   {
+   double wrap;
+
+   if (type==ref.type)
+      if (type==MINICOORD_LLH)
+         {
+         wrap=ref.vec.x/(360*60*60);
+         if (symmetric)
+            {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*360*60*60;}
+         else
+            {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*360*60*60;}
+         }
+      else if (type==MINICOORD_MERC)
+         {
+         wrap=ref.vec.x/(2*minicrs::WGS84_r_major);
+         if (symmetric)
+            {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*2*minicrs::WGS84_r_major;}
+         else
+            {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*2*minicrs::WGS84_r_major;}
+         }
+
+   return(*this);
+   }
+
 // get approximate orb radius
 double minicoord::getorbradius() const
    {return(getorbradius(crs_orb));}
