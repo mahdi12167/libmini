@@ -534,7 +534,7 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
 // normalize wraparound coordinates
 minicoord &minicoord::normalize(BOOLINT symmetric)
    {
-   static const double eps=1E-3;
+   const double eps=symmetric?1E-10:1E-3;
 
    double wrap;
 
@@ -561,7 +561,7 @@ minicoord &minicoord::normalize(BOOLINT symmetric)
 // normalize wraparound coordinates
 minicoord &minicoord::normalize(const minicoord &ref,BOOLINT symmetric)
    {
-   static const double eps=1E-3;
+   const double eps=symmetric?1E-10:1E-3;
 
    double wrap;
 
