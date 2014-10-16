@@ -534,23 +534,25 @@ void minicoord::convert(const miniv3d src[2],const miniv3d dst[8])
 // normalize wraparound coordinates
 minicoord &minicoord::normalize(BOOLINT symmetric)
    {
+   static const double eps=1E-3;
+
    double wrap;
 
    if (type==MINICOORD_LLH)
       {
       wrap=vec.x/(360*60*60);
       if (symmetric)
-         {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*360*60*60;}
+         {if (wrap<-0.5-eps || wrap>0.5+eps) vec.x-=floor(wrap+0.5)*360*60*60;}
       else
-         {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*360*60*60;}
+         {if (wrap<-eps || wrap>1.0+eps) vec.x-=floor(wrap)*360*60*60;}
       }
    else if (type==MINICOORD_MERC)
       {
       wrap=vec.x/(2*minicrs::WGS84_r_major);
       if (symmetric)
-         {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*2*minicrs::WGS84_r_major;}
+         {if (wrap<-0.5-eps || wrap>0.5+eps) vec.x-=floor(wrap+0.5)*2*minicrs::WGS84_r_major;}
       else
-         {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*2*minicrs::WGS84_r_major;}
+         {if (wrap<-eps || wrap>1.0+eps) vec.x-=floor(wrap)*2*minicrs::WGS84_r_major;}
       }
 
    return(*this);
@@ -559,6 +561,8 @@ minicoord &minicoord::normalize(BOOLINT symmetric)
 // normalize wraparound coordinates
 minicoord &minicoord::normalize(const minicoord &ref,BOOLINT symmetric)
    {
+   static const double eps=1E-3;
+
    double wrap;
 
    if (type==ref.type)
@@ -566,17 +570,17 @@ minicoord &minicoord::normalize(const minicoord &ref,BOOLINT symmetric)
          {
          wrap=ref.vec.x/(360*60*60);
          if (symmetric)
-            {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*360*60*60;}
+            {if (wrap<-0.5-eps || wrap>0.5+eps) vec.x-=floor(wrap+0.5)*360*60*60;}
          else
-            {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*360*60*60;}
+            {if (wrap<-eps || wrap>1.0+eps) vec.x-=floor(wrap)*360*60*60;}
          }
       else if (type==MINICOORD_MERC)
          {
          wrap=ref.vec.x/(2*minicrs::WGS84_r_major);
          if (symmetric)
-            {if (wrap<-0.5 || wrap>0.5) vec.x-=floor(wrap+0.5)*2*minicrs::WGS84_r_major;}
+            {if (wrap<-0.5-eps || wrap>0.5+eps) vec.x-=floor(wrap+0.5)*2*minicrs::WGS84_r_major;}
          else
-            {if (wrap<0.0 || wrap>1.0) vec.x-=floor(wrap)*2*minicrs::WGS84_r_major;}
+            {if (wrap<-eps || wrap>1.0+eps) vec.x-=floor(wrap)*2*minicrs::WGS84_r_major;}
          }
 
    return(*this);
