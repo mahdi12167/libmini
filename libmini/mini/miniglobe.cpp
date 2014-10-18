@@ -201,7 +201,7 @@ void miniglobe::create_earth(const float color[3])
          beta=v*90*60*60;
 
          minicrs::LLH2ECEF(beta,alpha,
-                           sample_geoid(beta/(60*60),alpha/(60*60)),
+                           sample_geoid(beta/(60*60),alpha/(60*60)), // geoid height
                            xyz);
 
          xyz[0]/=SCALE;
@@ -222,7 +222,7 @@ void miniglobe::create_earth(const float color[3])
          beta=v*90*60*60;
 
          minicrs::LLH2ECEF(beta,alpha,
-                           sample_geoid(beta/(60*60),alpha/(60*60)),
+                           sample_geoid(beta/(60*60),alpha/(60*60)), // geoid height
                            xyz);
 
          xyz[0]/=SCALE;

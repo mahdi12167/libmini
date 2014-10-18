@@ -11,6 +11,8 @@
 
 #include "miniearth.h"
 
+#include "geoid.h"
+
 #include "minilayer.h"
 
 // default constructor
@@ -1320,6 +1322,8 @@ void minilayer::createwarps(int cols,int rows,
                {
                p=offsetDAT;
                p.vec+=miniv4d(u*extentDAT.vec.x,v*extentDAT.vec.y,w*extentDAT.vec.z);
+               p.convert2(minicoord::MINICOORD_LLH);
+               p.vec.z+=sample_geoid(p.vec.y/(60*60),p.vec.x/(60*60)); // add geoid height
                p.convert2(minicoord::MINICOORD_ECEF);
 
                n=p.vec;
