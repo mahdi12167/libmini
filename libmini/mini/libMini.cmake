@@ -22,7 +22,7 @@ SET(MINI_HDRS
    minilayer.h miniterrain.h miniearth.h
    minicache.h minishader.h
    miniray.h ministrip.h
-   minipoint.h minitext.h minisky.h miniglobe.h
+   minipoint.h minitext.h minisky.h miniglobe.h geoid.h
    minitree.h minibrick.h minilod.h
    minislicer.h
    minigeom.h minimesh.h minibspt.h miniproj.h
@@ -52,7 +52,7 @@ SET(MINI_SRCS
    minilayer.cpp miniterrain.cpp miniearth.cpp
    minicache.cpp minishader.cpp
    miniray.cpp ministrip.cpp
-   minipoint.cpp minitext.cpp minisky.cpp miniglobe.cpp
+   minipoint.cpp minitext.cpp minisky.cpp miniglobe.cpp geoid.cpp
    minitree.cpp minibrick.cpp minilod.cpp
    minimesh.cpp minibspt.cpp miniproj.cpp
    mininodes.cpp mininode_teapot.cpp mininode_path.cpp

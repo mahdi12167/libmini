@@ -5,6 +5,8 @@
 #include "miniOGL.h"
 #include "minicrs.h"
 
+#include "geoid.h"
+
 #include "pnmbase.h"
 
 #include "miniglobe.h"
@@ -198,7 +200,9 @@ void miniglobe::create_earth(const float color[3])
          alpha=u*360*60*60;
          beta=v*90*60*60;
 
-         minicrs::LLH2ECEF(beta,alpha,0.0f,xyz);
+         minicrs::LLH2ECEF(beta,alpha,
+                           sample_geoid(beta/(60*60),alpha/(60*60)),
+                           xyz);
 
          xyz[0]/=SCALE;
          xyz[1]/=SCALE;
@@ -217,7 +221,9 @@ void miniglobe::create_earth(const float color[3])
          v=(float)(j+1)/beta_steps;
          beta=v*90*60*60;
 
-         minicrs::LLH2ECEF(beta,alpha,0.0f,xyz);
+         minicrs::LLH2ECEF(beta,alpha,
+                           sample_geoid(beta/(60*60),alpha/(60*60)),
+                           xyz);
 
          xyz[0]/=SCALE;
          xyz[1]/=SCALE;

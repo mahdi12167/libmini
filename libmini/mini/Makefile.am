@@ -30,7 +30,7 @@ MODS	= mini miniOGL\
 	  minilayer miniterrain miniearth\
 	  minicache minishader\
 	  miniray ministrip\
-	  minipoint minitext minisky miniglobe\
+	  minipoint minitext minisky miniglobe geoid\
 	  minitree minibrick minilod\
 	  minimesh minibspt miniproj\
 	  mininodes mininode_teapot mininode_path\
