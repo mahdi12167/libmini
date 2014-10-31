@@ -138,3 +138,8 @@ if (-X wget) then
       mv sqlite-autoconf-3080500 sqlite-autoconf
    endif
 endif
+
+# libexiv2 0.24
+if (-X svn) then
+   svn up exiv2 # svn external
+endif
