@@ -4,6 +4,7 @@
 # the installation path can be supplied as an optional argument (default is /usr/local)
 # if the installation path begins with /usr, the script asks for the super user password
 # following the installation path the install target can be explicitly specified
+# for instance: ./install.sh /usr/local zlib
 # the list of available install targets is shown by specifying the install target "help"
 
 set arg=$1
@@ -16,9 +17,7 @@ else
 endif
 
 if ($target == "help") then
-   echo "available install targets for"
-   echo " ./install.sh $prefix <target>"
-   echo "are:"
+   echo "available install targets:"
    echo " zlib libjpeg libpng"
    echo " curl squish freeglut"
    echo " proj libiconv gdal"
