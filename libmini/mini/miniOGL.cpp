@@ -1537,7 +1537,6 @@ inline int buildprog(const char *prog,BOOLINT vtxorfrg)
          }
 
       glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB,&errorPos);
-      glGetProgramivARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,&isNative);
 
       if (errorPos==0)
          {
@@ -1553,6 +1552,8 @@ inline int buildprog(const char *prog,BOOLINT vtxorfrg)
             }
          if (isNative!=1) WARNMSG("shader program non-native");
          }
+
+      glGetProgramivARB(GL_FRAGMENT_PROGRAM_ARB,GL_PROGRAM_UNDER_NATIVE_LIMITS_ARB,&isNative);
       }
 #endif
 
