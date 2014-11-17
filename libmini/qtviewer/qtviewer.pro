@@ -1,17 +1,17 @@
 TARGET = qtviewer
 TEMPLATE = app
 
-include(sources.pro)
+include(sources.pri)
 
-!include(mini/sources.pro) {
+!include(mini/sources.pri) {
    error("couldn't find libMini sources!")
 }
 
-!include(squish/sources.pro) {
+!include(squish/sources.pri) {
    error("couldn't find libSquish sources!")
 }
 
-!include(grid/sources.pro) {
+!include(grid/sources.pri) {
    error("couldn't find libGrid sources!")
 }
 
