@@ -122,6 +122,18 @@ class minicoord
    //! set time from utc string
    void set_time(const ministring &utc);
 
+   //! set meters above sea level (m.a.s.l.)
+   void set_masl(double masl);
+
+   //! get meters above sea level (m.a.s.l.)
+   double get_masl();
+
+   //! get latitude
+   double get_latitude();
+
+   //! get longitude
+   double get_longitude();
+
    //! convert from 1 coordinate system 2 another
    void convert2(MINICOORD t,int zone=0,MINICOORD_DATUM datum=MINICOORD_DATUM_NONE,int orb=MINICOORD_ORB_NONE);
 

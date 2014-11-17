@@ -168,6 +168,10 @@ float sample_geoid(double latitude, double longitude)
    // adjust wraparound longitudes
    nx = nx - floor(nx);
 
+   // clamp out-of-range latitudes
+   if (ny<0.0) ny = 0.0;
+   else if (ny>1.0) ny = 1.0;
+
    // interpolate geoid height
    return(interpolate(nx, ny, (const float *)data, size_x, size_y));
 }

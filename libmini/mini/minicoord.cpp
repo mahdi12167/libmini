@@ -2,6 +2,7 @@
 
 #include "minibase.h"
 
+#include "geoid.h"
 #include "minitime.h"
 #include "ministring.h"
 
@@ -193,6 +194,40 @@ void minicoord::set_time(int year,unsigned int month,unsigned int day,
 // set time from utc string
 void minicoord::set_time(const ministring &utc)
    {set_time(utc2unixtime(utc));}
+
+// set meters above sea level (m.a.s.l.)
+void minicoord::set_masl(double masl)
+   {
+   convert2llh();
+
+   if (type!=MINICOORD_LINEAR)
+      vec.z=masl+sample_geoid(get_latitude(),get_longitude());
+   }
+
+// get meters above sea level (m.a.s.l.)
+double minicoord::get_masl()
+   {
+   convert2llh();
+
+   if (type!=MINICOORD_LINEAR)
+      return(vec.z-sample_geoid(get_latitude(),get_longitude()));
+
+   return(0.0);
+   }
+
+// get latitude
+double minicoord::get_latitude()
+   {
+   convert2llh();
+   return(vec.y/3600);
+   }
+
+// get longitude
+double minicoord::get_longitude()
+   {
+   convert2llh();
+   return(vec.x/3600);
+   }
 
 // orb to orb scaling
 void minicoord::scale2(int orb)
