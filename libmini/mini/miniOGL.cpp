@@ -1540,13 +1540,14 @@ inline int buildprog(const char *prog,BOOLINT vtxorfrg)
 
       if (errorPos==0)
          {
-         WARNMSG("shader programs unavailable");
+         WARNMSG("shader program unavailable");
          WARNMSG((char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
          }
       else
          {
          if (errorPos!=-1)
             {
+            WARNMSG("error in shader program");
             WARNMSG((char *)glGetString(GL_PROGRAM_ERROR_STRING_ARB));
             ERRORMSG();
             }
