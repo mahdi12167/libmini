@@ -16,13 +16,14 @@ ministrip::SHADER_TYPE ministrip::SHADER[SHADERMAX];
 ministrip::SNIPPET_TYPE ministrip::SNIPPET[SNIPPETMAX];
 int ministrip::SNIPPETS=0;
 
-int ministrip::global_shader[128]={-1};
+int ministrip::global_shader[256]={-1};
 
 BOOLINT ministrip::global_texgen=FALSE;
 BOOLINT ministrip::global_shade=FALSE,ministrip::global_shade_direct=FALSE;
 BOOLINT ministrip::global_tex=FALSE,ministrip::global_tex3=FALSE;
 BOOLINT ministrip::global_fog=FALSE;
 BOOLINT ministrip::global_invariant=FALSE;
+BOOLINT ministrip::global_sfx=FALSE;
 
 float ministrip::global_fogstart=0.0f,ministrip::global_fogend=0.0f;
 float ministrip::global_fogdensity=0.0f,ministrip::global_fogcolor[3]={0,0,0};
@@ -30,6 +31,8 @@ float ministrip::global_fogdensity=0.0f,ministrip::global_fogcolor[3]={0,0,0};
 float ministrip::global_lightdir[3]={0,0,0};
 float ministrip::global_lightbias=0.5f,ministrip::global_lightoffset=0.5f;
 float ministrip::global_transbias=4.0f,ministrip::global_transoffset=0.0f;
+
+int ministrip::global_sfxmode=3;
 
 // initialize shader snippets
 void ministrip::initsnippets()
@@ -358,7 +361,8 @@ int ministrip::createshader(BOOLINT texgen,
                             BOOLINT shade,BOOLINT shade_direct,
                             BOOLINT tex,BOOLINT tex3,
                             BOOLINT fog,
-                            BOOLINT invariant)
+                            BOOLINT invariant,
+                            BOOLINT sfx)
    {
    int slot=getfreeslot();
 
@@ -384,6 +388,8 @@ int ministrip::createshader(BOOLINT texgen,
 
    concatpixshader(slot,MINI_SNIPPET_FRG_BEGIN);
    concatpixshader(slot,MINI_SNIPPET_FRG_HEADER);
+   if (sfx)
+      concatpixshader(slot,MINI_SNIPPET_FRG_INTERLACE);
    concatpixshader(slot,MINI_SNIPPET_FRG_BASIC);
    if (tex)
       concatpixshader(slot,MINI_SNIPPET_FRG_TEX);
@@ -406,7 +412,8 @@ void ministrip::enableglobalshader(BOOLINT texgen,
                                    BOOLINT shade,BOOLINT shade_direct,
                                    BOOLINT tex,BOOLINT tex3,
                                    BOOLINT fog,
-                                   BOOLINT invariant)
+                                   BOOLINT invariant,
+                                   BOOLINT sfx)
    {
    int slot;
 
@@ -416,14 +423,16 @@ void ministrip::enableglobalshader(BOOLINT texgen,
         8*tex+
         16*tex3+
         32*fog+
-        64*invariant;
+        64*invariant+
+        128*sfx;
 
    if (global_shader[slot]==-1)
       global_shader[slot]=createshader(texgen,
                                        shade,shade_direct,
                                        tex,tex3,
                                        fog,
-                                       invariant);
+                                       invariant,
+                                       sfx);
 
    useglobalshader(global_shader[slot]);
    }
@@ -435,7 +444,8 @@ void ministrip::enableglobalshader()
                       global_shade,global_shade_direct,
                       global_tex,global_tex3,
                       global_fog,
-                      global_invariant);
+                      global_invariant,
+                      global_sfx);
 
    settexturedirectparams(getglobalshader(),
                           global_lightdir,
@@ -449,6 +459,9 @@ void ministrip::enableglobalshader()
                 global_fogstart,global_fogend,
                 global_fogdensity,
                 global_fogcolor);
+
+   setsfxparams(getglobalshader(),
+                global_sfxmode);
    }
 
 // disable global shader
@@ -1306,6 +1319,24 @@ void ministrip::setglobalfogparams(float fogstart,float fogend,
    global_fogcolor[1]=fogcolor[1];
    global_fogcolor[2]=fogcolor[2];
    }
+
+// set stereo interlacing parameters
+void ministrip::setsfxparams(int num,
+                             int sfxmode)
+   {
+   float sfx_a=0.0f,sfx_b=0.0f,sfx_c=0.5f,sfx_d=0.5f;
+
+   if (sfxmode==1) {sfx_a=0.5f; sfx_c=0.5f;}
+   else if (sfxmode==2) {sfx_a=0.5f; sfx_c=0.0f;}
+   else if (sfxmode==3) {sfx_b=0.5f; sfx_d=0.0f;}
+   else if (sfxmode==4) {sfx_b=0.5f; sfx_d=0.5f;}
+
+   setpixshaderparams(num,sfx_a,sfx_b,sfx_c,sfx_d,3);
+   }
+
+// set global stereo interlacing parameters
+void ministrip::setglobalsfxparams(int sfxmode)
+   {global_sfxmode=sfxmode;}
 
 // set global shader
 void ministrip::useglobalshader(int num)

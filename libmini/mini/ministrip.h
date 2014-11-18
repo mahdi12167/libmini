@@ -166,6 +166,13 @@ class ministrip
                                   float fogdensity,
                                   float fogcolor[3]);
 
+   //! set stereo interlacing parameters
+   static void setsfxparams(int num,
+                            int sfxmode);
+
+   //! set global stereo interlacing parameters
+   static void setglobalsfxparams(int sfxmode);
+
    //! get default shader
    static int getdefaultshader() {return(0);}
 
@@ -220,6 +227,13 @@ class ministrip
 
    //! get global invariant
    static BOOLINT getglobal_invariant() {return(global_invariant);}
+
+   //! enable/disable global stereo interlacing
+   static void setglobal_sfx(BOOLINT on)
+      {global_sfx=on; enableglobalshader();}
+
+   //! get global stereo interlacing
+   static BOOLINT getglobal_sfx() {return(global_sfx);}
 
    //! enable global shader
    static void enableglobalshader();
@@ -436,13 +450,14 @@ class ministrip
 
    // global shader settings:
 
-   static int global_shader[128];
+   static int global_shader[256];
 
    static BOOLINT global_texgen;
    static BOOLINT global_shade,global_shade_direct;
    static BOOLINT global_tex,global_tex3;
    static BOOLINT global_fog;
    static BOOLINT global_invariant;
+   static BOOLINT global_sfx;
 
    static float global_fogstart,global_fogend;
    static float global_fogdensity,global_fogcolor[3];
@@ -451,17 +466,21 @@ class ministrip
    static float global_lightbias,global_lightoffset;
    static float global_transbias,global_transoffset;
 
+   static int global_sfxmode;
+
    static int createshader(BOOLINT texgen,
                            BOOLINT shade,BOOLINT shade_direct,
                            BOOLINT tex,BOOLINT tex3,
                            BOOLINT fog=FALSE,
-                           BOOLINT invariant=FALSE);
+                           BOOLINT invariant=FALSE,
+                           BOOLINT sfx=FALSE);
 
    static void enableglobalshader(BOOLINT texgen,
                                   BOOLINT shade,BOOLINT shade_direct,
                                   BOOLINT tex,BOOLINT tex3,
                                   BOOLINT fog=FALSE,
-                                  BOOLINT invariant=FALSE);
+                                  BOOLINT invariant=FALSE,
+                                  BOOLINT sfx=FALSE);
 
    };
 
