@@ -19,6 +19,7 @@
 #define MINI_SNIPPET_VTX_END "snippet_vtx_end"
 #define MINI_SNIPPET_FRG_BEGIN "snippet_frg_begin"
 #define MINI_SNIPPET_FRG_HEADER "snippet_frg_header"
+#define MINI_SNIPPET_FRG_INTERLACE "snippet_frg_interlace"
 #define MINI_SNIPPET_FRG_BASIC "snippet_frg_basic"
 #define MINI_SNIPPET_FRG_TEX "snippet_frg_tex"
 #define MINI_SNIPPET_FRG_TEX3 "snippet_frg_tex3"

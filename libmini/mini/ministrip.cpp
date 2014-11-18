@@ -147,6 +147,13 @@ void ministrip::initsnippets()
       PARAM c7=program.env[7]; \n\
       TEMP col; \n");
 
+   addsnippet(MINI_SNIPPET_FRG_INTERLACE,"\
+      ### stereo interlacing \n\
+      MAD tmp.xy,fragment.position,program.env[3],program.env[3].zwxy; \n\
+      FRC tmp.xy,tmp; \n\
+      SUB tmp.xy,tmp,0.5; \n\
+      KIL tmp.xyxy;\n");
+
    addsnippet(MINI_SNIPPET_FRG_BASIC,"\
       ### fetch fragment color \n\
       MOV col,fragment.color; \n");
