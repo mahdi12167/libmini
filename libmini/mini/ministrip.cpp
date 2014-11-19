@@ -153,10 +153,10 @@ void ministrip::initsnippets()
    addsnippet(MINI_SNIPPET_FRG_INTERLACE,"\
       ### stereo interlacing \n\
       TEMP tmp; \n\
-      MAD tmp.xy,fragment.position,program.env[3],program.env[3].zwxy; \n\
+      MAD tmp.xy,fragment.position,c2,c2.zwxy; \n\
       FRC tmp.xy,tmp; \n\
       SUB tmp.xy,tmp,0.5; \n\
-      KIL tmp.xyxy;\n");
+      KIL tmp.xyxy; \n");
 
    addsnippet(MINI_SNIPPET_FRG_BASIC,"\
       ### fetch fragment color \n\
@@ -1332,7 +1332,7 @@ void ministrip::setsfxparams(int num,
    else if (sfxmode==3) {sfx_b=0.5f; sfx_d=0.0f;}
    else if (sfxmode==4) {sfx_b=0.5f; sfx_d=0.5f;}
 
-   setpixshaderparams(num,sfx_a,sfx_b,sfx_c,sfx_d,3);
+   setpixshaderparams(num,sfx_a,sfx_b,sfx_c,sfx_d,2);
    }
 
 // set global stereo interlacing parameters
