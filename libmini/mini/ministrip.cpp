@@ -354,7 +354,7 @@ void ministrip::initshader()
                                        slot&2,slot&4,
                                        slot&8,slot&16);
 
-   for (slot=32; slot<128; slot++) global_shader[slot]=-1;
+   for (slot=32; slot<256; slot++) global_shader[slot]=-1;
    }
 
 // create basic shader
