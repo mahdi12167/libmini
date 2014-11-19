@@ -152,6 +152,7 @@ void ministrip::initsnippets()
 
    addsnippet(MINI_SNIPPET_FRG_INTERLACE,"\
       ### stereo interlacing \n\
+      TEMP tmp; \n\
       MAD tmp.xy,fragment.position,program.env[3],program.env[3].zwxy; \n\
       FRC tmp.xy,tmp; \n\
       SUB tmp.xy,tmp,0.5; \n\
