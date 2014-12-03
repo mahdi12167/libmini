@@ -1,6 +1,11 @@
 // copyright by Stefan Roettger (www.open-terrain.org), licensed under BSD license
 
 #include <math.h>
+#include <limits> // for nan
+
+#ifndef NAN
+#   define NAN (std::numeric_limits<double>::quiet_NaN())
+#endif
 
 // check whether of not a floating point value is not a number
 inline int isNAN(const double v) {return(v!=v);}
