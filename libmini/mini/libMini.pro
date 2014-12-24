@@ -1,7 +1,7 @@
 TARGET = Mini
 TEMPLATE = lib
 
-include(sources.pro)
+include(sources.pri)
 
 QT += opengl
 QT -= gui
