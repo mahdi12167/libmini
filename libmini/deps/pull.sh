@@ -85,11 +85,13 @@ if ($target == "" || $target == "squish") then
    endif
 endif
 
-# CImg/GREYCstoration 1.5.0
+# CImg/GREYCstoration 1.6.0
 if ($target == "" || $target == "greyc") then
-   if (-X ../mini/tabify.sh && -X cvs) then
-      cvs -d:pserver:anonymous:@cimg.cvs.sourceforge.net:/cvsroot/cimg login
-      cvs -d:pserver:anonymous@cimg.cvs.sourceforge.net:/cvsroot/cimg co -r 1.996 CImg/CImg.h
+   if (-X ../mini/tabify.sh && -X git) then
+      if (! -e CImg) then
+         git clone http://git.code.sf.net/p/cimg/source CImg
+      endif
+      (cd CImg; git checkout dd2f26fb53bd2e8bc4464d7d5f7dac6bb401853e)
       foreach file (CImg.h)
          cp -f CImg/$file greycstoration/$file
          ../mini/tabify.sh -x greycstoration/$file
