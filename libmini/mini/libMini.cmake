@@ -22,8 +22,10 @@ SET(MINI_HDRS
    minilayer.h miniterrain.h miniearth.h
    minicache.h minishader.h
    miniray.h ministrip.h
-   minipoint.h minitext.h minisky.h miniglobe.h geoid.h
-   minitree.h minibrick.h minilod.h
+   minipoint.h minitext.h
+   minisky.h miniglobe.h geoid.h
+   minitree.h minipano.h
+   minibrick.h minilod.h
    minislicer.h
    minigeom.h minimesh.h minibspt.h miniproj.h
    pnmbase.h pnmsample.h
@@ -33,9 +35,8 @@ SET(MINI_HDRS
    datacalc.h dataparse.h
    lunascan.h lunaparse.h lunacode.h
    mini_core.h mini_extra.h mini_format.h mini_generic.h mini_gfx.h
-   mini_luna.h mini_math.h mini_object.h mini_sfx.h
+   mini_luna.h mini_math.h mini_object.h
    mini_tileset.h mini_util.h mini_volume.h
-   qt_viewer.h
    )
 
 SET(MINI_SRCS
@@ -52,8 +53,10 @@ SET(MINI_SRCS
    minilayer.cpp miniterrain.cpp miniearth.cpp
    minicache.cpp minishader.cpp
    miniray.cpp ministrip.cpp
-   minipoint.cpp minitext.cpp minisky.cpp miniglobe.cpp geoid.cpp
-   minitree.cpp minibrick.cpp minilod.cpp
+   minipoint.cpp minitext.cpp
+   minisky.cpp miniglobe.cpp geoid.cpp
+   minitree.cpp minipano.cpp
+   minibrick.cpp minilod.cpp
    minimesh.cpp minibspt.cpp miniproj.cpp
    mininodes.cpp mininode_teapot.cpp mininode_path.cpp
    minilog.cpp
@@ -70,7 +73,8 @@ SET(MINISFX_HDRS
    threadbase.h curlbase.h
    jpegbase.h pngbase.h zlibbase.h squishbase.h greycbase.h
    dataconv.h miniimg.h
-   minipano.h
+   mini_sfx.h
+   qt_viewer.h
    )
 
 SET(MINISFX_SRCS
@@ -78,7 +82,6 @@ SET(MINISFX_SRCS
    threadbase.cpp curlbase.cpp
    jpegbase.cpp pngbase.cpp zlibbase.cpp squishbase.cpp greycbase.cpp
    dataconv.cpp miniimg.cpp
-   minipano.cpp
    )
 
 IF (NOT WIN32)
