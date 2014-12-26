@@ -14,9 +14,9 @@ HDRS	= minidefs minibase minicore\
 	  minislicer.h\
 	  minigeom\
 	  mini_core.h mini_extra.h mini_format.h mini_generic.h mini_gfx.h\
-	  mini_luna.h mini_math.h mini_object.h mini_sfx.h\
+	  mini_luna.h mini_math.h mini_object.h\
 	  mini_tileset.h mini_util.h mini_volume.h\
-	  qt_viewer.h
+	  mini_sfx.h qt_viewer.h
 
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
@@ -31,8 +31,10 @@ MODS	= mini miniOGL\
 	  minilayer miniterrain miniearth\
 	  minicache minishader\
 	  miniray ministrip\
-	  minipoint minitext minisky miniglobe geoid\
-	  minitree minibrick minilod\
+	  minipoint minitext\
+	  minisky miniglobe geoid\
+	  minitree minipano\
+	  minibrick minilod\
 	  minimesh minibspt miniproj\
 	  mininodes mininode_teapot mininode_path\
 	  minilog\
@@ -46,8 +48,7 @@ MODS	= mini miniOGL\
 VMODS	= miniscene miniview\
 	  threadbase curlbase\
 	  jpegbase pngbase zlibbase squishbase greycbase\
-	  dataconv miniimg\
-	  minipano
+	  dataconv miniimg
 
 SRCS	= $(MODS:=.cpp)
 OBJS	= $(MODS:=.o)
