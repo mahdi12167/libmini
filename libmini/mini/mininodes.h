@@ -9,6 +9,7 @@
 
 #include "minibase.h"
 #include "minimath.h"
+#include "ministring.h"
 
 #include "minicrs.h"
 #include "minicoord.h"
@@ -16,15 +17,16 @@
 #include "minipath.h"
 #include "mininode.h"
 
-#include "ministring.h"
-#include "miniimg.h"
-
 #include "miniOGL.h"
 #include "ministrip.h"
 #include "minibrick.h"
 #include "minicam.h"
 
 #include "database.h"
+
+#ifndef NOOGL
+#include "miniimg.h"
+#endif
 
 enum
    {
@@ -810,6 +812,8 @@ class mininode_image: public mininode_texture2D
    //! load image from file
    void load(ministring filename,BOOLINT clamp=FALSE)
       {
+#ifndef NOOGL
+
       filename_=filename;
       clamp_=clamp;
 
@@ -841,6 +845,8 @@ class mininode_image: public mininode_texture2D
 
          set_clamp(clamp);
          }
+
+#endif
       }
 
    //! serialize node to string
@@ -903,6 +909,8 @@ class mininode_volume: public mininode_texture3D
    //! load volume from file
    void load(ministring filename)
       {
+#ifndef NOOGL
+
       filename_=filename;
 
       databuf buf;
@@ -918,6 +926,8 @@ class mininode_volume: public mininode_texture3D
 
          buf.release();
          }
+
+#endif
       }
 
    //! serialize node to string
