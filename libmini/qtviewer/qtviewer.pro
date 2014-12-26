@@ -6,6 +6,8 @@ include(sources.pri)
 VPATH += $$PWD/mini
 !include(mini/sources.pri) {
    error("couldn't find libMini sources!")
+!include(mini/sources_sfx.pri) {
+   error("couldn't find libMiniSFX sources!")
 }
 
 VPATH += $$PWD/squish
