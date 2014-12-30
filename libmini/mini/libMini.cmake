@@ -34,6 +34,7 @@ SET(MINI_HDRS
    datacloud.h datacache.h datagrid.h
    datacalc.h dataparse.h
    lunascan.h lunaparse.h lunacode.h
+   lunafunctor.h
    mini_core.h mini_extra.h mini_format.h mini_generic.h mini_gfx.h
    mini_luna.h mini_math.h mini_object.h
    mini_tileset.h mini_util.h mini_volume.h
@@ -66,6 +67,7 @@ SET(MINI_SRCS
    datacloud.cpp datacache.cpp datagrid.cpp
    datacalc.cpp dataparse.cpp
    lunascan.cpp lunaparse.cpp lunacode.cpp
+   lunafunctor.cpp
    )
 
 SET(MINISFX_HDRS

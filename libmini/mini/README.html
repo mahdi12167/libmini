@@ -13,7 +13,7 @@ rendering system which is described in the paper
 "<a href="http://stereofx.org/papers/TERRAIN.PDF">Real-Time Generation
 of Continuous Levels of Detail for Height Fields</a>".<p>
 
-Version 11.4.1 as of 3.December.2014<br>
+Version 11.4.1 as of 30.December.2014<br>
 Copyright (c) 1995-2014 by Stefan Roettger<p>
 
 <h2>Table of Contents</h2>
@@ -186,11 +186,12 @@ Within the libMini package the following files are contained:<p>
    <tr><td>minishader.cpp/.h:      </td><td>shader support for the render cache</td></tr>
    <tr><td>miniray.cpp/.h:         </td><td>ray/triangle intersection code</td></tr>
    <tr><td>ministrip.cpp/.h:       </td><td>vertex array container for triangle strips</td></tr>
-   <tr><td>minipoint.cpp/.h:       </td><td>simple point of interest management</td></tr>
+   <tr><td>minipoint.cpp/.h:       </td><td>simple point of interest renderer</td></tr>
    <tr><td>minitext.cpp/.h:        </td><td>simple text renderer</td></tr>
    <tr><td>minisky.cpp/.h:         </td><td>simple sky dome renderer</td></tr>
    <tr><td>miniglobe.cpp/.h:       </td><td>night/day renderer of the earth or other textured globes</td></tr>
    <tr><td>minitree.cpp/.h:        </td><td>contains algorithms for vegetation rendering</td></tr>
+   <tr><td>minipano.cpp/.h:        </td><td>contains panoramic addon for the minipoint renderer</td></tr>
    <tr><td>minibrick.cpp/.h:       </td><td>contains algorithms for C-LOD volume rendering</td></tr>
    <tr><td>minilod.cpp/.h:         </td><td>contains algorithms for S-LOD volume rendering</td></tr>
    <tr><td>minislicer.h:           </td><td>contains algorithms for volume slicing</td></tr>
@@ -225,8 +226,10 @@ Within the libMini package the following files are contained:<p>
    <tr><td>greycbase.cpp/.h:       </td><td>CImg/GREYCstoration support for image denoising</td></tr>
    <tr><td>dataconv.cpp/.h:        </td><td>image conversion support for external formats</td></tr>
    <tr><td>miniimg.cpp/.h:         </td><td>image reading and writing support for image formats</td></tr>
-   <tr><td>minipano.cpp/.h:        </td><td>panoramic addon for the minipoint renderer</td></tr>
-   <tr><td>luna*.cpp/.h:           </td><td>parser for LUNA, an RPN-style computer language</td></tr>
+   <tr><td>lunascan.cpp/.h:        </td><td>text scanner for LUNA, an RPN-style computer language</td></tr>
+   <tr><td>lunaparse.cpp/.h:       </td><td>token parser for LUNA, an RPN-style computer language</td></tr>
+   <tr><td>lunacode.cpp/.h:        </td><td>code interpreter for LUNA, an RPN-style computer language</td></tr>
+   <tr><td>lunafunctor.cpp/.h:     </td><td>function evaluator based on LUNA</td></tr>
    <tr><td>qt_viewer.h:            </td><td>Qt viewer base class</td></tr>
    <tr><td>data/SkyDome.ppm:       </td><td>a sample sky dome texture (from Philo's Sky Collection)</td></tr>
    <tr><td>data/EarthDay.db:       </td><td>a daylight earth texture (from NASA BlueMarble)</td></tr>

@@ -42,7 +42,8 @@ MODS	= mini miniOGL\
 	  database datafill\
 	  datacloud datacache datagrid\
 	  datacalc dataparse\
-	  lunascan lunaparse lunacode
+	  lunascan lunaparse lunacode\
+	  lunafunctor
 
 VMODS	= miniscene miniview\
 	  threadbase curlbase\

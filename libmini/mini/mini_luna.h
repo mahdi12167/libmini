@@ -7,4 +7,6 @@
 #include <mini/lunaparse.h>
 #include <mini/lunacode.h>
 
+#include <mini/lunafunctor.h>
+
 #endif
