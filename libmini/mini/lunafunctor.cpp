@@ -13,31 +13,23 @@ lunafunctor::~lunafunctor()
    {if (parser!=NULL) delete parser;}
 
 // set the program to be parsed and executed
-void lunafunctor::setcode(const char *code,int bytes,
+void lunafunctor::setcode(ministring &code,
                           const char *path,const char *altpath)
    {
    if (parser!=NULL) delete parser;
    parser=new lunaparse;
 
-   parser->setcode(code,bytes);
+   parser->setcode(code.c_str(),code.size());
    parser->setpath(path,altpath);
    parser->parseLUNA();
-
-   parser->getcode()->init();
    }
 
-// push one value onto the computation stack
-void lunafunctor::pushvalue(float v)
-   {parser->getcode()->pushvalue(v);}
+// evaluate the previously parsed code
+float lunafunctor::evaluate(float x)
+   {
+   parser->getcode()->init(FALSE);
+   parser->getcode()->pushvalue(x);
+   parser->getcode()->execute();
 
-// pop one value from the computation stack
-float lunafunctor::popvalue()
-   {return(parser->getcode()->popvalue());}
-
-// reset the interpreter
-void lunafunctor::init()
-   {parser->getcode()->init(FALSE);}
-
-// execute the previously parsed code
-void lunafunctor::execute()
-   {parser->getcode()->execute();}
+   return(parser->getcode()->popvalue());
+   }

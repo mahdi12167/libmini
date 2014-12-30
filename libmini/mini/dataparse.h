@@ -34,8 +34,6 @@ class dataparse
    protected:
 
    lunaparse *parser;
-
-   private:
    };
 
 #endif
