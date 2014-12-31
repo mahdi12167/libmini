@@ -238,6 +238,21 @@ void lunascan::setcode(const char *code,int bytes)
    free(code0);
    }
 
+char *lunascan::cleancode(const char *code)
+   {
+   unsigned int i;
+
+   char *copy;
+
+   copy=strdup(code);
+
+   for (i=strlen(copy); i>0; i--)
+      if (copy[i-1]=='\n' || copy[i-1]=='\r') copy[i-1]='\0';
+      else break;
+
+   return(copy);
+   }
+
 void lunascan::pushcode(const char *code)
    {
    init();
@@ -250,9 +265,10 @@ void lunascan::pushcode(const char *code)
 
    ungetmychar();
 
-   CODE[CODESTACKSIZE]=strdup(code);
-   POINTER[CODESTACKSIZE]=0;
+   if (CODESTACKSIZE<1) CODE[CODESTACKSIZE]=cleancode(code);
+   else CODE[CODESTACKSIZE]=strdup(code);
 
+   POINTER[CODESTACKSIZE]=0;
    CODESTACKSIZE++;
 
    getmychar();

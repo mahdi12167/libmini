@@ -113,6 +113,8 @@ class lunascan
 
    void init();
 
+   char *cleancode(const char *code);
+
    int getstring(const char *string);
    int addstring(const char *string,unsigned int id);
 
