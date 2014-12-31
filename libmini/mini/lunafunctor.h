@@ -16,7 +16,8 @@ class lunafunctor
    ~lunafunctor();
 
    //! set the code to be parsed and executed
-   void setcode(const char *code,const char *path=NULL);
+   void setcode(const char *code,
+                const char *path=NULL);
 
    //! evaluate the previously parsed program
    float evaluate(float x);
