@@ -25,10 +25,6 @@ int main(int argc,char *argv[])
 
    code=readstring(argv[1]);
 
-   for (bytes=strlen(code); bytes>0; bytes--)
-      if (code[bytes-1]=='\n' || code[bytes-1]=='\r') code[bytes-1]='\0';
-      else break;
-
    value=0.0f;
 
    if (argc>=3)

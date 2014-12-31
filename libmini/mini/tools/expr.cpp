@@ -7,6 +7,8 @@
 int main(int argc,char *argv[])
    {
    lunaparse parser;
+
+   int errors;
    float value;
 
    BOOLINT sw_debug;
@@ -26,24 +28,35 @@ int main(int argc,char *argv[])
 
    parser.setpath(argv[0],"include/");
    parser.include("std.luna");
-   parser.parseEXPR(argv[1]);
+   errors=parser.parseEXPR(argv[1]);
 
-   if (sw_debug)
+   if (errors!=0)
       {
-      printf("compiled code:\n----\n");
-      parser.getcode()->print();
-      printf("----\n");
+      printf("malformed expression\n");
+      value=-1;
       }
+   else
+      {
+      if (sw_debug)
+         {
+         printf("compiled code:\n----\n");
+         parser.getcode()->print();
+         printf("----\n");
+         }
 
-   printf("executing code...\n");
+      printf("executing code...\n");
 
-   parser.getcode()->init();
-   parser.getcode()->setdebug(sw_debug);
-   parser.getcode()->execute();
+      parser.getcode()->init();
+      parser.getcode()->setdebug(sw_debug);
+      parser.getcode()->execute();
 
-   value=parser.getcode()->popvalue();
+      value=parser.getcode()->popvalue();
 
-   printf("...yields value: %g\n",value);
+      if (parser.getcode()->geterrors()!=0)
+         printf("...yields error\n");
+      else
+         printf("...yields value: %g\n",value);
+      }
 
    return(ftrc(value+0.5f));
    }
