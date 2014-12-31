@@ -13,12 +13,12 @@ array_decl  ::= "array" [ "byte" ] <array-id> [ "[" expression "]" ]
 ref_decl    ::= "ref" [ "byte" ] <ref-id>
 vars_decl   ::= var_decl { "," var_decl }
 pars_decl   ::= par_decl | ref_decl { "," par_decl | ref_decl }
-function    ::= "main" | ( "func" <func-id> ) "(" [ pars_decl ] ")"
-                "{" { declaration | statement } "}"
-statement   ::= ( <var-id> ( "=" | ":=" expression ) | "++" | "--" ) |
+function    ::= "main" | ( "func" <func-id> ) "(" [ pars_decl ] ")" block
+block       ::= "{" { declaration | function | statement } "}"
+statement   ::= block |
+                ( <var-id> ( "=" | ":=" expression ) | "++" | "--" ) |
                 ( <array-id> | <ref-id> "[" expression "]" ( "=" | ":=" expression ) | "++" | "--" ) |
                 ( <func-id> "(" [ expression { "," expression } ] ")" ) |
-                ( "{" { declaration | statement } "}" ) |
                 ( "if" "(" expression ")" statement [ "else" statement ] ) |
                 ( "while" "(" expression ")" statement ) |
                 ( "repeat" statement "until" "(" expression ")" ) |
@@ -104,8 +104,10 @@ Example use case:
    parser.setcode(code);
    int errors=parser.parseLUNA();
 
-   // check compile errors
-   if (errors==0)
+   // check compilation errors
+   if (errors!=0)
+      printf("compilation error\n");
+   else
       {
       // execute compiled code
       parser.getcode()->init();
@@ -116,6 +118,9 @@ Example use case:
 
       // get execution errors
       int errors=parser.getcode()->geterrors();
+
+      if (errors!=0)
+         printf("execution error\n");
       }
 
 */
@@ -265,7 +270,7 @@ class lunaparse
    void parse_while(int *VAR_LOC_NUM,int RET_ADDR);
    void parse_repeat(int *VAR_LOC_NUM,int RET_ADDR);
    void parse_for(int *VAR_LOC_NUM,int RET_ADDR);
-   void parse_expression();
+   void parse_expression(BOOLINT infix_ops=TRUE);
    void parse_logicop();
    void parse_comparison();
    void parse_term();
