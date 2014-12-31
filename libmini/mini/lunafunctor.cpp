@@ -6,30 +6,50 @@
 
 // default constructor
 lunafunctor::lunafunctor()
-   {parser=NULL;}
+   {
+   parser=NULL;
+   errors=0;
+   }
 
 // destructor
 lunafunctor::~lunafunctor()
    {if (parser!=NULL) delete parser;}
 
 // set the program to be parsed and executed
-void lunafunctor::setcode(ministring &code,
-                          const char *path,const char *altpath)
+void lunafunctor::setcode(const char *code,
+                          const char *path)
    {
    if (parser!=NULL) delete parser;
    parser=new lunaparse;
 
-   parser->setcode(code.c_str(),code.size());
-   parser->setpath(path,altpath);
-   parser->parseLUNA();
+   parser->setcode(code);
+   parser->setpath(path,"include/");
+   errors=parser->parseLUNA();
    }
 
 // evaluate the previously parsed code
 float lunafunctor::evaluate(float x)
    {
-   parser->getcode()->init(FALSE);
-   parser->getcode()->pushvalue(x);
-   parser->getcode()->execute();
+   float value;
 
-   return(parser->getcode()->popvalue());
+   if (parser==NULL)
+      {
+      errors++;
+      value=-1;
+      }
+   else
+      {
+      parser->getcode()->init(FALSE);
+      parser->getcode()->pushvalue(x);
+      parser->getcode()->execute();
+
+      value=parser->getcode()->popvalue();
+      errors+=parser->getcode()->geterrors();
+      }
+
+   return(value);
    }
+
+// evaluate the previously parsed code
+BOOLINT lunafunctor::error()
+   {return(errors!=0);}

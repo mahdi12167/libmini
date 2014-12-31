@@ -3,7 +3,6 @@
 #ifndef LUNAFUNCTOR_H
 #define LUNAFUNCTOR_H
 
-#include "ministring.h"
 #include "lunaparse.h"
 
 class lunafunctor
@@ -17,15 +16,18 @@ class lunafunctor
    ~lunafunctor();
 
    //! set the code to be parsed and executed
-   void setcode(ministring &code,
-                const char *path=NULL,const char *altpath=NULL);
+   void setcode(const char *code,const char *path=NULL);
 
    //! evaluate the previously parsed program
    float evaluate(float x);
 
+   //! check for errors
+   BOOLINT error();
+
    protected:
 
    lunaparse *parser;
+   int errors;
    };
 
 #endif

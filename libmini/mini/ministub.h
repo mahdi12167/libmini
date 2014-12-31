@@ -124,8 +124,6 @@ class ministub
    int MODIFIED;
 
    int FAST;
-
-   private:
    };
 
 #endif
