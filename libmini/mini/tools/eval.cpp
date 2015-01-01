@@ -8,7 +8,6 @@
 int main(int argc,char *argv[])
    {
    char *code;
-   unsigned int bytes;
 
    lunaparse parser;
 

@@ -263,7 +263,7 @@ class lunaparse
    void parse_par_decl(int *PAR_LOC_NUM);
    void parse_func_decl(BOOLINT main);
    void parse_statement(int *VAR_LOC_NUM,int RET_ADDR);
-   void parse_var(BOOLINT index,int code_assign,int code_inc,int code_dec,int code_assign_idx,int code_inc_idx,int code_dec_idx);
+   void parse_var(BOOLINT index,int code_assign,int code_inc,int code_dec,int code_assign_idx,int code_inc_idx,int code_dec_idx,BOOLINT local=TRUE);
    void parse_func();
    void parse_block(int *VAR_LOC_NUM,int RET_ADDR);
    void parse_if(int *VAR_LOC_NUM,int RET_ADDR);
@@ -279,7 +279,8 @@ class lunaparse
    void parse_value();
    void parse_prefix_ops();
    BOOLINT parse_alpha_ops();
-   void parse_var_index(int push,int push_idx);
+   void parse_array(BOOLINT local);
+   void parse_array_index(int push,int push_idx);
    };
 
 #endif

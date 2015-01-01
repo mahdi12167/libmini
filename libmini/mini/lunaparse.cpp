@@ -532,7 +532,8 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
    else if (SCANNER.gettoken()==LUNA_REF_GLB)
       parse_var(TRUE,
                 lunacode::CODE_POP_REF,lunacode::CODE_NOP,lunacode::CODE_NOP,
-                lunacode::CODE_POP_REF_IDX,lunacode::CODE_INC_REF_IDX,lunacode::CODE_DEC_REF_IDX);
+                lunacode::CODE_POP_REF_IDX,lunacode::CODE_INC_REF_IDX,lunacode::CODE_DEC_REF_IDX,
+                FALSE);
    else if (SCANNER.gettoken()==LUNA_REF_LOC)
       parse_var(TRUE,
                 lunacode::CODE_POP_REF_LOC,lunacode::CODE_NOP,lunacode::CODE_NOP,
@@ -567,7 +568,8 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
 
 void lunaparse::parse_var(BOOLINT index,
                           int code_assign,int code_inc,int code_dec,
-                          int code_assign_idx,int code_inc_idx,int code_dec_idx)
+                          int code_assign_idx,int code_inc_idx,int code_dec_idx,
+                          BOOLINT local)
    {
    int info;
 
@@ -591,14 +593,20 @@ void lunaparse::parse_var(BOOLINT index,
       {
       SCANNER.next();
 
-      parse_expression();
-
       if (!index)
+         {
+         parse_array(local);
+
          if (code_assign==lunacode::CODE_NOP) PARSERMSG("invalid assignment");
          else CODE.addcode(code_assign,lunacode::MODE_ANY,info);
+         }
       else
+         {
+         parse_expression();
+
          if (code_assign_idx==lunacode::CODE_NOP) PARSERMSG("invalid assignment");
          else CODE.addcode(code_assign_idx,lunacode::MODE_ANY,info);
+         }
       }
    else if (SCANNER.gettoken()==LUNA_INC)
       {
@@ -961,10 +969,10 @@ void lunaparse::parse_value()
 
       SCANNER.next();
       }
-   else if (SCANNER.gettoken()==LUNA_ARRAY_GLB) parse_var_index(lunacode::CODE_PUSH_ARRAY,lunacode::CODE_PUSH_ARRAY_IDX);
-   else if (SCANNER.gettoken()==LUNA_ARRAY_LOC) parse_var_index(lunacode::CODE_PUSH_ARRAY_LOC,lunacode::CODE_PUSH_ARRAY_LOC_IDX);
-   else if (SCANNER.gettoken()==LUNA_REF_GLB) parse_var_index(lunacode::CODE_PUSH_REF,lunacode::CODE_PUSH_REF_IDX);
-   else if (SCANNER.gettoken()==LUNA_REF_LOC) parse_var_index(lunacode::CODE_PUSH_REF_LOC,lunacode::CODE_PUSH_REF_LOC_IDX);
+   else if (SCANNER.gettoken()==LUNA_ARRAY_GLB) parse_array_index(lunacode::CODE_PUSH_ARRAY,lunacode::CODE_PUSH_ARRAY_IDX);
+   else if (SCANNER.gettoken()==LUNA_ARRAY_LOC) parse_array_index(lunacode::CODE_PUSH_ARRAY_LOC,lunacode::CODE_PUSH_ARRAY_LOC_IDX);
+   else if (SCANNER.gettoken()==LUNA_REF_GLB) parse_array_index(lunacode::CODE_PUSH_REF,lunacode::CODE_PUSH_REF_IDX);
+   else if (SCANNER.gettoken()==LUNA_REF_LOC) parse_array_index(lunacode::CODE_PUSH_REF_LOC,lunacode::CODE_PUSH_REF_LOC_IDX);
    else if (SCANNER.gettoken()==LUNA_FUNCTION) parse_func();
    else if (SCANNER.gettoken()==LUNA_PARENLEFT) parse_prefix_ops();
    else if (SCANNER.gettoken()==LUNA_SIZE)
@@ -1111,7 +1119,31 @@ BOOLINT lunaparse::parse_alpha_ops()
    return(TRUE);
    }
 
-void lunaparse::parse_var_index(int push,int push_idx)
+void lunaparse::parse_array(BOOLINT local)
+   {
+   int push;
+   int info;
+
+   push=lunacode::CODE_NOP;
+
+   if (SCANNER.gettoken()==LUNA_ARRAY_GLB) push=lunacode::CODE_PUSH_ARRAY;
+   else if (SCANNER.gettoken()==LUNA_ARRAY_LOC) push=lunacode::CODE_PUSH_ARRAY_LOC;
+   else if (SCANNER.gettoken()==LUNA_REF_GLB) push=lunacode::CODE_PUSH_REF;
+   else if (SCANNER.gettoken()==LUNA_REF_LOC) push=lunacode::CODE_PUSH_REF_LOC;
+
+   if (!local)
+      if (SCANNER.gettoken()==LUNA_ARRAY_LOC ||
+          SCANNER.gettoken()==LUNA_REF_LOC) push=lunacode::CODE_NOP;
+
+   info=SCANNER.getinfo();
+
+   SCANNER.next();
+
+   if (push!=lunacode::CODE_NOP) CODE.addcode(push,lunacode::MODE_ANY,info);
+   else PARSERMSG("invalid array assignment");
+   }
+
+void lunaparse::parse_array_index(int push,int push_idx)
    {
    int info;
 
