@@ -532,8 +532,7 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
    else if (SCANNER.gettoken()==LUNA_REF_GLB)
       parse_var(TRUE,
                 lunacode::CODE_POP_REF,lunacode::CODE_NOP,lunacode::CODE_NOP,
-                lunacode::CODE_POP_REF_IDX,lunacode::CODE_INC_REF_IDX,lunacode::CODE_DEC_REF_IDX,
-                FALSE);
+                lunacode::CODE_POP_REF_IDX,lunacode::CODE_INC_REF_IDX,lunacode::CODE_DEC_REF_IDX);
    else if (SCANNER.gettoken()==LUNA_REF_LOC)
       parse_var(TRUE,
                 lunacode::CODE_POP_REF_LOC,lunacode::CODE_NOP,lunacode::CODE_NOP,
@@ -568,8 +567,7 @@ void lunaparse::parse_statement(int *VAR_LOC_NUM,int RET_ADDR)
 
 void lunaparse::parse_var(BOOLINT index,
                           int code_assign,int code_inc,int code_dec,
-                          int code_assign_idx,int code_inc_idx,int code_dec_idx,
-                          BOOLINT local)
+                          int code_assign_idx,int code_inc_idx,int code_dec_idx)
    {
    int info;
 
@@ -595,7 +593,9 @@ void lunaparse::parse_var(BOOLINT index,
 
       if (!index)
          {
-         parse_array(local);
+         if (code_assign!=lunacode::CODE_POP_REF &&
+             code_assign!=lunacode::CODE_POP_REF_LOC) parse_expression();
+         else parse_array(code_assign!=lunacode::CODE_POP_REF);
 
          if (code_assign==lunacode::CODE_NOP) PARSERMSG("invalid assignment");
          else CODE.addcode(code_assign,lunacode::MODE_ANY,info);
@@ -632,7 +632,7 @@ void lunaparse::parse_var(BOOLINT index,
       }
    else
       {
-      PARSERMSG("expected variable access");
+      PARSERMSG("expected assignment");
       SCANNER.next();
       }
    }
