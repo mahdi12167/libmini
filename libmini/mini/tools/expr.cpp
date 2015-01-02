@@ -53,7 +53,7 @@ int main(int argc,char *argv[])
       value=parser.getcode()->popvalue();
 
       if (parser.getcode()->geterrors()!=0)
-         printf("...yields error\n");
+         printf("...execution error\n");
       else
          printf("...yields value: %g\n",value);
       }

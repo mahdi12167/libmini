@@ -15,19 +15,21 @@ lunafunctor::lunafunctor()
 lunafunctor::~lunafunctor()
    {if (parser!=NULL) delete parser;}
 
-// set the program to be parsed and executed
-void lunafunctor::setcode(const char *code,
-                          const char *path)
+// set the expression to be parsed and evaluated
+void lunafunctor::expr(const char *expr,
+                       const char *path)
    {
    if (parser!=NULL) delete parser;
    parser=new lunaparse;
 
-   parser->setcode(code);
+   parser->setcode("var x; main(par p){x=p;}");
    parser->setpath(path,"include/");
-   errors=parser->parseLUNA();
+   parser->include("std.luna");
+   parser->include("functor.luna");
+   errors=parser->parseEXPR(expr);
    }
 
-// evaluate the previously parsed code
+// evaluate the previously parsed expression
 float lunafunctor::evaluate(float x)
    {
    float value;

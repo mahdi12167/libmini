@@ -15,11 +15,11 @@ class lunafunctor
    //! destructor
    ~lunafunctor();
 
-   //! set the code to be parsed and executed
-   void setcode(const char *code,
-                const char *path=NULL);
+   //! set the expression to be evaluated
+   void expr(const char *expr,
+             const char *path=NULL);
 
-   //! evaluate the previously parsed program
+   //! evaluate the previously parsed expression
    float evaluate(float x);
 
    //! check for errors

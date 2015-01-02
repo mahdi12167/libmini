@@ -44,7 +44,7 @@ int main(int argc,char *argv[])
 
    if (errors!=0)
       {
-      printf("compilation failed\n");
+      printf("compilation error\n");
       value=-1;
       }
    else
@@ -66,7 +66,7 @@ int main(int argc,char *argv[])
       value=parser.getcode()->popvalue();
 
       if (parser.getcode()->geterrors()!=0)
-         printf("execution failed\n");
+         printf("...execution error\n");
       else
          printf("...yields value: %g\n",value);
       }
