@@ -77,8 +77,8 @@ endif
 # squish 1.11 /w cmake
 if ($target == "" || $target == "squish") then
    if (-X ../mini/tabify.sh && -X svn) then
-      svn co -r 58 http://libsquish.googlecode.com/svn/trunk libsquish
-      foreach file (libsquish/*.cpp libsquish/*.h libsquish/*.inl libsquish/CMakeLists.txt libsquish/*.pro)
+      svn co -r 60 http://libsquish.googlecode.com/svn/trunk libsquish
+      foreach file (libsquish/*.cpp libsquish/*.h libsquish/*.inl libsquish/CMakeLists.txt libsquish/*.pr?)
          cp -f $file $file:s/libsquish/squish/
          ../mini/tabify.sh -x $file:s/libsquish/squish/
       end
