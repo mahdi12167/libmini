@@ -4,19 +4,19 @@ TEMPLATE = app
 include(sources.pri)
 
 VPATH += $$PWD/mini
-!include(mini/sources.pri) {
+!include(mini/libMini.pri) {
    error("couldn't find libMini sources!")
-!include(mini/sources_sfx.pri) {
+!include(mini/libMiniSFX.pri) {
    error("couldn't find libMiniSFX sources!")
 }
 
 VPATH += $$PWD/squish
-!include(squish/sources.pri) {
+!include(squish/libSquish.pri) {
    error("couldn't find libSquish sources!")
 }
 
 VPATH += $$PWD/grid
-!include(grid/sources.pri) {
+!include(grid/libGrid.pri) {
    error("couldn't find libGrid sources!")
 }
 
