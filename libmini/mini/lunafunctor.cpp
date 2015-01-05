@@ -6,6 +6,7 @@
 
 // default constructor
 lunafunctor::lunafunctor()
+   : functor()
    {
    parser=NULL;
    errors=0;

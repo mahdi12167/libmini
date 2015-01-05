@@ -5,7 +5,41 @@
 
 #include "lunaparse.h"
 
-class lunafunctor
+class functor
+   {
+   public:
+
+   //! default constructor
+   functor() : range_min(0.0f), range_max(1.0f) {}
+
+   //! destructor
+   ~functor() {}
+
+   //! set the functor domain range
+   void range(float min=0.0f,float max=1.0f)
+      {
+      range_min=min;
+      range_max=max;
+      }
+
+   //! evaluate the denormalized functor
+   float f(float x)
+      {return(evaluate(range_min+x*(range_max-range_min)));}
+
+   //! evaluate the functor
+   virtual float evaluate(float x) = 0;
+
+   //! check for errors
+   virtual BOOLINT error()
+      {return(FALSE);}
+
+   protected:
+
+   float range_min;
+   float range_max;
+   };
+
+class lunafunctor: public functor
    {
    public:
 
@@ -20,7 +54,7 @@ class lunafunctor
              const char *path=NULL);
 
    //! evaluate the previously parsed expression
-   float evaluate(float x);
+   virtual float evaluate(float x);
 
    //! check for errors
    BOOLINT error();
