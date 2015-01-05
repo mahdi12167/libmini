@@ -30,7 +30,7 @@ class functor
    virtual float evaluate(float x) = 0;
 
    //! check for errors
-   virtual BOOLINT error()
+   BOOLINT error()
       {return(FALSE);}
 
    protected:
