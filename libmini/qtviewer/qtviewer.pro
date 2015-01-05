@@ -1,7 +1,7 @@
 TARGET = qtviewer
 TEMPLATE = app
 
-include(sources.pri)
+include(qtviewer.pri)
 
 VPATH += $$PWD/mini
 !include(mini/libMini.pri) {
