@@ -9,21 +9,13 @@
 
 void minicurve::append(const minimeas &p)
    {
-   minimeas m=p;
-
-   m.convert2ecef();
-   minidyna<minimeas>::append(m);
-
+   minidyna<minimeas>::append(p);
    valid=FALSE;
    }
 
 void minicurve::append(minicurve &c)
    {
-   validate();
-   c.validate();
-
    minidyna<minimeas>::append(c);
-
    valid=FALSE;
    }
 
@@ -140,33 +132,64 @@ void minicurve::validate()
 
       // check for missing points
       for (i=0; i<getsize();)
-         if (isNAN(get(i).vec.x) || isNAN(get(i).vec.y)) dispose(i);
-         else i++;
+         if (get(i).type==minicoord::MINICOORD_LLH ||
+             get(i).type==minicoord::MINICOORD_UTM ||
+             get(i).type==minicoord::MINICOORD_MERC)
+            if (isNAN(get(i).vec.x) || isNAN(get(i).vec.y)) dispose(i);
+            else i++;
+         else
+            if (isNAN(get(i).vec.x) || isNAN(get(i).vec.y) || isNAN(get(i).vec.z)) dispose(i);
+            else i++;
 
       // mark first time step
       if (!empty()) ref(0).start=TRUE;
 
-      // check for missing height
+      // check for missing heights
       for (i=0; i<getsize(); i++)
-         if (isNAN(get(i).vec.z))
-            {
-            // reduplicate height from previous points
-            for (j=i; j>0;)
-               if (!isNAN(get(--j).vec.z))
+         if (get(i).type==minicoord::MINICOORD_LLH ||
+             get(i).type==minicoord::MINICOORD_UTM ||
+             get(i).type==minicoord::MINICOORD_MERC)
+            if (isNAN(get(i).vec.z))
+               {
+               // reduplicate height from previous points
+               for (j=i; j>0;)
                   {
-                  ref(i).vec.z=get(j).vec.z;
-                  break;
+                  --j;
+                  if (get(j).type==minicoord::MINICOORD_LLH ||
+                      get(j).type==minicoord::MINICOORD_UTM ||
+                      get(j).type==minicoord::MINICOORD_MERC)
+                     if (!isNAN(get(j).vec.z))
+                        {
+                        ref(i).vec.z=get(j).vec.z;
+                        break;
+                        }
                   }
 
-            // reduplicate height from following points
-            if (isNAN(get(i).vec.z))
-               for (j=i+1; j<getsize(); j++)
-                  if (!isNAN(get(j).vec.z))
+               // reduplicate height from following points
+               if (isNAN(get(i).vec.z))
+                  for (j=i; j<getsize();)
                      {
-                     ref(i).vec.z=get(j).vec.z;
-                     break;
+                     j++;
+                     if (get(j).type==minicoord::MINICOORD_LLH ||
+                         get(j).type==minicoord::MINICOORD_UTM ||
+                         get(j).type==minicoord::MINICOORD_MERC)
+                        if (!isNAN(get(j).vec.z))
+                           {
+                           ref(i).vec.z=get(j).vec.z;
+                           break;
+                           }
                      }
-            }
+               }
+
+      // replace missing heights
+      for (i=0; i<getsize(); i++)
+         if (get(i).type==minicoord::MINICOORD_LLH ||
+             get(i).type==minicoord::MINICOORD_UTM ||
+             get(i).type==minicoord::MINICOORD_MERC)
+            if (isNAN(get(i).vec.z)) ref(i).vec.z=0.0;
+
+      // convert to ecef
+      for (i=0; i<getsize(); i++) ref(i).convert2ecef();
 
       // check for maximum time difference and travelled distance
       for (i=1; i<getsize(); i++)
