@@ -35,10 +35,11 @@ void minixmlparser::from_strings(ministrings &infos)
    scanner->addtoken(":",XML_COLON);
    scanner->addtoken("=",XML_EQUAL);
 
-   // pass xml
+   // pass xml code
    parser_->setcode(infos.to_string("\n").c_str());
+   scanner->next();
 
-   // skim xml
+   // skim xml code
    while (scanner->gettoken()!=lunascan::LUNA_END)
       {
       // skim tags

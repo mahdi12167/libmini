@@ -325,6 +325,7 @@ void minipoint::parsecomment(minipointdata *point)
    scanner.addtoken("datarange",minipointopts::OPTION_DATARANGE);
 
    scanner.setcode(point->comment);
+   scanner.next();
 
    // options are of the form $option=value
    while (scanner.gettoken()!=lunascan::LUNA_END)

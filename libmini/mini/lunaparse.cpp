@@ -147,6 +147,8 @@ int lunaparse::parseLUNA()
       return(ERRORS);
       }
 
+   SCANNER.next();
+
    MAIN=-1;
 
    addr1=CODE.getaddr();
@@ -192,10 +194,12 @@ int lunaparse::parseEXPR(const char *expr)
    {
    ERRORS=0;
 
-   if (SCANNER.getcode()!=NULL)
-      parseLUNA();
+   if (SCANNER.getcode()==NULL) SCANNER.next();
+   else parseLUNA();
 
    SCANNER.pushcode(expr);
+   SCANNER.next();
+
    parse_expression();
    SCANNER.freecode();
 
@@ -206,19 +210,11 @@ void lunaparse::parse_include(const char *path,const char *altpath)
    {
    SCANNER.next();
 
-   if (SCANNER.gettoken()!=lunascan::LUNA_STRING)
-      {
-      PARSERMSG("expected string");
-      SCANNER.next();
-      return;
-      }
+   if (SCANNER.gettoken()!=lunascan::LUNA_STRING) PARSERMSG("expected string");
+   else
+      if (!include(SCANNER.getstring(),path,altpath)) PARSERMSG("unable to open include file");
 
-   if (!include(SCANNER.getstring(),path,altpath))
-      {
-      PARSERMSG("unable to open include file");
-      SCANNER.next();
-      return;
-      }
+   SCANNER.next();
    }
 
 BOOLINT lunaparse::include(const char *file,
@@ -1139,7 +1135,8 @@ void lunaparse::parse_array(BOOLINT local)
 
    SCANNER.next();
 
-   if (push!=lunacode::CODE_NOP) CODE.addcode(push,lunacode::MODE_ANY,info);
+   if (push==lunacode::CODE_NOP)
+      CODE.addcode(push,lunacode::MODE_ANY,info);
    else PARSERMSG("invalid array assignment");
    }
 

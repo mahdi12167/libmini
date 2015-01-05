@@ -25,8 +25,8 @@ void lunafunctor::expr(const char *expr,
 
    parser->setcode("var x; main(par p){x=p;}");
    parser->setpath(path,"include/");
-   parser->include("std.luna");
    parser->include("functor.luna");
+   parser->include("std.luna");
    errors=parser->parseEXPR(expr);
    }
 

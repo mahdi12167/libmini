@@ -25,6 +25,12 @@ lunascan::lunascan()
    COL=PCOL=PPCOL=1;
    LINE=PLINE=PPLINE=0;
 
+   TOKEN=LUNA_END;
+   SERIAL=LUNA_UNKNOWN;
+   VALUE=0.0;
+
+   CHECKIDNT=CHECKSPCL=FALSE;
+
    COMMENT='#';
    }
 
@@ -87,6 +93,7 @@ void lunascan::init()
       {
       if ((STRING=(char *)malloc(STRINGMAX*sizeof(char)))==NULL) MEMERROR();
       STRINGSIZE=0;
+      STRING[0]='\0';
       }
 
    if (SCOPESTACK==NULL)
@@ -272,7 +279,6 @@ void lunascan::pushcode(const char *code)
    CODESTACKSIZE++;
 
    getmychar();
-   next();
    }
 
 char *lunascan::getcode()
@@ -399,6 +405,26 @@ void lunascan::next()
       else if (CH=='"') scanstring();
       else if ((CH>='a' && CH<='z') || (CH>='A' && CH<='Z') || CH=='_') scanidentifier();
       else scanspecial();
+   }
+
+void lunascan::gettext(char delimiter)
+   {
+   if (CODESTACKSIZE<1) ERRORMSG();
+
+   clear();
+
+   if (CH!='\0')
+      {
+      while (CH!=delimiter && CH!='\0')
+         {
+         if (CH!='\r') pushback(CH);
+         getmychar();
+         }
+
+      if (CH!=delimiter) SCANNERMSG("unterminated text");
+      }
+
+   TOKEN=LUNA_STRING;
    }
 
 int lunascan::getserials()
@@ -603,24 +629,6 @@ void lunascan::scanstring()
    if (CH!='"') SCANNERMSG("unterminated string constant");
 
    getmychar();
-
-   TOKEN=LUNA_STRING;
-   }
-
-void lunascan::gettext(char delimiter)
-   {
-   clear();
-
-   if (CH!='\0')
-      {
-      while (CH!=delimiter && CH!='\0')
-         {
-         if (CH!='\r') pushback(CH);
-         getmychar();
-         }
-
-      if (CH!=delimiter) SCANNERMSG("unterminated text");
-      }
 
    TOKEN=LUNA_STRING;
    }
