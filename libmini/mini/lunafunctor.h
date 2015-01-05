@@ -13,7 +13,7 @@ class functor
    functor() : range_min(0.0f), range_max(1.0f) {}
 
    //! destructor
-   ~functor() {}
+   virtual ~functor() {}
 
    //! set the functor domain range
    void range(float min=0.0f,float max=1.0f)
@@ -47,7 +47,7 @@ class lunafunctor: public functor
    lunafunctor();
 
    //! destructor
-   ~lunafunctor();
+   virtual ~lunafunctor();
 
    //! set the expression to be evaluated
    void expr(const char *expr,
