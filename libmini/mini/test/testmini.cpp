@@ -9,6 +9,7 @@
 #define MINIPATH_TEST // enable this to perform a test of the minipath module
 #define MINIXML_TEST // enable this to perform a test of the minixml module
 #define GLSLMATH_TEST // enable this to perform a test of the glslmath module
+#define LUNAFUNCTOR_TEST // enable this to perform a test of the lunafunctor module
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
@@ -20,6 +21,7 @@
 #include <mini/minipath.h>
 #include <mini/minixml.h>
 #include <mini/glslmath.h>
+#include <mini/lunafunctor.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -162,10 +164,7 @@ int main(int argc,char *argv[])
    std::cout << " " << c3 << std::endl;
    c3.convert2llh();
    std::cout << c3 << std::endl;
-   c3-=c1;
-   if (c3.vec.getlength()<1e-5) c3.vec=miniv3d(0,0,0);
-   c3+=c1;
-   if (c3==c1) std::cout << "SUCCESS" << std::endl;
+   if (c1.getdist(c3)<1E-2) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
 
    std::cout << "minicoord:" << std::endl;
@@ -256,6 +255,7 @@ int main(int argc,char *argv[])
    minipath path;
    path.append(point1);
    path.append(point2);
+   path.set_constraints();
    double length=path.get_length();
    std::cout << "minipath: length=" << length << std::endl;
    if (dabs(length-1.15704e+07)<1E1) std::cout << "SUCCESS" << std::endl;
@@ -274,6 +274,14 @@ int main(int argc,char *argv[])
 #ifdef GLSLMATH_TEST
    std::cout << "glslmath:" << std::endl;
    if (test_glslmath()==0) std::cout << "SUCCESS" << std::endl;
+   else {std::cout << "FAILURE" << std::endl; failure++;}
+#endif
+
+#ifdef LUNAFUNCTOR_TEST
+   std::cout << "lunafunctor:" << std::endl;
+   lunafunctor functor;
+   functor.expr("1-2*x");
+   if (functor.f(0.5f)==0.0f) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
 #endif
 
