@@ -2648,9 +2648,9 @@ ministrings ViewerWindow::browse(ministring title,
    if (newfile) fd->setAcceptMode(QFileDialog::AcceptSave);
 #ifdef HAVE_QT5
    fd->setFilter(QDir::Dirs|QDir::Files);
-   fd->setNameFilter(tr("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);; QTV Files (*.qtv);; Grid Files (*.grid)"));
+   fd->setNameFilter(tr("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);;QTV Files (*.qtv);;Grid Files (*.grid)"));
 #else
-   fd->setFilter(tr("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);; QTV Files (*.qtv);; Grid Files (*.grid)"));
+   fd->setFilter(tr("All Files (*.*);;Ini Files (*.ini);;Binary Terrain (*.bt);;Images (*.tif *.tiff *.jpg *.png);;QTV Files (*.qtv);;Grid Files (*.grid)"));
 #endif
 
    if (path!="") fd->setDirectory(path.c_str());
