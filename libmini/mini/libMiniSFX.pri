@@ -3,7 +3,7 @@ HEADERS += \
    threadbase.h curlbase.h \
    jpegbase.h pngbase.h zlibbase.h squishbase.h greycbase.h \
    dataconv.h miniimg.h \
-   minisfx.h \
+   mini_sfx.h \
    qt_viewer.h
 
 SOURCES += \
