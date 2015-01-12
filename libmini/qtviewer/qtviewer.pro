@@ -6,6 +6,7 @@ include(qtviewer.pri)
 VPATH += $$PWD/mini
 !include(mini/libMini.pri) {
    error("couldn't find libMini sources!")
+}
 !include(mini/libMiniSFX.pri) {
    error("couldn't find libMiniSFX sources!")
 }

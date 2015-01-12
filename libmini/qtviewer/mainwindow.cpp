@@ -235,6 +235,9 @@ void MainWindow::createWidgets()
 
    // style sheets:
 
+   setStyleSheet("QSplitter::handle:horizontal { background-color: white; }"
+                 ":focus { background-color: white; }");
+
    tabWidget->setStyleSheet("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; }"
                             "QGroupBox#viewerGroupBox { border: 0; border-radius: 0; }"
                             "QGroupBox#prefGroupBox { border: 0; border-radius: 0; }"
