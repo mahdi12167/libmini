@@ -61,8 +61,9 @@ class lunafunctor: public functor
 
    protected:
 
-   lunaparse *parser;
-   int errors;
+   lunaparse *parser_;
+   char *expr_;
+   int errors_;
    };
 
 #endif
