@@ -1219,12 +1219,12 @@ void normalize(int num,
                              &scaling0,&missing0,
                              &utm_zone,&utm_datum)==0) ERRORMSG();
 
+            for (i=0; i<8; i++) utm_coord[i]=coord[i];
+
             // transform corners
             if (utm_zone!=0)
                {
                static minicrs CRS;
-
-               for (i=0; i<8; i++) utm_coord[i]=coord[i];
 
                CRS.UTM2LL(coord[0],coord[1],utm_zone,utm_datum,&coord[1],&coord[0]);
                CRS.UTM2LL(coord[2],coord[3],utm_zone,utm_datum,&coord[3],&coord[2]);
@@ -1244,6 +1244,9 @@ void normalize(int num,
                            (coord[3]-coord[1])*(coord[3]-coord[1]))+
                       sqrt(dsqr(LONSUB(coord[4],coord[6]))+
                            (coord[5]-coord[7])*(coord[5]-coord[7])))/2.0;
+
+            if (utm_zone!=0)
+               for (i=0; i<8; i++) coord[i]=utm_coord[i];
             }
          else
             {
@@ -1270,9 +1273,6 @@ void normalize(int num,
          free(hmap);
 
          printf("normalized grid with center (%g,%g)\n",centerx0/60/60,centery0/60/60);
-
-         if (utm_zone!=0)
-            for (i=0; i<8; i++) coord[i]=utm_coord[i];
 
          putPNMparams(&comment,
                       "normalized with libMini",
