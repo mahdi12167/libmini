@@ -28,6 +28,12 @@ DEPENDPATH += grid
 QT += core gui opengl
 CONFIG += debug_and_release
 
+message(QT_VERSION = $$QT_VERSION)
+greaterThan(QT_MAJOR_VERSION, 4) {
+   QT += widgets
+   DEFINES += HAVE_QT5
+}
+
 CONFIG(debug, debug|release) {
    unix:TARGET = $$join(TARGET,,,_debug)
 }
