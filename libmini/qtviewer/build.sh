@@ -6,7 +6,7 @@
 # for build options type "./build.sh help"
 
 if ($1 == "clean") then
-   make clean
+   make distclean
    rm -rf Makefile* qtviewer qtviewer_debug qtviewer*.app mocs* objs* rccs* uics*
    exit
 endif
