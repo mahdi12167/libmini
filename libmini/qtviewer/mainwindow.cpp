@@ -249,6 +249,8 @@ void MainWindow::createWidgets()
    paramGroup->setStyleSheet("QGroupBox { margin: 3px; padding-top: 16px; }"
                              "QGroupBox::title { subcontrol-origin: padding; subcontrol-position: top left; padding-left: 8px; padding-top: 3px; }");
 
+   qApp->setStyle(new Style_tweaks);
+
    // drag and drop:
 
    connect(viewerWindow, SIGNAL(signalChange(const ministring &, const ministring &)),
