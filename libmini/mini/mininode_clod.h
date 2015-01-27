@@ -8,7 +8,7 @@
 #include "miniclod.h"
 
 //! a geometry node that implements C-LOD for geo-referenced paths
-class mininode_geometry_path_clod: public mininode_geometry, miniclod
+class mininode_geometry_path_clod: public mininode_geometry, public miniclod
    {
    public:
 
@@ -17,6 +17,12 @@ class mininode_geometry_path_clod: public mininode_geometry, miniclod
 
    //! destructor
    virtual ~mininode_geometry_path_clod();
+
+   //! set path
+   void set(const minipath &path);
+
+   //! load path
+   void load(ministring filename);
 
    //! create geometry from actual view point
    void create(double maxdev=1,double atdist=100, // maximum deviation at specific distance

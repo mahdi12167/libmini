@@ -15,6 +15,14 @@ mininode_geometry_path_clod::mininode_geometry_path_clod()
 mininode_geometry_path_clod::~mininode_geometry_path_clod()
    {}
 
+// set path
+void mininode_geometry_path_clod::set(const minipath &path)
+   {miniclod::set(path);}
+
+// load path
+void mininode_geometry_path_clod::load(ministring filename)
+   {miniclod::load(filename);}
+
 // create geometry from actual view point
 void mininode_geometry_path_clod::create(double maxdev,double atdist,
                                          double maxwidth,
