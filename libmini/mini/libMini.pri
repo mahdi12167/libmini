@@ -17,7 +17,7 @@ HEADERS += \
    ministub.h minitile.h miniload.h \
    minicoord.h minimeas.h \
    minicurve.h minipath.h minixml.h \
-   miniwarp.h minicam.h \
+   miniclod.h miniwarp.h minicam.h \
    minilayer.h miniterrain.h miniearth.h \
    minicache.h minishader.h \
    miniray.h ministrip.h \
@@ -49,7 +49,7 @@ SOURCES += \
    ministub.cpp minitile.cpp miniload.cpp \
    minicoord.cpp minimeas.cpp \
    minicurve.cpp minipath.cpp minixml.cpp \
-   miniwarp.cpp minicam.cpp \
+   miniclod.cpp miniwarp.cpp minicam.cpp \
    minilayer.cpp miniterrain.cpp miniearth.cpp \
    minicache.cpp minishader.cpp \
    miniray.cpp ministrip.cpp \

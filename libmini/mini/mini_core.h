@@ -7,5 +7,6 @@
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
 #include <mini/ministub.h>
+#include <mini/miniclod.h>
 
 #endif
