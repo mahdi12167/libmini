@@ -12,7 +12,8 @@
 #include <mini/mininode.h>
 #include <mini/mininodes.h>
 #include <mini/mininode_geom.h>
-#include <mini/mininode_path.h>
 #include <mini/mininode_teapot.h>
+#include <mini/mininode_path.h>
+#include <mini/mininode_clod.h>
 
 #endif

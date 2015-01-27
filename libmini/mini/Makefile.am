@@ -12,7 +12,8 @@ HDRS	= minidefs minibase minicore\
 	  miniref mininode mininode_geom\
 	  minislicer.h\
 	  minigeom\
-	  mini_core.h mini_extra.h mini_format.h mini_generic.h mini_gfx.h\
+	  mini_core.h mini_extra.h mini_format.h\
+          mini_generic.h mini_gfx.h\
 	  mini_luna.h mini_math.h mini_object.h\
 	  mini_tileset.h mini_util.h mini_volume.h\
 	  mini_sfx.h qt_viewer.h
@@ -35,7 +36,8 @@ MODS	= mini miniOGL\
 	  minitree minipano\
 	  minibrick minilod\
 	  minimesh minibspt miniproj\
-	  mininodes mininode_teapot mininode_path\
+	  mininodes mininode_teapot\
+	  mininode_path mininode_clod\
 	  minilog\
 	  pnmbase pnmsample\
 	  rawbase rekbase\

@@ -7,7 +7,8 @@ HEADERS += \
    minikeyval.h minikdtree.h \
    ministring.h minilog.h \
    miniref.h mininode.h mininodes.h \
-   mininode_geom.h mininode_teapot.h mininode_path.h \
+   mininode_geom.h mininode_teapot.h \
+   mininode_path.h mininode_clod.h \
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h \
    minimath.h minicomplex.h glslmath.h \
    mininoise.h minimpfp.h \
@@ -33,7 +34,8 @@ HEADERS += \
    datacalc.h dataparse.h \
    lunascan.h lunaparse.h lunacode.h \
    lunafunctor.h \
-   mini_core.h mini_extra.h mini_format.h mini_generic.h mini_gfx.h \
+   mini_core.h mini_extra.h mini_format.h \
+   mini_generic.h mini_gfx.h \
    mini_luna.h mini_math.h mini_object.h \
    mini_tileset.h mini_util.h mini_volume.h
 
@@ -56,7 +58,8 @@ SOURCES += \
    minitree.cpp minipano.cpp \
    minibrick.cpp minilod.cpp \
    minimesh.cpp minibspt.cpp miniproj.cpp \
-   mininodes.cpp mininode_teapot.cpp mininode_path.cpp \
+   mininodes.cpp mininode_teapot.cpp \
+   mininode_path.cpp mininode_clod.cpp \
    minilog.cpp \
    pnmbase.cpp pnmsample.cpp \
    rawbase.cpp rekbase.cpp \
