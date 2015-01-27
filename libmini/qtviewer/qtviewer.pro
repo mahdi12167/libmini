@@ -102,7 +102,7 @@ unix:!mac:LIBS += -ljpeg -lpng
 unix:!mac:LIBS += -lGLU
 
 unix:LIBS += -lgdal
-unix:mac += -liconv
+unix:mac: LIBS += -liconv
 
 win32:LIBS += -lcurllib_static -llibjpeg -llibpng -lzlib -lpthread_static
 win32:LIBS += -lgdal # -lgdal_i for dll stub
