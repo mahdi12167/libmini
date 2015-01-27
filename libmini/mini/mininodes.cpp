@@ -841,7 +841,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       }
    }
 
-mininode_geometry_band::mininode_geometry_band(const minidyna<struct point_struct> &points)
+mininode_geometry_band::mininode_geometry_band(const minidyna<point_struct> &points)
    : mininode_geometry(3,3,0,0,0,0)
    {
    if (points.getsize()<2) return;
@@ -851,7 +851,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<struct point_struc
       miniv3d dir;
 
       if (i==0) dir=points[i+1].pos-points[i].pos;
-      else if (i==pos.getsize()-1) dir=points[i].pos-points[i-1].pos;
+      else if (i==points.getsize()-1) dir=points[i].pos-points[i-1].pos;
       else dir=get_halfdir(points[i].pos-points[i-1].pos,points[i+1].pos-points[i].pos);
       dir.normalize();
 
@@ -961,7 +961,7 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minidyna<miniv3d>
    : mininode_geometry_band(pos,nrm,col,width)
    {}
 
-mininode_geometry_band_path::mininode_geometry_band_path(const minidyna<struct point_struct> &points)
+mininode_geometry_band_path::mininode_geometry_band_path(const minidyna<point_struct> &points)
    : mininode_geometry_band(points)
    {}
 

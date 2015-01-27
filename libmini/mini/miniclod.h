@@ -10,6 +10,14 @@ class miniclod
    {
    public:
 
+   struct point_struct
+      {
+      miniv3d pos;
+      miniv3d nrm;
+      miniv3d col;
+      double wdt;
+      };
+
    //! default constructor
    miniclod();
 
@@ -46,14 +54,6 @@ class miniclod
       BOOLINT add;
       };
 
-   struct point_struct
-      {
-      miniv3d pos;
-      miniv3d nrm;
-      miniv3d col;
-      double wdt;
-      };
-
    minipath path_;
 
    minidyna<float> dc_; // constant deviations
@@ -78,7 +78,7 @@ class miniclod
    void calcpath_inc(miniv3d eye,int update=100);
    void calcpath_inc();
 
-   virtual void updated(minidyna<struct point_struct> points) = 0;
+   virtual void updated(const minidyna<struct point_struct> &points) = 0;
 
    private:
 

@@ -203,14 +203,14 @@ void miniclod::addpoint(miniv3d p,double v,BOOLINT start)
          miniv3d ln=POINTS_.last().nrm;
          miniv3d lc=POINTS_.last().col;
 
-         struct point_struct point1 = {lp,ln,lc,0.0};
+         struct point_struct point1={lp,ln,lc,0.0};
          POINTS_.push_back(point1);
 
-         struct point_struct point2 = {p,n,miniv3d(rgb),0.0};
+         struct point_struct point2={p,n,miniv3d(rgb),0.0};
          POINTS_.push_back(point2);
          }
 
-   struct point_struct point = {p,n,miniv3d(rgb),W_*d};
+   struct point_struct point={p,n,miniv3d(rgb),W_*d};
    POINTS_.push_back(point);
    }
 

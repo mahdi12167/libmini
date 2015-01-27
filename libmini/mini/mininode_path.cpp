@@ -1,8 +1,5 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
-#include "minirgb.h"
-#include "minimath.h"
-
 #include "mininode_path.h"
 
 // zscale
