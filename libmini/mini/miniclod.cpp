@@ -23,14 +23,14 @@ miniclod::~miniclod()
 // set path
 void miniclod::set(const minipath &path)
    {
-   path_=path;
+   path0_=path;
    UPDATED_=TRUE;
    }
 
 // load path
 void miniclod::load(ministring filename)
    {
-   path_.load(filename);
+   path0_.load(filename);
    UPDATED_=TRUE;
    }
 
@@ -76,6 +76,9 @@ void miniclod::updateDX()
    {
    if (UPDATED_)
       {
+      path_=path0_;
+      path0_.clear();
+
       calcDC();
       calcD2();
 
@@ -188,25 +191,32 @@ float miniclod::calcD2(int left,int right)
    }
 
 // add a point
-void miniclod::addpoint(miniv3d p,double v,BOOLINT start)
+void miniclod::addpoint(const minimeas &m,BOOLINT start)
    {
-   miniv3d n;
+   miniv3d p,n;
+   double v;
 
    double d;
-   float hue,rgb[3];
+   float hue;
+   miniv3d rgb;
+
+   p=m.getpos();
 
    n=p;
    n.normalize();
 
+   v=m.velocity;
+
    d=(p-EYE_).getlength();
    if (d<D_) d=D_;
 
-   hue=(1.0-(v-MINV_)/(MAXV_-MINV_))*240.0;
+   v=(v-MINV_)/(MAXV_-MINV_);
+   hue=(1.0-v)*240.0;
 
    if (hue<0.0f) hue=0.0f;
    else if (hue>240.0f) hue=240.0f;
 
-   hsv2rgb(hue,SAT_,VAL_,rgb);
+   rgb=point2rgb(m,v,hue,SAT_,VAL_);
 
    if (start)
       if (!POINTS_.empty())
@@ -218,11 +228,11 @@ void miniclod::addpoint(miniv3d p,double v,BOOLINT start)
          struct point_struct point1={lp,ln,lc,0.0};
          POINTS_.push_back(point1);
 
-         struct point_struct point2={p,n,miniv3d(rgb),0.0};
+         struct point_struct point2={p,n,rgb,0.0};
          POINTS_.push_back(point2);
          }
 
-   struct point_struct point={p,n,miniv3d(rgb),W_*d};
+   struct point_struct point={p,n,rgb,W_*d};
    POINTS_.push_back(point);
    }
 
@@ -252,9 +262,9 @@ void miniclod::calcpath()
 
    if (!path_.empty())
       {
-      addpoint(path_.first().getpos(),path_.first().velocity);
+      addpoint(path_.first());
       calcpath(0,path_.getsize()-1);
-      addpoint(path_.last().getpos(),path_.last().velocity);
+      addpoint(path_.last());
       }
 
    updated(POINTS_);
@@ -269,7 +279,7 @@ void miniclod::calcpath(int left,int right)
       minimeas c=path_.get(center);
 
       calcpath(left,center);
-      addpoint(c.getpos(),c.velocity,c.start);
+      addpoint(c,c.start);
       calcpath(center,right);
       }
    }
@@ -290,7 +300,7 @@ void miniclod::calcpath_inc(miniv3d eye,int update)
             {
             POINTS_.clear();
 
-            addpoint(path_.first().getpos(),path_.first().velocity);
+            addpoint(path_.first());
 
             struct state_struct start={0,(int)path_.getsize()-1,FALSE};
             STACK_.push_back(start);
@@ -306,7 +316,7 @@ void miniclod::calcpath_inc(miniv3d eye,int update)
 
          if (STACK_.empty())
             {
-            addpoint(path_.last().getpos(),path_.last().velocity);
+            addpoint(path_.last());
 
             updated(POINTS_);
             }
@@ -325,7 +335,7 @@ void miniclod::calcpath_inc()
    if (actual.add)
       {
       minimeas a=path_.get(left);
-      addpoint(a.getpos(),a.velocity,a.start);
+      addpoint(a,a.start);
       }
 
    if (subdiv(left,right))
@@ -338,4 +348,15 @@ void miniclod::calcpath_inc()
       struct state_struct lseg={left,center,FALSE};
       STACK_.push_back(lseg);
       }
+   }
+
+// map point measurement to rgb color
+miniv3d miniclod::point2rgb(const minimeas &m,double v,
+                            float hue,float sat,float val)
+   {
+   float rgb[3];
+
+   hsv2rgb(hue,sat,val,rgb);
+
+   return(miniv3d(rgb));
    }

@@ -54,7 +54,7 @@ class miniclod
       BOOLINT add;
       };
 
-   minipath path_;
+   minipath path_,path0_;
 
    minidyna<float> dc_; // constant deviations
 
@@ -71,7 +71,7 @@ class miniclod
    void calcD2();
    float calcD2(int left,int right);
 
-   void addpoint(miniv3d p,double v,BOOLINT start=FALSE);
+   void addpoint(const minimeas &m,BOOLINT start=FALSE);
    BOOLINT subdiv(int left,int right);
 
    void calcpath();
@@ -80,6 +80,7 @@ class miniclod
    void calcpath_inc(miniv3d eye,int update=100);
    void calcpath_inc();
 
+   virtual miniv3d point2rgb(const minimeas &m,double v,float hue,float sat,float val);
    virtual void updated(const minidyna<struct point_struct> &points) = 0;
 
    private:
