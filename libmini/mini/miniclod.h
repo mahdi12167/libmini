@@ -61,6 +61,8 @@ class miniclod
    minidyna<float> d2_; // geometric deviations
    minidyna<float> dm_; // geometric maximum
 
+   void updateDX();
+
    void calcDC();
 
    float calcD2(int left,int right,int center);
@@ -82,7 +84,7 @@ class miniclod
 
    private:
 
-   miniv3d EYE_;
+   miniv3d EYE_,EYE0_;
    float C_,D_,W_;
 
    float MINV_,MAXV_,SAT_,VAL_;

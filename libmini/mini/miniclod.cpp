@@ -1,5 +1,7 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
+#include "minidefs.h"
+
 #include "minirgb.h"
 #include "minimath.h"
 
@@ -10,6 +12,8 @@ miniclod::miniclod()
    {
    UPDATED_=FALSE;
    UPDATE_=0;
+
+   EYE_=EYE0_=miniv3d(NAN,NAN,NAN);
    }
 
 // destructor
@@ -40,6 +44,7 @@ void miniclod::create(miniv3d eye,
    {
    UPDATE_=update;
 
+   EYE0_=EYE_;
    EYE_=eye;
 
    C_=maxdev/atdist;
@@ -55,22 +60,29 @@ void miniclod::create(miniv3d eye,
 
    UPDATE_=update;
 
-   if (UPDATED_)
-      {
-      calcDC();
-      calcD2();
-
-      UPDATED_=FALSE;
-      }
-
+   updateDX();
    calcpath();
    }
 
 // incrementally recreate geometry from actual view point
 void miniclod::create_inc(miniv3d eye)
    {
-   if (UPDATE_>0)
-      calcpath_inc(eye,UPDATE_);
+   updateDX();
+   calcpath_inc(eye,UPDATE_);
+   }
+
+// update delta values
+void miniclod::updateDX()
+   {
+   if (UPDATED_)
+      {
+      calcDC();
+      calcD2();
+
+      UPDATED_=FALSE;
+
+      EYE0_=miniv3d(NAN,NAN,NAN);
+      }
    }
 
 // calculate the dc-values
@@ -236,16 +248,16 @@ BOOLINT miniclod::subdiv(int left,int right)
 // calculate the path
 void miniclod::calcpath()
    {
+   POINTS_.clear();
+
    if (!path_.empty())
       {
-      POINTS_.clear();
-
       addpoint(path_.first().getpos(),path_.first().velocity);
       calcpath(0,path_.getsize()-1);
       addpoint(path_.last().getpos(),path_.last().velocity);
-
-      updated(POINTS_);
       }
+
+   updated(POINTS_);
    }
 
 // calculate the path subdivision bottom-up
@@ -267,18 +279,22 @@ void miniclod::calcpath_inc(miniv3d eye,int update)
    {
    int i;
 
-   if (!path_.empty())
+   if (!path_.empty() && update>0)
       {
       if (STACK_.empty())
          {
-         POINTS_.clear();
-
+         EYE0_=EYE_;
          EYE_=eye;
 
-         addpoint(path_.first().getpos(),path_.first().velocity);
+         if (EYE_!=EYE0_)
+            {
+            POINTS_.clear();
 
-         struct state_struct start={0,(int)path_.getsize()-1,FALSE};
-         STACK_.push_back(start);
+            addpoint(path_.first().getpos(),path_.first().velocity);
+
+            struct state_struct start={0,(int)path_.getsize()-1,FALSE};
+            STACK_.push_back(start);
+            }
          }
       else
          {
