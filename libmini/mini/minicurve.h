@@ -6,7 +6,7 @@
 #include "minidyna.h"
 #include "minimeas.h"
 
-class minicurve : public minidyna<minimeas>
+class minicurve: public minidyna<minimeas>
    {
    public:
 

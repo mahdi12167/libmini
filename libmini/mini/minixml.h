@@ -60,7 +60,7 @@ class minixmlparser
    virtual void finish();
    };
 
-class minixml : public minixmlparser
+class minixml: public minixmlparser
    {
    public:
 

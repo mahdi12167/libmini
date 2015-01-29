@@ -319,7 +319,7 @@ class miniearth
    };
 
 //! base class for viewing planets
-class miniplanet : public miniearth
+class miniplanet: public miniearth
    {
    public:
 

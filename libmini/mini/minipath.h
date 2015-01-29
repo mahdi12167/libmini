@@ -5,7 +5,7 @@
 
 #include "minicurve.h"
 
-class minipath : public minicurve
+class minipath: public minicurve
    {
    public:
 
@@ -52,6 +52,24 @@ class minipath : public minicurve
    BOOLINT read_csv_format(ministrings &csv);
    BOOLINT read_gpx_format(ministrings &gpx);
    BOOLINT read_trk_format(ministrings &trk);
+   };
+
+class minipaths: public minidyna<minipath>
+   {
+   public:
+
+   //! default constructor
+   minipaths(double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0);
+
+   //! conversion of multiple paths to a combined one
+   operator minipath();
+
+   protected:
+
+   double max_delta_;
+   double max_length_;
+   double min_accuracy_;
+   double max_accel_;
    };
 
 #endif

@@ -8,7 +8,7 @@
 class minicam;
 
 //! base class for viewing tilesets plus ecef geometry
-class miniview : public miniscene
+class miniview: public miniscene
    {
    public:
 

@@ -413,3 +413,24 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
 
    return(FALSE);
    }
+
+// default constructor
+minipaths::minipaths(double max_delta,double max_length,double min_accuracy,double max_accel)
+   : max_delta_(max_delta),
+     max_length_(max_length),
+     min_accuracy_(min_accuracy),
+     max_accel_(max_accel)
+   {}
+
+minipaths::operator minipath()
+   {
+   minipath paths(0,1,max_delta_,max_length_,min_accuracy_,max_accel_);
+
+   for (unsigned int i=0; i<size(); i++)
+      {
+      minipath path=get(i);
+      paths.merge(path);
+      }
+
+   return(paths);
+   }
