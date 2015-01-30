@@ -79,6 +79,8 @@ class minicurve: public minidyna<minimeas>
       minicurve::max_tolerance=max_tolerance;
       }
 
+   void validate();
+
    minimeas interpolate(double t);
    minimeas interpolate_cubic(double t);
 
@@ -126,7 +128,6 @@ class minicurve: public minidyna<minimeas>
                int level,int maxlevel);
 
    void sort();
-   void validate();
 
    double compute_velocity(unsigned int i);
 

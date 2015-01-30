@@ -218,6 +218,8 @@ void minipath::from_csv(ministrings &csv)
       }
 
    csv.clear();
+
+   validate();
    }
 
 // load path from file
@@ -422,6 +424,7 @@ minipaths::minipaths(double max_delta,double max_length,double min_accuracy,doub
      max_accel_(max_accel)
    {}
 
+// conversion operator
 minipaths::operator minipath()
    {
    minipath paths(0,1,max_delta_,max_length_,min_accuracy_,max_accel_);
@@ -431,6 +434,8 @@ minipaths::operator minipath()
       minipath path=get(i);
       paths.merge(path);
       }
+
+   paths.validate();
 
    return(paths);
    }
