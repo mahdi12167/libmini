@@ -15,9 +15,9 @@
 #include "minicoord.h"
 #include "minicurve.h"
 #include "minipath.h"
-#include "miniclod.h"
 #include "mininode.h"
 
+#include "mini3D.h"
 #include "miniOGL.h"
 #include "ministrip.h"
 #include "minibrick.h"
@@ -2307,15 +2307,13 @@ class mininode_geometry_band: public mininode_geometry
    {
    public:
 
-   typedef struct miniclod::point_struct point_struct;
-
    //! default constructors
    mininode_geometry_band() : mininode_geometry(0,3,0) {}
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,double width);
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,double width);
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,const minidyna<double> &width);
-   mininode_geometry_band(const minidyna<point_struct> &points);
+   mininode_geometry_band(const minidyna<mini3D::point_struct_band> &points);
 
    //! constructors from curve
    mininode_geometry_band(const minicurve &curve,double width);
@@ -2335,7 +2333,7 @@ class mininode_geometry_band_path: public mininode_geometry_band
    mininode_geometry_band_path() : mininode_geometry_band() {}
    mininode_geometry_band_path(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,double width);
    mininode_geometry_band_path(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,const minidyna<double> &width);
-   mininode_geometry_band_path(const minidyna<point_struct> &points);
+   mininode_geometry_band_path(const minidyna<mini3D::point_struct_band> &points);
 
    //! constructors from path
    mininode_geometry_band_path(const minipath &path,double width,double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0);

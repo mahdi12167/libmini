@@ -13,6 +13,7 @@ SET(MINI_HDRS
    mininode_path.h mininode_clod.h
    miniv3f.h miniv3d.h miniv4f.h miniv4d.h
    minimath.h minicomplex.h glslmath.h
+   mini3D.h
    mininoise.h minimpfp.h
    minitime.h minirgb.h minicrs.h
    miniio.h minidir.h minidds.h
@@ -46,6 +47,7 @@ SET(MINI_SRCS
    mini.cpp miniOGL.cpp
    miniv3f.cpp miniv3d.cpp miniv4f.cpp miniv4d.cpp
    minimath.cpp
+   mini3D.cpp
    mininoise.cpp minimpfp.cpp
    minitime.cpp minirgb.cpp minicrs.cpp
    miniio.cpp minidir.cpp minidds.cpp

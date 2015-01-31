@@ -3,6 +3,7 @@
 #ifndef MINICLOD_H
 #define MINICLOD_H
 
+#include "mini3D.h"
 #include "minipath.h"
 
 //! C-LOD core class for geo-referenced paths
@@ -81,7 +82,7 @@ class miniclod
    void calcpath_inc();
 
    virtual miniv3d point2rgb(const minimeas &m,double v,float hue,float sat,float val);
-   virtual void updated(const minidyna<struct point_struct> &points) = 0;
+   virtual void updated(const minidyna<mini3D::point_struct_band> &points) = 0;
 
    private:
 
@@ -95,7 +96,7 @@ class miniclod
    int UPDATE_;
 
    minidyna<struct state_struct> STACK_;
-   minidyna<struct point_struct> POINTS_;
+   minidyna<mini3D::point_struct_band> POINTS_;
    };
 
 #endif

@@ -38,7 +38,7 @@ class mininode_geometry_path_clod: public mininode_geometry, public miniclod
 
    virtual void traverse_pre();
 
-   virtual void updated(const minidyna<struct point_struct> &points);
+   virtual void updated(const minidyna<mini3D::point_struct_band> &points);
    };
 
 #endif

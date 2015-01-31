@@ -8,5 +8,6 @@
 #include <mini/miniOGL.h>
 #include <mini/ministub.h>
 #include <mini/miniclod.h>
+#include <mini/mini3D.h>
 
 #endif

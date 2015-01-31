@@ -21,6 +21,7 @@ HDRS	= minidefs minibase minicore\
 MODS	= mini miniOGL\
 	  miniv3f miniv3d miniv4f miniv4d\
 	  minimath\
+          mini3D\
 	  mininoise minimpfp\
 	  minitime minirgb minicrs\
 	  miniio minidir minidds\

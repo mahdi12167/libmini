@@ -46,7 +46,7 @@ void mininode_geometry_path_clod::traverse_pre()
    }
 
 // post-updated callback
-void mininode_geometry_path_clod::updated(const minidyna<struct point_struct> &points)
+void mininode_geometry_path_clod::updated(const minidyna<mini3D::point_struct_band> &points)
    {
    *(mininode_geometry *)this=mininode_geometry_band(points);
    setZscale(zscale);
