@@ -14,21 +14,21 @@ class mini3D
    struct point_struct_line
       {
       miniv3d pos;
-      miniv3d col;
+      miniv3f col;
       };
 
    struct point_struct_band
       {
       miniv3d pos;
-      miniv3d nrm;
-      miniv3d col;
-      double wdt;
+      miniv3f nrm;
+      miniv3f col;
+      float wdt;
       };
 
    struct point_struct_sphere
       {
       miniv3d pos;
-      miniv3d col;
+      miniv3f col;
       double r;
       };
 

@@ -35,6 +35,7 @@
 
 #include "miniOGL.h"
 #include "miniv3f.h"
+#include "miniv4f.h"
 #include "miniv3d.h"
 #include "miniv4d.h"
 
@@ -73,24 +74,24 @@ class ministrip
 
    //! set color of next vertex
    void setcol(const float r,const float g,const float b,float a=1.0f);
-   void setcol(const miniv3d &rgb);
-   void setcol(const miniv4d &rgba);
+   void setcol(const miniv3f &rgb);
+   void setcol(const miniv4f &rgba);
 
    //! set normal of next vertex
    void setnrm(const float nx,const float ny,const float nz);
-   void setnrm(const miniv3d &n);
+   void setnrm(const miniv3f &n);
 
    //! set normal from three points
    void setnrm(const miniv3d &v1,const miniv3d &v2,const miniv3d &v3);
 
    //! set tex coords of next vertex
    void settex(const float tx,const float ty=0.0f,const float tz=0.0f,float tw=1.0f);
-   void settex(const miniv3d &t);
-   void settex(const miniv4d &t);
+   void settex(const miniv3f &t);
+   void settex(const miniv4f &t);
 
    //! add one vertex
    void addvtx(const float x,const float y,const float z);
-   void addvtx(const miniv3d &v);
+   void addvtx(const miniv3f &v);
 
    //! check color array
    BOOLINT hascolor() const {return(COLCOMPS>0);}

@@ -1969,7 +1969,7 @@ class mininode_geometry_base: public mininode_color, public ministrip
    void add_coord(minicoord c)
       {
       if (c.type!=minicoord::MINICOORD_LINEAR) c.convert2(minicoord::MINICOORD_ECEF);
-      addvtx(c.vec);
+      addvtx(c.getpos());
       }
 
    //! check color array
@@ -2311,8 +2311,10 @@ class mininode_geometry_band: public mininode_geometry
    mininode_geometry_band() : mininode_geometry(0,3,0) {}
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,double width);
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
+   mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3f> &nrm,const minidyna<float> &width);
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,double width);
    mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,const minidyna<double> &width);
+   mininode_geometry_band(const minidyna<miniv3d> &pos,const minidyna<miniv3f> &nrm,const minidyna<miniv3f> &col,const minidyna<float> &width);
    mininode_geometry_band(const minidyna<mini3D::point_struct_band> &points);
 
    //! constructors from curve
@@ -2320,6 +2322,7 @@ class mininode_geometry_band: public mininode_geometry
    mininode_geometry_band(const minicurve &curve,const minidyna<double> &width);
    mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,double width);
    mininode_geometry_band(const minicurve &curve,const minidyna<miniv3d> &nrm,const minidyna<double> &width);
+   mininode_geometry_band(const minicurve &curve,const minidyna<miniv3f> &nrm,const minidyna<float> &width);
    };
 
 //! band path geometry node
@@ -2333,6 +2336,7 @@ class mininode_geometry_band_path: public mininode_geometry_band
    mininode_geometry_band_path() : mininode_geometry_band() {}
    mininode_geometry_band_path(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,double width);
    mininode_geometry_band_path(const minidyna<miniv3d> &pos,const minidyna<miniv3d> &nrm,const minidyna<miniv3d> &col,const minidyna<double> &width);
+   mininode_geometry_band_path(const minidyna<miniv3d> &pos,const minidyna<miniv3f> &nrm,const minidyna<miniv3f> &col,const minidyna<float> &width);
    mininode_geometry_band_path(const minidyna<mini3D::point_struct_band> &points);
 
    //! constructors from path

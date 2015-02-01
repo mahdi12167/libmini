@@ -776,10 +776,10 @@ void ministrip::setcol(const float r,const float g,const float b,float a)
    if (a>COLAMAX) COLAMAX=a;
    }
 
-void ministrip::setcol(const miniv3d &rgb)
+void ministrip::setcol(const miniv3f &rgb)
    {setcol(rgb.x,rgb.y,rgb.z,1.0);}
 
-void ministrip::setcol(const miniv4d &rgba)
+void ministrip::setcol(const miniv4f &rgba)
    {setcol(rgba.x,rgba.y,rgba.z,rgba.w);}
 
 // set normal of next vertex
@@ -790,7 +790,7 @@ void ministrip::setnrm(const float nx,const float ny,const float nz)
    NRMZ=nz;
    }
 
-void ministrip::setnrm(const miniv3d &n)
+void ministrip::setnrm(const miniv3f &n)
    {setnrm(n.x,n.y,n.z);}
 
 // set normal from three points
@@ -806,10 +806,10 @@ void ministrip::settex(const float tx,const float ty,const float tz,float tw)
    TEXW=tw;
    }
 
-void ministrip::settex(const miniv3d &t)
+void ministrip::settex(const miniv3f &t)
    {settex(t.x,t.y,t.z);}
 
-void ministrip::settex(const miniv4d &t)
+void ministrip::settex(const miniv4f &t)
    {settex(t.x,t.y,t.z,t.w);}
 
 // add one vertex
@@ -828,7 +828,7 @@ void ministrip::addvtx(const float x,const float y,const float z)
       }
    }
 
-void ministrip::addvtx(const miniv3d &v)
+void ministrip::addvtx(const miniv3f &v)
    {addvtx(v.x,v.y,v.z);}
 
 // add one vertex
