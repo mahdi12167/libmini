@@ -232,7 +232,7 @@ void miniclod::addpoint(const minimeas &m,BOOLINT start)
          POINTS_.push_back(point2);
          }
 
-   mini3D::point_struct_band point={p,n,rgb,W_*d};
+   mini3D::point_struct_band point={p,n,rgb,float(W_*d)};
    POINTS_.push_back(point);
    }
 
