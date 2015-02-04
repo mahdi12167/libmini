@@ -1269,19 +1269,18 @@ class glScopedMatrixStack
    public:
 
    glScopedMatrixStack()
-   {
+      {
 #ifdef GL_VERSION_1_2
       glPushMatrix();
 #endif
-   }
+      }
 
    ~glScopedMatrixStack()
-   {
+      {
 #ifdef GL_VERSION_1_2
       glPopMatrix();
 #endif
-   }
-
+      }
    };
 
 // scoped replacement for glPushMatrix/glPopMatrix pairs
