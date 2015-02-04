@@ -10,6 +10,12 @@ mini3D::mini3D()
 mini3D::~mini3D()
    {}
 
+void mini3D::preMultiply(const mat4 &m)
+   {preMatrix_=m;}
+
+void mini3D::postMultiply(const mat4 &m)
+   {postMatrix_=m;}
+
 void mini3D::line(const minidyna<point_struct> &l)
    {
    }
@@ -34,15 +40,18 @@ void mini3D::pyramid(const struct pyramid_struct &s)
    {
    }
 
-void mini3D::render(miniv3d eye)
+void mini3D::render()
    {
+   vec4 eye;
+
+   eye=postMatrix_.invert()*vec4(0,0,0);
    sort(eye);
 
    for (unsigned int i=0; i<primitives_.size(); i++)
       primitives_[i]->render(vertices_);
    }
 
-void mini3D::sort(miniv3d eye)
+void mini3D::sort(vec3 eye)
    {
    }
 

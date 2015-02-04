@@ -1269,14 +1269,25 @@ class glScopedMatrixStack
    public:
 
    glScopedMatrixStack()
-      {mtxpush();}
+   {
+#ifdef GL_VERSION_1_2
+      glPushMatrix();
+#endif
+   }
 
    ~glScopedMatrixStack()
-      {mtxpop();}
+   {
+#ifdef GL_VERSION_1_2
+      glPopMatrix();
+#endif
+   }
+
    };
 
 // scoped replacement for glPushMatrix/glPopMatrix pairs
+#ifndef glPushMatrixScoped
 #define glPushMatrixScoped() glScopedMatrixStack p
+#endif
 
 // test function
 int test_glslmath()

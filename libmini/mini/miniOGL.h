@@ -141,7 +141,9 @@ class glScopedMatrixStack
    };
 
 // scoped replacement for glPushMatrix/glPopMatrix pairs
+#ifndef glPushMatrixScoped
 #define mtxpushscoped() glScopedMatrixStack p
+#endif
 
 inline void mtxid();
 inline void mtxscale(const float sx,const float sy,const float sz);

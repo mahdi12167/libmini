@@ -6,6 +6,7 @@
 #include "miniv3f.h"
 #include "miniv3d.h"
 #include "minidyna.h"
+#include "glslmath.h"
 
 //! 3D software rendering pipeline
 class mini3D
@@ -57,6 +58,9 @@ class mini3D
    //! destructor
    virtual ~mini3D();
 
+   void preMultiply(const mat4 &m);
+   void postMultiply(const mat4 &m);
+
    void line(const minidyna<point_struct> &l);
    void band(const minidyna<joint_struct> &b);
 
@@ -66,7 +70,7 @@ class mini3D
    void prism(const struct prism_struct &s);
    void pyramid(const struct pyramid_struct &s);
 
-   void render(miniv3d eye);
+   void render();
 
    void clear();
 
@@ -240,6 +244,8 @@ class mini3D
       unsigned int index;
       };
 
+   mat4 preMatrix_,postMatrix_;
+
    minidyna<vertex_struct> vertices_;
    minidyna<primitive *> primitives_;
 
@@ -250,7 +256,7 @@ class mini3D
    minidyna<primitive_prism> primitives_prism_;
    minidyna<primitive_pyramid> primitives_pyramid_;
 
-   void sort(miniv3d eye);
+   void sort(vec3 eye);
    };
 
 #endif
