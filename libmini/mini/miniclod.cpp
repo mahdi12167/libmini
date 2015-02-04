@@ -225,14 +225,14 @@ void miniclod::addpoint(const minimeas &m,BOOLINT start)
          miniv3d ln=POINTS_.last().nrm;
          miniv3d lc=POINTS_.last().col;
 
-         mini3D::band_struct point1={lp,ln,lc,0.0};
+         mini3D::joint_struct point1={lp,ln,lc,0.0};
          POINTS_.push_back(point1);
 
-         mini3D::band_struct point2={p,n,rgb,0.0};
+         mini3D::joint_struct point2={p,n,rgb,0.0};
          POINTS_.push_back(point2);
          }
 
-   mini3D::band_struct point={p,n,rgb,float(W_*d)};
+   mini3D::joint_struct point={p,n,rgb,float(W_*d)};
    POINTS_.push_back(point);
    }
 

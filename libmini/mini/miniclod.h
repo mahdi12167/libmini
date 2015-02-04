@@ -82,7 +82,7 @@ class miniclod
    void calcpath_inc();
 
    virtual miniv3d point2rgb(const minimeas &m,double v,float hue,float sat,float val);
-   virtual void updated(const minidyna<mini3D::band_struct> &points) = 0;
+   virtual void updated(const minidyna<mini3D::joint_struct> &points) = 0;
 
    private:
 
@@ -96,7 +96,7 @@ class miniclod
    int UPDATE_;
 
    minidyna<struct state_struct> STACK_;
-   minidyna<mini3D::band_struct> POINTS_;
+   minidyna<mini3D::joint_struct> POINTS_;
    };
 
 #endif

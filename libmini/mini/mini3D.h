@@ -18,7 +18,7 @@ class mini3D
       miniv3f col;
       };
 
-   struct band_struct
+   struct joint_struct
       {
       miniv3d pos;
       miniv3f nrm;
@@ -58,13 +58,17 @@ class mini3D
    virtual ~mini3D();
 
    void line(const minidyna<point_struct> &l);
-   void band(const minidyna<band_struct> &b);
+   void band(const minidyna<joint_struct> &b);
 
    void sphere(const struct sphere_struct &s);
 
    void box(const struct sphere_struct &s);
    void prism(const struct prism_struct &s);
    void pyramid(const struct pyramid_struct &s);
+
+   void render(miniv3d eye);
+
+   void clear();
 
    protected:
 
@@ -77,6 +81,9 @@ class mini3D
    class primitive
       {
       public:
+
+      primitive()
+         {}
 
       primitive(miniv3d c,double r)
          : center(c),radius2(r*r)
@@ -106,7 +113,7 @@ class mini3D
 
       virtual ~primitive() {}
 
-      virtual void render(const minidyna<struct vertex_struct> &v);
+      virtual void render(const minidyna<vertex_struct> &v);
 
       double power(miniv3d p) const
          {return((p-center).getlength2()-radius2);}
@@ -140,6 +147,9 @@ class mini3D
       {
       public:
 
+      primitive_line()
+         {}
+
       primitive_line(unsigned int idx1,unsigned int idx2,
                      const minidyna<vertex_struct> &v)
          : primitive(points(v[idx1].pos,v[idx2].pos)),
@@ -149,9 +159,28 @@ class mini3D
       unsigned int index1,index2;
       };
 
+   class primitive_quad: public primitive
+      {
+      public:
+
+      primitive_quad()
+         {}
+
+      primitive_quad(unsigned int idx,
+                     const minidyna<vertex_struct> &v)
+         : primitive(points(&v[idx].pos,4)),
+           index(idx)
+         {}
+
+      unsigned int index;
+      };
+
    class primitive_sphere: public primitive
       {
       public:
+
+      primitive_sphere()
+         {}
 
       primitive_sphere(unsigned int idx,double r,
                        const minidyna<vertex_struct> &v)
@@ -167,6 +196,9 @@ class mini3D
       {
       public:
 
+      primitive_box()
+         {}
+
       primitive_box(unsigned int idx,
                     const minidyna<vertex_struct> &v)
          : primitive(points(&v[idx].pos,8)),
@@ -179,6 +211,9 @@ class mini3D
    class primitive_prism: public primitive
       {
       public:
+
+      primitive_prism()
+         {}
 
       primitive_prism(unsigned int idx,
                       const minidyna<vertex_struct> &v)
@@ -193,6 +228,9 @@ class mini3D
       {
       public:
 
+      primitive_pyramid()
+         {}
+
       primitive_pyramid(unsigned int idx,
                         const minidyna<vertex_struct> &v)
          : primitive(points(&v[idx].pos,5)),
@@ -204,6 +242,15 @@ class mini3D
 
    minidyna<vertex_struct> vertices_;
    minidyna<primitive *> primitives_;
+
+   minidyna<primitive_line> primitives_line_;
+   minidyna<primitive_quad> primitives_quad_;
+   minidyna<primitive_sphere> primitives_sphere_;
+   minidyna<primitive_box> primitives_box_;
+   minidyna<primitive_prism> primitives_prism_;
+   minidyna<primitive_pyramid> primitives_pyramid_;
+
+   void sort(miniv3d eye);
    };
 
 #endif

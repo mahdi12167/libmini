@@ -14,7 +14,7 @@ void mini3D::line(const minidyna<point_struct> &l)
    {
    }
 
-void mini3D::band(const minidyna<band_struct> &b)
+void mini3D::band(const minidyna<joint_struct> &b)
    {
    }
 
@@ -32,4 +32,29 @@ void mini3D::prism(const struct prism_struct &s)
 
 void mini3D::pyramid(const struct pyramid_struct &s)
    {
+   }
+
+void mini3D::render(miniv3d eye)
+   {
+   sort(eye);
+
+   for (unsigned int i=0; i<primitives_.size(); i++)
+      primitives_[i]->render(vertices_);
+   }
+
+void mini3D::sort(miniv3d eye)
+   {
+   }
+
+void mini3D::clear()
+   {
+   vertices_.clear();
+   primitives_.clear();
+
+   primitives_line_.clear();
+   primitives_quad_.clear();
+   primitives_sphere_.clear();
+   primitives_box_.clear();
+   primitives_prism_.clear();
+   primitives_pyramid_.clear();
    }
