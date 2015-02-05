@@ -6,18 +6,12 @@
 #include "mini3D.h"
 #include "minipath.h"
 
+#include "glslmath.h"
+
 //! C-LOD core class for geo-referenced paths
 class miniclod
    {
    public:
-
-   struct point_struct
-      {
-      miniv3d pos;
-      miniv3d nrm;
-      miniv3d col;
-      double wdt;
-      };
 
    //! default constructor
    miniclod();
@@ -32,7 +26,7 @@ class miniclod
    void load(ministring filename);
 
    //! create path geometry
-   void create(miniv3d eye, // actual eye point
+   void create(vec3 eye, // actual eye point
                double maxdev=1,double atdist=100, // maximum deviation at specific distance
                double maxwidth=1, // maximum width at specific distance
                double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0, // velocity color mapping
@@ -40,7 +34,7 @@ class miniclod
                int update=100); // vertices per update
 
    // create path geometry incrementally
-   void create_inc(miniv3d eye); // actual eye point
+   void create_inc(vec3 eye); // actual eye point
 
    //! get path
    minipath *getpath()
@@ -78,15 +72,18 @@ class miniclod
    void calcpath();
    void calcpath(int left,int right);
 
-   void calcpath_inc(miniv3d eye,int update=100);
+   void calcpath_inc(vec3 eye,int update=100);
    void calcpath_inc();
 
-   virtual miniv3f point2rgb(const minimeas &m,double v,float hue,float sat,float val);
+   double distance2line(vec3 p,vec3 a,vec3 b);
+   vec3f hsv2rgb(float hue,float sat,float val);
+
+   virtual vec3f point2rgb(const minimeas &m,double v,float hue,float sat,float val);
    virtual void updated(const minidyna<mini3D::joint_struct> &points) = 0;
 
    private:
 
-   miniv3d EYE_,EYE0_;
+   vec3 EYE_,EYE0_;
    float C_,D_,W_;
 
    float MINV_,MAXV_,SAT_,VAL_;

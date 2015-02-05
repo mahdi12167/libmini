@@ -900,14 +900,14 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<mini3D::joint_stru
 
    for (unsigned int i=0; i<points.getsize(); i++)
       {
-      miniv3d dir;
+      vec3 dir;
 
       if (i==0) dir=points[i+1].pos-points[i].pos;
       else if (i==points.getsize()-1) dir=points[i].pos-points[i-1].pos;
       else dir=get_halfdir(points[i].pos-points[i-1].pos,points[i+1].pos-points[i].pos);
       dir.normalize();
 
-      miniv3d right=dir/miniv3d(points[i].nrm);
+      vec3 right=dir/miniv3d(points[i].nrm);
       right.normalize();
 
       setnrm(points[i].nrm);

@@ -3,8 +3,10 @@
 #ifndef MINI3D_H
 #define MINI3D_H
 
-#include "glslmath.h"
+#include "minibase.h"
 #include "minidyna.h"
+
+#include "glslmath.h"
 
 //! 3D software rendering pipeline
 class mini3D

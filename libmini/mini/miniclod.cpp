@@ -1,10 +1,5 @@
 // (c) by Stefan Roettger, licensed under LGPL 2.1
 
-#include "minidefs.h"
-
-#include "minirgb.h"
-#include "minimath.h"
-
 #include "miniclod.h"
 
 // default constructor
@@ -13,7 +8,7 @@ miniclod::miniclod()
    UPDATED_=FALSE;
    UPDATE_=0;
 
-   EYE_=EYE0_=miniv3d(NAN,NAN,NAN);
+   EYE_=EYE0_=vec3(NAN,NAN,NAN);
    }
 
 // destructor
@@ -35,7 +30,7 @@ void miniclod::load(ministring filename)
    }
 
 // recreate geometry from actual view point
-void miniclod::create(miniv3d eye,
+void miniclod::create(vec3 eye,
                       double maxdev,double atdist,
                       double maxwidth,
                       double minv,double maxv,double sat,double val,
@@ -65,7 +60,7 @@ void miniclod::create(miniv3d eye,
    }
 
 // incrementally recreate geometry from actual view point
-void miniclod::create_inc(miniv3d eye)
+void miniclod::create_inc(vec3 eye)
    {
    updateDX();
    calcpath_inc(eye,UPDATE_);
@@ -84,7 +79,7 @@ void miniclod::updateDX()
 
       UPDATED_=FALSE;
 
-      EYE0_=miniv3d(NAN,NAN,NAN);
+      EYE0_=vec3(NAN,NAN,NAN);
       }
    }
 
@@ -113,8 +108,8 @@ float miniclod::calcD2(int left,int right,int center)
    {
    float d2,dc;
 
-   miniv3d a=path_.get(left).getpos();
-   miniv3d b=path_.get(right).getpos();
+   vec3 a=path_.get(left).getpos();
+   vec3 b=path_.get(right).getpos();
    minimeas c=path_.get(center);
 
    double d=(b-a).getlength();
@@ -142,12 +137,12 @@ float miniclod::calcDM(int left,int right)
 
    float dm=0.0f;
 
-   miniv3d a=path_.get(left).getpos();
-   miniv3d b=path_.get(right).getpos();
+   vec3 a=path_.get(left).getpos();
+   vec3 b=path_.get(right).getpos();
 
    for (i=left+1; i<right-1; i++)
       {
-      miniv3d c=path_.get(i).getpos();
+      vec3 c=path_.get(i).getpos();
       double d=distance2line(c,a,b);
 
       if (d>dm) dm=d;
@@ -193,13 +188,12 @@ float miniclod::calcD2(int left,int right)
 // add a point
 void miniclod::addpoint(const minimeas &m,BOOLINT start)
    {
-   miniv3d p;
-   miniv3f n;
+   vec3 p,n;
    double v;
 
    double d;
    float hue;
-   miniv3f rgb;
+   vec3f rgb;
 
    p=m.getpos();
 
@@ -247,8 +241,8 @@ BOOLINT miniclod::subdiv(int left,int right)
    float d2=d2_[center];
    float dm=dm_[center];
 
-   miniv3d a=path_.get(left).getpos();
-   miniv3d b=path_.get(right).getpos();
+   vec3 a=path_.get(left).getpos();
+   vec3 b=path_.get(right).getpos();
 
    double d=(b-a).getlength();
    double l=distance2line(EYE_,a,b);
@@ -286,7 +280,7 @@ void miniclod::calcpath(int left,int right)
    }
 
 // calculate the path incrementally
-void miniclod::calcpath_inc(miniv3d eye,int update)
+void miniclod::calcpath_inc(vec3 eye,int update)
    {
    int i;
 
@@ -351,13 +345,67 @@ void miniclod::calcpath_inc()
       }
    }
 
-// map point measurement to rgb color
-miniv3f miniclod::point2rgb(const minimeas &m,double v,
-                            float hue,float sat,float val)
+// calculate the distance of a point p from a line segment between vectors a and b
+double miniclod::distance2line(vec3 p,vec3 a,vec3 b)
    {
-   float rgb[3];
+   vec3 n=b-a;
+   n.normalize();
 
-   hsv2rgb(hue,sat,val,rgb);
+   double l=(p-a).dot(n);
+   vec3 h=a+l*n;
 
-   return(miniv3f(rgb));
+   double dh=(p-h).getlength2();
+   double da=(p-a).getlength2();
+   double db=(p-b).getlength2();
+
+   if (dh<da && dh<db) return(sqrt(dh));
+   if (da<db) return(sqrt(da));
+   else return(sqrt(db));
    }
+
+// hsv to rgb conversion
+vec3f miniclod::hsv2rgb(float hue,float sat,float val)
+   {
+   vec3f rgb;
+
+   float hue6,r,s,t;
+
+   if (hue<0.0f || sat<0.0f || sat>1.0f || val<0.0f || val>1.0f) ERRORMSG();
+
+   hue/=60.0f;
+   hue=hue-6.0f*ftrc(hue/6.0f);
+   hue6=hue-ftrc(hue);
+
+   r=val*(1.0f-sat);
+   s=val*(1.0f-sat*hue6);
+   t=val*(1.0f-sat*(1.0f-hue6));
+
+   switch (ftrc(hue))
+        {
+        case 0: // red -> yellow
+           rgb = vec3f(val,t,r);
+           break;
+        case 1: // yellow -> green
+           rgb = vec3f(s,val,r);
+           break;
+        case 2: // green -> cyan
+           rgb = vec3f(r,val,t);
+           break;
+        case 3: // cyan -> blue
+           rgb = vec3f(r,s,val);
+           break;
+        case 4: // blue -> magenta
+           rgb = vec3f(t,r,val);
+           break;
+        case 5: // magenta -> red
+           rgb = vec3f(val,r,s);
+           break;
+        }
+
+   return(rgb);
+   }
+
+// map point measurement to rgb color
+vec3f miniclod::point2rgb(const minimeas &m,double v,
+                          float hue,float sat,float val)
+   {return(hsv2rgb(hue,sat,val));}
