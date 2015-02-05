@@ -51,10 +51,10 @@ class miniclod
 
    minipath path_,path0_;
 
-   minidyna<float> dc_; // constant deviations
+   std::vector<float> dc_; // constant deviations
 
-   minidyna<float> d2_; // geometric deviations
-   minidyna<float> dm_; // geometric maximum
+   std::vector<float> d2_; // geometric deviations
+   std::vector<float> dm_; // geometric maximum
 
    void updateDX();
 
@@ -79,7 +79,7 @@ class miniclod
    vec3f hsv2rgb(float hue,float sat,float val);
 
    virtual vec3f point2rgb(const minimeas &m,double v,float hue,float sat,float val);
-   virtual void updated(const minidyna<mini3D::joint_struct> &points) = 0;
+   virtual void updated(const std::vector<mini3D::joint_struct> &points) = 0;
 
    private:
 
@@ -92,8 +92,8 @@ class miniclod
    BOOLINT UPDATED_;
    int UPDATE_;
 
-   minidyna<struct state_struct> STACK_;
-   minidyna<mini3D::joint_struct> POINTS_;
+   std::vector<struct state_struct> STACK_;
+   std::vector<mini3D::joint_struct> POINTS_;
    };
 
 #endif

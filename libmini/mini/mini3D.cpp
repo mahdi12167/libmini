@@ -16,11 +16,11 @@ void mini3D::preMultiply(const mat4 &m)
 void mini3D::postMultiply(const mat4 &m)
    {postMatrix_=m;}
 
-void mini3D::line(const minidyna<point_struct> &l)
+void mini3D::line(const std::vector<point_struct> &l)
    {
    }
 
-void mini3D::band(const minidyna<joint_struct> &b)
+void mini3D::band(const std::vector<joint_struct> &b)
    {
    }
 

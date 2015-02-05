@@ -90,7 +90,7 @@ void miniclod::calcDC()
 
    float dc;
 
-   dc_.setsize(path_.getsize(),0.0f);
+   dc_.resize(path_.getsize(),0.0f);
 
    for (i=0; i<path_.getsize(); i++)
       {
@@ -154,8 +154,8 @@ float miniclod::calcDM(int left,int right)
 // calculate the d2-values
 void miniclod::calcD2()
    {
-   d2_.setsize(path_.getsize(),0.0f);
-   dm_.setsize(path_.getsize(),0.0f);
+   d2_.resize(path_.getsize(),0.0f);
+   dm_.resize(path_.getsize(),0.0f);
 
    if (!path_.empty())
       calcD2(0,path_.getsize()-1);
@@ -216,9 +216,9 @@ void miniclod::addpoint(const minimeas &m,BOOLINT start)
    if (start)
       if (!POINTS_.empty())
          {
-         vec3 lp=POINTS_.last().pos;
-         vec3f ln=POINTS_.last().nrm;
-         vec3f lc=POINTS_.last().col;
+         vec3 lp=POINTS_.back().pos;
+         vec3f ln=POINTS_.back().nrm;
+         vec3f lc=POINTS_.back().col;
 
          mini3D::joint_struct point1={lp,ln,lc,0.0};
          POINTS_.push_back(point1);
@@ -322,7 +322,9 @@ void miniclod::calcpath_inc(vec3 eye,int update)
 // calculate the path subdivision incrementally
 void miniclod::calcpath_inc()
    {
-   struct state_struct actual=STACK_.pop();
+   struct state_struct actual=STACK_.back();
+
+   STACK_.pop_back();
 
    int left=actual.left;
    int right=actual.right;

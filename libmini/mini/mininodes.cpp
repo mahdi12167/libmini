@@ -893,17 +893,17 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       }
    }
 
-mininode_geometry_band::mininode_geometry_band(const minidyna<mini3D::joint_struct> &points)
+mininode_geometry_band::mininode_geometry_band(const std::vector<mini3D::joint_struct> &points)
    : mininode_geometry(3,3,0,0,0,0)
    {
-   if (points.getsize()<2) return;
+   if (points.size()<2) return;
 
-   for (unsigned int i=0; i<points.getsize(); i++)
+   for (unsigned int i=0; i<points.size(); i++)
       {
       vec3 dir;
 
       if (i==0) dir=points[i+1].pos-points[i].pos;
-      else if (i==points.getsize()-1) dir=points[i].pos-points[i-1].pos;
+      else if (i==points.size()-1) dir=points[i].pos-points[i-1].pos;
       else dir=get_halfdir(points[i].pos-points[i-1].pos,points[i+1].pos-points[i].pos);
       dir.normalize();
 
@@ -1036,7 +1036,7 @@ mininode_geometry_band_path::mininode_geometry_band_path(const minidyna<miniv3d>
    : mininode_geometry_band(pos,nrm,col,width)
    {}
 
-mininode_geometry_band_path::mininode_geometry_band_path(const minidyna<mini3D::joint_struct> &points)
+mininode_geometry_band_path::mininode_geometry_band_path(const std::vector<mini3D::joint_struct> &points)
    : mininode_geometry_band(points)
    {}
 
