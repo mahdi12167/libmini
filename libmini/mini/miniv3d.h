@@ -11,6 +11,7 @@ class miniv3f;
 class miniv4d;
 class miniv4f;
 
+class vec3;
 class ministring;
 
 //! 3D double vector
@@ -40,6 +41,9 @@ class miniv3d
    miniv3d(const miniv3f &v);
    miniv3d(const miniv4d &v);
    miniv3d(const miniv4f &v);
+
+   //! glslmath cast operator
+   operator vec3() const;
 
    //! string cast operator
    operator ministring() const;

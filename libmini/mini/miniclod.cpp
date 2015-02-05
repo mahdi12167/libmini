@@ -193,12 +193,13 @@ float miniclod::calcD2(int left,int right)
 // add a point
 void miniclod::addpoint(const minimeas &m,BOOLINT start)
    {
-   miniv3d p,n;
+   miniv3d p;
+   miniv3f n;
    double v;
 
    double d;
    float hue;
-   miniv3d rgb;
+   miniv3f rgb;
 
    p=m.getpos();
 
@@ -221,9 +222,9 @@ void miniclod::addpoint(const minimeas &m,BOOLINT start)
    if (start)
       if (!POINTS_.empty())
          {
-         miniv3d lp=POINTS_.last().pos;
-         miniv3d ln=POINTS_.last().nrm;
-         miniv3d lc=POINTS_.last().col;
+         vec3 lp=POINTS_.last().pos;
+         vec3f ln=POINTS_.last().nrm;
+         vec3f lc=POINTS_.last().col;
 
          mini3D::joint_struct point1={lp,ln,lc,0.0};
          POINTS_.push_back(point1);
@@ -351,12 +352,12 @@ void miniclod::calcpath_inc()
    }
 
 // map point measurement to rgb color
-miniv3d miniclod::point2rgb(const minimeas &m,double v,
+miniv3f miniclod::point2rgb(const minimeas &m,double v,
                             float hue,float sat,float val)
    {
    float rgb[3];
 
    hsv2rgb(hue,sat,val,rgb);
 
-   return(miniv3d(rgb));
+   return(miniv3f(rgb));
    }

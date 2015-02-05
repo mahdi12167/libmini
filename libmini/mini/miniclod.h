@@ -81,7 +81,7 @@ class miniclod
    void calcpath_inc(miniv3d eye,int update=100);
    void calcpath_inc();
 
-   virtual miniv3d point2rgb(const minimeas &m,double v,float hue,float sat,float val);
+   virtual miniv3f point2rgb(const minimeas &m,double v,float hue,float sat,float val);
    virtual void updated(const minidyna<mini3D::joint_struct> &points) = 0;
 
    private:

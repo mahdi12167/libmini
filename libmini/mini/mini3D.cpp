@@ -42,16 +42,14 @@ void mini3D::pyramid(const struct pyramid_struct &s)
 
 void mini3D::render()
    {
-   vec4 eye;
-
-   eye=postMatrix_.invert()*vec4(0,0,0);
-   sort(eye);
+   eye_=postMatrix_.invert()*vec4(0,0,0);
+   sort();
 
    for (unsigned int i=0; i<primitives_.size(); i++)
       primitives_[i]->render(vertices_);
    }
 
-void mini3D::sort(vec3 eye)
+void mini3D::sort()
    {
    }
 

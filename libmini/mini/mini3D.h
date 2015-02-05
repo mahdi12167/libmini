@@ -3,10 +3,8 @@
 #ifndef MINI3D_H
 #define MINI3D_H
 
-#include "miniv3f.h"
-#include "miniv3d.h"
-#include "minidyna.h"
 #include "glslmath.h"
+#include "minidyna.h"
 
 //! 3D software rendering pipeline
 class mini3D
@@ -15,41 +13,41 @@ class mini3D
 
    struct point_struct
       {
-      miniv3d pos;
-      miniv3f col;
+      vec3 pos;
+      vec3f col;
       };
 
    struct joint_struct
       {
-      miniv3d pos;
-      miniv3f nrm;
-      miniv3f col;
+      vec3 pos;
+      vec3f nrm;
+      vec3f col;
       float wdt;
       };
 
    struct sphere_struct
       {
-      miniv3d pos;
-      miniv3f col;
+      vec3 pos;
+      vec3f col;
       double r;
       };
 
    struct box_struct
       {
-      miniv3d pos[8];
-      miniv3f col;
+      vec3 pos[8];
+      vec3f col;
       };
 
    struct prism_struct
       {
-      miniv3d pos[6];
-      miniv3f col;
+      vec3 pos[6];
+      vec3f col;
       };
 
    struct pyramid_struct
       {
-      miniv3d pos[5];
-      miniv3f col;
+      vec3 pos[5];
+      vec3f col;
       };
 
    //! default constructor
@@ -78,8 +76,8 @@ class mini3D
 
    struct vertex_struct
       {
-      miniv3d pos;
-      miniv3f col;
+      vec3 pos;
+      vec3f col;
       };
 
    class primitive
@@ -89,21 +87,21 @@ class mini3D
       primitive()
          {}
 
-      primitive(miniv3d c,double r)
+      primitive(vec3 c,double r)
          : center(c),radius2(r*r)
          {}
 
-      primitive(const minidyna<miniv3d> &p)
+      primitive(const minidyna<vec3> &p)
          {
-         miniv3d c;
+         vec3 c;
          double r2;
 
          if (p.size()>0)
             {
             c=p[0];
             for (unsigned int i=1; i<p.size(); i++)
-               c+=p[i];
-            c/=p.size();
+               c=c+p[i];
+            c=c/p.size();
 
             r2=0.0;
             for (unsigned int i=0; i<p.size(); i++)
@@ -119,23 +117,20 @@ class mini3D
 
       virtual void render(const minidyna<vertex_struct> &v);
 
-      double power(miniv3d p) const
+      double power(vec3 p) const
          {return((p-center).getlength2()-radius2);}
 
-      bool order(const primitive &pr,miniv3d p) const
-         {return(power(p)<pr.power(p));}
-
-      static minidyna<miniv3d> points(miniv3d a,miniv3d b)
+      static minidyna<vec3> points(vec3 a,vec3 b)
          {
-         minidyna<miniv3d> v;
+         minidyna<vec3> v;
          v.append(a);
          v.append(b);
          return(v);
          }
 
-      static minidyna<miniv3d> points(const miniv3d p[],unsigned int n)
+      static minidyna<vec3> points(const vec3 p[],unsigned int n)
          {
-         minidyna<miniv3d> v;
+         minidyna<vec3> v;
          for (unsigned int i=0; i<n; i++)
             v.append(p[i]);
          return(v);
@@ -143,7 +138,7 @@ class mini3D
 
       protected:
 
-      miniv3d center;
+      vec3 center;
       double radius2;
       };
 
@@ -244,6 +239,7 @@ class mini3D
       unsigned int index;
       };
 
+   vec3 eye_;
    mat4 preMatrix_,postMatrix_;
 
    minidyna<vertex_struct> vertices_;
@@ -256,7 +252,10 @@ class mini3D
    minidyna<primitive_prism> primitives_prism_;
    minidyna<primitive_pyramid> primitives_pyramid_;
 
-   void sort(vec3 eye);
+   bool order(const primitive &a,const primitive &b)
+      {return(a.power(eye_)<b.power(eye_));}
+
+   void sort();
    };
 
 #endif

@@ -99,6 +99,39 @@ inline vec2 vec2::normalize() const
 inline std::ostream& operator << (std::ostream &out,const vec2 &v)
    {return(out << '(' << v.x << ',' << v.y << ')');}
 
+// 2D float vector
+//  definition of components via constructor vec2f(x,y)
+//  access to components x/y via . component selector
+//  this vector type is not designed for calculations
+//  it is just designed for compact storage and transfer purposes
+//  use vec2 for linear math calulations instead
+class vec2f
+   {
+   public:
+
+   // default constructor
+   vec2f() {}
+
+   // copy constructor
+   vec2f(const vec2f &v) {x=v.x; y=v.y;}
+
+   // copy constructor
+   vec2f(const vec2 &v) {x=v.x; y=v.y;}
+
+   // component-wise constructor
+   vec2f(const float vx,const float vy) {x=vx; y=vy;}
+
+   // cast operator
+   operator vec2() const
+      {return(vec2(x,y));}
+
+   // destructor
+   ~vec2f() {}
+
+   // vector components
+   float x,y;
+   };
+
 // 3D double vector
 //  definition of components via constructor vec3(x,y,z)
 //  access to components x/y/z via . component selector
@@ -206,6 +239,39 @@ vec3 vec3::reflect(const vec3 &n) const
 // output operator
 inline std::ostream& operator << (std::ostream &out,const vec3 &v)
    {return(out << '(' << v.x << ',' << v.y << ',' << v.z << ')');}
+
+// 3D float vector
+//  definition of components via constructor vec3f(x,y,z)
+//  access to components x/y/z via . component selector
+//  this vector type is not designed for calculations
+//  it is just designed for compact storage and transfer purposes
+//  use vec3 for linear math calulations instead
+class vec3f
+   {
+   public:
+
+   // default constructor
+   vec3f() {}
+
+   // copy constructor
+   vec3f(const vec3f &v) {x=v.x; y=v.y; z=v.z;}
+
+   // copy constructor
+   vec3f(const vec3 &v) {x=v.x; y=v.y; z=v.z;}
+
+   // component-wise constructor
+   vec3f(const float vx,const float vy,const float vz) {x=vx; y=vy; z=vz;}
+
+   // cast operator
+   operator vec3() const
+      {return(vec3(x,y,z));}
+
+   // destructor
+   ~vec3f() {}
+
+   // vector components
+   float x,y,z;
+   };
 
 // 4D double vector
 //  definition of components via constructor vec4(x,y,z,w)
@@ -334,6 +400,39 @@ inline vec4 vec4::reflect(const vec4 &n) const
 // output operator
 inline std::ostream& operator << (std::ostream &out,const vec4 &v)
    {return(out << '(' << v.x << ',' << v.y << ',' << v.z << ',' << v.w << ')');}
+
+// 4D float vector
+//  definition of components via constructor vec2f(x,y,z,w)
+//  access to components x/y/z/w via . component selector
+//  this vector type is not designed for calculations
+//  it is just designed for compact storage and transfer purposes
+//  use vec4 for linear math calulations instead
+class vec4f
+   {
+   public:
+
+   // default constructor
+   vec4f() {}
+
+   // copy constructor
+   vec4f(const vec4f &v) {x=v.x; y=v.y; z=v.z; w=v.w;}
+
+   // copy constructor
+   vec4f(const vec4 &v) {x=v.x; y=v.y; z=v.z; w=v.w;}
+
+   // component-wise constructor
+   vec4f(const float vx,const float vy,const float vz,const float vw) {x=vx; y=vy; z=vz; w=vw;}
+
+   // cast operator
+   operator vec4() const
+      {return(vec4(x,y,z,w));}
+
+   // destructor
+   ~vec4f() {}
+
+   // vector components
+   float x,y,z,w;
+   };
 
 // 2x2 double matrix
 //  definition of matrix via constructor taking two row vectors
@@ -666,7 +765,7 @@ inline std::ostream& operator << (std::ostream &out,const mat3 &m)
 
 // 3x3 float matrix
 //  this matrix type is not designed for calculations
-//  it is just designed for storage and transfer purposes
+//  it is just designed for compact storage and transfer purposes
 //   use mat3 for linear math calulations, then copy to mat3f and
 //   cast to const float * to transfer via glUniform for example:
 //    glUniformMatrix3fv(location, 1, GL_FALSE, (const float *)mat3f(M));
