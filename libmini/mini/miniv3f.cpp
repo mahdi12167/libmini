@@ -14,6 +14,10 @@ miniv3f::miniv3f(const miniv3d &v) {x=(float)v.x; y=(float)v.y; z=(float)v.z;}
 miniv3f::miniv3f(const miniv4f &v) {x=v.x; y=v.y; z=v.z;}
 miniv3f::miniv3f(const miniv4d &v) {x=(float)v.x; y=(float)v.y; z=(float)v.z;}
 
+// glslmath conversion constructors
+miniv3f::miniv3f(const vec3f &v) {x=v.x; y=v.y; z=v.z;}
+miniv3f::miniv3f(const vec3 &v) {x=(float)v.x; y=(float)v.y; z=(float)v.z;}
+
 // glslmath cast operator
 miniv3f::operator vec3f() const {return(vec3f(x,y,z));}
 

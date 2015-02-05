@@ -233,7 +233,7 @@ inline vec3 vec3::normalize() const
    }
 
 // reflect incident vector at normalized surface normal
-vec3 vec3::reflect(const vec3 &n) const
+inline vec3 vec3::reflect(const vec3 &n) const
    {return((*this)-2*n*dot(n));}
 
 // output operator
@@ -1388,7 +1388,7 @@ class glScopedMatrixStack
 #endif
 
 // test function
-int test_glslmath()
+inline int test_glslmath()
    {
    int errors=0;
 

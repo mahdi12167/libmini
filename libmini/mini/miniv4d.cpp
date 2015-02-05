@@ -6,6 +6,7 @@
 #include "miniv3d.h"
 #include "miniv3f.h"
 
+#include "glslmath.h"
 #include "ministring.h"
 
 // conversion constructors
@@ -14,6 +15,13 @@ miniv4d::miniv4d(const miniv3d &v) {x=v.x; y=v.y; z=v.z; w=0.0;}
 miniv4d::miniv4d(const miniv3d &v,const double vw) {x=v.x; y=v.y; z=v.z; w=vw;}
 miniv4d::miniv4d(const miniv3f &v) {x=(double)v.x; y=(double)v.y; z=(double)v.z; w=0.0;}
 miniv4d::miniv4d(const miniv3f &v,const float vw) {x=(double)v.x; y=(double)v.y; z=(double)v.z; w=(double)vw;}
+
+// glslmath conversion constructors
+miniv4d::miniv4d(const vec4 &v) {x=v.x; y=v.y; z=v.z; w=v.w;}
+miniv4d::miniv4d(const vec4f &v) {x=(double)v.x; y=(double)v.y; z=(double)v.z; w=(double)v.w;}
+
+// glslmath cast operator
+miniv4d::operator vec4() const {return(vec4(x,y,z,w));}
 
 // string cast operator
 miniv4d::operator ministring() const {return((ministring)"(" + x + "," + y + "," + z + "," + w + ")");}
