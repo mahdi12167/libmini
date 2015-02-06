@@ -196,9 +196,7 @@ void miniclod::addpoint(const minimeas &m,BOOLINT start)
    vec3f rgb;
 
    p=m.getpos();
-
-   n=p;
-   n.normalize();
+   n=p.normalize();
 
    v=m.velocity;
 
@@ -257,9 +255,9 @@ void miniclod::calcpath()
 
    if (!path_.empty())
       {
-      addpoint(path_.first());
+      addpoint(path_.front());
       calcpath(0,path_.getsize()-1);
-      addpoint(path_.last());
+      addpoint(path_.back());
       }
 
    updated(POINTS_);
@@ -295,7 +293,7 @@ void miniclod::calcpath_inc(vec3 eye,int update)
             {
             POINTS_.clear();
 
-            addpoint(path_.first());
+            addpoint(path_.front());
 
             struct state_struct start={0,(int)path_.getsize()-1,FALSE};
             STACK_.push_back(start);
@@ -311,7 +309,7 @@ void miniclod::calcpath_inc(vec3 eye,int update)
 
          if (STACK_.empty())
             {
-            addpoint(path_.last());
+            addpoint(path_.back());
 
             updated(POINTS_);
             }
@@ -350,8 +348,7 @@ void miniclod::calcpath_inc()
 // calculate the distance of a point p from a line segment between vectors a and b
 double miniclod::distance2line(vec3 p,vec3 a,vec3 b)
    {
-   vec3 n=b-a;
-   n.normalize();
+   vec3 n=(b-a).normalize();
 
    double l=(p-a).dot(n);
    vec3 h=a+l*n;

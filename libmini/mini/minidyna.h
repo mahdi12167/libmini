@@ -275,6 +275,10 @@ class minidyna
    const Item& head() const
       {return(first());}
 
+   //! get first item
+   const Item& front() const
+      {return(first());}
+
    //! get last item
    const Item& last() const
       {
@@ -286,6 +290,10 @@ class minidyna
 
    //! get last item
    const Item& tail() const
+      {return(last());}
+
+   //! get last item
+   const Item& back() const
       {return(last());}
 
    //! set first item

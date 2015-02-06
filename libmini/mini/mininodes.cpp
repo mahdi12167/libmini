@@ -905,10 +905,10 @@ mininode_geometry_band::mininode_geometry_band(const std::vector<mini3D::joint_s
       if (i==0) dir=points[i+1].pos-points[i].pos;
       else if (i==points.size()-1) dir=points[i].pos-points[i-1].pos;
       else dir=get_halfdir(points[i].pos-points[i-1].pos,points[i+1].pos-points[i].pos);
-      dir.normalize();
+      dir=dir.normalize();
 
       vec3 right=dir/miniv3d(points[i].nrm);
-      right.normalize();
+      right=right.normalize();
 
       setnrm(points[i].nrm);
       setcol(points[i].col);
