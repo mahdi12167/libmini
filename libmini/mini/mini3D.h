@@ -58,20 +58,34 @@ class mini3D
    //! destructor
    virtual ~mini3D();
 
+   //! pre-multiply vertices by 4x4 matrix
    void preMultiply(const mat4 &m);
+
+   // post-multiply vertices by 4x4 matrix
    void postMultiply(const mat4 &m);
 
+   //! add line to scene
    void line(const std::vector<point_struct> &l);
+
+   //! add band to scene
    void band(const std::vector<joint_struct> &b);
 
+   //! add sphere to scene
    void sphere(const struct sphere_struct &s);
 
+   //! add box to scene
    void box(const struct sphere_struct &s);
+
+   //! add prism to scene
    void prism(const struct prism_struct &s);
+
+   //! add pyramid to scene
    void pyramid(const struct pyramid_struct &s);
 
+   //! render scene
    void render();
 
+   //! clear scene
    void clear();
 
    protected:
@@ -254,10 +268,27 @@ class mini3D
    std::vector<primitive_prism> primitives_prism_;
    std::vector<primitive_pyramid> primitives_pyramid_;
 
-   bool order(const primitive &a,const primitive &b)
+   void sort();
+
+   bool less(const primitive &a,const primitive &b)
       {return(a.power(eye_)<b.power(eye_));}
 
-   void sort();
+   template<class Item>
+   bool less(const Item &a,const Item &b)
+      {return(less(a,b));}
+
+   template<class Item>
+   void merge(std::vector<Item *> &a,
+              unsigned int begin, unsigned int middle, unsigned int end,
+              std::vector<Item *> &tmp);
+
+   template<class Item>
+   void mergesort(std::vector<Item *> &a,
+                  unsigned int begin, unsigned int end,
+                  std::vector<Item *> &tmp);
+
+   template <class Item>
+   void mergesort(std::vector<Item *> &a);
    };
 
 #endif
