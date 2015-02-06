@@ -2704,6 +2704,8 @@ ministring ViewerWindow::browseDir(ministring title,
 
    delete fd;
 
+   setlocale(LC_NUMERIC, "C");
+
    return(dir);
 }
 
