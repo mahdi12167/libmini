@@ -986,9 +986,9 @@ void ViewerWindow::runAction(const ministring &action,
 
          if (!keys.empty())
             if (keys.size()==1)
-               MINILOG("opened layer with key=" + keys.to_string());
+               MINILOG("opened file with key=" + keys.to_string());
             else
-               MINILOG("opened layers with keys=" + keys.to_string(";"));
+               MINILOG("opened files with keys=" + keys.to_string(";"));
       }
    }
    else if (action == "select")
@@ -2676,6 +2676,8 @@ ministrings ViewerWindow::browse(ministring title,
    }
 
    delete fd;
+
+   setlocale(LC_NUMERIC, "C");
 
    return(files);
 }

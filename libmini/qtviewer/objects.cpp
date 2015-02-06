@@ -673,10 +673,6 @@ int Object_path::initGFX()
       path_node=new mininode_geometry_path_clod();
       if (path_node==NULL) MEMERROR();
 
-      //!! tmp hack for locale
-      std::cout << std::setlocale(LC_NUMERIC, 0) << std::endl;
-      setlocale(LC_NUMERIC, "C");
-
       path_node->load(get_full_name());
 
       path_node->create(0.25,100, // maximum deviation at specific distance
