@@ -235,7 +235,10 @@ void MainWindow::createWidgets()
 
    // style sheets:
 
-   setStyleSheet("QSplitter::handle:horizontal { background-color: white; }"
+   setStyleSheet("QMainWindow { background-color: white; }"
+                 "QTabWidget::pane { background-color: #eeeeee; border: 0; }"
+                 "QScrollArea { background-color: #eeeeee; }"
+                 "QSplitter::handle:horizontal { background-color: white; }"
                  ":focus { background-color: white; }");
 
    tabWidget->setStyleSheet("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; }"
