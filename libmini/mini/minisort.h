@@ -204,6 +204,58 @@ void shellsort(minidyna<Item *> &a,BOOLINT (*less)(const Item &a,const Item &b))
       }
    }
 
+// Mergesort as proposed by John von Neumann in 1945
+//  the algorithm sorts the elements in ascending order
+//  the < operator needs to be overloaded for two elements
+//  runtime is O(nlogn), stable
+
+// merge two halves
+template<class Item>
+void merge(minidyna<Item *> &a,
+           unsigned int begin, unsigned int middle, unsigned int end,
+           minidyna<Item *> &tmp)
+   {
+   unsigned int b=begin, m=middle, t=begin;
+
+   while (b<middle && m<end)
+      if (*(a[b])<*(a[m])) tmp[t++] = a[b++];
+      else tmp[t++] = a[m++];
+
+   while (b<middle) tmp[t++] = a[b++];
+   while (m<end) tmp[t++] = a[m++];
+
+   for (t=begin; t<end; t++) a[t] = tmp[t];
+   }
+
+// mergesort by recursively merging two halves
+template<class Item>
+void mergesort(minidyna<Item *> &a,
+               unsigned int begin, unsigned int end,
+               minidyna<Item *> &tmp)
+   {
+   unsigned int s = end-begin;
+
+   if (s>1)
+      {
+      unsigned int middle = begin+s/2;
+
+      mergesort(a, begin, middle, tmp);
+      mergesort(a, middle, end, tmp);
+
+      merge(a, begin, middle, end, tmp);
+      }
+   }
+
+// mergesort
+template <class Item>
+void mergesort(minidyna<Item *> &a)
+   {
+   minidyna<Item *> tmp;
+   tmp.setsize(a.getsize());
+
+   mergesort(a, 0, a.getsize(), tmp);
+   }
+
 }
 
 using namespace minisort;

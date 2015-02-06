@@ -10,6 +10,7 @@
 #define MINIXML_TEST // enable this to perform a test of the minixml module
 #define GLSLMATH_TEST // enable this to perform a test of the glslmath module
 #define LUNAFUNCTOR_TEST // enable this to perform a test of the lunafunctor module
+#define MERGESORT_TEST // enable this to perform a test of the mergesort module
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
@@ -22,6 +23,7 @@
 #include <mini/minixml.h>
 #include <mini/glslmath.h>
 #include <mini/lunafunctor.h>
+#include <mini/minisort.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -282,6 +284,17 @@ int main(int argc,char *argv[])
    lunafunctor functor;
    functor.expr("1-2*x");
    if (functor.f(0.5f)==0.0f) std::cout << "SUCCESS" << std::endl;
+   else {std::cout << "FAILURE" << std::endl; failure++;}
+#endif
+
+#ifdef MERGESORT_TEST
+   int a=3,b=2,c=1;
+   minidyna<int *> array;
+   array.push_back(&a);
+   array.push_back(&b);
+   array.push_back(&c);
+   mergesort<int>(array);
+   if (*(array[0])==1 && *(array[1])==2 && *(array[2])==3) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
 #endif
 
