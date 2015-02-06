@@ -139,8 +139,13 @@ void ViewerWindow::initializeGL()
          else arg.push_back(args[i]);
 
       // load object urls
-      for (int i=0; i<arg.size(); i++)
-         runAction("open", arg[i].toStdString().c_str());
+      if (arg.size()>0)
+      {
+         runAction("repo", "");
+
+         for (int i=0; i<arg.size(); i++)
+            runAction("open", arg[i].toStdString().c_str());
+      }
    }
 
    qglClearColor(Qt::black);
