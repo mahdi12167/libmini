@@ -85,7 +85,7 @@ void mini3D::merge(std::vector<Item *> &a,
    unsigned int b=begin, m=middle, t=begin;
 
    while (b<middle && m<end)
-      if (less(*(a[b]), *(a[m]))) tmp[t++] = a[b++];
+      if (greater(*(a[b]), *(a[m]))) tmp[t++] = a[b++];
       else tmp[t++] = a[m++];
 
    while (b<middle) tmp[t++] = a[b++];

@@ -270,12 +270,12 @@ class mini3D
 
    void sort();
 
-   bool less(const primitive &a,const primitive &b)
-      {return(a.power(eye_)<b.power(eye_));}
+   bool greater(const primitive &a,const primitive &b)
+      {return(a.power(eye_)>b.power(eye_));}
 
    template<class Item>
-   bool less(const Item &a,const Item &b)
-      {return(less(a,b));}
+   bool greater(const Item &a,const Item &b)
+      {return(greater(a,b));}
 
    template<class Item>
    void merge(std::vector<Item *> &a,
