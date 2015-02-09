@@ -670,6 +670,9 @@ int Object_path::initGFX()
       ecef_node=new mininode_ecef();
       if (ecef_node==NULL) MEMERROR();
 
+      noculling_node=new mininode_noculling();
+      if (noculling_node==NULL) MEMERROR();
+
       path_node=new mininode_geometry_clod();
       if (path_node==NULL) MEMERROR();
 
@@ -691,7 +694,7 @@ int Object_path::initGFX()
          set_center(path_node->getpath()->get(0),2.0*sqrt(radius2));
 
          // link path node
-         path_groupnode->append_child(ecef_node)->append_child(path_node);
+         path_groupnode->append_child(ecef_node)->append_child(noculling_node)->append_child(path_node);
 
          // pass object key to image node
          path_node->set_name(get_full_name());
