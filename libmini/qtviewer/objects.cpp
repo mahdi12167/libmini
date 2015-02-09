@@ -670,7 +670,7 @@ int Object_path::initGFX()
       ecef_node=new mininode_ecef();
       if (ecef_node==NULL) MEMERROR();
 
-      path_node=new mininode_geometry_path_clod();
+      path_node=new mininode_geometry_clod();
       if (path_node==NULL) MEMERROR();
 
       path_node->load(get_full_name());
