@@ -38,7 +38,8 @@ enum
    MININODE_SWITCH,
    MININODE_SELECTOR,
    MININODE_TRANSFORM,
-   MININODE_GEOMETRY
+   MININODE_GEOMETRY,
+   MININODE_STATE
    };
 
 class mininode_cam;
@@ -2417,6 +2418,93 @@ class mininode_geometry_evaluator: public mininode_geometry
    private:
 
    void construct_vtx(double x,double y,double s);
+   };
+
+//! state node (base class)
+//!  changes state for children
+class mininode_state: public mininode_group
+   {
+   public:
+
+   //! default constructor
+   mininode_state(unsigned int id=MININODE_STATE)
+      : mininode_group(id)
+      {}
+
+   //! destructor
+   virtual ~mininode_state() {}
+
+   //! serialize node to string
+   virtual ministring to_string() const
+      {return("mininode_state()");}
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info)
+      {
+      if (info.startswith("mininode_state()"))
+         {
+         info=info.tail("mininode_state()");
+         return(TRUE);
+         }
+
+      return(FALSE);
+      }
+
+   protected:
+
+   virtual void state(BOOLINT on) = 0;
+
+   virtual void traverse_pre()
+      {state(TRUE);}
+
+   virtual void traverse_past()
+      {state(TRUE);}
+
+   virtual void traverse_post()
+      {state(FALSE);}
+
+   };
+
+//! state node
+//!  disables back face culling for children
+class mininode_noculling: public mininode_state
+   {
+   public:
+
+   //! default constructor
+   mininode_noculling()
+      : mininode_state()
+      {}
+
+   protected:
+
+   virtual void state(BOOLINT on)
+      {
+      if (on) disableculling();
+      else enableBFculling();
+      }
+
+   };
+
+//! state node
+//!  enables front face culling for children
+class mininode_ffculling: public mininode_state
+   {
+   public:
+
+   //! default constructor
+   mininode_ffculling()
+      : mininode_state()
+      {}
+
+   protected:
+
+   virtual void state(BOOLINT on)
+      {
+      if (on) enableFFculling();
+      else enableBFculling();
+      }
+
    };
 
 //! deferred transform node (base class)

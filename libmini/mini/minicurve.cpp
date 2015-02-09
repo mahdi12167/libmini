@@ -499,6 +499,83 @@ void minicurve::getbsphere(miniv3d &center,double &radius2)
    }
 
 // serialization
+ministring minicurve::to_string()
+   {
+   unsigned int i;
+
+   ministring info("minicurve");
+
+   validate();
+
+   info.append("(");
+
+   info.append_double(curve_start);
+   info.append(",");
+   info.append_double(curve_stop);
+   info.append(",");
+   info.append_double(curve_map_start);
+   info.append(",");
+   info.append_double(curve_map_stop);
+   info.append(",");
+   info.append_double(curve_repeat_start);
+   info.append(",");
+   info.append_double(curve_repeat_stop);
+
+   info.append(",[");
+
+   for (i=0; i<getsize(); i++)
+      {
+      info.append(get(i).to_string());
+      if (i+1<getsize()) info.append(",");
+      }
+
+   info.append("]");
+
+   info.append(")");
+
+   return(info);
+   }
+
+// deserialization
+void minicurve::from_string(ministring &info)
+   {
+   if (info.startswith("minicurve"))
+      {
+      info=info.tail("minicurve(");
+
+      curve_start=info.prefix(",").value();
+      info=info.tail(",");
+      curve_stop=info.prefix(",").value();
+      info=info.tail(",");
+      curve_map_start=info.prefix(",").value();
+      info=info.tail(",");
+      curve_map_stop=info.prefix(",").value();
+      info=info.tail(",");
+      curve_repeat_start=info.prefix(",").value();
+      info=info.tail(",");
+      curve_repeat_stop=info.prefix(")").value();
+      info=info.tail(",[");
+
+      while (!info.startswith("]"))
+         {
+         minimeas meas;
+
+         meas.from_string(info);
+         append(meas);
+
+         if (info.startswith(",")) info=info.tail(",");
+         else break;
+         }
+
+      info=info.tail("]");
+
+      info=info.tail(")");
+
+      valid=FALSE;
+      }
+   }
+
+// serialize to string list
 ministrings minicurve::to_strings()
    {
    unsigned int i;
@@ -533,14 +610,14 @@ ministrings minicurve::to_strings()
    return(curve);
    }
 
-// deserialization
+// deserialize from string list
 void minicurve::from_strings(ministrings &infos)
    {
    unsigned int line;
 
    ministring info;
 
-   if (!empty())
+   if (!infos.empty())
       {
       info=infos[0];
 

@@ -25,14 +25,23 @@ class mininode_geometry_path: public mininode_geometry
 
    //! get path
    minipath *getpath()
-      {return(&path_);}
+      {return(&path);}
 
-   //! zscale
-   static float zscale;
+   //! set zscale
+   void set_zscale(float s=0.975f)
+      {zscale=s;}
+
+   //! serialize node to string
+   virtual ministring to_string();
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info);
 
    protected:
 
-   minipath path_;
+   minipath path;
+
+   float zscale;
    };
 
 #endif

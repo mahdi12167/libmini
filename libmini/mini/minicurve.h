@@ -103,9 +103,15 @@ class minicurve: public minidyna<minimeas>
    void getbsphere(miniv3d &center,double &radius2);
 
    //! serialization
-   ministrings to_strings();
+   ministring to_string();
 
    //! deserialization
+   void from_string(ministring &info);
+
+   //! serialize to string list
+   ministrings to_strings();
+
+   //! deserialize from string list
    void from_strings(ministrings &infos);
 
    protected:

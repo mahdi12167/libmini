@@ -40,6 +40,14 @@ class miniclod
    minipath *getpath()
       {return(&path_);}
 
+   //! serialization
+   ministring to_string()
+      {return(path_.to_string());}
+
+   //! deserialization
+   void from_string(ministring &info)
+      {path_.from_string(info);}
+
    protected:
 
    struct state_struct

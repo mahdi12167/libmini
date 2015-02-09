@@ -8,15 +8,15 @@
 #include "miniclod.h"
 
 //! a geometry node that implements C-LOD for geo-referenced paths
-class mininode_geometry_path_clod: public mininode_geometry, public miniclod
+class mininode_geometry_clod: public mininode_geometry, public miniclod
    {
    public:
 
    //! default constructor
-   mininode_geometry_path_clod();
+   mininode_geometry_clod();
 
    //! destructor
-   virtual ~mininode_geometry_path_clod();
+   virtual ~mininode_geometry_clod();
 
    //! set path
    void set(const minipath &path);
@@ -31,10 +31,19 @@ class mininode_geometry_path_clod: public mininode_geometry, public miniclod
                double weight=1.0, // weight of color mapping
                int update=100); // vertices per update
 
-   //! zscale
-   static float zscale;
+   //! set zscale
+   void set_zscale(float s=0.975f)
+      {zscale=s;}
+
+   //! serialize node to string
+   virtual ministring to_string();
+
+   //! deserialize node from string
+   virtual BOOLINT from_string(ministring &info);
 
    protected:
+
+   float zscale;
 
    virtual void traverse_pre();
 
