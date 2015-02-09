@@ -288,6 +288,7 @@ int main(int argc,char *argv[])
 #endif
 
 #ifdef MERGESORT_TEST
+   std::cout << "mergesort:" << std::endl;
    int a=3,b=2,c=1;
    minidyna<int *> array;
    array.push_back(&a);
