@@ -65,7 +65,7 @@ ministring mininode_geometry_clod::to_string()
    info.append(",");
    info.append_float(zscale);
    info.append(",");
-   info.append(miniclod::to_string());
+   info.append(getpath()->to_string());
    info.append(")");
 
    return(info);
@@ -88,7 +88,7 @@ BOOLINT mininode_geometry_clod::from_string(ministring &info)
       info=info.tail(",");
       zscale=info.prefix(",").value();
       info=info.tail(",");
-      miniclod::from_string(info);
+      getpath()->from_string(info);
 
       info=info.tail(")");
 
