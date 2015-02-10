@@ -88,31 +88,13 @@ class mini3D
 
       virtual ~primitive() {}
 
-      virtual void render(const std::vector<vertex_struct> &v);
-
-      double depth(vec3 p) const
-         {return((p-center).getlength2());}
+      virtual double depth(vec3 p) const = 0;
+      virtual void render(const std::vector<vertex_struct> &v) = 0;
 
       protected:
 
       vec3 center;
       double radius2;
-      };
-
-   class primitive_line: public primitive
-      {
-      public:
-
-      primitive_line()
-         {}
-
-      primitive_line(unsigned int idx1,unsigned int idx2,
-                     const std::vector<vertex_struct> &v)
-         : primitive(v[idx1].pos,v[idx2].pos),
-           index1(idx1),index2(idx2)
-         {}
-
-      unsigned int index1,index2;
       };
 
    class primitive_sphere: public primitive
@@ -128,8 +110,38 @@ class mini3D
            index(idx),radius(r)
          {}
 
+      virtual double depth(vec3 p) const
+         {return((p-center).getlength2());}
+
+      virtual void render(const std::vector<vertex_struct> &v) {}
+
+      protected:
+
       unsigned int index;
       double radius;
+      };
+
+   class primitive_line: public primitive
+      {
+      public:
+
+      primitive_line()
+         {}
+
+      primitive_line(unsigned int idx1,unsigned int idx2,
+                     const std::vector<vertex_struct> &v)
+         : primitive(v[idx1].pos,v[idx2].pos),
+           index1(idx1),index2(idx2)
+         {}
+
+      virtual double depth(vec3 p) const
+         {return((p-center).getlength2()+radius2);}
+
+      virtual void render(const std::vector<vertex_struct> &v) {}
+
+      protected:
+
+      unsigned int index1,index2;
       };
 
    vec3 eye_;
@@ -138,8 +150,8 @@ class mini3D
    std::vector<vertex_struct> vertices_;
    std::vector<primitive *> primitives_;
 
-   std::vector<primitive_line> primitives_line_;
    std::vector<primitive_sphere> primitives_sphere_;
+   std::vector<primitive_line> primitives_line_;
 
    void sort();
 

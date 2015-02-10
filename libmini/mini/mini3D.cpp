@@ -18,19 +18,22 @@ void mini3D::preMultiply(const mat4 &m)
 void mini3D::postMultiply(const mat4 &m)
    {postMatrix_=m;}
 
+// add sphere to scene
+void mini3D::sphere(const struct sphere_struct &s)
+   {
+   //!! todo
+   }
+
 // add line to scene
 void mini3D::line(const std::vector<point_struct> &l)
    {
+   //!! todo
    }
 
 // add band to scene
 void mini3D::band(const std::vector<joint_struct> &b)
    {
-   }
-
-// add sphere to scene
-void mini3D::sphere(const struct sphere_struct &s)
-   {
+   //!! todo
    }
 
 // render scene
@@ -53,8 +56,8 @@ void mini3D::clear()
    vertices_.clear();
    primitives_.clear();
 
-   primitives_line_.clear();
    primitives_sphere_.clear();
+   primitives_line_.clear();
    }
 
 // merge two halves
