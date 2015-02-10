@@ -33,21 +33,6 @@ void mini3D::sphere(const struct sphere_struct &s)
    {
    }
 
-// add box to scene
-void mini3D::box(const struct sphere_struct &s)
-   {
-   }
-
-// add prism to scene
-void mini3D::prism(const struct prism_struct &s)
-   {
-   }
-
-// add pyramid to scene
-void mini3D::pyramid(const struct pyramid_struct &s)
-   {
-   }
-
 // render scene
 void mini3D::render()
    {
@@ -58,7 +43,7 @@ void mini3D::render()
       primitives_[i]->render(vertices_);
    }
 
-// power sort scene
+// depth sort scene
 void mini3D::sort()
    {mergesort<primitive>(primitives_);}
 
@@ -69,11 +54,7 @@ void mini3D::clear()
    primitives_.clear();
 
    primitives_line_.clear();
-   primitives_quad_.clear();
    primitives_sphere_.clear();
-   primitives_box_.clear();
-   primitives_prism_.clear();
-   primitives_pyramid_.clear();
    }
 
 // merge two halves
