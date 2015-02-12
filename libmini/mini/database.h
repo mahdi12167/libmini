@@ -11,7 +11,7 @@ as DB Format. It provides additional metadata such as dimension, type,
 no-data values and geo-references.
 
 Note: The methods that manipulate the native DB format are
-thread-safe. They are also not affected by LOCALE settings.
+thread-safe. They are not affected by LOCALE settings.
 **/
 class databuf
    {

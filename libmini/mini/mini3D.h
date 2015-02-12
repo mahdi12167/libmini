@@ -4,6 +4,7 @@
 #define MINI3D_H
 
 #include "minibase.h"
+#include "database.h"
 #include "vector"
 
 #include "glslmath.h"
@@ -34,6 +35,14 @@ class mini3D
       double r;
       };
 
+   struct sprite_struct
+      {
+      vec3 pos;
+      vec3f col;
+      double r;
+      databuf buf;
+      };
+
    //! default constructor
    mini3D();
 
@@ -55,8 +64,11 @@ class mini3D
    //! add sphere to scene
    void sphere(const struct sphere_struct &s);
 
-   //! render scene
-   void render();
+   //! add sprite to scene
+   void sprite(const struct sprite_struct &s);
+
+   //! render scene with n passes
+   void render(unsigned int n);
 
    //! clear scene
    void clear();
@@ -66,6 +78,7 @@ class mini3D
    struct vertex_struct
       {
       vec3 pos;
+      vec3 pos_post;
       vec3f col;
       };
 
@@ -89,36 +102,11 @@ class mini3D
       virtual ~primitive() {}
 
       virtual double depth(vec3 p) const = 0;
-      virtual void render(const std::vector<vertex_struct> &v) = 0;
 
       protected:
 
       vec3 center;
       double radius2;
-      };
-
-   class primitive_sphere: public primitive
-      {
-      public:
-
-      primitive_sphere()
-         {}
-
-      primitive_sphere(unsigned int idx,double r,
-                       const std::vector<vertex_struct> &v)
-         : primitive(v[idx].pos,r),
-           index(idx),radius(r)
-         {}
-
-      virtual double depth(vec3 p) const
-         {return((p-center).getlength2());}
-
-      virtual void render(const std::vector<vertex_struct> &v) {}
-
-      protected:
-
-      unsigned int index;
-      double radius;
       };
 
    class primitive_line: public primitive
@@ -137,11 +125,63 @@ class mini3D
       virtual double depth(vec3 p) const
          {return((p-center).getlength2()+radius2);}
 
-      virtual void render(const std::vector<vertex_struct> &v) {}
-
       protected:
 
       unsigned int index1,index2;
+      };
+
+   class primitive_band: public primitive_line
+      {
+      public:
+
+      primitive_band()
+         {}
+
+      primitive_band(unsigned int idx1,unsigned int idx2,
+                     const std::vector<vertex_struct> &v)
+         : primitive_line(idx1,idx2,v)
+         {}
+
+      };
+
+   class primitive_sphere: public primitive
+      {
+      public:
+
+      primitive_sphere()
+         {}
+
+      primitive_sphere(unsigned int idx,double r,
+                       const std::vector<vertex_struct> &v)
+         : primitive(v[idx].pos,r),
+           index(idx),radius(r)
+         {}
+
+      virtual double depth(vec3 p) const
+         {return((p-center).getlength2());}
+
+      protected:
+
+      unsigned int index;
+      double radius;
+      };
+
+   class primitive_sprite: public primitive_sphere
+      {
+      public:
+
+      primitive_sprite()
+         {}
+
+      primitive_sprite(unsigned int idx,double r,const databuf &b,
+                       const std::vector<vertex_struct> &v)
+         : primitive_sphere(idx,r,v),
+           buf(b)
+         {}
+
+      protected:
+
+      databuf buf;
       };
 
    vec3 eye_;
@@ -150,8 +190,12 @@ class mini3D
    std::vector<vertex_struct> vertices_;
    std::vector<primitive *> primitives_;
 
-   std::vector<primitive_sphere> primitives_sphere_;
    std::vector<primitive_line> primitives_line_;
+   std::vector<primitive_band> primitives_band_;
+   std::vector<primitive_sphere> primitives_sphere_;
+   std::vector<primitive_sphere> primitives_sprite_;
+
+   unsigned int addvtx(vec3 v,vec3f c);
 
    void sort();
 
@@ -174,6 +218,11 @@ class mini3D
 
    template <class Item>
    void mergesort(std::vector<Item *> &a);
+
+   virtual void render(unsigned int pass,
+                       const primitive *p,
+                       const std::vector<vertex_struct> &v) = 0;
+
    };
 
 #endif

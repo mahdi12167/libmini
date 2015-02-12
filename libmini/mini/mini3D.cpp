@@ -18,12 +18,6 @@ void mini3D::preMultiply(const mat4 &m)
 void mini3D::postMultiply(const mat4 &m)
    {postMatrix_=m;}
 
-// add sphere to scene
-void mini3D::sphere(const struct sphere_struct &s)
-   {
-   //!! todo
-   }
-
 // add line to scene
 void mini3D::line(const std::vector<point_struct> &l)
    {
@@ -36,14 +30,49 @@ void mini3D::band(const std::vector<joint_struct> &b)
    //!! todo
    }
 
-// render scene
-void mini3D::render()
+// add sphere to scene
+void mini3D::sphere(const struct sphere_struct &s)
    {
+   unsigned int idx=addvtx(s.pos,s.col);
+
+   primitives_sphere_.push_back(primitive_sphere(idx,s.r,vertices_));
+   primitives_.push_back(&primitives_sphere_[primitives_sphere_.size()-1]);
+   }
+
+// add sprite to scene
+void mini3D::sprite(const struct sprite_struct &s)
+   {
+   //!! todo
+   }
+
+// add pre-multiplied vertex
+unsigned int mini3D::addvtx(vec3 v,vec3f c)
+   {
+   // multiply vertex with pre-matrix
+   v=preMatrix_*v;
+
+   // append to vertex array
+   struct vertex_struct vtx={v,v,c};
+   vertices_.push_back(vtx);
+
+   return(vertices_.size()-1);
+   }
+
+// render scene with n passes
+void mini3D::render(unsigned int n)
+   {
+   // calculate eye point and sort primitives by depth
    eye_=postMatrix_.invert()*vec4(0,0,0);
    sort();
 
-   for (unsigned int i=0; i<primitives_.size(); i++)
-      primitives_[i]->render(vertices_);
+   // multiply vertices with post-matrix
+   for (unsigned int i=0; i<vertices_.size(); i++)
+      vertices_[i].pos_post=postMatrix_*vertices_[i].pos;
+
+   // render each primitive with n passes
+   for (unsigned int i=0; i<n; i++)
+      for (unsigned int j=0; j<primitives_.size(); j++)
+         render(i,primitives_[j],vertices_);
    }
 
 // depth sort scene
@@ -56,8 +85,10 @@ void mini3D::clear()
    vertices_.clear();
    primitives_.clear();
 
-   primitives_sphere_.clear();
    primitives_line_.clear();
+   primitives_band_.clear();
+   primitives_sphere_.clear();
+   primitives_sprite_.clear();
    }
 
 // merge two halves
