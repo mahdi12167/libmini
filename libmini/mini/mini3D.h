@@ -101,7 +101,10 @@ class mini3D
 
       virtual ~primitive() {}
 
-      virtual double depth(vec3 p) const = 0;
+      virtual double depth() const = 0;
+
+      int operator > (const primitive &p)
+         {return(depth()>p.depth());}
 
       protected:
 
@@ -122,8 +125,8 @@ class mini3D
            index1(idx1),index2(idx2)
          {}
 
-      virtual double depth(vec3 p) const
-         {return((p-center).getlength2()+radius2);}
+      virtual double depth() const
+         {return(center.getlength2()+radius2);}
 
       protected:
 
@@ -157,8 +160,8 @@ class mini3D
            index(idx),radius(r)
          {}
 
-      virtual double depth(vec3 p) const
-         {return((p-center).getlength2());}
+      virtual double depth() const
+         {return(center.getlength2());}
 
       protected:
 
@@ -184,7 +187,6 @@ class mini3D
       databuf buf;
       };
 
-   vec3 eye_;
    mat4 preMatrix_,postMatrix_;
 
    std::vector<vertex_struct> vertices_;
@@ -198,13 +200,6 @@ class mini3D
    unsigned int addvtx(vec3 v,vec3f c);
 
    void sort();
-
-   bool greater(const primitive &a,const primitive &b)
-      {return(a.depth(eye_)>b.depth(eye_));}
-
-   template<class Item>
-   bool greater(const Item &a,const Item &b)
-      {return(greater(a,b));}
 
    template<class Item>
    void merge(std::vector<Item *> &a,
@@ -221,7 +216,7 @@ class mini3D
 
    virtual void render(unsigned int pass,
                        const primitive *p,
-                       const std::vector<vertex_struct> &v) = 0;
+                       const std::vector<vertex_struct> *v) = 0;
 
    };
 
