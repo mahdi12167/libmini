@@ -78,7 +78,7 @@ class mini3D
    struct vertex_struct
       {
       vec3 pos;
-      vec3 pos_post;
+      vec4 pos_post;
       vec3f col;
       };
 
@@ -125,8 +125,6 @@ class mini3D
       virtual double depth(vec3 p) const
          {return((p-center).getlength2()+radius2);}
 
-      protected:
-
       unsigned int index1,index2;
       };
 
@@ -160,8 +158,6 @@ class mini3D
       virtual double depth(vec3 p) const
          {return((p-center).getlength2());}
 
-      protected:
-
       unsigned int index;
       double radius;
       };
@@ -178,8 +174,6 @@ class mini3D
          : primitive_sphere(idx,r,v),
            buf(b)
          {}
-
-      protected:
 
       databuf buf;
       };
@@ -219,10 +213,17 @@ class mini3D
    template <class Item>
    void mergesort(std::vector<Item *> &a);
 
-   virtual void render(unsigned int pass,
-                       const primitive *p,
-                       const std::vector<vertex_struct> *v) = 0;
+   vec4 clip(vec4 a,vec4 b);
 
+   void clip_line(unsigned int pass,vertex_struct *a,vertex_struct *b);
+   void clip_band(unsigned int pass,vertex_struct *a,vertex_struct *b);
+   void clip_sphere(unsigned int pass,vertex_struct *m,double r);
+   void clip_sprite(unsigned int pass,vertex_struct *m,double r,databuf *b);
+
+   virtual void render_line(unsigned int pass,vec3 a,vec3 b) = 0;
+   virtual void render_band(unsigned int pass,vec3 a,vec3 b) = 0;
+   virtual void render_sphere(unsigned int pass,vec3 m,double r) = 0;
+   virtual void render_sprite(unsigned int pass,vec3 m,double r,databuf *b) = 0;
    };
 
 #endif

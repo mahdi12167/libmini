@@ -105,7 +105,18 @@ void mini3D::render(unsigned int n)
    // render each primitive with n passes
    for (unsigned int i=0; i<n; i++)
       for (unsigned int j=0; j<primitives_.size(); j++)
-         render(i,primitives_[j],&vertices_);
+         {
+         primitive *p=primitives_[j];
+
+         if (primitive_line *pl=dynamic_cast<primitive_line*>(p))
+            clip_line(i,&vertices_[pl->index1],&vertices_[pl->index2]);
+         else if (primitive_band *pb=dynamic_cast<primitive_band*>(p))
+            clip_band(i,&vertices_[pb->index1],&vertices_[pb->index2]);
+         else if (primitive_sphere *ps=dynamic_cast<primitive_sphere*>(p))
+            clip_sphere(i,&vertices_[ps->index],ps->radius);
+         else if (primitive_sprite *ps=dynamic_cast<primitive_sprite*>(p))
+            clip_sprite(i,&vertices_[ps->index],ps->radius,&ps->buf);
+         }
    }
 
 // depth sort scene
@@ -169,4 +180,38 @@ void mini3D::mergesort(std::vector<Item *> &a)
    tmp.resize(a.size());
 
    mergesort(a, 0, a.size(), tmp);
+   }
+
+// clip line segment
+vec4 mini3D::clip(vec4 a,vec4 b)
+   {return(a+(b-a)*a.z/(a.z-b.z));}
+
+// clip and render line
+void mini3D::clip_line(unsigned int pass,vertex_struct *a,vertex_struct *b)
+   {
+   if (a->pos_post.z<0 && b->pos_post.z<0) render_line(pass,a->pos_post,b->pos_post);
+   else if (a->pos_post.z<0) render_line(pass,a->pos_post,clip(b->pos_post,a->pos_post));
+   else if (b->pos_post.z<0) render_line(pass,b->pos_post,clip(a->pos_post,b->pos_post));
+   }
+
+// clip and render band
+void mini3D::clip_band(unsigned int pass,vertex_struct *a,vertex_struct *b)
+   {
+   if (a->pos_post.z<0 && b->pos_post.z<0) render_band(pass,a->pos_post,b->pos_post);
+   else if (a->pos_post.z<0) render_band(pass,a->pos_post,clip(b->pos_post,a->pos_post));
+   else if (b->pos_post.z<0) render_band(pass,b->pos_post,clip(a->pos_post,b->pos_post));
+   }
+
+// clip and render sphere
+void mini3D::clip_sphere(unsigned int pass,vertex_struct *m,double r)
+   {
+   if (m->pos_post.z<0)
+      render_sphere(pass,m->pos_post,r/-m->pos_post.w);
+   }
+
+// clip and render sphere
+void mini3D::clip_sprite(unsigned int pass,vertex_struct *m,double r,databuf *b)
+   {
+   if (m->pos_post.z<0)
+      render_sprite(pass,m->pos_post,r/-m->pos_post.w,b);
    }
