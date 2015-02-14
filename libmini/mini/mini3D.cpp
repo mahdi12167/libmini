@@ -94,12 +94,13 @@ unsigned int mini3D::addvtx(vec3 v,vec3f c)
 // render scene with n passes
 void mini3D::render(unsigned int n)
    {
+   // calculate eye point and sort primitives by depth
+   eye_=postMatrix_.invert()*vec4(0,0,0);
+   sort();
+
    // multiply vertices with post-matrix
    for (unsigned int i=0; i<vertices_.size(); i++)
       vertices_[i].pos_post=postMatrix_*vertices_[i].pos;
-
-   // sort primitives by depth
-   sort();
 
    // render each primitive with n passes
    for (unsigned int i=0; i<n; i++)
@@ -132,7 +133,7 @@ void mini3D::merge(std::vector<Item *> &a,
    unsigned int b=begin, m=middle, t=begin;
 
    while (b<middle && m<end)
-      if (*(a[b])>*(a[m])) tmp[t++] = a[b++];
+      if (greater(*(a[b]), *(a[m]))) tmp[t++] = a[b++];
       else tmp[t++] = a[m++];
 
    while (b<middle) tmp[t++] = a[b++];
