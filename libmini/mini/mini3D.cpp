@@ -21,13 +21,43 @@ void mini3D::postMultiply(const mat4 &m)
 // add line to scene
 void mini3D::line(const std::vector<point_struct> &l)
    {
-   //!! todo
+   unsigned int idx1,idx2;
+
+   if (l.size()>0)
+      {
+      idx1=addvtx(l[0].pos,l[0].col);
+
+      for (unsigned int i=1; i<l.size(); i++)
+         {
+         idx2=addvtx(l[i].pos,l[i].col);
+
+         primitives_line_.push_back(primitive_line(idx1,idx2,&vertices_));
+         primitives_.push_back(&primitives_line_[primitives_line_.size()-1]);
+
+         idx1=idx2;
+         }
+      }
    }
 
 // add band to scene
 void mini3D::band(const std::vector<joint_struct> &b)
    {
-   //!! todo
+   unsigned int idx1,idx2;
+
+   if (b.size()>0)
+      {
+      idx1=addvtx(b[0].pos,b[0].col);
+
+      for (unsigned int i=1; i<b.size(); i++)
+         {
+         idx2=addvtx(b[i].pos,b[i].col);
+
+         primitives_band_.push_back(primitive_band(idx1,idx2,&vertices_));
+         primitives_.push_back(&primitives_band_[primitives_band_.size()-1]);
+
+         idx1=idx2;
+         }
+      }
    }
 
 // add sphere to scene
@@ -35,14 +65,17 @@ void mini3D::sphere(const struct sphere_struct &s)
    {
    unsigned int idx=addvtx(s.pos,s.col);
 
-   primitives_sphere_.push_back(primitive_sphere(idx,s.r,vertices_));
+   primitives_sphere_.push_back(primitive_sphere(idx,s.r,&vertices_));
    primitives_.push_back(&primitives_sphere_[primitives_sphere_.size()-1]);
    }
 
 // add sprite to scene
 void mini3D::sprite(const struct sprite_struct &s)
    {
-   //!! todo
+   unsigned int idx=addvtx(s.pos,s.col);
+
+   primitives_sprite_.push_back(primitive_sprite(idx,s.r,s.buf,&vertices_));
+   primitives_.push_back(&primitives_sprite_[primitives_sprite_.size()-1]);
    }
 
 // add pre-multiplied vertex

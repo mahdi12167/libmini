@@ -120,8 +120,8 @@ class mini3D
          {}
 
       primitive_line(unsigned int idx1,unsigned int idx2,
-                     const std::vector<vertex_struct> &v)
-         : primitive(v[idx1].pos,v[idx2].pos),
+                     const std::vector<vertex_struct> *v)
+         : primitive((*v)[idx1].pos,(*v)[idx2].pos),
            index1(idx1),index2(idx2)
          {}
 
@@ -141,7 +141,7 @@ class mini3D
          {}
 
       primitive_band(unsigned int idx1,unsigned int idx2,
-                     const std::vector<vertex_struct> &v)
+                     const std::vector<vertex_struct> *v)
          : primitive_line(idx1,idx2,v)
          {}
 
@@ -155,8 +155,8 @@ class mini3D
          {}
 
       primitive_sphere(unsigned int idx,double r,
-                       const std::vector<vertex_struct> &v)
-         : primitive(v[idx].pos,r),
+                       const std::vector<vertex_struct> *v)
+         : primitive((*v)[idx].pos,r),
            index(idx),radius(r)
          {}
 
@@ -177,7 +177,7 @@ class mini3D
          {}
 
       primitive_sprite(unsigned int idx,double r,const databuf &b,
-                       const std::vector<vertex_struct> &v)
+                       const std::vector<vertex_struct> *v)
          : primitive_sphere(idx,r,v),
            buf(b)
          {}
