@@ -67,8 +67,8 @@ class mini3D
    //! add sprite to scene
    void sprite(const struct sprite_struct &s);
 
-   //! render scene with n passes
-   void render(unsigned int n);
+   //! render scene
+   void render();
 
    //! clear scene
    void clear();
@@ -179,6 +179,7 @@ class mini3D
       };
 
    vec3 eye_;
+   double near_;
    mat4 preMatrix_,postMatrix_;
 
    std::vector<vertex_struct> vertices_;
@@ -213,17 +214,17 @@ class mini3D
    template <class Item>
    void mergesort(std::vector<Item *> &a);
 
-   vec4 clip(vec4 a,vec4 b);
+   vec4 clip(vec4 a,vec4 b,double z);
 
-   void clip_line(unsigned int pass,vertex_struct *a,vertex_struct *b);
-   void clip_band(unsigned int pass,vertex_struct *a,vertex_struct *b);
-   void clip_sphere(unsigned int pass,vertex_struct *m,double r);
-   void clip_sprite(unsigned int pass,vertex_struct *m,double r,databuf *b);
+   void clip_line(vertex_struct *a,vertex_struct *b);
+   void clip_band(vertex_struct *a,vertex_struct *b);
+   void clip_sphere(vertex_struct *m,double r);
+   void clip_sprite(vertex_struct *m,double r,databuf *b);
 
-   virtual void render_line(unsigned int pass,vec3 a,vec3 b) = 0;
-   virtual void render_band(unsigned int pass,vec3 a,vec3 b) = 0;
-   virtual void render_sphere(unsigned int pass,vec3 m,double r) = 0;
-   virtual void render_sprite(unsigned int pass,vec3 m,double r,databuf *b) = 0;
+   virtual void render_line(vec3 a,vec3 b) = 0;
+   virtual void render_band(vec3 a,vec3 b) = 0;
+   virtual void render_sphere(vec3 m,double r) = 0;
+   virtual void render_sprite(vec3 m,double r,databuf *b) = 0;
    };
 
 #endif
