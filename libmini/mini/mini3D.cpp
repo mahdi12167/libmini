@@ -240,7 +240,7 @@ void mini3D::clip_triangle(vertex_struct *a,vertex_struct *b,vertex_struct *c)
    else
       cliptri(a->pos_post,b->pos_post,c->pos_post,
               a->col,b->col,c->col,
-              vec3(0,0,z),vec3(0,0,1));
+              vec3(0,0,z),vec3(0,0,-1));
    }
 
 // clip and render sphere
