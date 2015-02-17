@@ -238,9 +238,9 @@ void mini3D::clip_triangle(vertex_struct *a,vertex_struct *b,vertex_struct *c)
    if (a->pos_post.z>z && b->pos_post.z>z && c->pos_post.z>z)
       render_triangle(a->pos_post,b->pos_post,c->pos_post,a->col,b->col,c->col);
    else
-      {
-      //!! clip one corner
-      }
+      cliptri(a->pos_post,b->pos_post,c->pos_post,
+              a->col,b->col,c->col,
+              vec3(0,0,z),vec3(0,0,1));
    }
 
 // clip and render sphere
@@ -259,4 +259,94 @@ void mini3D::clip_sprite(vertex_struct *m,double r,databuf *b)
 
    if (m->pos_post.z>z)
       render_sprite(m->pos_post,r/-m->pos_post.w,m->col,b);
+   }
+
+// clip a triangle (resulting in one remaining triangle)
+//  v0 is the contained vertex
+//  d is distance of the respective point to the clipping plane
+inline void mini3D::clip1tri(vec3 v0,double d0,vec3 c0,
+                             vec3 v1,double d1,vec3 c1,
+                             vec3 v2,double d2,vec3 c2)
+   {
+   vec3 p1,p2;
+   vec3 pc1,pc2;
+
+   p1=(d1*v0+d0*v1)/(d0+d1);
+   p2=(d2*v0+d0*v2)/(d0+d2);
+
+   pc1=(d1*c0+d0*c1)/(d0+d1);
+   pc2=(d2*c0+d0*c2)/(d0+d2);
+
+   render_triangle(v0,p1,p2,c0,pc1,pc2);
+   }
+
+// clip a triangle (resulting in two remaining triangles)
+//  v0 is the non-contained vertex
+//  d is distance of the respective point to the clipping plane
+inline void mini3D::clip2tri(vec3 v0,double d0,vec3 c0,
+                             vec3 v1,double d1,vec3 c1,
+                             vec3 v2,double d2,vec3 c2)
+   {
+   vec3 p1,p2;
+   vec3 pc1,pc2;
+
+   p1=(d1*v0+d0*v1)/(d0+d1);
+   p2=(d2*v0+d0*v2)/(d0+d2);
+
+   pc1=(d1*c0+d0*c1)/(d0+d1);
+   pc2=(d2*c0+d0*c2)/(d0+d2);
+
+   render_triangle(v1,v2,p2,c1,c2,pc2);
+   render_triangle(p2,p1,v1,pc2,pc1,c1);
+   }
+
+// clip a triangle with a plane
+//  2 cases: triangle geometry consists of either 1 or 2 triangles
+void mini3D::cliptri(vec3 v0, // vertex v0
+                     vec3 v1, // vertex v1
+                     vec3 v2, // vertex v2
+                     vec3 c0, // color c0
+                     vec3 c1, // color c1
+                     vec3 c2, // color c2
+                     vec3 o,  // origin of clip plane
+                     vec3 n)  // normal of clip plane
+   {
+   double d0,d1,d2;
+
+   int ff;
+
+   d0=(v0-o).dot(n);
+   d1=(v1-o).dot(n);
+   d2=(v2-o).dot(n);
+
+   ff=0;
+
+   if (d0<0.0) ff|=1;
+   if (d1<0.0) ff|=2;
+   if (d2<0.0) ff|=4;
+
+   switch (ff)
+      {
+      // 1 triangle
+      case 1: clip1tri(v0,fabs(d0),c0,
+                       v1,fabs(d1),c1,
+                       v2,fabs(d2),c2); break;
+      case 2: clip1tri(v1,fabs(d1),c1,
+                       v0,fabs(d0),c0,
+                       v2,fabs(d2),c2); break;
+      case 4: clip1tri(v2,fabs(d2),c2,
+                       v0,fabs(d0),c0,
+                       v1,fabs(d1),c1); break;
+
+      // 2 triangles
+      case 6: clip2tri(v0,fabs(d0),c0,
+                       v1,fabs(d1),c1,
+                       v2,fabs(d2),c2); break;
+      case 5: clip2tri(v1,fabs(d1),c1,
+                       v0,fabs(d0),c0,
+                       v2,fabs(d2),c2); break;
+      case 3: clip2tri(v2,fabs(d2),c2,
+                       v0,fabs(d0),c0,
+                       v1,fabs(d1),c1); break;
+      }
    }
