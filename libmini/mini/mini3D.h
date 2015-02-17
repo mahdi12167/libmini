@@ -207,6 +207,7 @@ class mini3D
    std::vector<primitive_sphere> primitives_sphere_;
    std::vector<primitive_sphere> primitives_sprite_;
 
+   vec3 halfdir(vec3 dir1,vec3 dir2);
    unsigned int addvtx(vec3 v,vec3f c);
 
    void sort();

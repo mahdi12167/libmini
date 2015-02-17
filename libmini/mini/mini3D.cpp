@@ -42,7 +42,28 @@ void mini3D::line(const std::vector<point_struct> &l)
 // add band to scene
 void mini3D::band(const std::vector<joint_struct> &b)
    {
-   //!! map to triangle strip
+   std::vector<point_struct> s;
+
+   for (unsigned int i=0; i<b.size(); i++)
+      {
+      vec3 dir;
+
+      if (i==0) dir=b[i+1].pos-b[i].pos;
+      else if (i==b.size()-1) dir=b[i].pos-b[i-1].pos;
+      else dir=halfdir(b[i].pos-b[i-1].pos,b[i+1].pos-b[i].pos);
+      dir=dir.normalize();
+
+      vec3 right=dir.cross(b[i].nrm);
+      right=right.normalize();
+
+      point_struct p1={b[i].pos-right*b[i].wdt/2,b[i].col};
+      s.push_back(p1);
+
+      point_struct p2={b[i].pos+right*b[i].wdt/2,b[i].col};
+      s.push_back(p2);
+      }
+
+   strip(s);
    }
 
 // add triangle strip to scene
@@ -84,6 +105,15 @@ void mini3D::sprite(const struct sprite_struct &s)
 
    primitives_sprite_.push_back(primitive_sprite(idx,s.r,s.buf,&vertices_));
    primitives_.push_back(&primitives_sprite_[primitives_sprite_.size()-1]);
+   }
+
+// compute half direction between two vectors
+vec3 mini3D::halfdir(vec3 dir1,vec3 dir2)
+   {
+   dir1=dir1.normalize();
+   dir2=dir2.normalize();
+
+   return(dir1+dir2);
    }
 
 // add pre-multiplied vertex
