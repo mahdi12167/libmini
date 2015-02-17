@@ -23,7 +23,7 @@ void mini3D::line(const std::vector<point_struct> &l)
    {
    unsigned int idx1,idx2;
 
-   if (l.size()>0)
+   if (l.size()>1)
       {
       idx1=addvtx(l[0].pos,l[0].col);
 
@@ -42,20 +42,28 @@ void mini3D::line(const std::vector<point_struct> &l)
 // add band to scene
 void mini3D::band(const std::vector<joint_struct> &b)
    {
-   unsigned int idx1,idx2;
+   //!! map to triangle strip
+   }
 
-   if (b.size()>0)
+// add triangle strip to scene
+void mini3D::strip(const std::vector<point_struct> &s)
+   {
+   unsigned int idx1,idx2,idx3;
+
+   if (s.size()>2)
       {
-      idx1=addvtx(b[0].pos,b[0].col);
+      idx1=addvtx(s[0].pos,s[0].col);
+      idx2=addvtx(s[1].pos,s[1].col);
 
-      for (unsigned int i=1; i<b.size(); i++)
+      for (unsigned int i=2; i<s.size(); i++)
          {
-         idx2=addvtx(b[i].pos,b[i].col);
+         idx3=addvtx(s[i].pos,s[i].col);
 
-         primitives_band_.push_back(primitive_band(idx1,idx2,&vertices_));
-         primitives_.push_back(&primitives_band_[primitives_band_.size()-1]);
+         primitives_triangle_.push_back(primitive_triangle(idx1,idx2,idx3,&vertices_));
+         primitives_.push_back(&primitives_triangle_[primitives_triangle_.size()-1]);
 
          idx1=idx2;
+         idx2=idx3;
          }
       }
    }
@@ -112,8 +120,8 @@ void mini3D::render()
 
       if (primitive_line *pl=dynamic_cast<primitive_line*>(p))
          clip_line(&vertices_[pl->index1],&vertices_[pl->index2]);
-      else if (primitive_band *pb=dynamic_cast<primitive_band*>(p))
-         clip_band(&vertices_[pb->index1],&vertices_[pb->index2]);
+      else if (primitive_triangle *pt=dynamic_cast<primitive_triangle*>(p))
+         clip_triangle(&vertices_[pt->index1],&vertices_[pt->index2],&vertices_[pt->index3]);
       else if (primitive_sphere *ps=dynamic_cast<primitive_sphere*>(p))
          clip_sphere(&vertices_[ps->index],ps->radius);
       else if (primitive_sprite *ps=dynamic_cast<primitive_sprite*>(p))
@@ -132,7 +140,7 @@ void mini3D::clear()
    primitives_.clear();
 
    primitives_line_.clear();
-   primitives_band_.clear();
+   primitives_triangle_.clear();
    primitives_sphere_.clear();
    primitives_sprite_.clear();
    }
@@ -185,27 +193,54 @@ void mini3D::mergesort(std::vector<Item *> &a)
    }
 
 // clip line segment
-vec4 mini3D::clip(vec4 a,vec4 b,double z)
-   {return(a+(b-a)*(a.z-z)/(a.z-b.z));}
+void mini3D::clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,double z)
+   {
+   double f=(a.z-z)/(a.z-b.z);
+
+   a=a+(b-a)*f;
+   ac=ac+(bc-ac)*f;
+   }
 
 // clip and render line
 void mini3D::clip_line(vertex_struct *a,vertex_struct *b)
    {
    double z=-near_;
 
-   if (a->pos_post.z>z && b->pos_post.z>z) render_line(a->pos_post,b->pos_post);
-   else if (a->pos_post.z>z) render_line(a->pos_post,clip(b->pos_post,a->pos_post,z));
-   else if (b->pos_post.z>z) render_line(b->pos_post,clip(a->pos_post,b->pos_post,z));
+   if (a->pos_post.z>z && b->pos_post.z>z)
+      render_line(a->pos_post,b->pos_post,a->col,b->col);
+   else if (a->pos_post.z>z)
+      {
+      vec4 clipa=a->pos_post;
+      vec4 clipb=b->pos_post;
+      vec3 clipac=vec3(a->col);
+      vec3 clipbc=vec3(b->col);
+
+      clip(clipb,clipa,clipbc,clipac,z);
+      render_line(clipa,clipb,clipac,clipbc);
+      }
+   else if (b->pos_post.z>z)
+      {
+      vec4 clipa=a->pos_post;
+      vec4 clipb=b->pos_post;
+      vec3 clipac=vec3(a->col);
+      vec3 clipbc=vec3(b->col);
+
+      clip(clipa,clipb,clipac,clipbc,z);
+      render_line(clipa,clipb,clipac,clipbc);
+      }
    }
 
-// clip and render band
-void mini3D::clip_band(vertex_struct *a,vertex_struct *b)
+// clip and render triangle
+void mini3D::clip_triangle(vertex_struct *a,vertex_struct *b,vertex_struct *c)
    {
    double z=-near_;
 
-   if (a->pos_post.z>z && b->pos_post.z>z) render_band(a->pos_post,b->pos_post);
-   else if (a->pos_post.z>z) render_band(a->pos_post,clip(b->pos_post,a->pos_post,z));
-   else if (b->pos_post.z>z) render_band(b->pos_post,clip(a->pos_post,b->pos_post,z));
+   if (a->pos_post.z>z && b->pos_post.z>z && c->pos_post.z>z)
+      render_triangle(a->pos_post,b->pos_post,c->pos_post,a->col,b->col,c->col);
+   else
+      {
+      //!! clip one corner
+      }
    }
 
 // clip and render sphere
@@ -214,7 +249,7 @@ void mini3D::clip_sphere(vertex_struct *m,double r)
    double z=-near_;
 
    if (m->pos_post.z>z)
-      render_sphere(m->pos_post,r/-m->pos_post.w);
+      render_sphere(m->pos_post,r/-m->pos_post.w,m->col);
    }
 
 // clip and render sphere
@@ -223,5 +258,5 @@ void mini3D::clip_sprite(vertex_struct *m,double r,databuf *b)
    double z=-near_;
 
    if (m->pos_post.z>z)
-      render_sprite(m->pos_post,r/-m->pos_post.w,b);
+      render_sprite(m->pos_post,r/-m->pos_post.w,m->col,b);
    }

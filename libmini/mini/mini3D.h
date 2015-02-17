@@ -61,6 +61,9 @@ class mini3D
    //! add band to scene
    void band(const std::vector<joint_struct> &b);
 
+   //! add triangle strip to scene
+   void strip(const std::vector<point_struct> &s);
+
    //! add sphere to scene
    void sphere(const struct sphere_struct &s);
 
@@ -99,6 +102,14 @@ class mini3D
          radius2=0.25*(a-b).getlength2();
          }
 
+      primitive(vec3 a,vec3 b,vec3 c)
+         {
+         center=(a+b+c)/3;
+         radius2=(a-center).getlength2();
+         radius2=dmax(radius2,(b-center).getlength2());
+         radius2=dmax(radius2,(c-center).getlength2());
+         }
+
       virtual ~primitive() {}
 
       virtual double depth(vec3 p) const = 0;
@@ -128,18 +139,23 @@ class mini3D
       unsigned int index1,index2;
       };
 
-   class primitive_band: public primitive_line
+   class primitive_triangle: public primitive
       {
       public:
 
-      primitive_band()
+      primitive_triangle()
          {}
 
-      primitive_band(unsigned int idx1,unsigned int idx2,
-                     const std::vector<vertex_struct> *v)
-         : primitive_line(idx1,idx2,v)
+      primitive_triangle(unsigned int idx1,unsigned int idx2,unsigned int idx3,
+                         const std::vector<vertex_struct> *v)
+         : primitive((*v)[idx1].pos,(*v)[idx2].pos,(*v)[idx3].pos),
+           index1(idx1),index2(idx2),index3(idx3)
          {}
 
+      virtual double depth(vec3 p) const
+         {return((p-center).getlength2());}
+
+      unsigned int index1,index2,index3;
       };
 
    class primitive_sphere: public primitive
@@ -180,13 +196,14 @@ class mini3D
 
    vec3 eye_;
    double near_;
+
    mat4 preMatrix_,postMatrix_;
 
    std::vector<vertex_struct> vertices_;
    std::vector<primitive *> primitives_;
 
    std::vector<primitive_line> primitives_line_;
-   std::vector<primitive_band> primitives_band_;
+   std::vector<primitive_triangle> primitives_triangle_;
    std::vector<primitive_sphere> primitives_sphere_;
    std::vector<primitive_sphere> primitives_sprite_;
 
@@ -214,17 +231,17 @@ class mini3D
    template <class Item>
    void mergesort(std::vector<Item *> &a);
 
-   vec4 clip(vec4 a,vec4 b,double z);
+   void clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,double z);
 
    void clip_line(vertex_struct *a,vertex_struct *b);
-   void clip_band(vertex_struct *a,vertex_struct *b);
+   void clip_triangle(vertex_struct *a,vertex_struct *b,vertex_struct *c);
    void clip_sphere(vertex_struct *m,double r);
    void clip_sprite(vertex_struct *m,double r,databuf *b);
 
-   virtual void render_line(vec3 a,vec3 b) = 0;
-   virtual void render_band(vec3 a,vec3 b) = 0;
-   virtual void render_sphere(vec3 m,double r) = 0;
-   virtual void render_sprite(vec3 m,double r,databuf *b) = 0;
+   virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc) = 0;
+   virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc) = 0;
+   virtual void render_sphere(vec3 m,double r,vec3f c) = 0;
+   virtual void render_sprite(vec3 m,double r,vec3f c,databuf *b) = 0;
    };
 
 #endif
