@@ -262,4 +262,27 @@ class mini3D
    virtual void render_sprite(vec3 m,double r,vec3f c,databuf *b) = 0;
    };
 
+//! 3D test pipeline
+class mini3Dtest: public mini3D
+   {
+   public:
+
+   mini3Dtest()
+      : mini3D()
+      {}
+
+   virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc)
+      {std::cout << "line from " << a << " to " << b << std::endl;}
+
+   virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc)
+      {std::cout << "triangle with corners " << a << ", " << b << ", " << c << std::endl;}
+
+   virtual void render_sphere(vec3 m,double r,vec3f c)
+      {std::cout << "sphere at " << m << " with radius " << r << std::endl;}
+
+   virtual void render_sprite(vec3 m,double r,vec3f c,databuf *b)
+      {std::cout << "sprite at " << m << " with radius " << r << std::endl;}
+
+   };
+
 #endif
