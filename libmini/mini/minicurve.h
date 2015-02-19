@@ -70,7 +70,7 @@ class minicurve: public minidyna<minimeas>
                         double max_length=MAXFLOAT,
                         double min_accuracy=MAXFLOAT,
                         double max_acceleration=MAXFLOAT,
-                        double max_tolerance=2.0)
+                        double max_tolerance=MAXFLOAT)
       {
       minicurve::max_delta=max_delta;
       minicurve::max_length=max_length;
@@ -78,6 +78,9 @@ class minicurve: public minidyna<minimeas>
       minicurve::max_acceleration=max_acceleration;
       minicurve::max_tolerance=max_tolerance;
       }
+
+   void unset_constraints()
+      {set_constraints();}
 
    void validate();
 

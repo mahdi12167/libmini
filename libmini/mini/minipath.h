@@ -11,19 +11,19 @@ class minipath: public minicurve
 
    //! default constructor
    minipath(double start=0.0,double stop=1.0,
-            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0)
+            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0)
       : minicurve(start,stop),
         name("path"), activity("none"), description("created by libmini")
-      {set_constraints(max_delta,max_length,min_accuracy,max_accel);}
+      {set_constraints(max_delta,max_length,min_accuracy,max_accel,max_tol);}
 
    //! constructor
    minipath(ministring filename,
             double start=0.0,double stop=1.0,
-            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0)
+            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0)
       : minicurve(start,stop),
         name("path"), activity("none"), description("created by libmini")
       {
-      set_constraints(max_delta,max_length,min_accuracy,max_accel);
+      set_constraints(max_delta,max_length,min_accuracy,max_accel,max_tol);
       load(filename);
       }
 
@@ -59,7 +59,7 @@ class minipaths: public minidyna<minipath>
    public:
 
    //! default constructor
-   minipaths(double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0);
+   minipaths(double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0);
 
    //! conversion of multiple paths to a combined one
    operator minipath();
@@ -70,6 +70,7 @@ class minipaths: public minidyna<minipath>
    double max_length_;
    double min_accuracy_;
    double max_accel_;
+   double max_tol_;
    };
 
 #endif

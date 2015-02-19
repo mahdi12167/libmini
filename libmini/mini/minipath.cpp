@@ -417,17 +417,18 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
    }
 
 // default constructor
-minipaths::minipaths(double max_delta,double max_length,double min_accuracy,double max_accel)
+minipaths::minipaths(double max_delta,double max_length,double min_accuracy,double max_accel,double max_tol)
    : max_delta_(max_delta),
      max_length_(max_length),
      min_accuracy_(min_accuracy),
-     max_accel_(max_accel)
+     max_accel_(max_accel),
+     max_tol_(max_tol)
    {}
 
 // conversion operator
 minipaths::operator minipath()
    {
-   minipath paths(0,1,max_delta_,max_length_,min_accuracy_,max_accel_);
+   minipath paths(0,1,max_delta_,max_length_,min_accuracy_,max_accel_,max_tol_);
 
    for (unsigned int i=0; i<size(); i++)
       {

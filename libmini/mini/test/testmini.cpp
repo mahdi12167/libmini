@@ -11,6 +11,7 @@
 #define GLSLMATH_TEST // enable this to perform a test of the glslmath module
 #define LUNAFUNCTOR_TEST // enable this to perform a test of the lunafunctor module
 #define MERGESORT_TEST // enable this to perform a test of the mergesort module
+#define MINI3D_TEST // enable this to perform a test of the mini3D module
 
 #include <mini/minibase.h>
 #include <mini/miniOGL.h>
@@ -135,14 +136,17 @@ int main(int argc,char *argv[])
    // ...
 
 #ifdef OPENGL_TEST
+   {
    std::cout << "miniOGL:" << std::endl;
    miniOGL::print_unsupported_glexts();
    miniOGL::print_graphics_info();
    if (get_unsupported_glexts()==0) std::cout << "OPENGL SUCCESS" << std::endl;
    else {std::cout << "OPENGL FAILURE" << std::endl; failure++;}
+   }
 #endif
 
 #ifdef MINICRS_TEST
+   {
    std::cout << "minicrs:" << std::endl;
    int z0=4;
    double lon=minicrs::UTMZ2L(z0);
@@ -150,9 +154,11 @@ int main(int argc,char *argv[])
    int z=minicrs::LL2UTMZ(0,lon);
    if (z==z0) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 #endif
 
 #ifdef MINICOORD_TEST
+   {
    std::cout << "minicoord:" << std::endl;
    minicoord c1(miniv4d(11*3600,49*3600,0),minicoord::MINICOORD_LLH,0,minicoord::MINICOORD_DATUM_WGS84);
    std::cout << c1 << std::endl;
@@ -168,7 +174,9 @@ int main(int argc,char *argv[])
    std::cout << c3 << std::endl;
    if (c1.getdist(c3)<1E-2) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 
+   {
    std::cout << "minicoord:" << std::endl;
    minicoord u(miniv4d(500000,0,0),minicoord::MINICOORD_UTM,4,minicoord::MINICOORD_DATUM_WGS84);
    std::cout << u << std::endl;
@@ -178,9 +186,11 @@ int main(int argc,char *argv[])
    std::cout << " " << u << std::endl;
    if (u.vec.x==500000) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 #endif
 
 #ifdef MINISTRING_TEST
+   {
    std::cout << "ministring:" << std::endl;
    ministring test1("this is a simple test string");
    ministring test2("this is a s1mple test string");
@@ -192,9 +202,12 @@ int main(int argc,char *argv[])
    for (unsigned int i=0; i<check1.getsize(); i++) if (check1[i]!=check2[i]) count++;
    if (count==1) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 #endif
 
 #ifdef MINISTRIP_TEST
+   {
+   std::cout << "ministrip:" << std::endl;
    ministrip strip1(3,3);
    strip1.setcol(1,0,0);
    strip1.setnrm(0,0,-1);
@@ -229,9 +242,12 @@ int main(int argc,char *argv[])
       std::cout << "SUCCESS" << std::endl;
    else
       {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 #endif
 
 #ifdef MINITIME_TEST
+   {
+   std::cout << "minitime:" << std::endl;
    double s1971=utc2minitime(1971,7,2,14,34,0,0);
    double s1970=utc2minitime(1970,1,1,0,0,0,0);
    double s1969=utc2minitime(1969,7,1,0,0,0,700);
@@ -249,9 +265,12 @@ int main(int argc,char *argv[])
       std::cout << "SUCCESS" << std::endl;
    else
       {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 #endif
 
 #ifdef MINIPATH_TEST
+   {
+   std::cout << "minipath:" << std::endl;
    minicoord point1(miniv4d(11*3600,49*3600,0),minicoord::MINICOORD_LLH,0,minicoord::MINICOORD_DATUM_WGS84);
    minicoord point2(miniv4d(500000,0,0),minicoord::MINICOORD_UTM,4,minicoord::MINICOORD_DATUM_WGS84);
    minipath path;
@@ -262,32 +281,41 @@ int main(int argc,char *argv[])
    std::cout << "minipath: length=" << length << std::endl;
    if (dabs(length-1.15704e+07)<1E1) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 #endif
 
 #ifdef MINIXML_TEST
+   {
+   std::cout << "minixml:" << std::endl;
    ministrings txt;
    txt.from_string("<?xml version=\"1.0\"?> \n <tag><subtag>text</subtag></tag> \n <anothertag answer=42> < / anothertag >","\n");
    minixml xml;
    xml.from_strings(txt);
    if (txt.empty()) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 #endif
 
 #ifdef GLSLMATH_TEST
+   {
    std::cout << "glslmath:" << std::endl;
    if (test_glslmath()==0) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 #endif
 
 #ifdef LUNAFUNCTOR_TEST
+   {
    std::cout << "lunafunctor:" << std::endl;
    lunafunctor functor;
    functor.expr("1-2*x");
    if (functor.f(0.5f)==0.0f) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 #endif
 
 #ifdef MERGESORT_TEST
+   {
    std::cout << "mergesort:" << std::endl;
    int a=3,b=2,c=1;
    minidyna<int *> array;
@@ -297,6 +325,19 @@ int main(int argc,char *argv[])
    mergesort<int>(array);
    if (*(array[0])==1 && *(array[1])==2 && *(array[2])==3) std::cout << "SUCCESS" << std::endl;
    else {std::cout << "FAILURE" << std::endl; failure++;}
+   }
+#endif
+
+#ifdef MINI3D_TEST
+   {
+   std::cout << "mini3D:" << std::endl;
+   minipath test;
+   test.unset_constraints();
+   if (!test.load("test.csv")) test.load("test/test.csv");
+   double length=test.get_length()/1000;
+   if (dabs(length-10410.5)<1E1) std::cout << "SUCCESS" << std::endl;
+   else {std::cout << "FAILURE" << std::endl; failure++;}
+   }
 #endif
 
    // end of test code
