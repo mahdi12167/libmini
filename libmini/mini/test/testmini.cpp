@@ -25,6 +25,8 @@
 #include <mini/glslmath.h>
 #include <mini/lunafunctor.h>
 #include <mini/minisort.h>
+#include <mini/mini3D.h>
+#include <mini/miniclod.h>
 
 #ifndef __APPLE__
 #include <GL/glut.h>
@@ -331,12 +333,21 @@ int main(int argc,char *argv[])
 #ifdef MINI3D_TEST
    {
    std::cout << "mini3D:" << std::endl;
-   minipath test;
-   test.unset_constraints();
-   if (!test.load("test.csv")) test.load("test/test.csv");
-   double length=test.get_length()/1000;
-   if (dabs(length-10410.5)<1E1) std::cout << "SUCCESS" << std::endl;
-   else {std::cout << "FAILURE" << std::endl; failure++;}
+   minipath path;
+   path.unset_constraints();
+   if (!path.load("test.csv")) path.load("test/test.csv");
+   double length=path.get_length()/1000;
+   miniCLODcontainer clod;
+   clod.set(path);
+   minicoord eye;
+   eye.set_llh(49.9,10.9,10000);
+   eye.convert2ecef();
+   clod.create(eye.getpos());
+   int points=clod.getPoints()->size();
+   if (dabs(length-10410.5)<1E1 || points!=4)
+      std::cout << "SUCCESS" << std::endl;
+   else
+      {std::cout << "FAILURE" << std::endl; failure++;}
    }
 #endif
 

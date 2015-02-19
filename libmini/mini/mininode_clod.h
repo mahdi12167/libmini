@@ -8,7 +8,7 @@
 #include "miniclod.h"
 
 //! a geometry node that implements C-LOD for geo-referenced paths
-class mininode_geometry_clod: public mininode_geometry, public miniclod
+class mininode_geometry_clod: public mininode_geometry, public miniCLOD
    {
    public:
 

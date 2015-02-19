@@ -5,7 +5,7 @@
 // default constructor
 mininode_geometry_clod::mininode_geometry_clod()
    : mininode_geometry(0,3,0),
-     miniclod()
+     miniCLOD()
    {set_zscale();}
 
 // destructor
@@ -14,11 +14,11 @@ mininode_geometry_clod::~mininode_geometry_clod()
 
 // set path
 void mininode_geometry_clod::set(const minipath &path)
-   {miniclod::set(path);}
+   {miniCLOD::set(path);}
 
 // load path
 void mininode_geometry_clod::load(ministring filename)
-   {miniclod::load(filename);}
+   {miniCLOD::load(filename);}
 
 // create geometry from actual view point
 void mininode_geometry_clod::create(double maxdev,double atdist,
@@ -27,7 +27,7 @@ void mininode_geometry_clod::create(double maxdev,double atdist,
                                     double weight,
                                     int update)
    {
-   miniclod::create(mininode_culling::peek_view(),
+   miniCLOD::create(mininode_culling::peek_view(),
                     maxdev,atdist,
                     maxwidth,
                     minv,maxv,sat,val,

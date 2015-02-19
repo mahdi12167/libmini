@@ -9,15 +9,15 @@
 #include "glslmath.h"
 
 //! C-LOD core class for geo-referenced paths
-class miniclod
+class miniCLOD
    {
    public:
 
    //! default constructor
-   miniclod();
+   miniCLOD();
 
    //! destructor
-   virtual ~miniclod();
+   virtual ~miniCLOD();
 
    //! set path
    void set(const minipath &path);
@@ -94,6 +94,27 @@ class miniclod
 
    std::vector<struct state_struct> STACK_;
    std::vector<mini3D::joint_struct> POINTS_;
+   };
+
+//! C-LOD container class
+class miniCLODcontainer: public miniCLOD
+   {
+   public:
+
+   //! default constructor
+   miniCLODcontainer()
+      : miniCLOD()
+      {}
+
+   virtual void updated(const std::vector<mini3D::joint_struct> &points)
+      {points_ = points;}
+
+   const std::vector<mini3D::joint_struct> *getPoints()
+      {return(&points_);}
+
+   protected:
+
+   std::vector<mini3D::joint_struct> points_;
    };
 
 #endif

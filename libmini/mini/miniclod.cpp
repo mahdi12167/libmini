@@ -3,7 +3,7 @@
 #include "miniclod.h"
 
 // default constructor
-miniclod::miniclod()
+miniCLOD::miniCLOD()
    {
    UPDATED_=FALSE;
    UPDATE_=0;
@@ -12,25 +12,25 @@ miniclod::miniclod()
    }
 
 // destructor
-miniclod::~miniclod()
+miniCLOD::~miniCLOD()
    {}
 
 // set path
-void miniclod::set(const minipath &path)
+void miniCLOD::set(const minipath &path)
    {
    path0_=path;
    UPDATED_=TRUE;
    }
 
 // load path
-void miniclod::load(ministring filename)
+void miniCLOD::load(ministring filename)
    {
    path0_.load(filename);
    UPDATED_=TRUE;
    }
 
 // recreate geometry from actual view point
-void miniclod::create(vec3 eye,
+void miniCLOD::create(vec3 eye,
                       double maxdev,double atdist,
                       double maxwidth,
                       double minv,double maxv,double sat,double val,
@@ -60,14 +60,14 @@ void miniclod::create(vec3 eye,
    }
 
 // incrementally recreate geometry from actual view point
-void miniclod::create_inc(vec3 eye)
+void miniCLOD::create_inc(vec3 eye)
    {
    updateDX();
    calcpath_inc(eye,UPDATE_);
    }
 
 // update delta values
-void miniclod::updateDX()
+void miniCLOD::updateDX()
    {
    if (UPDATED_)
       {
@@ -84,7 +84,7 @@ void miniclod::updateDX()
    }
 
 // calculate the dc-values
-void miniclod::calcDC()
+void miniCLOD::calcDC()
    {
    unsigned int i;
 
@@ -104,7 +104,7 @@ void miniclod::calcDC()
    }
 
 // calculate a d2-value
-float miniclod::calcD2(int left,int right,int center)
+float miniCLOD::calcD2(int left,int right,int center)
    {
    float d2,dc;
 
@@ -131,7 +131,7 @@ float miniclod::calcD2(int left,int right,int center)
    }
 
 // calculate a dm-value
-float miniclod::calcDM(int left,int right)
+float miniCLOD::calcDM(int left,int right)
    {
    int i;
 
@@ -152,7 +152,7 @@ float miniclod::calcDM(int left,int right)
    }
 
 // calculate the d2-values
-void miniclod::calcD2()
+void miniCLOD::calcD2()
    {
    d2_.resize(path_.getsize(),0.0f);
    dm_.resize(path_.getsize(),0.0f);
@@ -162,7 +162,7 @@ void miniclod::calcD2()
    }
 
 // propagate the d2-values top-down
-float miniclod::calcD2(int left,int right)
+float miniCLOD::calcD2(int left,int right)
    {
    float d2=0.0f;
 
@@ -186,7 +186,7 @@ float miniclod::calcD2(int left,int right)
    }
 
 // add a point
-void miniclod::addpoint(const minimeas &m,BOOLINT start)
+void miniCLOD::addpoint(const minimeas &m,BOOLINT start)
    {
    vec3 p,n;
    double v;
@@ -230,7 +230,7 @@ void miniclod::addpoint(const minimeas &m,BOOLINT start)
    }
 
 // subdivide a segment
-BOOLINT miniclod::subdiv(int left,int right)
+BOOLINT miniCLOD::subdiv(int left,int right)
    {
    if (right-left<2) return(FALSE);
 
@@ -249,7 +249,7 @@ BOOLINT miniclod::subdiv(int left,int right)
    }
 
 // calculate the path
-void miniclod::calcpath()
+void miniCLOD::calcpath()
    {
    POINTS_.clear();
 
@@ -264,7 +264,7 @@ void miniclod::calcpath()
    }
 
 // calculate the path subdivision bottom-up
-void miniclod::calcpath(int left,int right)
+void miniCLOD::calcpath(int left,int right)
    {
    if (subdiv(left,right))
       {
@@ -278,7 +278,7 @@ void miniclod::calcpath(int left,int right)
    }
 
 // calculate the path incrementally
-void miniclod::calcpath_inc(vec3 eye,int update)
+void miniCLOD::calcpath_inc(vec3 eye,int update)
    {
    int i;
 
@@ -318,7 +318,7 @@ void miniclod::calcpath_inc(vec3 eye,int update)
    }
 
 // calculate the path subdivision incrementally
-void miniclod::calcpath_inc()
+void miniCLOD::calcpath_inc()
    {
    struct state_struct actual=STACK_.back();
 
@@ -346,7 +346,7 @@ void miniclod::calcpath_inc()
    }
 
 // calculate the distance of a point p from a line segment between vectors a and b
-double miniclod::distance2line(vec3 p,vec3 a,vec3 b)
+double miniCLOD::distance2line(vec3 p,vec3 a,vec3 b)
    {
    vec3 n=(b-a).normalize();
 
@@ -363,7 +363,7 @@ double miniclod::distance2line(vec3 p,vec3 a,vec3 b)
    }
 
 // hsv to rgb conversion
-vec3f miniclod::hsv2rgb(float hue,float sat,float val)
+vec3f miniCLOD::hsv2rgb(float hue,float sat,float val)
    {
    vec3f rgb;
 
@@ -405,6 +405,6 @@ vec3f miniclod::hsv2rgb(float hue,float sat,float val)
    }
 
 // map point measurement to rgb color
-vec3f miniclod::point2rgb(const minimeas &m,double v,
+vec3f miniCLOD::point2rgb(const minimeas &m,double v,
                           float hue,float sat,float val)
    {return(hsv2rgb(hue,sat,val));}
