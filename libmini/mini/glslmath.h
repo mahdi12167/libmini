@@ -1015,6 +1015,9 @@ class mat4
    static mat4 rotate(double angle,const vec3 &v)
       {return(mat3::rotate(angle,v));}
 
+   // create affine transformation matrix
+   static mat4 transform(vec3 o,vec3 x,vec3 y,vec3 z);
+
    // create orthographic matrix
    static mat4 ortho(double l,double r,double b,double t,double n,double f);
 
@@ -1080,6 +1083,15 @@ inline vec4 operator * (const mat4 &m,const vec4 &v)
 // output operator
 inline std::ostream& operator << (std::ostream &out,const mat4 &m)
    {return(out << '(' << m.row(0) << ',' << m.row(1) << ',' << m.row(2) << ',' << m.row(3) << ')');}
+
+// create affine transformation matrix
+inline mat4 mat4::transform(vec3 o,vec3 x,vec3 y,vec3 z)
+   {
+   return(mat4(vec4(x,o.x),
+               vec4(y,o.y),
+               vec4(z,o.z),
+               vec4(0,0,0,1)));
+   }
 
 // create orthographic matrix
 inline mat4 mat4::ortho(double l,double r,double b,double t,double n,double f)
@@ -1409,6 +1421,18 @@ inline int test_glslmath()
              vec4(0,0,1,0));
 
       if (!(M*M.invert()==mat4())) errors++;
+   }
+
+   // test affine transformation
+   {
+      vec3 o = vec3(3,3,3);
+      vec3 x = vec3(1,0,0);
+      vec3 y = vec3(0,1,0);
+      vec3 z = vec3(0,0,1);
+      mat4 T = mat4::transform(o,x,y,z);
+      vec4 v(1,0,0);
+      v = T*v;
+      if (v!=vec4(4,3,3,1)) errors++;
    }
 
    // test transformations
