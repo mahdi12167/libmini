@@ -123,7 +123,7 @@ unsigned int mini3D::addvtx(vec3 v,vec3f c)
    v=preMatrix_*v;
 
    // append to vertex array
-   struct vertex_struct vtx={v,v,c};
+   struct primitive::vertex_struct vtx={v,v,c};
    vertices_.push_back(vtx);
 
    return(vertices_.size()-1);
@@ -175,6 +175,10 @@ void mini3D::clear()
    primitives_sprite_.clear();
    }
 
+// compare object depth
+bool mini3D::greater(const primitive *a,const primitive *b) const
+   {return(a->depth(eye_) > b->depth(eye_));}
+
 // merge two halves
 template<class Item>
 void mini3D::merge(std::vector<Item *> &a,
@@ -184,7 +188,7 @@ void mini3D::merge(std::vector<Item *> &a,
    unsigned int b=begin, m=middle, t=begin;
 
    while (b<middle && m<end)
-      if (greater(*(a[b]), *(a[m]))) tmp[t++] = a[b++];
+      if (greater(a[b], a[m])) tmp[t++] = a[b++];
       else tmp[t++] = a[m++];
 
    while (b<middle) tmp[t++] = a[b++];
@@ -232,7 +236,7 @@ void mini3D::clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,double z)
    }
 
 // clip and render line
-void mini3D::clip_line(vertex_struct *a,vertex_struct *b)
+void mini3D::clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b)
    {
    double z=-near_;
 
@@ -261,7 +265,7 @@ void mini3D::clip_line(vertex_struct *a,vertex_struct *b)
    }
 
 // clip and render triangle
-void mini3D::clip_triangle(vertex_struct *a,vertex_struct *b,vertex_struct *c)
+void mini3D::clip_triangle(primitive::vertex_struct *a,primitive::vertex_struct *b,primitive::vertex_struct *c)
    {
    double z=-near_;
 
@@ -274,7 +278,7 @@ void mini3D::clip_triangle(vertex_struct *a,vertex_struct *b,vertex_struct *c)
    }
 
 // clip and render sphere
-void mini3D::clip_sphere(vertex_struct *m,double r)
+void mini3D::clip_sphere(primitive::vertex_struct *m,double r)
    {
    double z=-near_;
 
@@ -283,7 +287,7 @@ void mini3D::clip_sphere(vertex_struct *m,double r)
    }
 
 // clip and render sphere
-void mini3D::clip_sprite(vertex_struct *m,double r,databuf *b)
+void mini3D::clip_sprite(primitive::vertex_struct *m,double r,databuf *b)
    {
    double z=-near_;
 

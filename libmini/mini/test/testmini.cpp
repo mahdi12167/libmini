@@ -342,8 +342,18 @@ int main(int argc,char *argv[])
    minicoord eye;
    eye.set_llh(49.9,10.9,10000);
    eye.convert2ecef();
-   clod.create(eye.getpos());
+   vec3 e=eye.getpos();
+   clod.create(e);
    int points=clod.getPoints()->size();
+   mini3Dtest t;
+   t.band(*clod.getPoints());
+   vec3 l(0,0,0);
+   vec3 u(0,0,1);
+   mat4 p=mat4::perspective(90,1,1,1E8);
+   mat4 mv=mat4::lookat(e,l,u);
+   mat4 mvp=p*mv;
+   t.postMultiply(mvp);
+   t.render();
    if (dabs(length-10410.5)<1E1 || points!=4)
       std::cout << "SUCCESS" << std::endl;
    else
