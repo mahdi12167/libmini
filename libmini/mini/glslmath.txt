@@ -136,9 +136,11 @@ Use cases:
   v = M*v; // yields (0,10,0)
 }}}
 
-* Creating an affine 4x4 matrix that transforms points from the local
-  coordinate system to a coordinate system with the origin o and the
-  coordinate axis x, y and z:
+* Creating an affine 4x4 matrix:
+
+  The matrix transforms homogeneous points from the local coordinate
+  system to a coordinate system with the origin o and the coordinate
+  axis x, y and z:
 
 {{{
   vec3 o = vec3(3,3,3);
