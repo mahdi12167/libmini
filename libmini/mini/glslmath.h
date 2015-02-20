@@ -466,6 +466,13 @@ class mat2
       return(vec2(mtx[0][i],mtx[1][i]));
       }
 
+   // column getter
+   vec2 col(const int i) const
+      {
+      assert(i>=0 && i<2);
+      return(vec2(mtx[i][0],mtx[i][1]));
+      }
+
    // cast operator to column-first array
    operator const double *() const
       {return(pointer);}
@@ -476,7 +483,7 @@ class mat2
 
    // transpose 2x2 matrix
    mat2 transpose() const
-      {return(mat2(row(0),row(1)));}
+      {return(mat2(col(0),col(1)));}
 
    // invert 2x2 matrix
    mat2 invert() const
@@ -622,6 +629,13 @@ class mat3
       return(vec3(mtx[0][i],mtx[1][i],mtx[2][i]));
       }
 
+   // column getter
+   vec3 col(const int i) const
+      {
+      assert(i>=0 && i<3);
+      return(vec3(mtx[i][0],mtx[i][1],mtx[i][2]));
+      }
+
    // cast operator to column-first array
    operator const double *() const
       {return(pointer);}
@@ -636,7 +650,7 @@ class mat3
 
    // transpose 3x3 matrix
    mat3 transpose() const
-      {return(mat3(row(0),row(1),row(2)));}
+      {return(mat3(col(0),col(1),col(2)));}
 
    // invert 3x3 matrix
    mat3 invert() const
@@ -819,6 +833,13 @@ class mat3f
       return(vec4(mtx[0][i],mtx[1][i],mtx[2][i]));
       }
 
+   // column getter
+   vec4 col(const int i) const
+      {
+      assert(i>=0 && i<3);
+      return(vec3(mtx[i][0],mtx[i][1],mtx[i][2]));
+      }
+
    // cast operator to column-first array
    operator const float *() const
       {return(pointer);}
@@ -904,6 +925,13 @@ class mat4
       return(vec4(mtx[0][i],mtx[1][i],mtx[2][i],mtx[3][i]));
       }
 
+   // column getter
+   vec4 col(const int i) const
+      {
+      assert(i>=0 && i<4);
+      return(vec4(mtx[i][0],mtx[i][1],mtx[i][2],mtx[i][3]));
+      }
+
    // cast operator to column-first array
    operator const double *() const
       {return(pointer);}
@@ -939,7 +967,7 @@ class mat4
 
    // transpose 4x4 matrix
    mat4 transpose() const
-      {return(mat4(row(0),row(1),row(2),row(3)));}
+      {return(mat4(col(0),col(1),col(2),col(3)));}
 
    // invert 4x4 matrix
    mat4 invert() const
@@ -1087,10 +1115,10 @@ inline std::ostream& operator << (std::ostream &out,const mat4 &m)
 // create affine transformation matrix
 inline mat4 mat4::transform(vec3 o,vec3 x,vec3 y,vec3 z)
    {
-   return(mat4(vec4(x,o.x),
-               vec4(y,o.y),
-               vec4(z,o.z),
-               vec4(0,0,0,1)));
+   return(mat4(vec4(x,0),
+               vec4(y,0),
+               vec4(z,0),
+               vec4(o,1)).transpose());
    }
 
 // create orthographic matrix
@@ -1206,6 +1234,13 @@ class mat4f
       {
       assert(i>=0 && i<4);
       return(vec4(mtx[0][i],mtx[1][i],mtx[2][i],mtx[3][i]));
+      }
+
+   // column getter
+   vec4 col(const int i) const
+      {
+      assert(i>=0 && i<4);
+      return(vec4(mtx[i][0],mtx[i][1],mtx[i][2],mtx[i][3]));
       }
 
    // cast operator to column-first array
@@ -1426,13 +1461,13 @@ inline int test_glslmath()
    // test affine transformation
    {
       vec3 o = vec3(3,3,3);
-      vec3 x = vec3(1,0,0);
-      vec3 y = vec3(0,1,0);
-      vec3 z = vec3(0,0,1);
+      vec3 x = vec3(0,1,0);
+      vec3 y = vec3(0,0,1);
+      vec3 z = vec3(1,0,0);
       mat4 T = mat4::transform(o,x,y,z);
       vec4 v(1,0,0);
       v = T*v;
-      if (v!=vec4(4,3,3,1)) errors++;
+      if (v!=vec4(3,4,3,1)) errors++;
    }
 
    // test transformations
