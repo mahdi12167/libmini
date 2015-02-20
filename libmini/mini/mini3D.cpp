@@ -8,7 +8,7 @@ mini3D::mini3D()
 
 // destructor
 mini3D::~mini3D()
-   {}
+   {clear();}
 
 // pre-multiply vertices by 4x4 matrix
 void mini3D::preMultiply(const mat4 &m)
@@ -31,8 +31,7 @@ void mini3D::line(const std::vector<point_struct> &l)
          {
          idx2=addvtx(l[i].pos,l[i].col);
 
-         primitives_line_.push_back(primitive_line(idx1,idx2,&vertices_));
-         primitives_.push_back(&primitives_line_[primitives_line_.size()-1]);
+         primitives_.push_back(new primitive_line(idx1,idx2,&vertices_));
 
          idx1=idx2;
          }
@@ -80,8 +79,7 @@ void mini3D::strip(const std::vector<point_struct> &s)
          {
          idx3=addvtx(s[i].pos,s[i].col);
 
-         primitives_triangle_.push_back(primitive_triangle(idx1,idx2,idx3,&vertices_));
-         primitives_.push_back(&primitives_triangle_[primitives_triangle_.size()-1]);
+         primitives_.push_back(new primitive_triangle(idx1,idx2,idx3,&vertices_));
 
          idx1=idx2;
          idx2=idx3;
@@ -94,8 +92,7 @@ void mini3D::sphere(const struct sphere_struct &s)
    {
    unsigned int idx=addvtx(s.pos,s.col);
 
-   primitives_sphere_.push_back(primitive_sphere(idx,s.r,&vertices_));
-   primitives_.push_back(&primitives_sphere_[primitives_sphere_.size()-1]);
+   primitives_.push_back(new primitive_sphere(idx,s.r,&vertices_));
    }
 
 // add sprite to scene
@@ -103,8 +100,7 @@ void mini3D::sprite(const struct sprite_struct &s)
    {
    unsigned int idx=addvtx(s.pos,s.col);
 
-   primitives_sprite_.push_back(primitive_sprite(idx,s.r,s.buf,&vertices_));
-   primitives_.push_back(&primitives_sprite_[primitives_sprite_.size()-1]);
+   primitives_.push_back(new primitive_sprite(idx,s.r,s.buf,&vertices_));
    }
 
 // compute half direction between two vectors
@@ -161,18 +157,17 @@ void mini3D::render()
 
 // depth sort scene
 void mini3D::sort()
-   {mergesort<primitive>(primitives_);}
+   {mergesort(primitives_);}
 
 // clear scene
 void mini3D::clear()
    {
    vertices_.clear();
-   primitives_.clear();
 
-   primitives_line_.clear();
-   primitives_triangle_.clear();
-   primitives_sphere_.clear();
-   primitives_sprite_.clear();
+   for (unsigned int i=0; i<primitives_.size(); i++)
+      delete primitives_[i];
+
+   primitives_.clear();
    }
 
 // compare object depth
@@ -180,10 +175,9 @@ bool mini3D::greater(const primitive *a,const primitive *b) const
    {return(a->depth(eye_) > b->depth(eye_));}
 
 // merge two halves
-template<class Item>
-void mini3D::merge(std::vector<Item *> &a,
+void mini3D::merge(std::vector<primitive *> &a,
                    unsigned int begin, unsigned int middle, unsigned int end,
-                   std::vector<Item *> &tmp)
+                   std::vector<primitive *> &tmp)
    {
    unsigned int b=begin, m=middle, t=begin;
 
@@ -198,10 +192,9 @@ void mini3D::merge(std::vector<Item *> &a,
    }
 
 // mergesort by recursively merging two halves
-template<class Item>
-void mini3D::mergesort(std::vector<Item *> &a,
+void mini3D::mergesort(std::vector<primitive *> &a,
                        unsigned int begin, unsigned int end,
-                       std::vector<Item *> &tmp)
+                       std::vector<primitive *> &tmp)
    {
    unsigned int s = end-begin;
 
@@ -217,10 +210,9 @@ void mini3D::mergesort(std::vector<Item *> &a,
    }
 
 // mergesort
-template <class Item>
-void mini3D::mergesort(std::vector<Item *> &a)
+void mini3D::mergesort(std::vector<primitive *> &a)
    {
-   std::vector<Item *> tmp;
+   std::vector<primitive *> tmp;
    tmp.resize(a.size());
 
    mergesort(a, 0, a.size(), tmp);

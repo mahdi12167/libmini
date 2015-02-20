@@ -5,10 +5,11 @@
 
 #include "minibase.h"
 #include "database.h"
-#include "vector"
 
+#include "vector"
 #include "glslmath.h"
 
+//! rendering primitive (base class)
 class primitive
    {
    public:
@@ -50,6 +51,7 @@ class primitive
    double radius2;
    };
 
+//! line rendering primitive
 class primitive_line: public primitive
    {
    public:
@@ -68,6 +70,7 @@ class primitive_line: public primitive
    unsigned int index1,index2;
    };
 
+//! triangle rendering primitive
 class primitive_triangle: public primitive
    {
    public:
@@ -86,6 +89,7 @@ class primitive_triangle: public primitive
    unsigned int index1,index2,index3;
    };
 
+//! sphere rendering primitive
 class primitive_sphere: public primitive
    {
    public:
@@ -105,6 +109,7 @@ class primitive_sphere: public primitive
    double radius;
    };
 
+//! sprite rendering primitive
 class primitive_sprite: public primitive_sphere
    {
    public:
@@ -197,11 +202,6 @@ class mini3D
    std::vector<primitive::vertex_struct> vertices_;
    std::vector<primitive *> primitives_;
 
-   std::vector<primitive_line> primitives_line_;
-   std::vector<primitive_triangle> primitives_triangle_;
-   std::vector<primitive_sphere> primitives_sphere_;
-   std::vector<primitive_sphere> primitives_sprite_;
-
    vec3 halfdir(vec3 dir1,vec3 dir2);
    unsigned int addvtx(vec3 v,vec3f c);
 
@@ -209,22 +209,15 @@ class mini3D
 
    bool greater(const primitive *a,const primitive *b) const;
 
-   template<class Item>
-   bool greater(const Item *a,const Item *b) const
-      {return(greater(a,b));}
-
-   template<class Item>
-   void merge(std::vector<Item *> &a,
+   void merge(std::vector<primitive *> &a,
               unsigned int begin, unsigned int middle, unsigned int end,
-              std::vector<Item *> &tmp);
+              std::vector<primitive *> &tmp);
 
-   template<class Item>
-   void mergesort(std::vector<Item *> &a,
+   void mergesort(std::vector<primitive *> &a,
                   unsigned int begin, unsigned int end,
-                  std::vector<Item *> &tmp);
+                  std::vector<primitive *> &tmp);
 
-   template <class Item>
-   void mergesort(std::vector<Item *> &a);
+   void mergesort(std::vector<primitive *> &a);
 
    void clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,double z);
 
