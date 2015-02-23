@@ -347,7 +347,7 @@ int main(int argc,char *argv[])
    int points=clod.getPoints()->size();
    mini3Dtest t;
    t.band(*clod.getPoints());
-   minicoord lookat=path[2];
+   minicoord lookat=path[1];
    lookat.convert2ecef();
    vec3 l=lookat.getpos();
    vec3 u=l;
