@@ -400,23 +400,9 @@ void mininode_coord::set_coord(const minicoord &c)
    {
    coord=c;
 
-   minicoord ecef=c;
-   ecef.convert2ecef();
-
-   miniv3d p=ecef.vec;
-   miniv3d u=p;
-   u.normalize();
-   miniv3d d=miniv3d(0,0,1);
-   miniv3d r=d/u;
-   r.normalize();
-   if (r.getlength2()==0.0) r=miniv3d(0,1,0);
-   d=u/r;
-   d.normalize();
-
-   miniv4d mtx[3]={miniv4d(r.x,d.x,u.x,p.x),miniv4d(r.y,d.y,u.y,p.y),miniv4d(r.z,d.z,u.z,p.z)};
+   miniv4d mtx[3];
+   up=coord.local2ecef(mtx);
    mtxget(mtx,oglmtx);
-
-   up=u;
    }
 
 void mininode_coord::set_lightdir(const miniv3d &d)

@@ -823,6 +823,28 @@ ministring minicoord::getorb(int o)
       }
    }
 
+// create affine transformation from local north-up coordinates to global ECEF coordinates
+miniv3d minicoord::local2ecef(miniv4d mtx[3])
+   {
+   convert2ecef();
+
+   miniv3d p=getpos();
+   miniv3d u=p;
+   u.normalize();
+   miniv3d d(0,0,1);
+   miniv3d r=d/u;
+   r.normalize();
+   if (r.getlength2()==0.0) r=miniv3d(0,1,0);
+   d=u/r;
+   d.normalize();
+
+   mtx[0]=miniv4d(r.x,d.x,u.x,p.x);
+   mtx[1]=miniv4d(r.y,d.y,u.y,p.y);
+   mtx[2]=miniv4d(r.z,d.z,u.z,p.z);
+
+   return(u);
+   }
+
 // string cast operator
 minicoord::operator ministring() const
    {return((ministring)"[ (" + vec.x + "," + vec.y + "," + vec.z + ") t=" + vec.w + " crs=" + getcrs() + " datum=" + getdatum() + " orb=" + getorb() + " ]");}

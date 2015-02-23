@@ -213,6 +213,9 @@ class minicoord
    //! get scalar time component
    double gettime() const {return(vec.w);}
 
+   //! create affine transformation from local north-up coordinates to global ECEF coordinates
+   miniv3d local2ecef(miniv4d mtx[3]);
+
    //! string cast operator
    operator ministring() const;
 
