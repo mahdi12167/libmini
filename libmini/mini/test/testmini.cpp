@@ -347,8 +347,10 @@ int main(int argc,char *argv[])
    int points=clod.getPoints()->size();
    mini3Dtest t;
    t.band(*clod.getPoints());
-   vec3 l(0,0,0);
-   vec3 u(0,0,1);
+   minicoord lookat=path[2];
+   lookat.convert2ecef();
+   vec3 l=lookat.getpos();
+   vec3 u=l;
    mat4 p=mat4::perspective(90,1,1,1E8);
    mat4 mv=mat4::lookat(e,l,u);
    mat4 mvp=p*mv;

@@ -1158,7 +1158,7 @@ inline mat4 mat4::lookat(const vec3 &eye,const vec3 &center,const vec3 &up)
    dir=(center-eye).normalize();
    top=up.normalize();
 
-   right=dir.cross(top);
+   right=dir.cross(top).normalize();
    top=right.cross(dir);
 
    return(mat4(vec4(right,0),vec4(top,0),vec4(-dir,0))*translate(-eye));
