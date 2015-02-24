@@ -195,9 +195,11 @@ class mini3D
    protected:
 
    vec3 eye_;
-   double near_;
 
-   mat4 preMatrix_,postMatrix_;
+   mat4 preMatrix_;
+   bool preMatrixOne_;
+
+   mat4 postMatrix_;
 
    std::vector<primitive::vertex_struct> vertices_;
    std::vector<primitive *> primitives_;
@@ -226,22 +228,16 @@ class mini3D
    void clip_sphere(primitive::vertex_struct *m,double r);
    void clip_sprite(primitive::vertex_struct *m,double r,databuf *b);
 
-   inline void clip1tri(vec3 v0,double d0,vec3 c0,
-                        vec3 v1,double d1,vec3 c1,
-                        vec3 v2,double d2,vec3 c2);
+   inline void clip1tri(vec4 v0,double d0,vec3 c0,
+                        vec4 v1,double d1,vec3 c1,
+                        vec4 v2,double d2,vec3 c2);
 
-   inline void clip2tri(vec3 v0,double d0,vec3 c0,
-                        vec3 v1,double d1,vec3 c1,
-                        vec3 v2,double d2,vec3 c2);
+   inline void clip2tri(vec4 v0,double d0,vec3 c0,
+                        vec4 v1,double d1,vec3 c1,
+                        vec4 v2,double d2,vec3 c2);
 
-   void cliptri(vec3 v0, // vertex v0
-                vec3 v1, // vertex v1
-                vec3 v2, // vertex v2
-                vec3 c0, // color c0
-                vec3 c1, // color c1
-                vec3 c2, // color c2
-                vec3 o,  // origin of clip plane
-                vec3 n); // normal of clip plane
+   void cliptri(vec4 v0,vec4 v1,vec4 v2,
+                vec3 c0,vec3 c1,vec3 c2);
 
    virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc) = 0;
    virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc) = 0;

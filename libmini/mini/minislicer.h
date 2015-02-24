@@ -4,6 +4,7 @@
 #define MINISLICER_H
 
 #include "miniv3d.h"
+#include "miniOGL.h"
 
 namespace minislice {
 
@@ -196,7 +197,21 @@ inline void stack(const miniv3d &v0, // vertex v0
                o+d*n,n);
    }
 
-// clip a triangle (resulting in one remaining triangle)
+// render a triangle
+inline void rendertri(const miniv3d &v0,
+                      const miniv3d &v1,
+                      const miniv3d &v2)
+   {
+   beginfans();
+   texcoord(v0.x,v0.y,v0.z);
+   fanvertex(v0.x,v0.y,v0.z);
+   texcoord(v1.x,v1.y,v1.z);
+   fanvertex(v1.x,v1.y,v1.z);
+   texcoord(v2.x,v2.y,v2.z);
+   fanvertex(v2.x,v2.y,v2.z);
+   }
+
+// clip a triangle (resulting in one remaining rendered triangle)
 //  v0 is the contained vertex
 //  d is distance of the respective point to the clipping plane
 inline void clip1tri(const miniv3d &v0,const double d0,
@@ -217,7 +232,7 @@ inline void clip1tri(const miniv3d &v0,const double d0,
    fanvertex(p2.x,p2.y,p2.z);
    }
 
-// clip a triangle (resulting in two remaining triangles)
+// clip a triangle (resulting in two remaining rendered triangles)
 //  v0 is the non-contained vertex
 //  d is distance of the respective point to the clipping plane
 inline void clip2tri(const miniv3d &v0,const double d0,
@@ -241,7 +256,7 @@ inline void clip2tri(const miniv3d &v0,const double d0,
    }
 
 // clip a triangle with a plane
-//  2 cases: triangle geometry consists of either 1 or 2 triangles
+//  2 cases: clipped triangle geometry consists of either 1 or 2 triangles
 inline void cliptri(const miniv3d &v0, // vertex v0
                     const miniv3d &v1, // vertex v1
                     const miniv3d &v2, // vertex v2
@@ -264,7 +279,7 @@ inline void cliptri(const miniv3d &v0, // vertex v0
 
    switch (ff)
       {
-      // 1 triangle
+      // 1 clipped triangle
       case 1: clip1tri(v0,fabs(d0),
                        v1,fabs(d1),
                        v2,fabs(d2)); break;
@@ -275,7 +290,7 @@ inline void cliptri(const miniv3d &v0, // vertex v0
                        v0,fabs(d0),
                        v1,fabs(d1)); break;
 
-      // 2 triangles
+      // 2 clipped triangles
       case 6: clip2tri(v0,fabs(d0),
                        v1,fabs(d1),
                        v2,fabs(d2)); break;
@@ -285,6 +300,9 @@ inline void cliptri(const miniv3d &v0, // vertex v0
       case 3: clip2tri(v2,fabs(d2),
                        v0,fabs(d0),
                        v1,fabs(d1)); break;
+
+      // entire triangle
+      case 7: rendertri(v0,v1,v2); break;
       }
    }
 
