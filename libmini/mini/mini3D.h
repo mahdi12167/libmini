@@ -256,6 +256,18 @@ class mini3D
    virtual void render_sprite(vec3 m,double r,vec3f c,databuf *b);
    };
 
+inline struct mini3D::joint_struct operator + (const struct mini3D::joint_struct &a,const struct mini3D::joint_struct &b)
+   {
+   struct mini3D::joint_struct j={a.pos+b.pos,vec3(a.nrm)+vec3(b.nrm),vec3(a.col)+vec3(b.col),a.wdt+b.wdt};
+   return(j);
+   }
+
+inline struct mini3D::joint_struct operator * (const double a,const struct mini3D::joint_struct &b)
+   {
+   struct mini3D::joint_struct j={a*b.pos,a*vec3(b.nrm),a*vec3(b.col),a*b.wdt};
+   return(j);
+   }
+
 //! 3D pipeline primitive counter
 class mini3Dcounter: public mini3D
    {
