@@ -737,7 +737,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       miniv3d dir;
 
       if (i==0) dir=pos[i+1]-pos[i];
-      else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
+      else if (i+1==pos.getsize()) dir=pos[i]-pos[i-1];
       else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
       dir.normalize();
 
@@ -762,7 +762,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       miniv3d dir;
 
       if (i==0) dir=pos[i+1]-pos[i];
-      else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
+      else if (i+1==pos.getsize()) dir=pos[i]-pos[i-1];
       else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
       dir.normalize();
 
@@ -787,7 +787,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       miniv3d dir;
 
       if (i==0) dir=pos[i+1]-pos[i];
-      else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
+      else if (i+1==pos.getsize()) dir=pos[i]-pos[i-1];
       else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
       dir.normalize();
 
@@ -812,7 +812,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       miniv3d dir;
 
       if (i==0) dir=pos[i+1]-pos[i];
-      else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
+      else if (i+1==pos.getsize()) dir=pos[i]-pos[i-1];
       else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
       dir.normalize();
 
@@ -839,7 +839,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       miniv3d dir;
 
       if (i==0) dir=pos[i+1]-pos[i];
-      else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
+      else if (i+1==pos.getsize()) dir=pos[i]-pos[i-1];
       else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
       dir.normalize();
 
@@ -866,7 +866,7 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       miniv3d dir;
 
       if (i==0) dir=pos[i+1]-pos[i];
-      else if (i==pos.getsize()-1) dir=pos[i]-pos[i-1];
+      else if (i+1==pos.getsize()) dir=pos[i]-pos[i-1];
       else dir=get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]);
       dir.normalize();
 
@@ -938,7 +938,7 @@ mininode_geometry_band::mininode_geometry_band(const std::vector<mini3D::joint_s
       vec3 dir;
 
       if (i==0) dir=p2[i+1].pos-p2[i].pos;
-      else if (i==p2.size()-1) dir=p2[i].pos-p2[i-1].pos;
+      else if (i+1==p2.size()) dir=p2[i].pos-p2[i-1].pos;
       else dir=get_halfdir(p2[i].pos-p2[i-1].pos,p2[i+1].pos-p2[i].pos);
       dir=dir.normalize();
 
@@ -1208,7 +1208,7 @@ mininode_geometry_tube::mininode_geometry_tube(const minidyna<miniv3d> &pos,doub
    miniv3d dir=pos[1]-pos[0];
    miniv3d right=get_right(dir);
 
-   for (unsigned int i=0; i<pos.getsize()-1; i++)
+   for (unsigned int i=0; i+1<pos.getsize(); i++)
       right=create_tube(pos[i],pos[i+1],
                         (i==0)?pos[i+1]-pos[i]:get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]),
                         (i==pos.getsize()-2)?pos[i+1]-pos[i]:get_halfdir(pos[i+1]-pos[i],pos[i+2]-pos[i+1]),
@@ -1228,7 +1228,7 @@ mininode_geometry_tube::mininode_geometry_tube(const minidyna<miniv3d> &pos,cons
    miniv3d dir=pos[1]-pos[0];
    miniv3d right=get_right(dir);
 
-   for (unsigned int i=0; i<pos.getsize()-1; i++)
+   for (unsigned int i=0; i+1<pos.getsize(); i++)
       right=create_tube(pos[i],pos[i+1],
                         (i==0)?pos[i+1]-pos[i]:get_halfdir(pos[i]-pos[i-1],pos[i+1]-pos[i]),
                         (i==pos.getsize()-2)?pos[i+1]-pos[i]:get_halfdir(pos[i+1]-pos[i],pos[i+2]-pos[i+1]),
