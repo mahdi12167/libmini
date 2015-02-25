@@ -357,7 +357,7 @@ int main(int argc,char *argv[])
    t.postMultiply(mvp);
    t.render();
    unsigned int triangles=t.numTriangles();
-   if (dabs(length-10410.5)<1E1 || points!=4 || triangles!=7)
+   if (dabs(length-10410.5)<1E1 && points==4 && triangles==11)
       std::cout << "SUCCESS" << std::endl;
    else
       {std::cout << "FAILURE" << std::endl; failure++;}
