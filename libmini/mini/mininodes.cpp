@@ -885,28 +885,26 @@ mininode_geometry_band::mininode_geometry_band(const std::vector<mini3D::joint_s
    {
    if (points.size()<2) return;
 
-   std::vector<mini3D::joint_struct> p1,p2;
+   std::vector<mini3D::joint_struct> p1;
 
    // average points that are closer than half band width
    p1.push_back(points.front());
-   for (unsigned int i=1; i+2<points.size(); i++)
+   if (points.size()>2) p1.push_back(points[1]);
+   for (unsigned int i=2; i+1<points.size(); i++)
       {
-      double d;
+      double d,w;
 
-      d=(points[i+1].pos-points[i].pos).getlength2();
+      d=(points[i].pos-p1.back().pos).getlength2();
+      w=0.5*(points[i].wdt+p1.back().wdt);
 
-      if (d<dsqr(0.5*points[i].wdt))
-         {
-         p1.push_back(0.5*(points[i]+points[i+1]));
-         i++;
-         }
+      if (d<dsqr(0.5*w))
+         p1.back()=0.5*(points[i]+p1.back());
       else
-         {
          p1.push_back(points[i]);
-         if (i+2==points.size()) p1.push_back(points[i+1]);
-         }
       }
    p1.push_back(points.back());
+
+   std::vector<mini3D::joint_struct> p2;
 
    // create helper points for band turns greater than 90 degrees
    p2.push_back(p1.front());
