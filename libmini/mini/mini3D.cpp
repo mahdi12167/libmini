@@ -218,7 +218,7 @@ void mini3D::mergesort(std::vector<primitive *> &a)
    mergesort(a, 0, a.size(), tmp);
    }
 
-// clip line segment
+// clip line segment in homogeneous clip space
 void mini3D::clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,double w)
    {
    double f=(a.z-w)/(a.z-b.z);
@@ -227,54 +227,51 @@ void mini3D::clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,double w)
    ac=ac+(bc-ac)*f;
    }
 
-// clip and render line
+// clip and render line using homogeneous clip coordinates
 void mini3D::clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b)
    {
    bool af=a->pos_post.z>-a->pos_post.w;
    bool bf=b->pos_post.z>-b->pos_post.w;
 
-   if (af && bf)
+   bool ab=a->pos_post.z<a->pos_post.w;
+   bool bb=b->pos_post.z<b->pos_post.w;
+
+   if (af && bf && ab && bb)
       render_line(a->pos_post,b->pos_post,a->col,b->col);
-   else if (af)
+   else if ((!af || !bf) && (!ab || !bb))
       {
       vec4 clipa=a->pos_post;
       vec4 clipb=b->pos_post;
       vec3 clipac=vec3(a->col);
       vec3 clipbc=vec3(b->col);
 
-      clip(clipb,clipa,clipbc,clipac,-clipb.w);
-      render_line(clipa,clipb,clipac,clipbc);
-      }
-   else if (bf)
-      {
-      vec4 clipa=a->pos_post;
-      vec4 clipb=b->pos_post;
-      vec3 clipac=vec3(a->col);
-      vec3 clipbc=vec3(b->col);
+      if (!af) clip(clipa,clipb,clipac,clipbc,-clipb.w);
+      if (!bf) clip(clipb,clipa,clipbc,clipac,-clipb.w);
+      if (!ab) clip(clipa,clipb,clipac,clipbc,clipb.w);
+      if (!bb) clip(clipb,clipa,clipbc,clipac,clipb.w);
 
-      clip(clipa,clipb,clipac,clipbc,-clipa.w);
       render_line(clipa,clipb,clipac,clipbc);
       }
    }
 
-// clip and render triangle
+// clip and render triangle using homogeneous clip coordinates
 void mini3D::clip_triangle(primitive::vertex_struct *a,primitive::vertex_struct *b,primitive::vertex_struct *c)
    {
    cliptri1(a->pos_post,b->pos_post,c->pos_post,
             a->col,b->col,c->col);
    }
 
-// clip and render sphere
+// clip and render sphere using homogeneous clip coordinates
 void mini3D::clip_sphere(primitive::vertex_struct *m,double r)
    {
-   if (m->pos_post.z>-m->pos_post.w)
+   if (m->pos_post.z>-m->pos_post.w && m->pos_post.z<m->pos_post.w)
       render_sphere(m->pos_post,r*postMatrix_[1].y/m->pos_post.w,m->col);
    }
 
-// clip and render sprite
+// clip and render sprite using homogeneous clip coordinates
 void mini3D::clip_sprite(primitive::vertex_struct *m,double r,databuf *b)
    {
-   if (m->pos_post.z>-m->pos_post.w)
+   if (m->pos_post.z>-m->pos_post.w && m->pos_post.z<m->pos_post.w)
       render_sprite(m->pos_post,r*postMatrix_[1].y/m->pos_post.w,m->col,b);
    }
 
