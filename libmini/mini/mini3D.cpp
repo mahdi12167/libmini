@@ -95,7 +95,8 @@ void mini3D::sphere(const struct sphere_struct &s)
    {
    unsigned int idx=addvtx(s.pos,s.col);
 
-   primitives_.push_back(new primitive_sphere(idx,s.r*preMatrix_[1].y,&vertices_));
+   double f=dmax(dabs(preMatrix_[0].x),dabs(preMatrix_[1].y));
+   primitives_.push_back(new primitive_sphere(idx,s.r*f,&vertices_));
    }
 
 // add sprite to scene
@@ -103,7 +104,8 @@ void mini3D::sprite(const struct sprite_struct &s)
    {
    unsigned int idx=addvtx(s.pos,s.col);
 
-   primitives_.push_back(new primitive_sprite(idx,s.r*preMatrix_[1].y,s.buf,&vertices_));
+   double f=dmax(dabs(preMatrix_[0].x),dabs(preMatrix_[1].y));
+   primitives_.push_back(new primitive_sprite(idx,s.r*f,s.buf,&vertices_));
    }
 
 // compute half direction between two vectors
@@ -265,14 +267,14 @@ void mini3D::clip_triangle(primitive::vertex_struct *a,primitive::vertex_struct 
 void mini3D::clip_sphere(primitive::vertex_struct *m,double r)
    {
    if (m->pos_post.z>-m->pos_post.w && m->pos_post.z<m->pos_post.w)
-      render_sphere(m->pos_post,r*postMatrix_[1].y/m->pos_post.w,m->col);
+      render_sphere(m->pos_post,r*dabs(postMatrix_[1].y)/m->pos_post.w,m->col);
    }
 
 // clip and render sprite using homogeneous clip coordinates
 void mini3D::clip_sprite(primitive::vertex_struct *m,double r,databuf *b)
    {
    if (m->pos_post.z>-m->pos_post.w && m->pos_post.z<m->pos_post.w)
-      render_sprite(m->pos_post,r*postMatrix_[1].y/m->pos_post.w,m->col,b);
+      render_sprite(m->pos_post,r*dabs(postMatrix_[1].y)/m->pos_post.w,m->col,b);
    }
 
 // clip a triangle (resulting in one remaining triangle)
