@@ -344,8 +344,8 @@ int main(int argc,char *argv[])
    eye.convert2ecef();
    vec3 e=eye.getpos();
    clod.create(e);
-   int points=clod.getPoints()->size();
-   mini3Dtest t;
+   unsigned int points=clod.getPoints()->size();
+   mini3Dcounter t;
    t.band(*clod.getPoints());
    minicoord lookat=path[1];
    lookat.convert2ecef();
@@ -356,7 +356,8 @@ int main(int argc,char *argv[])
    mat4 mvp=p*mv;
    t.postMultiply(mvp);
    t.render();
-   if (dabs(length-10410.5)<1E1 || points!=4)
+   unsigned int triangles=t.numTriangles();
+   if (dabs(length-10410.5)<1E1 || points!=4 || triangles!=7)
       std::cout << "SUCCESS" << std::endl;
    else
       {std::cout << "FAILURE" << std::endl; failure++;}

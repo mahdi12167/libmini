@@ -228,45 +228,84 @@ class mini3D
    void clip_sphere(primitive::vertex_struct *m,double r);
    void clip_sprite(primitive::vertex_struct *m,double r,databuf *b);
 
-   inline void clip1tri(vec4 v0,double d0,vec3 c0,
-                        vec4 v1,double d1,vec3 c1,
-                        vec4 v2,double d2,vec3 c2);
+   inline void clip1tri1(vec4 v0,double d0,vec3 c0,
+                         vec4 v1,double d1,vec3 c1,
+                         vec4 v2,double d2,vec3 c2);
 
-   inline void clip2tri(vec4 v0,double d0,vec3 c0,
-                        vec4 v1,double d1,vec3 c1,
-                        vec4 v2,double d2,vec3 c2);
+   inline void clip2tri1(vec4 v0,double d0,vec3 c0,
+                         vec4 v1,double d1,vec3 c1,
+                         vec4 v2,double d2,vec3 c2);
 
-   void cliptri(vec4 v0,vec4 v1,vec4 v2,
-                vec3 c0,vec3 c1,vec3 c2);
+   void cliptri1(vec4 v0,vec4 v1,vec4 v2,
+                 vec3 c0,vec3 c1,vec3 c2);
+
+   inline void clip1tri2(vec4 v0,double d0,vec3 c0,
+                         vec4 v1,double d1,vec3 c1,
+                         vec4 v2,double d2,vec3 c2);
+
+   inline void clip2tri2(vec4 v0,double d0,vec3 c0,
+                         vec4 v1,double d1,vec3 c1,
+                         vec4 v2,double d2,vec3 c2);
+
+   void cliptri2(vec4 v0,vec4 v1,vec4 v2,
+                 vec3 c0,vec3 c1,vec3 c2);
 
    virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc) = 0;
    virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc) = 0;
-   virtual void render_sphere(vec3 m,double r,vec3f c) = 0;
-   virtual void render_sprite(vec3 m,double r,vec3f c,databuf *b) = 0;
+   virtual void render_sphere(vec3 m,double r,vec3f c);
+   virtual void render_sprite(vec3 m,double r,vec3f c,databuf *b);
    };
 
-//! 3D test pipeline
-class mini3Dtest: public mini3D
+//! 3D pipeline primitive counter
+class mini3Dcounter: public mini3D
    {
    public:
 
-   mini3Dtest()
+   mini3Dcounter()
       : mini3D()
-      {}
+      {lines=triangles=spheres=sprites=0;}
+
+   //! render scene
+   void render()
+      {
+      lines=triangles=spheres=sprites=0;
+      mini3D::render();
+      }
+
+   //! get total line count
+   unsigned int numLines()
+      {return(lines);}
+
+   //! get total triangle count
+   unsigned int numTriangles()
+      {return(triangles);}
+
+   //! get total sphere count
+   unsigned int numSpheres()
+      {return(spheres);}
+
+   //! get total sprite count
+   unsigned int numSprites()
+      {return(sprites);}
 
    protected:
 
+   unsigned int lines;
+   unsigned int triangles;
+   unsigned int spheres;
+   unsigned int sprites;
+
    virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc)
-      {std::cout << "line from " << a << " to " << b << std::endl;}
+      {lines++;}
 
    virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc)
-      {std::cout << "triangle with corners " << a << ", " << b << ", " << c << std::endl;}
+      {triangles++;}
 
    virtual void render_sphere(vec3 m,double r,vec3f c)
-      {std::cout << "sphere at " << m << " with radius " << r << std::endl;}
+      {spheres++;}
 
    virtual void render_sprite(vec3 m,double r,vec3f c,databuf *b)
-      {std::cout << "sprite at " << m << " with radius " << r << std::endl;}
+      {sprites++;}
 
    };
 

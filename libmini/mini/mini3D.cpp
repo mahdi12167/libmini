@@ -95,7 +95,7 @@ void mini3D::sphere(const struct sphere_struct &s)
    {
    unsigned int idx=addvtx(s.pos,s.col);
 
-   primitives_.push_back(new primitive_sphere(idx,s.r,&vertices_));
+   primitives_.push_back(new primitive_sphere(idx,s.r*preMatrix_[1].y,&vertices_));
    }
 
 // add sprite to scene
@@ -103,7 +103,7 @@ void mini3D::sprite(const struct sprite_struct &s)
    {
    unsigned int idx=addvtx(s.pos,s.col);
 
-   primitives_.push_back(new primitive_sprite(idx,s.r,s.buf,&vertices_));
+   primitives_.push_back(new primitive_sprite(idx,s.r*preMatrix_[1].y,s.buf,&vertices_));
    }
 
 // compute half direction between two vectors
@@ -219,9 +219,9 @@ void mini3D::mergesort(std::vector<primitive *> &a)
    }
 
 // clip line segment
-void mini3D::clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,double z)
+void mini3D::clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,double w)
    {
-   double f=(a.z-z)/(a.z-b.z);
+   double f=(a.z-w)/(a.z-b.z);
 
    a=a+(b-a)*f;
    ac=ac+(bc-ac)*f;
@@ -237,24 +237,22 @@ void mini3D::clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b)
       render_line(a->pos_post,b->pos_post,a->col,b->col);
    else if (af)
       {
-      double z=-b->pos_post.w;
       vec4 clipa=a->pos_post;
       vec4 clipb=b->pos_post;
       vec3 clipac=vec3(a->col);
       vec3 clipbc=vec3(b->col);
 
-      clip(clipb,clipa,clipbc,clipac,z);
+      clip(clipb,clipa,clipbc,clipac,-clipb.w);
       render_line(clipa,clipb,clipac,clipbc);
       }
    else if (bf)
       {
-      double z=-a->pos_post.w;
       vec4 clipa=a->pos_post;
       vec4 clipb=b->pos_post;
       vec3 clipac=vec3(a->col);
       vec3 clipbc=vec3(b->col);
 
-      clip(clipa,clipb,clipac,clipbc,z);
+      clip(clipa,clipb,clipac,clipbc,-clipa.w);
       render_line(clipa,clipb,clipac,clipbc);
       }
    }
@@ -262,30 +260,30 @@ void mini3D::clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b)
 // clip and render triangle
 void mini3D::clip_triangle(primitive::vertex_struct *a,primitive::vertex_struct *b,primitive::vertex_struct *c)
    {
-   cliptri(a->pos_post,b->pos_post,c->pos_post,
-           a->col,b->col,c->col);
+   cliptri1(a->pos_post,b->pos_post,c->pos_post,
+            a->col,b->col,c->col);
    }
 
 // clip and render sphere
 void mini3D::clip_sphere(primitive::vertex_struct *m,double r)
    {
    if (m->pos_post.z>-m->pos_post.w)
-      render_sphere(m->pos_post,r/m->pos_post.w,m->col);
+      render_sphere(m->pos_post,r*postMatrix_[1].y/m->pos_post.w,m->col);
    }
 
 // clip and render sprite
 void mini3D::clip_sprite(primitive::vertex_struct *m,double r,databuf *b)
    {
    if (m->pos_post.z>-m->pos_post.w)
-      render_sprite(m->pos_post,r/m->pos_post.w,m->col,b);
+      render_sprite(m->pos_post,r*postMatrix_[1].y/m->pos_post.w,m->col,b);
    }
 
 // clip a triangle (resulting in one remaining triangle)
 //  v0 is the contained vertex
 //  d is distance of the respective point to the clipping plane
-inline void mini3D::clip1tri(vec4 v0,double d0,vec3 c0,
-                             vec4 v1,double d1,vec3 c1,
-                             vec4 v2,double d2,vec3 c2)
+inline void mini3D::clip1tri1(vec4 v0,double d0,vec3 c0,
+                              vec4 v1,double d1,vec3 c1,
+                              vec4 v2,double d2,vec3 c2)
    {
    vec4 p1,p2;
    vec3 pc1,pc2;
@@ -296,15 +294,15 @@ inline void mini3D::clip1tri(vec4 v0,double d0,vec3 c0,
    pc1=(d1*c0+d0*c1)/(d0+d1);
    pc2=(d2*c0+d0*c2)/(d0+d2);
 
-   render_triangle(v0,p1,p2,c0,pc1,pc2);
+   cliptri2(v0,p1,p2,c0,pc1,pc2);
    }
 
 // clip a triangle (resulting in two remaining triangles)
 //  v0 is the non-contained vertex
 //  d is distance of the respective point to the clipping plane
-inline void mini3D::clip2tri(vec4 v0,double d0,vec3 c0,
-                             vec4 v1,double d1,vec3 c1,
-                             vec4 v2,double d2,vec3 c2)
+inline void mini3D::clip2tri1(vec4 v0,double d0,vec3 c0,
+                              vec4 v1,double d1,vec3 c1,
+                              vec4 v2,double d2,vec3 c2)
    {
    vec4 p1,p2;
    vec3 pc1,pc2;
@@ -315,18 +313,18 @@ inline void mini3D::clip2tri(vec4 v0,double d0,vec3 c0,
    pc1=(d1*c0+d0*c1)/(d0+d1);
    pc2=(d2*c0+d0*c2)/(d0+d2);
 
-   render_triangle(v1,v2,p2,c1,c2,pc2);
-   render_triangle(p2,p1,v1,pc2,pc1,c1);
+   cliptri2(v1,v2,p2,c1,c2,pc2);
+   cliptri2(p2,p1,v1,pc2,pc1,c1);
    }
 
 // clip a triangle in homogeneous clip coordinates so that -w<=z
 //  2 cases: clipped triangle geometry consists of either 1 or 2 triangles
-void mini3D::cliptri(vec4 v0, // vertex v0
-                     vec4 v1, // vertex v1
-                     vec4 v2, // vertex v2
-                     vec3 c0, // color c0
-                     vec3 c1, // color c1
-                     vec3 c2) // color c2
+void mini3D::cliptri1(vec4 v0, // vertex v0
+                      vec4 v1, // vertex v1
+                      vec4 v2, // vertex v2
+                      vec3 c0, // color c0
+                      vec3 c1, // color c1
+                      vec3 c2) // color c2
    {
    double d0,d1,d2;
 
@@ -345,28 +343,143 @@ void mini3D::cliptri(vec4 v0, // vertex v0
    switch (ff)
       {
       // 1 clipped triangle
-      case 1: clip1tri(v0,fabs(d0),c0,
-                       v1,fabs(d1),c1,
-                       v2,fabs(d2),c2); break;
-      case 2: clip1tri(v1,fabs(d1),c1,
-                       v0,fabs(d0),c0,
-                       v2,fabs(d2),c2); break;
-      case 4: clip1tri(v2,fabs(d2),c2,
-                       v0,fabs(d0),c0,
-                       v1,fabs(d1),c1); break;
+      case 1: clip1tri1(v0,fabs(d0),c0,
+                        v1,fabs(d1),c1,
+                        v2,fabs(d2),c2); break;
+      case 2: clip1tri1(v1,fabs(d1),c1,
+                        v0,fabs(d0),c0,
+                        v2,fabs(d2),c2); break;
+      case 4: clip1tri1(v2,fabs(d2),c2,
+                        v0,fabs(d0),c0,
+                        v1,fabs(d1),c1); break;
 
       // 2 clipped triangles
-      case 6: clip2tri(v0,fabs(d0),c0,
-                       v1,fabs(d1),c1,
-                       v2,fabs(d2),c2); break;
-      case 5: clip2tri(v1,fabs(d1),c1,
-                       v0,fabs(d0),c0,
-                       v2,fabs(d2),c2); break;
-      case 3: clip2tri(v2,fabs(d2),c2,
-                       v0,fabs(d0),c0,
-                       v1,fabs(d1),c1); break;
+      case 6: clip2tri1(v0,fabs(d0),c0,
+                        v1,fabs(d1),c1,
+                        v2,fabs(d2),c2); break;
+      case 5: clip2tri1(v1,fabs(d1),c1,
+                        v0,fabs(d0),c0,
+                        v2,fabs(d2),c2); break;
+      case 3: clip2tri1(v2,fabs(d2),c2,
+                        v0,fabs(d0),c0,
+                        v1,fabs(d1),c1); break;
+
+      // entire triangle
+      case 7: cliptri2(v0,v1,v2,c0,c1,c2); break;
+      }
+   }
+
+// clip a triangle (resulting in one remaining triangle)
+//  v0 is the contained vertex
+//  d is distance of the respective point to the clipping plane
+inline void mini3D::clip1tri2(vec4 v0,double d0,vec3 c0,
+                              vec4 v1,double d1,vec3 c1,
+                              vec4 v2,double d2,vec3 c2)
+   {
+   vec4 p1,p2;
+   vec3 pc1,pc2;
+
+   p1=(d1*v0+d0*v1)/(d0+d1);
+   p2=(d2*v0+d0*v2)/(d0+d2);
+
+   pc1=(d1*c0+d0*c1)/(d0+d1);
+   pc2=(d2*c0+d0*c2)/(d0+d2);
+
+   render_triangle(v0,p1,p2,c0,pc1,pc2);
+   }
+
+// clip a triangle (resulting in two remaining triangles)
+//  v0 is the non-contained vertex
+//  d is distance of the respective point to the clipping plane
+inline void mini3D::clip2tri2(vec4 v0,double d0,vec3 c0,
+                              vec4 v1,double d1,vec3 c1,
+                              vec4 v2,double d2,vec3 c2)
+   {
+   vec4 p1,p2;
+   vec3 pc1,pc2;
+
+   p1=(d1*v0+d0*v1)/(d0+d1);
+   p2=(d2*v0+d0*v2)/(d0+d2);
+
+   pc1=(d1*c0+d0*c1)/(d0+d1);
+   pc2=(d2*c0+d0*c2)/(d0+d2);
+
+   render_triangle(v1,v2,p2,c1,c2,pc2);
+   render_triangle(p2,p1,v1,pc2,pc1,c1);
+   }
+
+// clip a triangle in homogeneous clip coordinates so that z<=w
+//  2 cases: clipped triangle geometry consists of either 1 or 2 triangles
+void mini3D::cliptri2(vec4 v0, // vertex v0
+                      vec4 v1, // vertex v1
+                      vec4 v2, // vertex v2
+                      vec3 c0, // color c0
+                      vec3 c1, // color c1
+                      vec3 c2) // color c2
+   {
+   double d0,d1,d2;
+
+   int ff;
+
+   d0=v0.z-v0.w;
+   d1=v1.z-v1.w;
+   d2=v2.z-v2.w;
+
+   ff=0;
+
+   if (d0<0.0) ff|=1;
+   if (d1<0.0) ff|=2;
+   if (d2<0.0) ff|=4;
+
+   switch (ff)
+      {
+      // 1 clipped triangle
+      case 1: clip1tri2(v0,fabs(d0),c0,
+                        v1,fabs(d1),c1,
+                        v2,fabs(d2),c2); break;
+      case 2: clip1tri2(v1,fabs(d1),c1,
+                        v0,fabs(d0),c0,
+                        v2,fabs(d2),c2); break;
+      case 4: clip1tri2(v2,fabs(d2),c2,
+                        v0,fabs(d0),c0,
+                        v1,fabs(d1),c1); break;
+
+      // 2 clipped triangles
+      case 6: clip2tri2(v0,fabs(d0),c0,
+                        v1,fabs(d1),c1,
+                        v2,fabs(d2),c2); break;
+      case 5: clip2tri2(v1,fabs(d1),c1,
+                        v0,fabs(d0),c0,
+                        v2,fabs(d2),c2); break;
+      case 3: clip2tri2(v2,fabs(d2),c2,
+                        v0,fabs(d0),c0,
+                        v1,fabs(d1),c1); break;
 
       // entire triangle
       case 7: render_triangle(v0,v1,v2,c0,c1,c2); break;
       }
    }
+
+// render sphere by splitting it into triangles
+void mini3D::render_sphere(vec3 m,double r,vec3f c)
+   {
+   static const unsigned int n=64;
+
+   static bool done=false;
+   static vec3 delta[n+1];
+
+   if (!done)
+      {
+      for (unsigned int i=0; i<=n; i++)
+         delta[i]=vec3(cos((double)i/n*2*M_PI),sin((double)i/n*2*M_PI),0);
+
+      done=true;
+      }
+
+   for (unsigned int i=0; i<n; i++)
+      render_triangle(m,m+delta[i]*r,m+delta[i+1]*r,c,c,c);
+   }
+
+// render sprite by reducing it to a sphere
+void mini3D::render_sprite(vec3 m,double r,vec3f c,databuf *b)
+   {render_sphere(m,r,c);}
