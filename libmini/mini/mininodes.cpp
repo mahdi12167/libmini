@@ -745,8 +745,8 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       right.normalize();
 
       setnrm(nrm[i]);
-      addvtx(pos[i]-right*width/2);
-      addvtx(pos[i]+right*width/2);
+      addvtx(pos[i]-0.5*right*width);
+      addvtx(pos[i]+0.5*right*width);
       }
    }
 
@@ -770,8 +770,8 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       right.normalize();
 
       setnrm(nrm[i]);
-      addvtx(pos[i]-right*width[i]/2);
-      addvtx(pos[i]+right*width[i]/2);
+      addvtx(pos[i]-0.5*right*width[i]);
+      addvtx(pos[i]+0.5*right*width[i]);
       }
    }
 
@@ -795,8 +795,8 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
       right.normalize();
 
       setnrm(nrm[i]);
-      addvtx(pos[i]-right*(double)width[i]/2);
-      addvtx(pos[i]+right*(double)width[i]/2);
+      addvtx(pos[i]-0.5*right*(double)width[i]);
+      addvtx(pos[i]+0.5*right*(double)width[i]);
       }
    }
 
@@ -821,8 +821,8 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
 
       setnrm(nrm[i]);
       setcol(miniv3f(col[i]));
-      addvtx(pos[i]-right*width/2);
-      addvtx(pos[i]+right*width/2);
+      addvtx(pos[i]-0.5*right*width);
+      addvtx(pos[i]+0.5*right*width);
       }
    }
 
@@ -848,8 +848,8 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
 
       setnrm(nrm[i]);
       setcol(miniv3f(col[i]));
-      addvtx(pos[i]-right*width[i]/2);
-      addvtx(pos[i]+right*width[i]/2);
+      addvtx(pos[i]-0.5*right*width[i]);
+      addvtx(pos[i]+0.5*right*width[i]);
       }
    }
 
@@ -875,8 +875,8 @@ mininode_geometry_band::mininode_geometry_band(const minidyna<miniv3d> &pos,cons
 
       setnrm(nrm[i]);
       setcol(col[i]);
-      addvtx(pos[i]-right*(double)width[i]/2);
-      addvtx(pos[i]+right*(double)width[i]/2);
+      addvtx(pos[i]-0.5*right*(double)width[i]);
+      addvtx(pos[i]+0.5*right*(double)width[i]);
       }
    }
 
@@ -885,22 +885,70 @@ mininode_geometry_band::mininode_geometry_band(const std::vector<mini3D::joint_s
    {
    if (points.size()<2) return;
 
-   for (unsigned int i=0; i<points.size(); i++)
+   std::vector<mini3D::joint_struct> p1,p2;
+
+   // average points that are closer than half band width
+   p1.push_back(points.front());
+   for (unsigned int i=1; i+2<points.size(); i++)
+      {
+      double d;
+
+      d=(points[i+1].pos-points[i].pos).getlength2();
+
+      if (d<dsqr(0.5*points[i].wdt))
+         {
+         p1.push_back(0.5*(points[i]+points[i+1]));
+         i++;
+         }
+      else
+         {
+         p1.push_back(points[i]);
+         if (i+2==points.size()) p1.push_back(points[i+1]);
+         }
+      }
+   p1.push_back(points.back());
+
+   // create helper points for band turns greater than 90 degrees
+   p2.push_back(p1.front());
+   for (unsigned int i=1; i+1<p1.size(); i++)
+      {
+      vec3 d1,d2;
+
+      d1=p1[i].pos-p1[i-1].pos;
+      d1=p1[i+1].pos-p1[i].pos;
+
+      if (d1.dot(d2)<0.0)
+         {
+         vec3 dir=get_halfdir(d1,d2);
+         vec3 d=0.5*dir.normalize()*(double)p1[i].wdt;
+
+         p2.push_back(p1[i]);
+         p2.back().pos=p2.back().pos-d;
+
+         p2.push_back(p1[i]);
+         p2.back().pos=p2.back().pos+d;
+         }
+      else p2.push_back(p1[i]);
+      }
+   p2.push_back(p1.back());
+
+   // convert band to triangle strip
+   for (unsigned int i=0; i<p2.size(); i++)
       {
       vec3 dir;
 
-      if (i==0) dir=points[i+1].pos-points[i].pos;
-      else if (i==points.size()-1) dir=points[i].pos-points[i-1].pos;
-      else dir=get_halfdir(points[i].pos-points[i-1].pos,points[i+1].pos-points[i].pos);
+      if (i==0) dir=p2[i+1].pos-p2[i].pos;
+      else if (i==p2.size()-1) dir=p2[i].pos-p2[i-1].pos;
+      else dir=get_halfdir(p2[i].pos-p2[i-1].pos,p2[i+1].pos-p2[i].pos);
       dir=dir.normalize();
 
-      vec3 right=dir/miniv3d(points[i].nrm);
+      vec3 right=dir.cross(vec3(p2[i].nrm));
       right=right.normalize();
 
-      setnrm(points[i].nrm);
-      setcol(points[i].col);
-      addvtx(points[i].pos-right*(double)points[i].wdt/2);
-      addvtx(points[i].pos+right*(double)points[i].wdt/2);
+      setnrm(p2[i].nrm);
+      setcol(p2[i].col);
+      addvtx(p2[i].pos-0.5*right*(double)p2[i].wdt);
+      addvtx(p2[i].pos+0.5*right*(double)p2[i].wdt);
       }
    }
 
