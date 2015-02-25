@@ -130,7 +130,12 @@ void mini3D::strip(const std::vector<point_struct> &s)
          {
          idx3=addvtx(s[i].pos,s[i].col);
 
-         primitives_.push_back(new primitive_triangle(idx1,idx2,idx3,&vertices_));
+         vec3 p1=s[idx1].pos;
+         vec3 p2=s[idx2].pos;
+         vec3 p3=s[idx3].pos;
+
+         if (p1!=p2 && p2!=p3 && p3!=p1)
+            primitives_.push_back(new primitive_triangle(idx1,idx2,idx3,&vertices_));
 
          idx1=idx2;
          idx2=idx3;
