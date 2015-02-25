@@ -913,7 +913,7 @@ mininode_geometry_band::mininode_geometry_band(const std::vector<mini3D::joint_s
       vec3 d1,d2;
 
       d1=p1[i].pos-p1[i-1].pos;
-      d1=p1[i+1].pos-p1[i].pos;
+      d2=p1[i+1].pos-p1[i].pos;
 
       if (d1.dot(d2)<0.0)
          {
@@ -940,7 +940,7 @@ mininode_geometry_band::mininode_geometry_band(const std::vector<mini3D::joint_s
       else dir=get_halfdir(p2[i].pos-p2[i-1].pos,p2[i+1].pos-p2[i].pos);
       dir=dir.normalize();
 
-      vec3 right=dir.cross(vec3(p2[i].nrm));
+      vec3 right=dir.cross(p2[i].nrm);
       right=right.normalize();
 
       setnrm(p2[i].nrm);

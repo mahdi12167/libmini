@@ -44,24 +44,72 @@ void mini3D::line(const std::vector<point_struct> &l)
 // add band to scene
 void mini3D::band(const std::vector<joint_struct> &b)
    {
+   if (b.size()<2) return;
+
+   std::vector<mini3D::joint_struct> b1;
+
+   // average points that are closer than half band width
+   b1.push_back(b.front());
+   if (b.size()>2) b1.push_back(b[1]);
+   for (unsigned int i=2; i+1<b.size(); i++)
+      {
+      double d,w;
+
+      d=(b[i].pos-b1.back().pos).getlength2();
+      w=0.5*(b[i].wdt+b1.back().wdt);
+
+      if (d<dsqr(0.5*w))
+         b1.back()=0.5*(b[i]+b1.back());
+      else
+         b1.push_back(b[i]);
+      }
+   b1.push_back(b.back());
+
+   std::vector<mini3D::joint_struct> b2;
+
+   // create helper points for band turns greater than 90 degrees
+   b2.push_back(b1.front());
+   for (unsigned int i=1; i+1<b1.size(); i++)
+      {
+      vec3 d1,d2;
+
+      d1=b1[i].pos-b1[i-1].pos;
+      d2=b1[i+1].pos-b1[i].pos;
+
+      if (d1.dot(d2)<0.0)
+         {
+         vec3 dir=halfdir(d1,d2);
+         vec3 d=0.5*dir.normalize()*(double)b1[i].wdt;
+
+         b2.push_back(b1[i]);
+         b2.back().pos=b2.back().pos-d;
+
+         b2.push_back(b1[i]);
+         b2.back().pos=b2.back().pos+d;
+         }
+      else b2.push_back(b1[i]);
+      }
+   b2.push_back(b1.back());
+
    std::vector<point_struct> s;
 
-   for (unsigned int i=0; i<b.size(); i++)
+   // convert band to triangle strip
+   for (unsigned int i=0; i<b2.size(); i++)
       {
       vec3 dir;
 
-      if (i==0) dir=b[i+1].pos-b[i].pos;
-      else if (i==b.size()-1) dir=b[i].pos-b[i-1].pos;
-      else dir=halfdir(b[i].pos-b[i-1].pos,b[i+1].pos-b[i].pos);
+      if (i==0) dir=b2[i+1].pos-b2[i].pos;
+      else if (i+1==b2.size()) dir=b2[i].pos-b2[i-1].pos;
+      else dir=halfdir(b2[i].pos-b2[i-1].pos,b2[i+1].pos-b2[i].pos);
       dir=dir.normalize();
 
-      vec3 right=dir.cross(b[i].nrm);
+      vec3 right=dir.cross(b2[i].nrm);
       right=right.normalize();
 
-      point_struct p1={b[i].pos-right*b[i].wdt/2,b[i].col};
+      point_struct p1={b2[i].pos-0.5*right*(double)b2[i].wdt,b2[i].col};
       s.push_back(p1);
 
-      point_struct p2={b[i].pos+right*b[i].wdt/2,b[i].col};
+      point_struct p2={b2[i].pos+0.5*right*(double)b2[i].wdt,b2[i].col};
       s.push_back(p2);
       }
 
