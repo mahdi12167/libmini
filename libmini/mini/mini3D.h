@@ -4,7 +4,6 @@
 #define MINI3D_H
 
 #include "minibase.h"
-#include "database.h"
 
 #include "vector"
 #include "glslmath.h"
@@ -89,42 +88,6 @@ class primitive_triangle: public primitive
    unsigned int index1,index2,index3;
    };
 
-//! sphere rendering primitive
-class primitive_sphere: public primitive
-   {
-   public:
-
-   primitive_sphere() {}
-
-   primitive_sphere(unsigned int idx,double r,
-                    const std::vector<vertex_struct> *v)
-      : primitive((*v)[idx].pos,r),
-      index(idx),radius(r)
-      {}
-
-   virtual double depth(vec3 p) const
-      {return((p-center).getlength2());}
-
-   unsigned int index;
-   double radius;
-   };
-
-//! sprite rendering primitive
-class primitive_sprite: public primitive_sphere
-   {
-   public:
-
-   primitive_sprite() {}
-
-   primitive_sprite(unsigned int idx,double r,const databuf &b,
-                    const std::vector<vertex_struct> *v)
-      : primitive_sphere(idx,r,v),
-      buf(b)
-      {}
-
-   databuf buf;
-   };
-
 //! 3D software rendering pipeline
 class mini3D
    {
@@ -142,21 +105,6 @@ class mini3D
       vec3f nrm;
       vec3f col;
       float wdt;
-      };
-
-   struct sphere_struct
-      {
-      vec3 pos;
-      vec3f col;
-      double r;
-      };
-
-   struct sprite_struct
-      {
-      vec3 pos;
-      vec3f col;
-      double r;
-      databuf buf;
       };
 
    //! default constructor
@@ -179,12 +127,6 @@ class mini3D
 
    //! add triangle strip to scene
    void strip(const std::vector<point_struct> &s);
-
-   //! add sphere to scene
-   void sphere(const struct sphere_struct &s);
-
-   //! add sprite to scene
-   void sprite(const struct sprite_struct &s);
 
    //! render scene
    void render();
@@ -225,8 +167,6 @@ class mini3D
 
    void clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b);
    void clip_triangle(primitive::vertex_struct *a,primitive::vertex_struct *b,primitive::vertex_struct *c);
-   void clip_sphere(primitive::vertex_struct *m,double r);
-   void clip_sprite(primitive::vertex_struct *m,double r,databuf *b);
 
    inline void clip1tri1(vec4 v0,double d0,vec3 c0,
                          vec4 v1,double d1,vec3 c1,
@@ -252,8 +192,6 @@ class mini3D
 
    virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc) = 0;
    virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc) = 0;
-   virtual void render_sphere(vec3 m,double r,vec3f c);
-   virtual void render_sprite(vec3 m,double r,vec3f c,databuf *b);
    };
 
 inline struct mini3D::joint_struct operator + (const struct mini3D::joint_struct &a,const struct mini3D::joint_struct &b)
@@ -275,12 +213,12 @@ class mini3Dcounter: public mini3D
 
    mini3Dcounter()
       : mini3D()
-      {lines=triangles=spheres=sprites=0;}
+      {lines=triangles=0;}
 
    //! render scene
    void render()
       {
-      lines=triangles=spheres=sprites=0;
+      lines=triangles=0;
       mini3D::render();
       }
 
@@ -292,32 +230,16 @@ class mini3Dcounter: public mini3D
    unsigned int numTriangles()
       {return(triangles);}
 
-   //! get total sphere count
-   unsigned int numSpheres()
-      {return(spheres);}
-
-   //! get total sprite count
-   unsigned int numSprites()
-      {return(sprites);}
-
    protected:
 
    unsigned int lines;
    unsigned int triangles;
-   unsigned int spheres;
-   unsigned int sprites;
 
    virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc)
       {lines++;}
 
    virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc)
       {triangles++;}
-
-   virtual void render_sphere(vec3 m,double r,vec3f c)
-      {spheres++;}
-
-   virtual void render_sprite(vec3 m,double r,vec3f c,databuf *b)
-      {sprites++;}
 
    };
 

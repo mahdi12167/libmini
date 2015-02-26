@@ -143,24 +143,6 @@ void mini3D::strip(const std::vector<point_struct> &s)
       }
    }
 
-// add sphere to scene
-void mini3D::sphere(const struct sphere_struct &s)
-   {
-   unsigned int idx=addvtx(s.pos,s.col);
-
-   double f=dmax(dabs(preMatrix_[0].x),dabs(preMatrix_[1].y));
-   primitives_.push_back(new primitive_sphere(idx,s.r*f,&vertices_));
-   }
-
-// add sprite to scene
-void mini3D::sprite(const struct sprite_struct &s)
-   {
-   unsigned int idx=addvtx(s.pos,s.col);
-
-   double f=dmax(dabs(preMatrix_[0].x),dabs(preMatrix_[1].y));
-   primitives_.push_back(new primitive_sprite(idx,s.r*f,s.buf,&vertices_));
-   }
-
 // compute half direction between two vectors
 vec3 mini3D::halfdir(vec3 dir1,vec3 dir2)
    {
@@ -203,10 +185,6 @@ void mini3D::render()
          clip_line(&vertices_[pl->index1],&vertices_[pl->index2]);
       else if (primitive_triangle *pt=dynamic_cast<primitive_triangle*>(p))
          clip_triangle(&vertices_[pt->index1],&vertices_[pt->index2],&vertices_[pt->index3]);
-      else if (primitive_sphere *ps=dynamic_cast<primitive_sphere*>(p))
-         clip_sphere(&vertices_[ps->index],ps->radius);
-      else if (primitive_sprite *ps=dynamic_cast<primitive_sprite*>(p))
-         clip_sprite(&vertices_[ps->index],ps->radius,&ps->buf);
       }
    }
 
@@ -314,20 +292,6 @@ void mini3D::clip_triangle(primitive::vertex_struct *a,primitive::vertex_struct 
    {
    cliptri1(a->pos_post,b->pos_post,c->pos_post,
             a->col,b->col,c->col);
-   }
-
-// clip and render sphere using homogeneous clip coordinates
-void mini3D::clip_sphere(primitive::vertex_struct *m,double r)
-   {
-   if (m->pos_post.z>-m->pos_post.w && m->pos_post.z<m->pos_post.w)
-      render_sphere(m->pos_post,r*dabs(postMatrix_[1].y)/m->pos_post.w,m->col);
-   }
-
-// clip and render sprite using homogeneous clip coordinates
-void mini3D::clip_sprite(primitive::vertex_struct *m,double r,databuf *b)
-   {
-   if (m->pos_post.z>-m->pos_post.w && m->pos_post.z<m->pos_post.w)
-      render_sprite(m->pos_post,r*dabs(postMatrix_[1].y)/m->pos_post.w,m->col,b);
    }
 
 // clip a triangle (resulting in one remaining triangle)
@@ -511,27 +475,3 @@ void mini3D::cliptri2(vec4 v0, // vertex v0
       case 7: render_triangle(v0,v1,v2,c0,c1,c2); break;
       }
    }
-
-// render sphere by splitting it into triangles
-void mini3D::render_sphere(vec3 m,double r,vec3f c)
-   {
-   static const unsigned int n=64;
-
-   static bool done=false;
-   static vec3 delta[n+1];
-
-   if (!done)
-      {
-      for (unsigned int i=0; i<=n; i++)
-         delta[i]=vec3(cos((double)i/n*2*M_PI),sin((double)i/n*2*M_PI),0);
-
-      done=true;
-      }
-
-   for (unsigned int i=0; i<n; i++)
-      render_triangle(m,m+delta[i]*r,m+delta[i+1]*r,c,c,c);
-   }
-
-// render sprite by reducing it to a sphere
-void mini3D::render_sprite(vec3 m,double r,vec3f c,databuf *b)
-   {render_sphere(m,r,c);}
