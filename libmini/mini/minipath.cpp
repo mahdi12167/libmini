@@ -222,6 +222,18 @@ void minipath::from_csv(ministrings &csv)
    validate();
    }
 
+// serialization
+std::string minipath::to_stdstring()
+   {return(to_csv().to_string("\n").c_str());}
+
+// deserialization
+void minipath::from_stdstring(const std::string &csv)
+   {
+   ministrings strs;
+   strs.from_string(csv.c_str(),"\n");
+   from_csv(strs);
+   }
+
 // load path from file
 BOOLINT minipath::load(ministring filename)
    {

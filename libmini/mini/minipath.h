@@ -3,6 +3,8 @@
 #ifndef MINIPATH_H
 #define MINIPATH_H
 
+#include <string>
+
 #include "minicurve.h"
 
 class minipath: public minicurve
@@ -41,6 +43,12 @@ class minipath: public minicurve
 
    //! deserialization
    void from_csv(ministrings &csv);
+
+   //! serialization
+   std::string to_stdstring();
+
+   //! deserialization
+   void from_stdstring(const std::string &csv);
 
    ministring name;
    ministring activity;

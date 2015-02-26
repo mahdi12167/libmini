@@ -22,9 +22,28 @@ void miniCLOD::set(const minipath &path)
    UPDATED_=TRUE;
    }
 
-// load path
-void miniCLOD::load(ministring filename)
+// read path
+void miniCLOD::read(const std::string &csv,
+                    double max_delta,
+                    double max_length,
+                    double min_accuracy)
    {
+   path0_.set_constraints(max_delta,max_length,min_accuracy,
+                          MAXFLOAT,MAXFLOAT);
+
+   path0_.from_stdstring(csv);
+   UPDATED_=TRUE;
+   }
+
+// load path
+void miniCLOD::load(ministring filename,
+                    double max_delta,
+                    double max_length,
+                    double min_accuracy)
+   {
+   path0_.set_constraints(max_delta,max_length,min_accuracy,
+                          MAXFLOAT,MAXFLOAT);
+
    path0_.load(filename);
    UPDATED_=TRUE;
    }
@@ -90,9 +109,9 @@ void miniCLOD::calcDC()
 
    float dc;
 
-   dc_.resize(path_.getsize(),0.0f);
+   dc_.resize(path_.size(),0.0f);
 
-   for (i=0; i<path_.getsize(); i++)
+   for (i=0; i<path_.size(); i++)
       {
       dc=(path_.get(i).velocity-MINV_)/(MAXV_-MINV_);
 
@@ -154,11 +173,11 @@ float miniCLOD::calcDM(int left,int right)
 // calculate the d2-values
 void miniCLOD::calcD2()
    {
-   d2_.resize(path_.getsize(),0.0f);
-   dm_.resize(path_.getsize(),0.0f);
+   d2_.resize(path_.size(),0.0f);
+   dm_.resize(path_.size(),0.0f);
 
    if (!path_.empty())
-      calcD2(0,path_.getsize()-1);
+      calcD2(0,path_.size()-1);
    }
 
 // propagate the d2-values top-down
@@ -256,7 +275,7 @@ void miniCLOD::calcpath()
    if (!path_.empty())
       {
       addpoint(path_.front());
-      calcpath(0,path_.getsize()-1);
+      calcpath(0,path_.size()-1);
       addpoint(path_.back());
       }
 
@@ -295,7 +314,7 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
 
             addpoint(path_.front());
 
-            struct state_struct start={0,(int)path_.getsize()-1,FALSE};
+            struct state_struct start={0,(int)path_.size()-1,FALSE};
             STACK_.push_back(start);
             }
          }
