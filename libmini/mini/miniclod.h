@@ -26,13 +26,15 @@ class miniCLOD
    void read(const std::string &csv,
              double max_delta=MAXFLOAT, // maximum continuous point distance
              double max_length=MAXFLOAT, // maximum continuous time difference
-             double min_accuracy=MAXFLOAT); // minimum required measurement accuracy
+             double min_accuracy=MAXFLOAT, // minimum required measurement accuracy
+             int orb=minicoord::MINICOORD_ORB_NONE); // path orbital
 
    //! load path
    void load(ministring filename,
              double max_delta=MAXFLOAT, // maximum continuous point distance
              double max_length=MAXFLOAT, // maximum continuous time difference
-             double min_accuracy=MAXFLOAT); // minimum required measurement accuracy
+             double min_accuracy=MAXFLOAT, // minimum required measurement accuracy
+             int orb=minicoord::MINICOORD_ORB_NONE); // path orbital
 
    //! create path geometry
    void create(vec3 eye, // actual eye point
