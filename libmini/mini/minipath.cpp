@@ -173,7 +173,7 @@ void minipath::from_csv(ministrings &csv)
                values[i]=values[i].tail("\"").head("\"");
 
             // lat/lon/h /w time
-            meas.set_llh(values[2].value(),values[3].value(),values[4].value(),utc2unixtime(values[8]));
+            meas.set_llh(values[2].value(),values[3].value(),values[4].value(),utc2unixtime(values[8]),crs_orb);
 
             // physical properties
             meas.accuracy=values[6].value();
@@ -341,7 +341,7 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
 
                minimeas meas;
 
-               meas.set_llh(lat.value(),lon.value(),ele.value(),utc2unixtime(time));
+               meas.set_llh(lat.value(),lon.value(),ele.value(),utc2unixtime(time),crs_orb);
                if (trkpt==1) meas.start=TRUE;
 
                meas.accuracy=pdop.value();
@@ -398,7 +398,8 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
                   time=line.prefix(",").value();
                   line=line.tail(")");
 
-                  minicoord coord(miniv4d(lon*3600,lat*3600,elev,time),minicoord::MINICOORD_LLH);
+                  minicoord coord(miniv4d(lon*3600,lat*3600,elev,time),
+                                  minicoord::MINICOORD_LLH,0,minicoord::MINICOORD_DATUM_NONE,crs_orb);
 
                   BOOLINT start=FALSE;
                   ministring desc;

@@ -10,8 +10,10 @@ class minicurve: public minidyna<minimeas>
    {
    public:
 
-   minicurve(double start=0.0,double stop=1.0)
-      : minidyna<minimeas>()
+   minicurve(double start=0.0,double stop=1.0,
+             int orb=minicoord::MINICOORD_ORB_NONE)
+      : minidyna<minimeas>(),
+        crs_orb(orb)
       {
       curve_start=start;
       curve_stop=stop;
@@ -29,7 +31,8 @@ class minicurve: public minidyna<minimeas>
 
    minicurve(const minicoord &p1,const minicoord &p2,
              unsigned int n=0)
-      : minidyna<minimeas>()
+      : minidyna<minimeas>(),
+        crs_orb(minicoord::MINICOORD_ORB_NONE)
       {
       curve_start=0.0;
       curve_stop=1.0;
@@ -48,6 +51,8 @@ class minicurve: public minidyna<minimeas>
       }
 
    virtual ~minicurve() {}
+
+   void set_orb(int orb);
 
    void append(const minimeas &p);
 
@@ -118,6 +123,8 @@ class minicurve: public minidyna<minimeas>
    void from_strings(ministrings &infos);
 
    protected:
+
+   int crs_orb;
 
    BOOLINT valid;
 

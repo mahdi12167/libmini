@@ -7,6 +7,12 @@
 
 #include "minicurve.h"
 
+void minicurve::set_orb(int orb)
+   {
+   crs_orb=orb;
+   valid=FALSE;
+   }
+
 void minicurve::append(const minimeas &p)
    {
    minidyna<minimeas>::append(p);
@@ -189,7 +195,8 @@ void minicurve::validate()
             if (isNAN(get(i).vec.z)) ref(i).vec.z=0.0;
 
       // convert to ecef
-      for (i=0; i<getsize(); i++) ref(i).convert2ecef();
+      for (i=0; i<getsize(); i++)
+         ref(i).convert2(minicoord::MINICOORD_ECEF,0,minicoord::MINICOORD_DATUM_NONE,crs_orb);
 
       // check for maximum time difference and travelled distance
       for (i=1; i<getsize(); i++)

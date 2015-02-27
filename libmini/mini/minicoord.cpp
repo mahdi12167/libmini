@@ -156,25 +156,25 @@ minicoord::minicoord(const double cx,const double cy,const double cz,const MINIC
 minicoord::~minicoord() {}
 
 // set lat/lon/height in degrees/meters
-void minicoord::set_llh(double lat,double lon,double height,double t)
+void minicoord::set_llh(double lat,double lon,double height,double t,int orb)
    {
    vec=miniv4d(3600*lon,3600*lat,height,t);
    type=minicoord::MINICOORD_LLH;
 
    crs_zone=0;
-   crs_datum=MINICOORD_DATUM_WGS84;
-   crs_orb=MINICOORD_ORB_EARTH;
+   crs_datum=MINICOORD_DATUM_NONE;
+   crs_orb=orb;
    }
 
 // set polar coordinates on unit sphere
-void minicoord::set_polar(double alpha,double beta,double height,double t)
+void minicoord::set_polar(double alpha,double beta,double height,double t,int orb)
    {
    vec=miniv4d(3600*alpha,3600*beta,height,t);
    type=minicoord::MINICOORD_LLH;
 
    crs_zone=0;
    crs_datum=MINICOORD_DATUM_NONE;
-   crs_orb=MINICOORD_ORB_UNIT_SPHERE;
+   crs_orb=orb;
    }
 
 // set time (unix time since 1.1.1970)
