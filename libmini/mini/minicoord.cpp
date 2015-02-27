@@ -290,6 +290,8 @@ void minicoord::convert2(MINICOORD t,int zone,MINICOORD_DATUM datum,int orb)
    double r_major,r_minor;
 
    scale2(orb);
+
+   if (orb==MINICOORD_ORB_NONE) orb=crs_orb;
    getorbaxis(orb,r_major,r_minor);
 
    switch (type)
