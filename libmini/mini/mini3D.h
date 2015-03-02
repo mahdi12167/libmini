@@ -166,7 +166,7 @@ class mini3D
 
    void mergesort(std::vector<primitive *> &a);
 
-   void clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,double z);
+   void clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,vec4 P);
 
    void clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b);
    void clip_triangle(primitive::vertex_struct *a,primitive::vertex_struct *b,primitive::vertex_struct *c);

@@ -352,7 +352,7 @@ int main(int argc,char *argv[])
    lookat.convert2ecef();
    vec3 l=lookat.getpos();
    vec3 u=l;
-   mat4 p=mat4::perspective(90,1,1,1E6);
+   mat4 p=mat4::perspective(90,1,1E2,1E5);
    mat4 mv=mat4::lookat(e,l,u);
    mat4 mvp=p*mv;
    t.postMultiply(mvp);

@@ -272,12 +272,14 @@ void mini3D::mergesort(std::vector<primitive *> &a)
    }
 
 // clip line segment in homogeneous clip space
-void mini3D::clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,double w)
+void mini3D::clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,vec4 P)
    {
-   double f=(a.z-w)/(a.z-b.z);
+   double t;
 
-   a=a+(b-a)*f;
-   ac=ac+(bc-ac)*f;
+   t=-P.dot(a)/(P.dot(b)-P.dot(a));
+
+   a=a+(b-a)*t;
+   ac=ac+(bc-ac)*t;
    }
 
 // clip and render line using homogeneous clip coordinates
@@ -298,10 +300,10 @@ void mini3D::clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b)
       vec3 clipac=vec3(a->col);
       vec3 clipbc=vec3(b->col);
 
-      if (!af) clip(clipa,clipb,clipac,clipbc,-clipa.w);
-      if (!bf) clip(clipb,clipa,clipbc,clipac,-clipb.w);
-      if (!ab) clip(clipa,clipb,clipac,clipbc,clipa.w);
-      if (!bb) clip(clipb,clipa,clipbc,clipac,clipb.w);
+      if (!af) clip(clipa,clipb,clipac,clipbc,vec4(0,0,1,1));
+      if (!bf) clip(clipb,clipa,clipbc,clipac,vec4(0,0,1,1));
+      if (!ab) clip(clipa,clipb,clipac,clipbc,vec4(0,0,-1,1));
+      if (!bb) clip(clipb,clipa,clipbc,clipac,vec4(0,0,-1,1));
 
       render_line(clipa,clipb,clipac,clipbc);
       }
@@ -324,11 +326,16 @@ inline void mini3D::clip1tri1(vec4 v0,double d0,vec3 c0,
    vec4 p1,p2;
    vec3 pc1,pc2;
 
-   p1=(d1*v0+d0*v1)/(d0+d1);
-   p2=(d2*v0+d0*v2)/(d0+d2);
+   double t1,t2;
 
-   pc1=(d1*c0+d0*c1)/(d0+d1);
-   pc2=(d2*c0+d0*c2)/(d0+d2);
+   t1=d0/(d0-d1);
+   t2=d0/(d0-d2);
+
+   p1=v0*(1.0-t1)+v1*t1;
+   p2=v0*(1.0-t2)+v2*t2;
+
+   pc1=c0*(1.0-t1)+c1*t1;
+   pc2=c0*(1.0-t2)+c2*t2;
 
    cliptri2(v0,p1,p2,c0,pc1,pc2);
    }
@@ -343,11 +350,16 @@ inline void mini3D::clip2tri1(vec4 v0,double d0,vec3 c0,
    vec4 p1,p2;
    vec3 pc1,pc2;
 
-   p1=(d1*v0+d0*v1)/(d0+d1);
-   p2=(d2*v0+d0*v2)/(d0+d2);
+   double t1,t2;
 
-   pc1=(d1*c0+d0*c1)/(d0+d1);
-   pc2=(d2*c0+d0*c2)/(d0+d2);
+   t1=d0/(d0-d1);
+   t2=d0/(d0-d2);
+
+   p1=v0*(1.0-t1)+v1*t1;
+   p2=v0*(1.0-t2)+v2*t2;
+
+   pc1=c0*(1.0-t1)+c1*t1;
+   pc2=c0*(1.0-t2)+c2*t2;
 
    cliptri2(v1,v2,p2,c1,c2,pc2);
    cliptri2(p2,p1,v1,pc2,pc1,c1);
@@ -366,39 +378,39 @@ void mini3D::cliptri1(vec4 v0, // vertex v0
 
    int ff;
 
-   d0=v0.z+v0.w;
-   d1=v1.z+v1.w;
-   d2=v2.z+v2.w;
+   d0=-v0.z-v0.w;
+   d1=-v1.z-v1.w;
+   d2=-v2.z-v2.w;
 
    ff=0;
 
-   if (d0>0.0) ff|=1;
-   if (d1>0.0) ff|=2;
-   if (d2>0.0) ff|=4;
+   if (d0<0.0) ff|=1;
+   if (d1<0.0) ff|=2;
+   if (d2<0.0) ff|=4;
 
    switch (ff)
       {
       // 1 clipped triangle
-      case 1: clip1tri1(v0,fabs(d0),c0,
-                        v1,fabs(d1),c1,
-                        v2,fabs(d2),c2); break;
-      case 2: clip1tri1(v1,fabs(d1),c1,
-                        v0,fabs(d0),c0,
-                        v2,fabs(d2),c2); break;
-      case 4: clip1tri1(v2,fabs(d2),c2,
-                        v0,fabs(d0),c0,
-                        v1,fabs(d1),c1); break;
+      case 1: clip1tri1(v0,d0,c0,
+                        v1,d1,c1,
+                        v2,d2,c2); break;
+      case 2: clip1tri1(v1,d1,c1,
+                        v0,d0,c0,
+                        v2,d2,c2); break;
+      case 4: clip1tri1(v2,d2,c2,
+                        v0,d0,c0,
+                        v1,d1,c1); break;
 
       // 2 clipped triangles
-      case 6: clip2tri1(v0,fabs(d0),c0,
-                        v1,fabs(d1),c1,
-                        v2,fabs(d2),c2); break;
-      case 5: clip2tri1(v1,fabs(d1),c1,
-                        v0,fabs(d0),c0,
-                        v2,fabs(d2),c2); break;
-      case 3: clip2tri1(v2,fabs(d2),c2,
-                        v0,fabs(d0),c0,
-                        v1,fabs(d1),c1); break;
+      case 6: clip2tri1(v0,d0,c0,
+                        v1,d1,c1,
+                        v2,d2,c2); break;
+      case 5: clip2tri1(v1,d1,c1,
+                        v0,d0,c0,
+                        v2,d2,c2); break;
+      case 3: clip2tri1(v2,d2,c2,
+                        v0,d0,c0,
+                        v1,d1,c1); break;
 
       // entire triangle
       case 7: cliptri2(v0,v1,v2,c0,c1,c2); break;
@@ -415,11 +427,16 @@ inline void mini3D::clip1tri2(vec4 v0,double d0,vec3 c0,
    vec4 p1,p2;
    vec3 pc1,pc2;
 
-   p1=(d1*v0+d0*v1)/(d0+d1);
-   p2=(d2*v0+d0*v2)/(d0+d2);
+   double t1,t2;
 
-   pc1=(d1*c0+d0*c1)/(d0+d1);
-   pc2=(d2*c0+d0*c2)/(d0+d2);
+   t1=d0/(d0-d1);
+   t2=d0/(d0-d2);
+
+   p1=v0*(1.0-t1)+v1*t1;
+   p2=v0*(1.0-t2)+v2*t2;
+
+   pc1=c0*(1.0-t1)+c1*t1;
+   pc2=c0*(1.0-t2)+c2*t2;
 
    render_triangle(v0,p1,p2,c0,pc1,pc2);
    }
@@ -434,11 +451,16 @@ inline void mini3D::clip2tri2(vec4 v0,double d0,vec3 c0,
    vec4 p1,p2;
    vec3 pc1,pc2;
 
-   p1=(d1*v0+d0*v1)/(d0+d1);
-   p2=(d2*v0+d0*v2)/(d0+d2);
+   double t1,t2;
 
-   pc1=(d1*c0+d0*c1)/(d0+d1);
-   pc2=(d2*c0+d0*c2)/(d0+d2);
+   t1=d0/(d0-d1);
+   t2=d0/(d0-d2);
+
+   p1=v0*(1.0-t1)+v1*t1;
+   p2=v0*(1.0-t2)+v2*t2;
+
+   pc1=c0*(1.0-t1)+c1*t1;
+   pc2=c0*(1.0-t2)+c2*t2;
 
    render_triangle(v1,v2,p2,c1,c2,pc2);
    render_triangle(p2,p1,v1,pc2,pc1,c1);
@@ -470,26 +492,26 @@ void mini3D::cliptri2(vec4 v0, // vertex v0
    switch (ff)
       {
       // 1 clipped triangle
-      case 1: clip1tri2(v0,fabs(d0),c0,
-                        v1,fabs(d1),c1,
-                        v2,fabs(d2),c2); break;
-      case 2: clip1tri2(v1,fabs(d1),c1,
-                        v0,fabs(d0),c0,
-                        v2,fabs(d2),c2); break;
-      case 4: clip1tri2(v2,fabs(d2),c2,
-                        v0,fabs(d0),c0,
-                        v1,fabs(d1),c1); break;
+      case 1: clip1tri2(v0,d0,c0,
+                        v1,d1,c1,
+                        v2,d2,c2); break;
+      case 2: clip1tri2(v1,d1,c1,
+                        v0,d0,c0,
+                        v2,d2,c2); break;
+      case 4: clip1tri2(v2,d2,c2,
+                        v0,d0,c0,
+                        v1,d1,c1); break;
 
       // 2 clipped triangles
-      case 6: clip2tri2(v0,fabs(d0),c0,
-                        v1,fabs(d1),c1,
-                        v2,fabs(d2),c2); break;
-      case 5: clip2tri2(v1,fabs(d1),c1,
-                        v0,fabs(d0),c0,
-                        v2,fabs(d2),c2); break;
-      case 3: clip2tri2(v2,fabs(d2),c2,
-                        v0,fabs(d0),c0,
-                        v1,fabs(d1),c1); break;
+      case 6: clip2tri2(v0,d0,c0,
+                        v1,d1,c1,
+                        v2,d2,c2); break;
+      case 5: clip2tri2(v1,d1,c1,
+                        v0,d0,c0,
+                        v2,d2,c2); break;
+      case 3: clip2tri2(v2,d2,c2,
+                        v0,d0,c0,
+                        v1,d1,c1); break;
 
       // entire triangle
       case 7: render_triangle(v0,v1,v2,c0,c1,c2); break;
