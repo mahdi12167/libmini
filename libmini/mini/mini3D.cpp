@@ -41,6 +41,26 @@ void mini3D::line(const std::vector<point_struct> &l)
       }
    }
 
+// add line to scene
+void mini3D::line(const std::vector<joint_struct> &l)
+   {
+   unsigned int idx1,idx2;
+
+   if (l.size()>1)
+      {
+      idx1=addvtx(l[0].pos,l[0].col);
+
+      for (unsigned int i=1; i<l.size(); i++)
+         {
+         idx2=addvtx(l[i].pos,l[i].col);
+
+         primitives_.push_back(new primitive_line(idx1,idx2,&vertices_));
+
+         idx1=idx2;
+         }
+      }
+   }
+
 // add band to scene
 void mini3D::band(const std::vector<joint_struct> &b)
    {
@@ -271,16 +291,16 @@ void mini3D::clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b)
 
    if (af && bf && ab && bb)
       render_line(a->pos_post,b->pos_post,a->col,b->col);
-   else if ((!af || !bf) && (!ab || !bb))
+   else if ((af || bf) && (ab || bb))
       {
       vec4 clipa=a->pos_post;
       vec4 clipb=b->pos_post;
       vec3 clipac=vec3(a->col);
       vec3 clipbc=vec3(b->col);
 
-      if (!af) clip(clipa,clipb,clipac,clipbc,-clipb.w);
+      if (!af) clip(clipa,clipb,clipac,clipbc,-clipa.w);
       if (!bf) clip(clipb,clipa,clipbc,clipac,-clipb.w);
-      if (!ab) clip(clipa,clipb,clipac,clipbc,clipb.w);
+      if (!ab) clip(clipa,clipb,clipac,clipbc,clipa.w);
       if (!bb) clip(clipb,clipa,clipbc,clipac,clipb.w);
 
       render_line(clipa,clipb,clipac,clipbc);

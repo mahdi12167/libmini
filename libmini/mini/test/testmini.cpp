@@ -340,24 +340,26 @@ int main(int argc,char *argv[])
    miniCLODcontainer clod;
    clod.set(path);
    minicoord eye;
-   eye.set_llh(49.9,10.9,10000);
+   eye.set_llh(49.9,10.9,0);
    eye.convert2ecef();
    vec3 e=eye.getpos();
    clod.create(e);
    unsigned int points=clod.getPoints()->size();
    mini3Dcounter t;
+   t.line(*clod.getPoints());
    t.band(*clod.getPoints());
    minicoord lookat=path[1];
    lookat.convert2ecef();
    vec3 l=lookat.getpos();
    vec3 u=l;
-   mat4 p=mat4::perspective(90,1,1,1E8);
+   mat4 p=mat4::perspective(90,1,1,1E6);
    mat4 mv=mat4::lookat(e,l,u);
    mat4 mvp=p*mv;
    t.postMultiply(mvp);
    t.render();
+   unsigned int lines=t.numLines();
    unsigned int triangles=t.numTriangles();
-   if (dabs(length-10410.5)<1E1 && points==4 && triangles==11)
+   if (dabs(length-10410.5)<1E1 && points==4 && lines==3 && triangles==11)
       std::cout << "SUCCESS" << std::endl;
    else
       {std::cout << "FAILURE" << std::endl; failure++;}

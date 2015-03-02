@@ -64,7 +64,7 @@ class primitive_line: public primitive
       {}
 
    virtual double depth(vec3 p) const
-      {return((p-center).getlength2()+radius2);}
+      {return((p-center).getlength2()-radius2);}
 
    unsigned int index1,index2;
    };
@@ -121,6 +121,9 @@ class mini3D
 
    //! add line to scene
    void line(const std::vector<point_struct> &l);
+
+   //! add line to scene
+   void line(const std::vector<joint_struct> &l);
 
    //! add band to scene
    void band(const std::vector<joint_struct> &b);
