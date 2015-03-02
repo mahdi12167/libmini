@@ -1138,7 +1138,7 @@ inline mat4 mat4::perspective(double fovy,double aspect,double znear,double zfar
 
    fovy*=M_PI/180;
 
-   assert(fovy>0.0 && fovy<180.0);
+   assert(fovy>0.0 && fovy<M_PI);
    assert(znear>0.0 && zfar>znear);
    assert(aspect>0.0);
 
