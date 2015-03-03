@@ -68,6 +68,8 @@ class minicurve: public minidyna<minimeas>
    void append_point(const minicoord &p,double t,
                      unsigned int n=0);
 
+   void dispose(unsigned int i);
+
    void set_time_mapping(double map_start,double map_stop);
    void set_time_repeat(double repeat_start,double repeat_stop);
 

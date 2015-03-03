@@ -359,7 +359,11 @@ int main(int argc,char *argv[])
    t.render();
    unsigned int lines=t.numLines();
    unsigned int triangles=t.numTriangles();
-   if (dabs(length-10410.5)<1E1 && points==4 && lines==3 && triangles==11)
+   double llength=t.lineLength();
+   double tarea=t.triangleArea();
+   if (dabs(length-10410.5)<1E1 && points==4 &&
+       lines==3 && triangles==11 &&
+       dabs(llength-484.1)<1E1 && dabs(tarea-1850.0)<1E1)
       std::cout << "SUCCESS" << std::endl;
    else
       {std::cout << "FAILURE" << std::endl; failure++;}

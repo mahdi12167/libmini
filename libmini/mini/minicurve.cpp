@@ -102,6 +102,12 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
    if (level==0) append(p2);
    }
 
+void minicurve::dispose(unsigned int i)
+   {
+   minidyna<minimeas>::dispose(i);
+   valid=FALSE;
+   }
+
 void minicurve::sort()
    {shellsort<minimeas>(*this);}
 

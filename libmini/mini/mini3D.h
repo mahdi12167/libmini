@@ -216,12 +216,17 @@ class mini3Dcounter: public mini3D
 
    mini3Dcounter()
       : mini3D()
-      {lines=triangles=0;}
+      {
+      lines=triangles=0;
+      length=area=0.0;
+      }
 
    //! render scene
    void render()
       {
       lines=triangles=0;
+      length=area=0.0;
+
       mini3D::render();
       }
 
@@ -233,16 +238,33 @@ class mini3Dcounter: public mini3D
    unsigned int numTriangles()
       {return(triangles);}
 
+   //! get total line length
+   double lineLength()
+      {return(length);}
+
+   //! get total triangle area
+   double triangleArea()
+      {return(area);}
+
    protected:
 
    unsigned int lines;
    unsigned int triangles;
 
+   double length;
+   double area;
+
    virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc)
-      {lines++;}
+      {
+      lines++;
+      length+=(b-a).getlength();
+      }
 
    virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc)
-      {triangles++;}
+      {
+      triangles++;
+      area+=dabs((b-a).cross(c-a).getlength()/2);
+      }
 
    };
 
