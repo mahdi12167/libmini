@@ -177,8 +177,11 @@ class vec3
    vec3 cross(const vec3 &v) const
       {return(vec3(y*v.z-z*v.y,z*v.x-x*v.z,x*v.y-y*v.x));}
 
-   // reflect incident vector at normalized surface normal
+   // reflect incidental vector at normalized surface normal
    vec3 reflect(const vec3 &n) const;
+
+   // calculate triangle area
+   static double area(const vec3 &a,const vec3 &b,const vec3 &c);
 
    // test for approximate equality
    int approx(const vec3 &v,const double e=1E-10) const
@@ -232,9 +235,16 @@ inline vec3 vec3::normalize() const
    return(*this);
    }
 
-// reflect incident vector at normalized surface normal
+// reflect incidental vector at normalized surface normal
 inline vec3 vec3::reflect(const vec3 &n) const
    {return((*this)-2*n*dot(n));}
+
+// calculate triangle area
+inline double vec3::area(const vec3 &a,const vec3 &b,const vec3 &c)
+   {
+   double l=(b-a).cross(c-a).getlength()/2;
+   return(l<0.0?-l:l);
+   }
 
 // output operator
 inline std::ostream& operator << (std::ostream &out,const vec3 &v)
