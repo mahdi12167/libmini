@@ -689,7 +689,14 @@ BOOLINT ViewerWindow::loadPath(ministring url)
    if (!Object::is_absolute_path(url))
       url = repository_path+url;
 
-   Object_path *path = new Object_path(viewer, url, repository_path);
+   //!! expose in ui
+   double max_delta = 5*60;
+   double max_length = 500;
+   double min_accurary = 50;
+
+   Object_path *path = new Object_path(viewer,
+                                       url, repository_path,
+                                       max_delta, max_length, min_accurary);
 
    if (path == NULL) MEMERROR();
 

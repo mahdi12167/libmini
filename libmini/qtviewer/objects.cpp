@@ -631,9 +631,16 @@ void Object_extent::scale_dt(const minicoord &pos0,const minicoord &pos1)
 mininode *Object_path::path_groupnode=NULL;
 
 Object_path::Object_path(Viewer *v,
-                         const ministring &name,const ministring &repo)
+                         const ministring &name,const ministring &repo,
+                         double max_delta,double max_length,
+                         double min_accuracy,int orb)
    : Object_serializable(v,name,repo)
    {
+   Object_path::max_delta=max_delta;
+   Object_path::max_length=max_length;
+   Object_path::min_accuracy=min_accuracy;
+   Object_path::orb=orb;
+
    shown=TRUE;
    marked=FALSE;
    }
@@ -676,7 +683,11 @@ int Object_path::initGFX()
       path_node=new mininode_geometry_clod();
       if (path_node==NULL) MEMERROR();
 
-      path_node->load(get_full_name());
+      path_node->load(get_full_name(),
+                      max_delta, // maximum continuous point distance
+                      max_length, // maximum continuous time difference
+                      min_accuracy, // minimum required measurement accuracy
+                      orb); // path orbital
 
       path_node->create(0.25,100, // maximum deviation at specific distance
                         1, // maximum width at specific distance

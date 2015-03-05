@@ -206,7 +206,9 @@ class Object_path: public Object_serializable
    public:
 
    Object_path(Viewer *v=NULL,
-               const ministring &name="",const ministring &repo="");
+               const ministring &name="",const ministring &repo="",
+               double max_delta=MAXFLOAT,double max_length=MAXFLOAT,
+               double min_accuracy=MAXFLOAT,int orb=minicoord::MINICOORD_ORB_NONE);
 
    virtual ~Object_path();
 
@@ -231,6 +233,11 @@ class Object_path: public Object_serializable
    virtual BOOLINT is_marked() const;
 
    protected:
+
+   double max_delta;
+   double max_length;
+   double min_accuracy;
+   int orb;
 
    mininode_ref ecef_node;
    mininode_noculling *noculling_node;
