@@ -16,9 +16,33 @@ mininode_geometry_clod::~mininode_geometry_clod()
 void mininode_geometry_clod::set(const minipath &path)
    {miniCLOD::set(path);}
 
+// read path
+void mininode_geometry_clod::read(const std::string &csv,
+                                  double max_delta,
+                                  double max_length,
+                                  double min_accuracy,
+                                  int orb)
+   {
+   miniCLOD::read(csv,
+                  max_delta,
+                  max_length,
+                  min_accuracy,
+                  orb);
+   }
+
 // load path
-void mininode_geometry_clod::load(ministring filename)
-   {miniCLOD::load(filename);}
+void mininode_geometry_clod::load(ministring filename,
+             double max_delta,
+             double max_length,
+             double min_accuracy,
+             int orb)
+   {
+   miniCLOD::load(filename,
+                  max_delta,
+                  max_length,
+                  min_accuracy,
+                  orb);
+   }
 
 // create geometry from actual view point
 void mininode_geometry_clod::create(double maxdev,double atdist,

@@ -21,8 +21,19 @@ class mininode_geometry_clod: public mininode_geometry, public miniCLOD
    //! set path
    void set(const minipath &path);
 
+   //! read path
+   void read(const std::string &csv,
+             double max_delta=MAXFLOAT, // maximum continuous point distance
+             double max_length=MAXFLOAT, // maximum continuous time difference
+             double min_accuracy=MAXFLOAT, // minimum required measurement accuracy
+             int orb=minicoord::MINICOORD_ORB_NONE); // path orbital
+
    //! load path
-   void load(ministring filename);
+   void load(ministring filename,
+             double max_delta=MAXFLOAT, // maximum continuous point distance
+             double max_length=MAXFLOAT, // maximum continuous time difference
+             double min_accuracy=MAXFLOAT, // minimum required measurement accuracy
+             int orb=minicoord::MINICOORD_ORB_NONE); // path orbital
 
    //! create geometry from actual view point
    void create(double maxdev=1,double atdist=100, // maximum deviation at specific distance
