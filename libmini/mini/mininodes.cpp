@@ -897,7 +897,7 @@ mininode_geometry_band::mininode_geometry_band(const std::vector<mini3D::joint_s
       d=(points[i].pos-p1.back().pos).getlength2();
       w=0.5*(points[i].wdt+p1.back().wdt);
 
-      if (d<dsqr(0.5*w))
+      if (d<dsqr(0.5*w) && points[i].wdt!=0.0 && p1.back().wdt!=0.0)
          p1.back()=0.5*(points[i]+p1.back());
       else
          p1.push_back(points[i]);
