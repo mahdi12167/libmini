@@ -78,7 +78,7 @@ void mini3D::band(const std::vector<joint_struct> &b)
       d=(b[i].pos-b1.back().pos).getlength2();
       w=0.5*(b[i].wdt+b1.back().wdt);
 
-      if (d<dsqr(0.5*w) && b[i].wdt!=0.0 && p1.back().wdt!=0.0)
+      if (d<dsqr(0.5*w) && b[i].wdt!=0.0 && b1.back().wdt!=0.0)
          b1.back()=0.5*(b[i]+b1.back());
       else
          b1.push_back(b[i]);
