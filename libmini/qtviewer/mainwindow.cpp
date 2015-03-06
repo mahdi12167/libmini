@@ -80,6 +80,10 @@ void MainWindow::initSettings()
    greenGamma=1.6;
    blueGamma=1.0;
 
+   maxDelta=5*60; // 5min
+   maxLength=500; // 500m
+   minAccuracy=50; // 50m
+
    // override with persistent settings:
 
    QSettings settings("www.open-terrain.org", "qtviewer");
@@ -128,6 +132,13 @@ void MainWindow::initSettings()
       greenGamma = settings.value("greenGamma").toDouble();
    if (settings.contains("blueGamma"))
       blueGamma = settings.value("blueGamma").toDouble();
+
+   if (settings.contains("maxDelta"))
+      maxDelta = settings.value("maxDelta").toDouble();
+   if (settings.contains("maxLength"))
+      maxLength = settings.value("maxLength").toDouble();
+   if (settings.contains("minAccuracy"))
+      minAccuracy = settings.value("minAccuracy").toDouble();
 }
 
 void MainWindow::saveSettings()
@@ -159,6 +170,10 @@ void MainWindow::saveSettings()
    settings.setValue("redGamma", redGamma);
    settings.setValue("greenGamma", greenGamma);
    settings.setValue("blueGamma", blueGamma);
+
+   settings.setValue("maxDelta", maxDelta);
+   settings.setValue("maxLength", maxLength);
+   settings.setValue("minAccuracy", minAccuracy);
 }
 
 void MainWindow::createActions()
@@ -340,7 +355,7 @@ void MainWindow::createWidgets()
 
    // sea level check:
 
-   seaLevelCheck = new QCheckBox(tr("Ocean Sea Level"));
+   seaLevelCheck = new QCheckBox(tr("Ocean Sea Level (+-100m)"));
    seaLevelCheck->setChecked(false);
 
    connect(seaLevelCheck, SIGNAL(stateChanged(int)), this, SLOT(checkSeaLevel(int)));
@@ -358,7 +373,7 @@ void MainWindow::createWidgets()
 
    // light check:
 
-   lightCheck = new QCheckBox(tr("UTC Night"));
+   lightCheck = new QCheckBox(tr("UTC Night (+-12h)"));
    lightCheck->setChecked(true);
 
    connect(lightCheck, SIGNAL(stateChanged(int)), this, SLOT(checkLight(int)));
@@ -376,7 +391,7 @@ void MainWindow::createWidgets()
 
    // exaggeration check:
 
-   exaggerCheck = new QCheckBox(tr("Exaggeration"));
+   exaggerCheck = new QCheckBox(tr("Exaggeration (+-100%)"));
    exaggerCheck->setChecked(false);
 
    connect(exaggerCheck, SIGNAL(stateChanged(int)), this, SLOT(checkExagger(int)));
@@ -462,7 +477,7 @@ void MainWindow::createWidgets()
    connect(lineEdit_tmpPath,SIGNAL(textChanged(QString)),this,SLOT(tmpPathChanged(QString)));
    connect(browseButton_tmpPath, SIGNAL(pressed()), this, SLOT(browseTmpPath()));
 
-   QGroupBox *lineEditGroup_splitMeters = createEdit(TR("Split Size in Meters"), split_meters, &lineEdit_splitMeters);
+   QGroupBox *lineEditGroup_splitMeters = createEdit(TR("Split Size (meters)"), split_meters, &lineEdit_splitMeters);
    connect(lineEdit_splitMeters,SIGNAL(textChanged(QString)),this,SLOT(splitMetersChanged(QString)));
 
    QGroupBox *lineEditGroup_gridLevel = createEdit(TR("Grid Level"), grid_level, &lineEdit_gridLevel);
@@ -505,14 +520,14 @@ void MainWindow::createWidgets()
    connect(lineEdit_shadePower,SIGNAL(textChanged(QString)),this,SLOT(shadePowerChanged(QString)));
    QGroupBox *lineEditGroup_shadeAmbient = createEdit(TR("Shading Ambience"), shadeAmbient, &lineEdit_shadeAmbient);
    connect(lineEdit_shadeAmbient,SIGNAL(textChanged(QString)),this,SLOT(shadeAmbientChanged(QString)));
-   QGroupBox *lineEditGroup_jpegQuality = createEdit(TR("JPEG Quality"), jpegQuality, &lineEdit_jpegQuality);
+   QGroupBox *lineEditGroup_jpegQuality = createEdit(TR("JPEG Quality (percent)"), jpegQuality, &lineEdit_jpegQuality);
    connect(lineEdit_jpegQuality,SIGNAL(textChanged(QString)),this,SLOT(jpegQualityChanged(QString)));
 
-   QGroupBox *lineEditGroup_contourSpacing = createEdit(TR("Contour Spacing"), contourSpacing, &lineEdit_contourSpacing);
+   QGroupBox *lineEditGroup_contourSpacing = createEdit(TR("Contour Spacing (meters)"), contourSpacing, &lineEdit_contourSpacing);
    connect(lineEdit_contourSpacing,SIGNAL(textChanged(QString)),this,SLOT(contourSpacingChanged(QString)));
-   QGroupBox *lineEditGroup_contourThickness = createEdit(TR("Contour Thickness"), contourThickness, &lineEdit_contourThickness);
+   QGroupBox *lineEditGroup_contourThickness = createEdit(TR("Contour Thickness (meters)"), contourThickness, &lineEdit_contourThickness);
    connect(lineEdit_contourThickness,SIGNAL(textChanged(QString)),this,SLOT(contourThicknessChanged(QString)));
-   QGroupBox *lineEditGroup_contourBorder = createEdit(TR("Contour Border"), contourBorder, &lineEdit_contourBorder);
+   QGroupBox *lineEditGroup_contourBorder = createEdit(TR("Contour Border (meters)"), contourBorder, &lineEdit_contourBorder);
    connect(lineEdit_contourBorder,SIGNAL(textChanged(QString)),this,SLOT(contourBorderChanged(QString)));
 
    QGroupBox *lineEditGroup_blackLevel = createEdit(TR("Black Contrast Level"), blackLevel, &lineEdit_blackLevel);
@@ -529,6 +544,13 @@ void MainWindow::createWidgets()
    QGroupBox *lineEditGroup_blueGamma = createEdit(TR("Blue Gamma Correction"), blueGamma, &lineEdit_blueGamma);
    connect(lineEdit_blueGamma,SIGNAL(textChanged(QString)),this,SLOT(blueGammaChanged(QString)));
 
+   QGroupBox *lineEditGroup_maxDelta = createEdit(TR("Maximum Track Point Period (seconds)"), maxDelta, &lineEdit_maxDelta);
+   connect(lineEdit_maxDelta,SIGNAL(textChanged(QString)),this,SLOT(maxDeltaChanged(QString)));
+   QGroupBox *lineEditGroup_maxLength = createEdit(TR("Maximum Track Point Distance (meters)"), maxLength, &lineEdit_maxLength);
+   connect(lineEdit_maxLength,SIGNAL(textChanged(QString)),this,SLOT(maxLengthChanged(QString)));
+   QGroupBox *lineEditGroup_minAccuracy = createEdit(TR("Minimum Track Point Accuracy (meters)"), minAccuracy, &lineEdit_minAccuracy);
+   connect(lineEdit_minAccuracy,SIGNAL(textChanged(QString)),this,SLOT(minAccuracyChanged(QString)));
+
    paramLayout->addWidget(lineEditGroup_shadePower);
    paramLayout->addWidget(lineEditGroup_shadeAmbient);
    paramLayout->addWidget(lineEditGroup_jpegQuality);
@@ -544,6 +566,10 @@ void MainWindow::createWidgets()
    paramLayout->addWidget(lineEditGroup_redGamma);
    paramLayout->addWidget(lineEditGroup_greenGamma);
    paramLayout->addWidget(lineEditGroup_blueGamma);
+
+   paramLayout->addWidget(lineEditGroup_maxDelta);
+   paramLayout->addWidget(lineEditGroup_maxLength);
+   paramLayout->addWidget(lineEditGroup_minAccuracy);
 
    paramLayout->addStretch();
 
@@ -623,6 +649,10 @@ void MainWindow::createWidgets()
    redGammaChanged(QString(ministring(redGamma).c_str()));
    greenGammaChanged(QString(ministring(greenGamma).c_str()));
    blueGammaChanged(QString(ministring(blueGamma).c_str()));
+
+   maxDeltaChanged(QString(ministring(maxDelta).c_str()));
+   maxLengthChanged(QString(ministring(maxLength).c_str()));
+   minAccuracyChanged(QString(ministring(minAccuracy).c_str()));
 
    // progress:
 
@@ -789,6 +819,14 @@ void MainWindow::receiveChange(const ministring &action, const ministring &value
       lineEdit_redGamma->setText(QString(ministring((double)redGamma).c_str()));
       lineEdit_greenGamma->setText(QString(ministring((double)greenGamma).c_str()));
       lineEdit_blueGamma->setText(QString(ministring((double)blueGamma).c_str()));
+   }
+   else if (action == "update_track_settings")
+   {
+      viewerWindow->getTrackSettings(maxDelta, maxLength, minAccuracy);
+
+      lineEdit_maxDelta->setText(QString(ministring((double)maxDelta).c_str()));
+      lineEdit_maxLength->setText(QString(ministring((double)maxLength).c_str()));
+      lineEdit_minAccuracy->setText(QString(ministring((double)minAccuracy).c_str()));
    }
 }
 
@@ -1241,6 +1279,42 @@ void MainWindow::blueGammaChanged(QString blue)
    {
       this->blueGamma = blueGamma;
       viewerWindow->runAction("set_blue_gamma", blue.toStdString().c_str());
+   }
+}
+
+void MainWindow::maxDeltaChanged(QString delta)
+{
+   bool valid;
+   double maxDelta = delta.toDouble(&valid);
+
+   if (valid)
+   {
+      this->maxDelta = maxDelta;
+      viewerWindow->runAction("set_max_delta", delta.toStdString().c_str());
+   }
+}
+
+void MainWindow::maxLengthChanged(QString length)
+{
+   bool valid;
+   double maxLength = length.toDouble(&valid);
+
+   if (valid)
+   {
+      this->maxLength = maxLength;
+      viewerWindow->runAction("set_max_length", length.toStdString().c_str());
+   }
+}
+
+void MainWindow::minAccuracyChanged(QString accuracy)
+{
+   bool valid;
+   double minAccuracy = accuracy.toDouble(&valid);
+
+   if (valid)
+   {
+      this->minAccuracy = minAccuracy;
+      viewerWindow->runAction("set_min_accuracy", accuracy.toStdString().c_str());
    }
 }
 

@@ -109,6 +109,10 @@ private slots:
    void greenGammaChanged(QString);
    void blueGammaChanged(QString);
 
+   void maxDeltaChanged(QString);
+   void maxLengthChanged(QString);
+   void minAccuracyChanged(QString);
+
    void checkSliders(int);
 
 private:
@@ -228,6 +232,10 @@ private:
    QLineEdit *lineEdit_greenGamma;
    QLineEdit *lineEdit_blueGamma;
 
+   QLineEdit *lineEdit_maxDelta;
+   QLineEdit *lineEdit_maxLength;
+   QLineEdit *lineEdit_minAccuracy;
+
    QCheckBox *sliderButton;
 
    void getNameInfo(Object *obj,
@@ -261,6 +269,10 @@ protected:
    double redGamma;
    double greenGamma;
    double blueGamma;
+
+   double maxDelta;
+   double maxLength;
+   double minAccuracy;
 
    void initSettings();
    void saveSettings();

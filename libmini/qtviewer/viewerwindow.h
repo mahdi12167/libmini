@@ -52,6 +52,7 @@ public:
    void setContourSettings(double spacing=100.0, double thickness=1.0, double border=1.0);
    void setContrastSettings(double black=0.0, double white=1.0, double linear=0.5);
    void setGammaSettings(double red=1.2, double green=1.6, double blue=1.0);
+   void setTrackSettings(double delta=50*60, double length=500, double accuracy=50);
 
    ministring loadURL(ministring url);
    ministrings loadURLs(ministrings urls);
@@ -131,6 +132,7 @@ public:
    void getContourSettings(double &spacing, double &thickness, double &border);
    void getContrastSettings(double &black, double &white, double &linear);
    void getGammaSettings(double &red, double &green, double &blue);
+   void getTrackSettings(double &delta, double &length, double &accuracy);
 
    void notify(ministring text);
    ministrings browse(ministring title, ministring path="", BOOLINT newfile=FALSE);
@@ -220,6 +222,10 @@ private:
    double redGamma;
    double greenGamma;
    double blueGamma;
+
+   double maxDelta;
+   double maxLength;
+   double minAccuracy;
 
    Objects objects;
 

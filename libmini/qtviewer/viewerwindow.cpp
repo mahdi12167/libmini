@@ -71,6 +71,7 @@ ViewerWindow::ViewerWindow()
    setContourSettings();
    setContrastSettings();
    setGammaSettings();
+   setTrackSettings();
 
    // accept drag and drop
    setAcceptDrops(true);
@@ -509,6 +510,18 @@ void ViewerWindow::setGammaSettings(double red, double green, double blue)
       blueGamma = blue;
 
       emit signalChange("update_gamma_settings");
+   }
+}
+
+void ViewerWindow::setTrackSettings(double delta, double length, double accuracy)
+{
+   if (delta != maxDelta || length != maxLength || accuracy != minAccuracy)
+   {
+      maxDelta = delta;
+      maxLength = length;
+      minAccuracy = accuracy;
+
+      emit signalChange("update_track_settings");
    }
 }
 
@@ -1832,6 +1845,27 @@ void ViewerWindow::runAction(const ministring &action,
 
       setGammaSettings(redGamma, greenGamma, blueGamma);
    }
+   else if (action == "set_max_delta")
+   {
+      ministring delta = value;
+      maxDelta = delta.value();
+
+      setTrackSettings(maxDelta, maxLength, minAccuracy);
+   }
+   else if (action == "set_max_length")
+   {
+      ministring length = value;
+      maxLength = length.value();
+
+      setTrackSettings(maxDelta, maxLength, minAccuracy);
+   }
+   else if (action == "set_min_accuracy")
+   {
+      ministring accuracy = value;
+      minAccuracy = accuracy.value();
+
+      setTrackSettings(maxDelta, maxLength, minAccuracy);
+   }
 }
 
 Object_image *ViewerWindow::get_image(ministring key)
@@ -2638,6 +2672,13 @@ void ViewerWindow::getGammaSettings(double &red, double &green, double &blue)
     red=redGamma;
     green=greenGamma;
     blue=blueGamma;
+}
+
+void ViewerWindow::getTrackSettings(double &delta, double &length, double &accuracy)
+{
+   delta=maxDelta;
+   length=maxLength;
+   accuracy=minAccuracy;
 }
 
 void ViewerWindow::notify(ministring text)
