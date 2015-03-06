@@ -256,15 +256,17 @@ void MainWindow::createWidgets()
                  "QSplitter::handle:horizontal { background-color: white; }"
                  ":focus { background-color: white; }");
 
-   tabWidget->setStyleSheet("QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; }"
+   tabWidget->setStyleSheet("QWidget { background-color: #eeeeee; }"
+                            "QLineEdit { background-color: white; }"
+                            "QGroupBox { background-color: #eeeeee; border: 2px solid #999999; border-radius: 5px; }"
                             "QGroupBox#viewerGroupBox { border: 0; border-radius: 0; }"
                             "QGroupBox#prefGroupBox { border: 0; border-radius: 0; }"
                             "QGroupBox#paramGroupBox { border: 0; border-radius: 0; }");
 
-   prefGroup->setStyleSheet("QGroupBox { margin: 3px; padding-top: 16px; }"
+   prefGroup->setStyleSheet("QGroupBox { margin-top: 3px; margin-bottom: 3px; padding-top: 16px; }"
                             "QGroupBox::title { subcontrol-origin: padding; subcontrol-position: top left; padding-left: 8px; padding-top: 3px; }");
 
-   paramGroup->setStyleSheet("QGroupBox { margin: 3px; padding-top: 16px; }"
+   paramGroup->setStyleSheet("QGroupBox { margin-top: 3px; margin-bottom: 3px; padding-top: 16px; }"
                              "QGroupBox::title { subcontrol-origin: padding; subcontrol-position: top left; padding-left: 8px; padding-top: 3px; }");
 
    qApp->setStyle(new Style_tweaks);
