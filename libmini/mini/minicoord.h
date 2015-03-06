@@ -48,7 +48,7 @@ class minicoord
       MINICOORD_DATUM_SouthAmerican1969=14,
       };
 
-   //! supported orbs
+   //! supported orbitals
    enum MINICOORD_ORB
       {
       MINICOORD_ORB_NONE=0,
