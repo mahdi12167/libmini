@@ -197,6 +197,7 @@ void mini3D::render()
       vertices_[i].pos_post=postMatrix_*vertices_[i].pos;
 
    // render each primitive
+   render_begin();
    for (unsigned int i=0; i<primitives_.size(); i++)
       {
       primitive *p=primitives_[i];
@@ -206,6 +207,7 @@ void mini3D::render()
       else if (primitive_triangle *pt=dynamic_cast<primitive_triangle*>(p))
          clip_triangle(&vertices_[pt->index1],&vertices_[pt->index2],&vertices_[pt->index3]);
       }
+   render_end();
    }
 
 // depth sort scene

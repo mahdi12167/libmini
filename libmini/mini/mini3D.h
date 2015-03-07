@@ -193,8 +193,10 @@ class mini3D
    void cliptri2(vec4 v0,vec4 v1,vec4 v2,
                  vec3 c0,vec3 c1,vec3 c2);
 
+   virtual void render_begin() {}
    virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc) = 0;
    virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc) = 0;
+   virtual void render_end() {}
    };
 
 inline struct mini3D::joint_struct operator + (const struct mini3D::joint_struct &a,const struct mini3D::joint_struct &b)
