@@ -531,6 +531,20 @@ class mat2
                   vec2(0,c.y)));
       }
 
+   // create rotation matrix
+   static mat2 rotate(double angle)
+      {
+      double c,s;
+
+      angle*=M_PI/180;
+
+      c=cos(angle);
+      s=sin(angle);
+
+      return(mat2(vec2(c,s),
+                  vec2(-s,c)));
+      }
+
    protected:
 
    // matrix
