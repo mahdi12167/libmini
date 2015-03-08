@@ -891,17 +891,17 @@ mininode_geometry_band::mininode_geometry_band(const std::vector<mini3D::joint_s
    p1.push_back(points.front());
    if (points.size()>2) p1.push_back(points[1]);
    for (unsigned int i=2; i+1<points.size(); i++)
-      {
-      double d,w;
+      if (points[i].wdt!=0.0 && p1.back().wdt!=0.0)
+         {
+         double d,w;
 
-      d=(points[i].pos-p1.back().pos).getlength2();
-      w=0.5*(points[i].wdt+p1.back().wdt);
+         d=(points[i].pos-p1.back().pos).getlength2();
+         w=0.5*(points[i].wdt+p1.back().wdt);
 
-      if (d<dsqr(0.5*w) && points[i].wdt!=0.0 && p1.back().wdt!=0.0)
-         p1.back()=0.5*(points[i]+p1.back());
-      else
-         p1.push_back(points[i]);
-      }
+         if (d<dsqr(0.5*w)) p1.back()=0.5*(points[i]+p1.back());
+         else p1.push_back(points[i]);
+         }
+      else p1.push_back(points[i]);
    p1.push_back(points.back());
 
    std::vector<mini3D::joint_struct> p2;
@@ -909,25 +909,27 @@ mininode_geometry_band::mininode_geometry_band(const std::vector<mini3D::joint_s
    // create helper points for band turns greater than 90 degrees
    p2.push_back(p1.front());
    for (unsigned int i=1; i+1<p1.size(); i++)
-      {
-      vec3 d1,d2;
-
-      d1=p1[i].pos-p1[i-1].pos;
-      d2=p1[i+1].pos-p1[i].pos;
-
-      if (d1.dot(d2)<0.0)
+      if (p1[i].wdt!=0.0 && p2.back().wdt!=0.0 && p1[i+1].wdt!=0.0)
          {
-         vec3 dir=get_halfdir(d1,d2);
-         vec3 d=0.5*dir.normalize()*(double)p1[i].wdt;
+         vec3 d1,d2;
 
-         p2.push_back(p1[i]);
-         p2.back().pos=p2.back().pos-d;
+         d1=p1[i].pos-p1[i-1].pos;
+         d2=p1[i+1].pos-p1[i].pos;
 
-         p2.push_back(p1[i]);
-         p2.back().pos=p2.back().pos+d;
+         if (d1.dot(d2)<0.0)
+            {
+            vec3 dir=get_halfdir(d1,d2);
+            vec3 d=0.5*dir.normalize()*(double)p1[i].wdt;
+
+            p2.push_back(p1[i]);
+            p2.back().pos=p2.back().pos-d;
+
+            p2.push_back(p1[i]);
+            p2.back().pos=p2.back().pos+d;
+            }
+         else p2.push_back(p1[i]);
          }
       else p2.push_back(p1[i]);
-      }
    p2.push_back(p1.back());
 
    // convert band to triangle strip

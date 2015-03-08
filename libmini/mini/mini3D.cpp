@@ -72,17 +72,17 @@ void mini3D::band(const std::vector<joint_struct> &b)
    b1.push_back(b.front());
    if (b.size()>2) b1.push_back(b[1]);
    for (unsigned int i=2; i+1<b.size(); i++)
-      {
-      double d,w;
+      if (b[i].wdt!=0.0 && b1.back().wdt!=0.0)
+         {
+         double d,w;
 
-      d=(b[i].pos-b1.back().pos).getlength2();
-      w=0.5*(b[i].wdt+b1.back().wdt);
+         d=(b[i].pos-b1.back().pos).getlength2();
+         w=0.5*(b[i].wdt+b1.back().wdt);
 
-      if (d<dsqr(0.5*w) && b[i].wdt!=0.0 && b1.back().wdt!=0.0)
-         b1.back()=0.5*(b[i]+b1.back());
-      else
-         b1.push_back(b[i]);
-      }
+         if (d<dsqr(0.5*w)) b1.back()=0.5*(b[i]+b1.back());
+         else b1.push_back(b[i]);
+         }
+      else b1.push_back(b[i]);
    b1.push_back(b.back());
 
    std::vector<mini3D::joint_struct> b2;
@@ -90,25 +90,27 @@ void mini3D::band(const std::vector<joint_struct> &b)
    // create helper points for band turns greater than 90 degrees
    b2.push_back(b1.front());
    for (unsigned int i=1; i+1<b1.size(); i++)
-      {
-      vec3 d1,d2;
-
-      d1=b1[i].pos-b1[i-1].pos;
-      d2=b1[i+1].pos-b1[i].pos;
-
-      if (d1.dot(d2)<0.0)
+      if (b1[i].wdt!=0.0 && b2.back().wdt!=0.0 && b1[i+1].wdt!=0.0)
          {
-         vec3 dir=halfdir(d1,d2);
-         vec3 d=0.5*dir.normalize()*(double)b1[i].wdt;
+         vec3 d1,d2;
 
-         b2.push_back(b1[i]);
-         b2.back().pos=b2.back().pos-d;
+         d1=b1[i].pos-b1[i-1].pos;
+         d2=b1[i+1].pos-b1[i].pos;
 
-         b2.push_back(b1[i]);
-         b2.back().pos=b2.back().pos+d;
+         if (d1.dot(d2)<0.0)
+            {
+            vec3 dir=halfdir(d1,d2);
+            vec3 d=0.5*dir.normalize()*(double)b1[i].wdt;
+
+            b2.push_back(b1[i]);
+            b2.back().pos=b2.back().pos-d;
+
+            b2.push_back(b1[i]);
+            b2.back().pos=b2.back().pos+d;
+            }
+         else b2.push_back(b1[i]);
          }
       else b2.push_back(b1[i]);
-      }
    b2.push_back(b1.back());
 
    std::vector<point_struct> s;
