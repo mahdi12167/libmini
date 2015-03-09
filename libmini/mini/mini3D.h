@@ -207,7 +207,7 @@ inline struct mini3D::joint_struct operator + (const struct mini3D::joint_struct
 
 inline struct mini3D::joint_struct operator * (const double a,const struct mini3D::joint_struct &b)
    {
-   struct mini3D::joint_struct j={a*b.pos,a*vec3(b.nrm),a*vec3(b.col),a*b.wdt};
+   struct mini3D::joint_struct j={a*b.pos,a*vec3(b.nrm),a*vec3(b.col),(float)a*b.wdt};
    return(j);
    }
 
