@@ -114,18 +114,29 @@ class miniCLODcontainer: public miniCLOD
 
    //! default constructor
    miniCLODcontainer()
-      : miniCLOD()
+      : miniCLOD(),
+      updated_(false)
       {}
 
    virtual void updated(const std::vector<mini3D::joint_struct> &points)
-      {points_ = points;}
+      {
+      points_=points;
+      updated_=true;
+      }
 
    const std::vector<mini3D::joint_struct> *getPoints()
-      {return(&points_);}
+      {
+      updated_=false;
+      return(&points_);
+      }
+
+   bool isupdated()
+      {return(updated_);}
 
    protected:
 
    std::vector<mini3D::joint_struct> points_;
+   bool updated_;
    };
 
 #endif
