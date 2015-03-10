@@ -430,18 +430,21 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
    }
 
 // default constructor
-minipaths::minipaths(double max_delta,double max_length,double min_accuracy,double max_accel,double max_tol)
+minipaths::minipaths(double max_delta,double max_length,double min_accuracy,
+                     int orb)
    : max_delta_(max_delta),
      max_length_(max_length),
      min_accuracy_(min_accuracy),
-     max_accel_(max_accel),
-     max_tol_(max_tol)
+     orb_(orb)
    {}
 
 // conversion operator
 minipaths::operator minipath() const
    {
-   minipath paths(0,1,max_delta_,max_length_,min_accuracy_,max_accel_,max_tol_);
+   minipath paths;
+
+   paths.set_constraints(max_delta_,max_length_,min_accuracy_);
+   paths.set_orb(orb_);
 
    for (unsigned int i=0; i<size(); i++)
       {
@@ -450,4 +453,29 @@ minipaths::operator minipath() const
       }
 
    return(paths);
+   }
+
+// serialization
+std::vector<std::string> minipaths::to_stdstrings()
+   {
+   std::vector<std::string> csvs;
+
+   for (unsigned int i=0; i<size(); i++)
+      {
+      minipath path=get(i);
+      csvs.push_back(path.to_stdstring());
+      }
+
+   return(csvs);
+   }
+
+// deserialization
+void minipaths::from_stdstrings(const std::vector<std::string> &csvs)
+   {
+   for (unsigned int i=0; i<csvs.size(); i++)
+      {
+      minipath path;
+      path.from_stdstring(csvs[i]);
+      push_back(path);
+      }
    }

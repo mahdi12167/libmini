@@ -32,6 +32,13 @@ class miniCLOD
              double min_accuracy=MAXFLOAT, // minimum required measurement accuracy
              int orb=minicoord::MINICOORD_ORB_NONE); // path orbital
 
+   //! read paths
+   void read(const std::vector<std::string> &csvs,
+             double max_delta=MAXFLOAT, // maximum continuous point distance
+             double max_length=MAXFLOAT, // maximum continuous time difference
+             double min_accuracy=MAXFLOAT, // minimum required measurement accuracy
+             int orb=minicoord::MINICOORD_ORB_NONE); // path orbital
+
    //! load path
    void load(ministring filename,
              double max_delta=MAXFLOAT, // maximum continuous point distance

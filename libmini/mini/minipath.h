@@ -4,6 +4,7 @@
 #define MINIPATH_H
 
 #include <string>
+#include <vector>
 
 #include "minicurve.h"
 
@@ -13,19 +14,26 @@ class minipath: public minicurve
 
    //! default constructor
    minipath(double start=0.0,double stop=1.0,
-            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0)
-      : minicurve(start,stop),
-        name("path"), activity("none"), description("created by libmini")
-      {set_constraints(max_delta,max_length,min_accuracy,max_accel,max_tol);}
-
-   //! constructor
-   minipath(ministring filename,
-            double start=0.0,double stop=1.0,
-            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0)
+            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0,
+            int orb=minicoord::MINICOORD_ORB_NONE)
       : minicurve(start,stop),
         name("path"), activity("none"), description("created by libmini")
       {
       set_constraints(max_delta,max_length,min_accuracy,max_accel,max_tol);
+      set_orb(orb);
+      }
+
+   //! constructor
+   minipath(ministring filename,
+            double start=0.0,double stop=1.0,
+            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0,
+            int orb=minicoord::MINICOORD_ORB_NONE)
+      : minicurve(start,stop),
+        name("path"), activity("none"), description("created by libmini")
+      {
+      set_constraints(max_delta,max_length,min_accuracy,max_accel,max_tol);
+      set_orb(orb);
+
       load(filename);
       }
 
@@ -67,18 +75,25 @@ class minipaths: public minidyna<minipath>
    public:
 
    //! default constructor
-   minipaths(double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0);
+   minipaths(double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,
+             int orb=minicoord::MINICOORD_ORB_NONE);
 
    //! conversion of multiple paths to a combined one
    operator minipath() const;
+
+   //! serialization
+   std::vector<std::string> to_stdstrings();
+
+   //! deserialization
+   void from_stdstrings(const std::vector<std::string> &csvs);
 
    protected:
 
    double max_delta_;
    double max_length_;
    double min_accuracy_;
-   double max_accel_;
-   double max_tol_;
+
+   int orb_;
    };
 
 #endif

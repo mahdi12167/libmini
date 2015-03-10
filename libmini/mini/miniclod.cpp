@@ -38,12 +38,26 @@ void miniCLOD::read(const std::string &csv,
                     double min_accuracy,
                     int orb)
    {
-   path0_.set_constraints(max_delta,max_length,min_accuracy,
-                          MAXFLOAT,MAXFLOAT);
-
+   path0_.set_constraints(max_delta,max_length,min_accuracy);
    path0_.set_orb(orb);
 
    path0_.from_stdstring(csv);
+   UPDATED_=TRUE;
+   }
+
+// read paths
+void miniCLOD::read(const std::vector<std::string> &csvs,
+                    double max_delta,
+                    double max_length,
+                    double min_accuracy,
+                    int orb)
+   {
+   minipaths paths(max_delta,max_length,min_accuracy,orb);
+   paths.from_stdstrings(csvs);
+
+   paths0_=paths;
+   paths0_.validate();
+   path0_.clear();
    UPDATED_=TRUE;
    }
 
@@ -54,9 +68,7 @@ void miniCLOD::load(ministring filename,
                     double min_accuracy,
                     int orb)
    {
-   path0_.set_constraints(max_delta,max_length,min_accuracy,
-                          MAXFLOAT,MAXFLOAT);
-
+   path0_.set_constraints(max_delta,max_length,min_accuracy);
    path0_.set_orb(orb);
 
    path0_.load(filename);
