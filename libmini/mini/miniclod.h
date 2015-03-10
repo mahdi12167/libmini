@@ -22,6 +22,9 @@ class miniCLOD
    //! set path
    void set(const minipath &path);
 
+   //! set paths
+   void set(const minipaths &paths);
+
    //! read path
    void read(const std::string &csv,
              double max_delta=MAXFLOAT, // maximum continuous point distance
@@ -60,7 +63,9 @@ class miniCLOD
       BOOLINT add;
       };
 
-   minipath path_,path0_;
+   minipath path_; // actual concatenated path
+   minipath path0_; // new path to be concatenated
+   minipath paths0_; // new concatenated path sequence
 
    std::vector<float> dc_; // constant deviations
 

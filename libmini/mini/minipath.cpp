@@ -439,7 +439,7 @@ minipaths::minipaths(double max_delta,double max_length,double min_accuracy,doub
    {}
 
 // conversion operator
-minipaths::operator minipath()
+minipaths::operator minipath() const
    {
    minipath paths(0,1,max_delta_,max_length_,min_accuracy_,max_accel_,max_tol_);
 
@@ -448,8 +448,6 @@ minipaths::operator minipath()
       minipath path=get(i);
       paths.merge(path);
       }
-
-   paths.validate();
 
    return(paths);
    }

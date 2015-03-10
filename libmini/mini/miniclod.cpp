@@ -22,6 +22,15 @@ void miniCLOD::set(const minipath &path)
    UPDATED_=TRUE;
    }
 
+// set paths
+void miniCLOD::set(const minipaths &paths)
+   {
+   paths0_=paths;
+   paths0_.validate();
+   path0_.clear();
+   UPDATED_=TRUE;
+   }
+
 // read path
 void miniCLOD::read(const std::string &csv,
                     double max_delta,
@@ -96,8 +105,19 @@ void miniCLOD::updateDX()
    {
    if (UPDATED_)
       {
-      path_=path0_;
-      path0_.clear();
+      if (paths0_.size()>0)
+         {
+         path_=paths0_;
+         path0_.validate();
+         path_.merge(path0_);
+         path0_.clear();
+         }
+      else
+         {
+         path_=path0_;
+         path_.validate();
+         path0_.clear();
+         }
 
       calcDC();
       calcD2();

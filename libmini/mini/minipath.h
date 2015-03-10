@@ -70,7 +70,7 @@ class minipaths: public minidyna<minipath>
    minipaths(double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0);
 
    //! conversion of multiple paths to a combined one
-   operator minipath();
+   operator minipath() const;
 
    protected:
 
