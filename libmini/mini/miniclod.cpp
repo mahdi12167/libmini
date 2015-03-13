@@ -121,7 +121,7 @@ void miniCLOD::updateDX()
          {
          path_=paths0_;
          path0_.validate();
-         path_.merge(path0_);
+         path_.append(path0_);
          path0_.clear();
          }
       else

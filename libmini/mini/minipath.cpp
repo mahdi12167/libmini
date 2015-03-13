@@ -12,7 +12,7 @@ ministrings minipath::to_csv()
    ministrings csv;
 
    unsigned int segment=0;
-   unsigned int point=0;
+   unsigned int point=1;
 
    validate();
 
@@ -342,7 +342,6 @@ BOOLINT minipath::read_gpx_format(ministrings &gpx)
                minimeas meas;
 
                meas.set_llh(lat.value(),lon.value(),ele.value(),utc2unixtime(time),crs_orb);
-               if (trkpt==1) meas.start=TRUE;
 
                meas.accuracy=pdop.value();
                if (isNAN(meas.accuracy))
@@ -449,7 +448,7 @@ minipaths::operator minipath() const
    for (unsigned int i=0; i<size(); i++)
       {
       minipath path=get(i);
-      paths.merge(path);
+      paths.append(path);
       }
 
    return(paths);

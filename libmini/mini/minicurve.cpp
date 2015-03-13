@@ -10,26 +10,18 @@
 void minicurve::set_orb(int orb)
    {
    crs_orb=orb;
-   valid=merged=FALSE;
+   valid=FALSE;
    }
 
 void minicurve::append(const minimeas &p)
    {
    minidyna<minimeas>::append(p);
-   valid=merged=FALSE;
+   valid=FALSE;
    }
 
 void minicurve::append(minicurve &c)
    {
    minidyna<minimeas>::append(c);
-   valid=merged=FALSE;
-   }
-
-void minicurve::merge(minicurve &c)
-   {
-   minidyna<minimeas>::append(c);
-   merged=TRUE;
-
    valid=FALSE;
    }
 
@@ -149,14 +141,6 @@ void minicurve::validate()
          else
             if (isNAN(get(i).vec.x) || isNAN(get(i).vec.y) || isNAN(get(i).vec.z)) dispose(i);
             else i++;
-
-      // clean start marks
-      if (merged)
-         for (i=0; i<getsize(); i++)
-            ref(i).start=FALSE;
-
-      // mark first time step
-      if (!empty()) ref(0).start=TRUE;
 
       // check for missing heights
       for (i=0; i<getsize(); i++)
