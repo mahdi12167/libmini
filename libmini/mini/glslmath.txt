@@ -1,14 +1,19 @@
 GLSLmath version 1.0.8 as of 7.March.2015
 ----
 
-GLSLmath consists of a single C++ header file.
-
-It contains vector and matrix classes plus linear algebra operators
-that allow computer graphics developers to write math operations in
-C++ just like one is used to it from GLSL.
-
 GLSLmath is totally free software and licensed under the MIT license.
 The code is copyright 2014-2015 by Stefan Roettger.
+
+GLSLmath consists of a single C++ header file.
+
+It allows computer graphics developers to write math operations in C++
+just like one is used to it from GLSL. This includes support for a
+complete set of operators working on vector and matrix classes,
+homogeneous coordinates and quaternions.
+
+The software is easy to install and use, so it is ideal for rapid
+prototyping or teaching purposes. It is mature, regression-tested and
+bug-free.
 
 Here is an example that declares a position vector and rotates and
 translates that vector by multiplying it with a corresponding matrix:
@@ -30,11 +35,11 @@ std::cout << "transformed vector: " << v << std::endl;
 ~~~~
 
 Note: GLSLmath has been inspired by the glm and slmath libraries,
-which also aim to mimic GLSL, but in contrast to those GLSLmath does
+which aim to mimic GLSL, as well. In contrast to those, GLSLmath does
 not focus on a complete conforming implementation of GLSL but rather
 on providing a convenient single header file that implements the most
-important features of GLSL in order to ease its use for rapid
-prototyping and GLSL teaching purposes.
+important linear algebra operations of GLSL in order to ease its use
+for rapid prototyping and GLSL teaching purposes.
 
 ----
 
