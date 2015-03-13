@@ -129,6 +129,7 @@ class minicurve: public minidyna<minimeas>
    int crs_orb;
 
    BOOLINT valid;
+   BOOLINT merged;
 
    double curve_start,curve_stop;
    double curve_map_start,curve_map_stop;
