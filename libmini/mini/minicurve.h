@@ -57,7 +57,6 @@ class minicurve: public minidyna<minimeas>
    void append(const minimeas &p);
 
    void append(minicurve &c);
-   void merge(minicurve &c);
 
    void append_sector(const minicoord &p1,const minicoord &p2,
                       unsigned int n=0);
@@ -129,7 +128,6 @@ class minicurve: public minidyna<minimeas>
    int crs_orb;
 
    BOOLINT valid;
-   BOOLINT merged;
 
    double curve_start,curve_stop;
    double curve_map_start,curve_map_stop;
