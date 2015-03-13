@@ -3,8 +3,8 @@ GLSLmath version 1.0.8 as of 7.March.2015
 
 GLSLmath consists of a single C++ header file.
 
-It contains definitions of vector and matrix classes plus operators
-that allows computer graphics developers to write math operations in
+It contains vector and matrix classes plus linear algebra operators
+that allow computer graphics developers to write math operations in
 C++ just like one is used to it from GLSL.
 
 GLSLmath is totally free software and licensed under the MIT license.
