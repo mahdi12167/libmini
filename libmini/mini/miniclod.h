@@ -25,6 +25,9 @@ class miniCLOD
    //! set paths
    void set(const minipaths &paths);
 
+   //! append to paths
+   void append(const minipath &path);
+
    //! read path
    void read(const std::string &csv,
              double max_delta=MAXFLOAT, // maximum continuous point distance
@@ -38,6 +41,9 @@ class miniCLOD
              double max_length=MAXFLOAT, // maximum continuous time difference
              double min_accuracy=MAXFLOAT, // minimum required measurement accuracy
              int orb=minicoord::MINICOORD_ORB_NONE); // path orbital
+
+   //! append to paths
+   void append(const std::string &csv);
 
    //! load path
    void load(ministring filename,

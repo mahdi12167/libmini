@@ -78,6 +78,22 @@ class minipaths: public minidyna<minipath>
    minipaths(double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,
              int orb=minicoord::MINICOORD_ORB_NONE);
 
+   //! get constraints
+   void get_constraints(double &max_delta,
+                        double &max_length,
+                        double &min_accuracy)
+      {
+      max_delta=max_delta_;
+      max_length=max_length_;
+      min_accuracy=min_accuracy_;
+      }
+
+   //! get orbital
+   int get_orb() {return(orb_);}
+
+   //! append path
+   void append(const minipath &path) {push_back(path);}
+
    //! conversion of multiple paths to a combined one
    operator minipath() const;
 

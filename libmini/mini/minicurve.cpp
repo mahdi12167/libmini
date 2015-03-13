@@ -19,7 +19,7 @@ void minicurve::append(const minimeas &p)
    valid=FALSE;
    }
 
-void minicurve::append(minicurve &c)
+void minicurve::append(const minicurve &c)
    {
    minidyna<minimeas>::append(c);
    valid=FALSE;

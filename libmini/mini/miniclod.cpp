@@ -31,6 +31,15 @@ void miniCLOD::set(const minipaths &paths)
    UPDATED_=TRUE;
    }
 
+// append to paths
+void miniCLOD::append(const minipath &path)
+   {
+   paths0_.append(path);
+   paths0_.validate();
+   path0_.clear();
+   UPDATED_=TRUE;
+   }
+
 // read path
 void miniCLOD::read(const std::string &csv,
                     double max_delta,
@@ -56,6 +65,26 @@ void miniCLOD::read(const std::vector<std::string> &csvs,
    paths.from_stdstrings(csvs);
 
    paths0_=paths;
+   paths0_.validate();
+   path0_.clear();
+   UPDATED_=TRUE;
+   }
+
+// append to paths
+void miniCLOD::append(const std::string &csv)
+   {
+   minipath path;
+
+   double max_delta;
+   double max_length;
+   double min_accuracy;
+
+   paths0_.get_constraints(max_delta,max_length,min_accuracy);
+   path.set_constraints(max_length,max_length,min_accuracy);
+   path.set_orb(paths0_.get_orb());
+
+   path.from_stdstring(csv);
+   paths0_.append(path);
    paths0_.validate();
    path0_.clear();
    UPDATED_=TRUE;
