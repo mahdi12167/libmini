@@ -279,7 +279,7 @@ void miniCLOD::addpoint(const minimeas &m,BOOLINT start)
 
    double d;
    float hue;
-   vec3f rgb;
+   vec4f rgb;
 
    p=m.getpos();
    n=p.normalize();
@@ -302,7 +302,7 @@ void miniCLOD::addpoint(const minimeas &m,BOOLINT start)
          {
          vec3 lp=POINTS_.back().pos;
          vec3f ln=POINTS_.back().nrm;
-         vec3f lc=POINTS_.back().col;
+         vec4f lc=POINTS_.back().col;
 
          mini3D::joint_struct point1={lp,ln,lc,0.0};
          POINTS_.push_back(point1);
