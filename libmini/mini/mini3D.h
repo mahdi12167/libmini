@@ -17,7 +17,7 @@ class primitive
       {
       vec3 pos;
       vec4 pos_post;
-      vec3f col;
+      vec4f col;
       };
 
    primitive() {}
@@ -96,14 +96,14 @@ class mini3D
    struct point_struct
       {
       vec3 pos;
-      vec3f col;
+      vec4f col;
       };
 
    struct joint_struct
       {
       vec3 pos;
       vec3f nrm;
-      vec3f col;
+      vec4f col;
       float wdt;
       };
 
@@ -150,7 +150,7 @@ class mini3D
    std::vector<primitive *> primitives_;
 
    vec3 halfdir(vec3 dir1,vec3 dir2);
-   unsigned int addvtx(vec3 v,vec3f c);
+   unsigned int addvtx(vec3 v,vec4f c);
 
    void sort();
 
@@ -166,48 +166,48 @@ class mini3D
 
    void mergesort(std::vector<primitive *> &a);
 
-   void clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,vec4 P);
+   void clip(vec4 &a,const vec4 b,vec4 &ac,const vec4 bc,vec4 P);
 
    void clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b);
    void clip_triangle(primitive::vertex_struct *a,primitive::vertex_struct *b,primitive::vertex_struct *c);
 
-   inline void clip1tri1(vec4 v0,double d0,vec3 c0,
-                         vec4 v1,double d1,vec3 c1,
-                         vec4 v2,double d2,vec3 c2);
+   inline void clip1tri1(vec4 v0,double d0,vec4 c0,
+                         vec4 v1,double d1,vec4 c1,
+                         vec4 v2,double d2,vec4 c2);
 
-   inline void clip2tri1(vec4 v0,double d0,vec3 c0,
-                         vec4 v1,double d1,vec3 c1,
-                         vec4 v2,double d2,vec3 c2);
+   inline void clip2tri1(vec4 v0,double d0,vec4 c0,
+                         vec4 v1,double d1,vec4 c1,
+                         vec4 v2,double d2,vec4 c2);
 
    void cliptri1(vec4 v0,vec4 v1,vec4 v2,
-                 vec3 c0,vec3 c1,vec3 c2);
+                 vec4 c0,vec4 c1,vec4 c2);
 
-   inline void clip1tri2(vec4 v0,double d0,vec3 c0,
-                         vec4 v1,double d1,vec3 c1,
-                         vec4 v2,double d2,vec3 c2);
+   inline void clip1tri2(vec4 v0,double d0,vec4 c0,
+                         vec4 v1,double d1,vec4 c1,
+                         vec4 v2,double d2,vec4 c2);
 
-   inline void clip2tri2(vec4 v0,double d0,vec3 c0,
-                         vec4 v1,double d1,vec3 c1,
-                         vec4 v2,double d2,vec3 c2);
+   inline void clip2tri2(vec4 v0,double d0,vec4 c0,
+                         vec4 v1,double d1,vec4 c1,
+                         vec4 v2,double d2,vec4 c2);
 
    void cliptri2(vec4 v0,vec4 v1,vec4 v2,
-                 vec3 c0,vec3 c1,vec3 c2);
+                 vec4 c0,vec4 c1,vec4 c2);
 
    virtual void render_begin() {}
-   virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc) = 0;
-   virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc) = 0;
+   virtual void render_line(vec3 a,vec3 b,vec4f ac,vec4f bc) = 0;
+   virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec4f ac,vec4f bc,vec4f cc) = 0;
    virtual void render_end() {}
    };
 
 inline struct mini3D::joint_struct operator + (const struct mini3D::joint_struct &a,const struct mini3D::joint_struct &b)
    {
-   struct mini3D::joint_struct j={a.pos+b.pos,vec3(a.nrm)+vec3(b.nrm),vec3(a.col)+vec3(b.col),a.wdt+b.wdt};
+   struct mini3D::joint_struct j={a.pos+b.pos,vec3(a.nrm)+vec3(b.nrm),vec4(a.col)+vec4(b.col),a.wdt+b.wdt};
    return(j);
    }
 
 inline struct mini3D::joint_struct operator * (const double a,const struct mini3D::joint_struct &b)
    {
-   struct mini3D::joint_struct j={a*b.pos,a*vec3(b.nrm),a*vec3(b.col),(float)a*b.wdt};
+   struct mini3D::joint_struct j={a*b.pos,a*vec3(b.nrm),a*vec4(b.col),(float)(a*b.wdt)};
    return(j);
    }
 
@@ -256,13 +256,13 @@ class mini3Dcounter: public mini3D
    double llength;
    double tarea;
 
-   virtual void render_line(vec3 a,vec3 b,vec3f ac,vec3f bc)
+   virtual void render_line(vec3 a,vec3 b,vec4f ac,vec4f bc)
       {
       lines++;
       llength+=(b-a).getlength();
       }
 
-   virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec3f ac,vec3f bc,vec3f cc)
+   virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec4f ac,vec4f bc,vec4f cc)
       {
       triangles++;
       tarea+=vec3::area(a,b,c);

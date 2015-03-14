@@ -175,7 +175,7 @@ vec3 mini3D::halfdir(vec3 dir1,vec3 dir2)
    }
 
 // add pre-multiplied vertex
-unsigned int mini3D::addvtx(vec3 v,vec3f c)
+unsigned int mini3D::addvtx(vec3 v,vec4f c)
    {
    // multiply vertex with pre-matrix
    if (!preMatrixOne_) v=preMatrix_*v;
@@ -276,7 +276,7 @@ void mini3D::mergesort(std::vector<primitive *> &a)
    }
 
 // clip line segment in homogeneous clip space
-void mini3D::clip(vec4 &a,const vec4 b,vec3 &ac,const vec3 bc,vec4 P)
+void mini3D::clip(vec4 &a,const vec4 b,vec4 &ac,const vec4 bc,vec4 P)
    {
    double t;
 
@@ -301,8 +301,8 @@ void mini3D::clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b)
       {
       vec4 clipa=a->pos_post;
       vec4 clipb=b->pos_post;
-      vec3 clipac=vec3(a->col);
-      vec3 clipbc=vec3(b->col);
+      vec4 clipac=a->col;
+      vec4 clipbc=b->col;
 
       if (!af) clip(clipa,clipb,clipac,clipbc,vec4(0,0,1,1));
       if (!bf) clip(clipb,clipa,clipbc,clipac,vec4(0,0,1,1));
@@ -323,12 +323,12 @@ void mini3D::clip_triangle(primitive::vertex_struct *a,primitive::vertex_struct 
 // clip a triangle (resulting in one remaining triangle)
 //  v0 is the contained vertex
 //  d is distance of the respective point to the clipping plane
-inline void mini3D::clip1tri1(vec4 v0,double d0,vec3 c0,
-                              vec4 v1,double d1,vec3 c1,
-                              vec4 v2,double d2,vec3 c2)
+inline void mini3D::clip1tri1(vec4 v0,double d0,vec4 c0,
+                              vec4 v1,double d1,vec4 c1,
+                              vec4 v2,double d2,vec4 c2)
    {
    vec4 p1,p2;
-   vec3 pc1,pc2;
+   vec4 pc1,pc2;
 
    double t1,t2;
 
@@ -347,12 +347,12 @@ inline void mini3D::clip1tri1(vec4 v0,double d0,vec3 c0,
 // clip a triangle (resulting in two remaining triangles)
 //  v0 is the non-contained vertex
 //  d is distance of the respective point to the clipping plane
-inline void mini3D::clip2tri1(vec4 v0,double d0,vec3 c0,
-                              vec4 v1,double d1,vec3 c1,
-                              vec4 v2,double d2,vec3 c2)
+inline void mini3D::clip2tri1(vec4 v0,double d0,vec4 c0,
+                              vec4 v1,double d1,vec4 c1,
+                              vec4 v2,double d2,vec4 c2)
    {
    vec4 p1,p2;
-   vec3 pc1,pc2;
+   vec4 pc1,pc2;
 
    double t1,t2;
 
@@ -374,9 +374,9 @@ inline void mini3D::clip2tri1(vec4 v0,double d0,vec3 c0,
 void mini3D::cliptri1(vec4 v0, // vertex v0
                       vec4 v1, // vertex v1
                       vec4 v2, // vertex v2
-                      vec3 c0, // color c0
-                      vec3 c1, // color c1
-                      vec3 c2) // color c2
+                      vec4 c0, // color c0
+                      vec4 c1, // color c1
+                      vec4 c2) // color c2
    {
    double d0,d1,d2;
 
@@ -424,12 +424,12 @@ void mini3D::cliptri1(vec4 v0, // vertex v0
 // clip a triangle (resulting in one remaining triangle)
 //  v0 is the contained vertex
 //  d is distance of the respective point to the clipping plane
-inline void mini3D::clip1tri2(vec4 v0,double d0,vec3 c0,
-                              vec4 v1,double d1,vec3 c1,
-                              vec4 v2,double d2,vec3 c2)
+inline void mini3D::clip1tri2(vec4 v0,double d0,vec4 c0,
+                              vec4 v1,double d1,vec4 c1,
+                              vec4 v2,double d2,vec4 c2)
    {
    vec4 p1,p2;
-   vec3 pc1,pc2;
+   vec4 pc1,pc2;
 
    double t1,t2;
 
@@ -448,12 +448,12 @@ inline void mini3D::clip1tri2(vec4 v0,double d0,vec3 c0,
 // clip a triangle (resulting in two remaining triangles)
 //  v0 is the non-contained vertex
 //  d is distance of the respective point to the clipping plane
-inline void mini3D::clip2tri2(vec4 v0,double d0,vec3 c0,
-                              vec4 v1,double d1,vec3 c1,
-                              vec4 v2,double d2,vec3 c2)
+inline void mini3D::clip2tri2(vec4 v0,double d0,vec4 c0,
+                              vec4 v1,double d1,vec4 c1,
+                              vec4 v2,double d2,vec4 c2)
    {
    vec4 p1,p2;
-   vec3 pc1,pc2;
+   vec4 pc1,pc2;
 
    double t1,t2;
 
@@ -475,9 +475,9 @@ inline void mini3D::clip2tri2(vec4 v0,double d0,vec3 c0,
 void mini3D::cliptri2(vec4 v0, // vertex v0
                       vec4 v1, // vertex v1
                       vec4 v2, // vertex v2
-                      vec3 c0, // color c0
-                      vec3 c1, // color c1
-                      vec3 c2) // color c2
+                      vec4 c0, // color c0
+                      vec4 c1, // color c1
+                      vec4 c2) // color c2
    {
    double d0,d1,d2;
 
