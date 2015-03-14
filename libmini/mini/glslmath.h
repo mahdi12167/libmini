@@ -150,6 +150,9 @@ class vec3
    // copy constructor
    vec3(const vec2 &v,const double vz=0.0) {x=v.x; y=v.y; z=vz;}
 
+   // copy constructor
+   vec3(const vec2f &v,const double vz=0.0) {x=v.x; y=v.y; z=vz;}
+
    // component-wise constructor
    vec3(const double vx,const double vy,const double vz) {x=vx; y=vy; z=vz;}
 
@@ -308,7 +311,13 @@ class vec4
    vec4(const vec3 &v,const double vw=1.0) {x=v.x; y=v.y; z=v.z; w=vw;}
 
    // copy constructor
+   vec4(const vec3f &v,const double vw=1.0) {x=v.x; y=v.y; z=v.z; w=vw;}
+
+   // copy constructor
    vec4(const vec2 &v,const double vz=0.0,const double vw=1.0) {x=v.x; y=v.y; z=vz; w=vw;}
+
+   // copy constructor
+   vec4(const vec2f &v,const double vz=0.0,const double vw=1.0) {x=v.x; y=v.y; z=vz; w=vw;}
 
    // component-wise constructor
    vec4(const double vx,const double vy,const double vz, const double vw=1.0) {x=vx; y=vy; z=vz; w=vw;}
