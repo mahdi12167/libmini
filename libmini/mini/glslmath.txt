@@ -1,4 +1,4 @@
-GLSLmath version 1.0.8 as of 7.March.2015
+GLSLmath version 1.0.9 as of 14.March.2015
 ----
 
 GLSLmath is totally free software and licensed under the MIT license.
