@@ -44,7 +44,7 @@ class vec2
       {return(x*v.x+y*v.y);}
 
    // test for approximate equality
-   int approx(const vec2 &v,const double e=1E-10) const
+   bool approx(const vec2 &v,const double e=1E-10) const
       {return((v.x-x)*(v.x-x)+(v.y-y)*(v.y-y)<e*e);}
 
    // vector components
@@ -80,11 +80,11 @@ inline vec2 operator * (const vec2 &a,const vec2 &b)
    {return(vec2(a.x*b.x,a.y*b.y));}
 
 // comparison
-inline int operator == (const vec2 &a,const vec2 &b)
+inline bool operator == (const vec2 &a,const vec2 &b)
    {return(a.x==b.x && a.y==b.y);}
 
 // negated comparison
-inline int operator != (const vec2 &a,const vec2 &b)
+inline bool operator != (const vec2 &a,const vec2 &b)
    {return(a.x!=b.x || a.y!=b.y);}
 
 // normalization to unit length
@@ -148,7 +148,7 @@ class vec3
    vec3(const vec3 &v) {x=v.x; y=v.y; z=v.z;}
 
    // copy constructor
-   vec3(const vec2 &v,double vz=0.0) {x=v.x; y=v.y; z=vz;}
+   vec3(const vec2 &v,const double vz=0.0) {x=v.x; y=v.y; z=vz;}
 
    // component-wise constructor
    vec3(const double vx,const double vy,const double vz) {x=vx; y=vy; z=vz;}
@@ -184,7 +184,7 @@ class vec3
    static double area(const vec3 &a,const vec3 &b,const vec3 &c);
 
    // test for approximate equality
-   int approx(const vec3 &v,const double e=1E-10) const
+   bool approx(const vec3 &v,const double e=1E-10) const
       {return((v.x-x)*(v.x-x)+(v.y-y)*(v.y-y)+(v.z-z)*(v.z-z)<e*e);}
 
    // vector components
@@ -220,11 +220,11 @@ inline vec3 operator * (const vec3 &a,const vec3 &b)
    {return(vec3(a.x*b.x,a.y*b.y,a.z*b.z));}
 
 // comparison
-inline int operator == (const vec3 &a,const vec3 &b)
+inline bool operator == (const vec3 &a,const vec3 &b)
    {return(a.x==b.x && a.y==b.y && a.z==b.z);}
 
 // negated comparison
-inline int operator != (const vec3 &a,const vec3 &b)
+inline bool operator != (const vec3 &a,const vec3 &b)
    {return(a.x!=b.x || a.y!=b.y || a.z!=b.z);}
 
 // normalization to unit length
@@ -269,6 +269,12 @@ class vec3f
    // copy constructor
    vec3f(const vec3 &v) {x=v.x; y=v.y; z=v.z;}
 
+   // copy constructor
+   vec3f(const vec2f &v,const float vz=0.0f) {x=v.x; y=v.y; z=vz;}
+
+   // copy constructor
+   vec3f(const vec2 &v,const float vz=0.0f) {x=v.x; y=v.y; z=vz;}
+
    // component-wise constructor
    vec3f(const float vx,const float vy,const float vz) {x=vx; y=vy; z=vz;}
 
@@ -299,10 +305,10 @@ class vec4
    vec4(const vec4 &v) {x=v.x; y=v.y; z=v.z; w=v.w;}
 
    // copy constructor
-   vec4(const vec3 &v,double vw=1.0) {x=v.x; y=v.y; z=v.z; w=vw;}
+   vec4(const vec3 &v,const double vw=1.0) {x=v.x; y=v.y; z=v.z; w=vw;}
 
    // copy constructor
-   vec4(const vec2 &v,double vz=0.0,double vw=1.0) {x=v.x; y=v.y; z=vz; w=vw;}
+   vec4(const vec2 &v,const double vz=0.0,const double vw=1.0) {x=v.x; y=v.y; z=vz; w=vw;}
 
    // component-wise constructor
    vec4(const double vx,const double vy,const double vz, const double vw=1.0) {x=vx; y=vy; z=vz; w=vw;}
@@ -349,7 +355,7 @@ class vec4
    vec4 reflect(const vec4 &n) const;
 
    // test for approximate equality
-   int approx(const vec4 &v,const double e=1E-10) const
+   bool approx(const vec4 &v,const double e=1E-10) const
       {return((v.x-x)*(v.x-x)+(v.y-y)*(v.y-y)+(v.z-z)*(v.z-z)+(v.w-w)*(v.w-w)<e*e);}
 
    // vector components
@@ -385,11 +391,11 @@ inline vec4 operator * (const vec4 &a,const vec4 &b)
    {return(vec4(a.x*b.x,a.y*b.y,a.z*b.z,a.w*b.w));}
 
 // comparison
-inline int operator == (const vec4 &a,const vec4 &b)
+inline bool operator == (const vec4 &a,const vec4 &b)
    {return(a.x==b.x && a.y==b.y && a.z==b.z && a.w==b.w);}
 
 // negated comparison
-inline int operator != (const vec4 &a,const vec4 &b)
+inline bool operator != (const vec4 &a,const vec4 &b)
    {return(a.x!=b.x || a.y!=b.y || a.z!=b.z || a.w!=b.w);}
 
 // normalization to unit length
@@ -429,6 +435,18 @@ class vec4f
 
    // copy constructor
    vec4f(const vec4 &v) {x=v.x; y=v.y; z=v.z; w=v.w;}
+
+   // copy constructor
+   vec4f(const vec3f &v,const float vw=0.0f) {x=v.x; y=v.y; z=v.z; w=vw;}
+
+   // copy constructor
+   vec4f(const vec3 &v,const float vw=0.0f) {x=v.x; y=v.y; z=v.z; w=vw;}
+
+   // copy constructor
+   vec4f(const vec2f &v,const float vz=0.0f,const float vw=1.0f) {x=v.x; y=v.y; z=vz; w=vw;}
+
+   // copy constructor
+   vec4f(const vec2 &v,const float vz=0.0f,const float vw=1.0f) {x=v.x; y=v.y; z=vz; w=vw;}
 
    // component-wise constructor
    vec4f(const float vx,const float vy,const float vz,const float vw) {x=vx; y=vy; z=vz; w=vw;}
@@ -569,7 +587,7 @@ inline mat2 operator * (const mat2 &m1,const mat2 &m2)
    }
 
 // comparison
-inline int operator == (const mat2 &a,const mat2 &b)
+inline bool operator == (const mat2 &a,const mat2 &b)
    {
    unsigned int i;
 
@@ -580,7 +598,7 @@ inline int operator == (const mat2 &a,const mat2 &b)
    }
 
 // negated comparison
-inline int operator != (const mat2 &a,const mat2 &b)
+inline bool operator != (const mat2 &a,const mat2 &b)
    {
    unsigned int i;
 
@@ -772,7 +790,7 @@ inline mat3 operator * (const mat3 &m1,const mat3 &m2)
    }
 
 // comparison
-inline int operator == (const mat3 &a,const mat3 &b)
+inline bool operator == (const mat3 &a,const mat3 &b)
    {
    unsigned int i;
 
@@ -783,7 +801,7 @@ inline int operator == (const mat3 &a,const mat3 &b)
    }
 
 // negated comparison
-inline int operator != (const mat3 &a,const mat3 &b)
+inline bool operator != (const mat3 &a,const mat3 &b)
    {
    unsigned int i;
 
@@ -1107,7 +1125,7 @@ inline mat4 operator * (const mat4 &m1,const mat4 &m2)
    }
 
 // comparison
-inline int operator == (const mat4 &a,const mat4 &b)
+inline bool operator == (const mat4 &a,const mat4 &b)
    {
    unsigned int i;
 
@@ -1118,7 +1136,7 @@ inline int operator == (const mat4 &a,const mat4 &b)
    }
 
 // negated comparison
-inline int operator != (const mat4 &a,const mat4 &b)
+inline bool operator != (const mat4 &a,const mat4 &b)
    {
    unsigned int i;
 
