@@ -79,7 +79,7 @@ void minicurve::bisect(const minicoord &p1,const minicoord &p2,
 
    if (level==0)
       if (getsize()==0) append(p1);
-      else if (p1!=last()) append(p1);
+      else if (p1!=(minicoord)last()) append(p1);
 
    if (level<maxlevel)
       {

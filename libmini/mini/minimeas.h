@@ -166,6 +166,8 @@ inline minimeas operator - (const minimeas &a,const minimeas &b);
 inline minimeas operator * (const double a,const minimeas &b);
 inline minimeas operator * (const minimeas &a,const double b);
 inline minimeas operator / (const minimeas &a,const double b);
+inline int operator == (const minimeas &a,const minimeas &b);
+inline int operator != (const minimeas &a,const minicoord &b);
 inline int operator < (const minimeas &a,const minimeas &b);
 
 // output stream operator
@@ -206,6 +208,18 @@ inline minimeas operator / (const minimeas &a,const double b)
    return(minimeas(minicoord(a.vec/b,a.type,a.crs_zone,a.crs_datum),
                    a.accuracy/b,a.velocity/b,a.heading,a.inclination,
                    a.start));
+   }
+
+inline int operator == (const minimeas &a,const minimeas &b)
+   {
+   return((minicoord)a==(minicoord)b &&
+          a.start==b.start);
+   }
+
+inline int operator != (const minimeas &a,const minimeas &b)
+   {
+   return((minicoord)a!=(minicoord)b ||
+          a.start!=b.start);
    }
 
 inline int operator < (const minimeas &a,const minimeas &b)

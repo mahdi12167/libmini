@@ -5,21 +5,23 @@
 // default constructor
 miniCLOD::miniCLOD()
    {
+   EYE_=EYE0_=vec3(NAN,NAN,NAN);
+
    UPDATED_=FALSE;
    UPDATE_=0;
-
-   EYE_=EYE0_=vec3(NAN,NAN,NAN);
    }
 
 // destructor
-miniCLOD::~miniCLOD()
-   {}
+miniCLOD::~miniCLOD() {}
 
 // set path
 void miniCLOD::set(const minipath &path)
    {
-   path0_=path;
-   UPDATED_=TRUE;
+   if (path!=path0_)
+      {
+      path0_=path;
+      UPDATED_=TRUE;
+      }
    }
 
 // set paths
@@ -47,11 +49,18 @@ void miniCLOD::read(const std::string &csv,
                     double min_accuracy,
                     int orb)
    {
-   path0_.set_constraints(max_delta,max_length,min_accuracy);
-   path0_.set_orb(orb);
+   minipath path;
 
-   path0_.from_stdstring(csv);
-   UPDATED_=TRUE;
+   path.set_constraints(max_delta,max_length,min_accuracy);
+   path.set_orb(orb);
+
+   path.from_stdstring(csv);
+
+   if (path!=path0_)
+      {
+      path0_=path;
+      UPDATED_=TRUE;
+      }
    }
 
 // read paths
@@ -97,11 +106,18 @@ void miniCLOD::load(ministring filename,
                     double min_accuracy,
                     int orb)
    {
-   path0_.set_constraints(max_delta,max_length,min_accuracy);
-   path0_.set_orb(orb);
+   minipath path;
 
-   path0_.load(filename);
-   UPDATED_=TRUE;
+   path.set_constraints(max_delta,max_length,min_accuracy);
+   path.set_orb(orb);
+
+   path.load(filename);
+
+   if (path!=path0_)
+      {
+      path0_=path;
+      UPDATED_=TRUE;
+      }
    }
 
 // recreate geometry from actual view point
@@ -112,8 +128,6 @@ void miniCLOD::create(vec3 eye,
                       double weight,
                       int update)
    {
-   UPDATE_=update;
-
    EYE0_=EYE_;
    EYE_=eye;
 
