@@ -25,7 +25,7 @@ void miniCLOD::set(const minipath &path)
 // set paths
 void miniCLOD::set(const minipaths &paths)
    {
-   paths0_=paths;
+   paths0_=minipaths(paths);
    paths0_.validate();
    path0_.clear();
    UPDATED_=TRUE;

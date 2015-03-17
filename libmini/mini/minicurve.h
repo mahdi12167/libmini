@@ -54,7 +54,7 @@ class minicurve: public minidyna<minimeas>
 
    void set_orb(int orb);
 
-   int get_orb() {return(crs_orb);}
+   int get_orb() const {return(crs_orb);}
 
    void append(const minimeas &p);
 
@@ -92,7 +92,7 @@ class minicurve: public minidyna<minimeas>
 
    void get_constraints(double &max_delta,
                         double &max_length,
-                        double &min_accuracy)
+                        double &min_accuracy) const
       {
       max_delta=minicurve::max_delta;
       max_length=minicurve::max_length;
@@ -103,7 +103,7 @@ class minicurve: public minidyna<minimeas>
                         double &max_length,
                         double &min_accuracy,
                         double &max_acceleration,
-                        double &max_tolerance)
+                        double &max_tolerance) const
       {
       max_delta=minicurve::max_delta;
       max_length=minicurve::max_length;

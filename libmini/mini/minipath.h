@@ -70,7 +70,10 @@ class minipath: public minicurve
    BOOLINT read_trk_format(ministrings &trk);
    };
 
-class minipaths: public minidyna<minipath>
+inline int operator < (const minipath &a,const minipath &b)
+   {return(a.front()<b.front());}
+
+class minipaths: public minidyna<minipath *>
    {
    public:
 
@@ -78,10 +81,16 @@ class minipaths: public minidyna<minipath>
    minipaths(double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,
              int orb=minicoord::MINICOORD_ORB_NONE);
 
+   //! copy constructor
+   minipaths(const minipaths &paths);
+
+   //! destructor
+   ~minipaths();
+
    //! get constraints
    void get_constraints(double &max_delta,
                         double &max_length,
-                        double &min_accuracy)
+                        double &min_accuracy) const
       {
       max_delta=max_delta_;
       max_length=max_length_;
@@ -89,13 +98,16 @@ class minipaths: public minidyna<minipath>
       }
 
    //! get orbital
-   int get_orb() {return(orb_);}
+   int get_orb() const {return(orb_);}
 
    //! append path
-   void append(const minipath &path) {push_back(path);}
+   void append(const minipath &path);
+
+   //! sort paths by starting time
+   void sort();
 
    //! conversion of multiple paths to a combined one
-   operator minipath() const;
+   operator minipath();
 
    //! serialization
    std::vector<std::string> to_stdstrings();
@@ -110,6 +122,8 @@ class minipaths: public minidyna<minipath>
    double min_accuracy_;
 
    int orb_;
+
+   BOOLINT sorted_;
    };
 
 #endif

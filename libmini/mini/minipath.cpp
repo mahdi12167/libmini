@@ -1,6 +1,7 @@
 // (c) by Stefan Roettger
 
 #include "minixml.h"
+#include "minisort.h"
 
 #include "minipath.h"
 
@@ -431,23 +432,67 @@ BOOLINT minipath::read_trk_format(ministrings &trk)
 // default constructor
 minipaths::minipaths(double max_delta,double max_length,double min_accuracy,
                      int orb)
-   : max_delta_(max_delta),
+   : minidyna<minipath *>(),
+     max_delta_(max_delta),
      max_length_(max_length),
      min_accuracy_(min_accuracy),
      orb_(orb)
-   {}
+   {sorted_=TRUE;}
+
+// copy constructor
+minipaths::minipaths(const minipaths &paths)
+   {
+   paths.get_constraints(max_delta_,max_length_,min_accuracy_);
+   orb_=paths.get_orb();
+
+   for (unsigned int i=0; i<size(); i++)
+      delete get(i);
+
+   clear();
+
+   for (unsigned int i=0; i<paths.size(); i++)
+      append(*paths.get(i));
+
+   sorted_=paths.sorted_;
+   }
+
+// destructor
+minipaths::~minipaths()
+   {
+   for (unsigned int i=0; i<size(); i++)
+      delete get(i);
+   }
+
+// append path
+void minipaths::append(const minipath &path)
+   {
+   push_back(new minipath(path));
+   sorted_=FALSE;
+   }
+
+// sort paths by starting time
+void minipaths::sort()
+   {
+   if (!sorted_)
+      {
+      mergesort<minipath>(*this);
+      sorted_=TRUE;
+      }
+   }
 
 // conversion operator
-minipaths::operator minipath() const
+minipaths::operator minipath()
    {
    minipath paths;
 
    paths.set_constraints(max_delta_,max_length_,min_accuracy_);
    paths.set_orb(orb_);
 
+   sort();
+
    for (unsigned int i=0; i<size(); i++)
       {
-      minipath path=get(i);
+      minipath path=*get(i);
       paths.append(path);
       }
 
@@ -459,9 +504,11 @@ std::vector<std::string> minipaths::to_stdstrings()
    {
    std::vector<std::string> csvs;
 
+   sort();
+
    for (unsigned int i=0; i<size(); i++)
       {
-      minipath path=get(i);
+      minipath path=*get(i);
       csvs.push_back(path.to_stdstring());
       }
 
@@ -475,6 +522,6 @@ void minipaths::from_stdstrings(const std::vector<std::string> &csvs)
       {
       minipath path;
       path.from_stdstring(csvs[i]);
-      push_back(path);
+      append(path);
       }
    }
