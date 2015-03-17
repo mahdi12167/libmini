@@ -211,16 +211,10 @@ inline minimeas operator / (const minimeas &a,const double b)
    }
 
 inline int operator == (const minimeas &a,const minimeas &b)
-   {
-   return((minicoord)a==(minicoord)b &&
-          a.start==b.start);
-   }
+   {return((minicoord)a==(minicoord)b);}
 
 inline int operator != (const minimeas &a,const minimeas &b)
-   {
-   return((minicoord)a!=(minicoord)b ||
-          a.start!=b.start);
-   }
+   {return((minicoord)a!=(minicoord)b);}
 
 inline int operator < (const minimeas &a,const minimeas &b)
    {return(a.vec.w<b.vec.w);}
