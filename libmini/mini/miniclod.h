@@ -52,6 +52,9 @@ class miniCLOD
              double min_accuracy=MAXFLOAT, // minimum required measurement accuracy
              int orb=minicoord::MINICOORD_ORB_NONE); // path orbital
 
+   //! clear path
+   void clear();
+
    //! create path geometry
    void create(vec3 eye, // actual eye point
                double maxdev=1,double atdist=100, // maximum deviation at specific distance

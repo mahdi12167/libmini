@@ -120,6 +120,17 @@ void miniCLOD::load(ministring filename,
       }
    }
 
+// clear path
+void miniCLOD::clear()
+   {
+   if (!path_.empty())
+      {
+      path0_.clear();
+      paths0_.clear();
+      UPDATED_=TRUE;
+      }
+   }
+
 // recreate geometry from actual view point
 void miniCLOD::create(vec3 eye,
                       double maxdev,double atdist,
