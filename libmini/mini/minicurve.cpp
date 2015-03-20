@@ -207,16 +207,6 @@ void minicurve::validate()
             if (d>max_length) ref(i).start=TRUE;
             }
 
-      // remove consecutive start points
-      for (i=0; i+1<getsize();)
-         if (get(i).start && get(i+1).start) dispose(i);
-         else i++;
-
-      // remove trailing start points
-      while (!empty())
-         if (last().start) pop_back();
-         else break;
-
       // apply constraints
       for (i=1; i+1<getsize();)
          if (!get(i).start)
