@@ -446,10 +446,10 @@ class vec4f
    vec4f(const vec4 &v) {x=v.x; y=v.y; z=v.z; w=v.w;}
 
    // copy constructor
-   vec4f(const vec3f &v,const float vw=0.0f) {x=v.x; y=v.y; z=v.z; w=vw;}
+   vec4f(const vec3f &v,const float vw=1.0f) {x=v.x; y=v.y; z=v.z; w=vw;}
 
    // copy constructor
-   vec4f(const vec3 &v,const float vw=0.0f) {x=v.x; y=v.y; z=v.z; w=vw;}
+   vec4f(const vec3 &v,const float vw=1.0f) {x=v.x; y=v.y; z=v.z; w=vw;}
 
    // copy constructor
    vec4f(const vec2f &v,const float vz=0.0f,const float vw=1.0f) {x=v.x; y=v.y; z=vz; w=vw;}
