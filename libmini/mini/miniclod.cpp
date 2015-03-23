@@ -172,13 +172,11 @@ BOOLINT miniCLOD::updateDX()
          path_=paths0_;
          path0_.validate();
          path_.append(path0_);
-         path0_.clear();
          }
       else
          {
          path_=path0_;
          path_.validate();
-         path0_.clear();
          }
 
       calcDC();

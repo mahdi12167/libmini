@@ -273,8 +273,7 @@ void minicurve::validate_props(unsigned int a,unsigned int b)
 
    // check for missing velocity
    for (i=a; i<=b; i++)
-      if (isNAN(get(i).velocity) || get(i).velocity==0.0f)
-         ref(i).velocity=compute_velocity(i);
+      ref(i).velocity=compute_velocity(i);
    }
 
 void minicurve::update_bbox(unsigned int a,unsigned int b)
@@ -694,7 +693,7 @@ void minicurve::from_strings(ministrings &infos)
 double minicurve::compute_velocity(unsigned int i)
    {
    // original value
-   if (!isNAN(get(i).velocity)) return(get(i).velocity);
+   if (!isNAN(get(i).velocity) && get(i).velocity!=0.0) return(get(i).velocity);
 
    // forward difference
    if (i==0 || get(i).start)
