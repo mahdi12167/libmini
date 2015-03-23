@@ -7,7 +7,7 @@ miniCLOD::miniCLOD()
    {
    EYE_=EYE0_=vec3(NAN,NAN,NAN);
 
-   UPDATED_=RECREATE_=FALSE;
+   UPDATED_=FALSE;
    UPDATE_=0;
    }
 
@@ -155,19 +155,15 @@ void miniCLOD::create(vec3 eye,
 
    UPDATE_=update;
 
-   updateDX();
    calcpath();
    }
 
 // incrementally recreate geometry from actual view point
 void miniCLOD::create_inc(vec3 eye)
-   {
-   updateDX();
-   calcpath_inc(eye,UPDATE_);
-   }
+   {calcpath_inc(eye,UPDATE_);}
 
 // update delta values
-void miniCLOD::updateDX()
+BOOLINT miniCLOD::updateDX()
    {
    if (UPDATED_)
       {
@@ -189,8 +185,11 @@ void miniCLOD::updateDX()
       calcD2();
 
       UPDATED_=FALSE;
-      RECREATE_=TRUE;
+
+      return(TRUE);
       }
+
+   return(FALSE);
    }
 
 // calculate the dc-values
@@ -361,6 +360,8 @@ BOOLINT miniCLOD::subdiv(int left,int right)
 // calculate the path
 void miniCLOD::calcpath()
    {
+   updateDX();
+
    POINTS_.clear();
 
    if (!path_.empty())
@@ -399,7 +400,7 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
          EYE0_=EYE_;
          EYE_=eye;
 
-         if (EYE_!=EYE0_ || RECREATE_)
+         if (EYE_!=EYE0_ || updateDX())
             {
             POINTS_.clear();
 
@@ -411,8 +412,6 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
                STACK_.push_back(start);
                }
             else updated(POINTS_);
-
-            RECREATE_=FALSE;
             }
          }
       else

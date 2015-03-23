@@ -92,7 +92,7 @@ class miniCLOD
    std::vector<float> d2_; // geometric deviations
    std::vector<float> dm_; // geometric maximum
 
-   void updateDX();
+   BOOLINT updateDX();
 
    void calcDC();
 
@@ -126,7 +126,6 @@ class miniCLOD
    float WEIGHT_;
 
    BOOLINT UPDATED_;
-   BOOLINT RECREATE_;
    int UPDATE_;
 
    std::vector<struct state_struct> STACK_;
