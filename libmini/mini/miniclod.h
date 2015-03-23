@@ -63,10 +63,14 @@ class miniCLOD
                double weight=1.0, // weight of color mapping
                int update=100); // vertices per update
 
-   // create path geometry incrementally
+   //! create path geometry incrementally
    void create_inc(vec3 eye); // actual eye point
 
-   //! get path
+   //! is the path creation idling?
+   BOOLINT idle()
+      {return(STACK_.empty());}
+
+   //! get actual path
    minipath *getpath()
       {return(&path_);}
 
@@ -151,13 +155,13 @@ class miniCLODcontainer: public miniCLOD
       return(&points_);
       }
 
-   bool isupdated()
+   BOOLINT isupdated()
       {return(updated_);}
 
    protected:
 
    std::vector<mini3D::joint_struct> points_;
-   bool updated_;
+   BOOLINT updated_;
    };
 
 #endif
