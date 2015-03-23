@@ -123,7 +123,7 @@ void miniCLOD::load(ministring filename,
 // clear path
 void miniCLOD::clear()
    {
-   if (!path_.empty())
+   if (!path0_.empty() || !paths0_.empty())
       {
       path0_.clear();
       paths0_.clear();
