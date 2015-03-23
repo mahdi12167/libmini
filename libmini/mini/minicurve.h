@@ -113,6 +113,8 @@ class minicurve: public minidyna<minimeas>
       }
 
    void validate();
+   void validate_props(unsigned int a,unsigned int b);
+   void update_bbox(unsigned int a,unsigned int b);
 
    minimeas interpolate(double t);
    minimeas interpolate_cubic(double t);

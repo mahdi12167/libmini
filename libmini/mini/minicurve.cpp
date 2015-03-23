@@ -21,8 +21,27 @@ void minicurve::append(const minimeas &p)
 
 void minicurve::append(const minicurve &c)
    {
+   unsigned int s;
+
+   if (c.getsize()==0) return;
+
+   s=getsize();
    minidyna<minimeas>::append(c);
-   valid=FALSE;
+
+   if (s==0)
+      {
+      bboxmin=c.bboxmin;
+      bboxmax=c.bboxmax;
+      valid=c.valid;
+      }
+   else if (valid && c.valid)
+      if (get(s-1)<get(s))
+         {
+         validate_props(s-1,getsize()-1);
+         update_bbox(s,getsize()-1);
+         }
+      else valid=FALSE;
+   else valid=FALSE;
    }
 
 void minicurve::append_sector(const minicoord &p1,const minicoord &p2,
@@ -190,71 +209,90 @@ void minicurve::validate()
       for (i=0; i<getsize(); i++)
          ref(i).convert2(minicoord::MINICOORD_ECEF,0,minicoord::MINICOORD_DATUM_NONE,crs_orb);
 
-      // check for maximum time difference and travelled distance
-      for (i=1; i<getsize(); i++)
-         if (!get(i).start)
-            {
-            double t1=get(i-1).vec.w;
-            double t2=get(i).vec.w;
-
-            if (t2-t1>max_delta) ref(i).start=TRUE;
-
-            miniv3d p1=get(i-1).getpos();
-            miniv3d p2=get(i).getpos();
-
-            double d=(p2-p1).getlength();
-
-            if (d>max_length) ref(i).start=TRUE;
-            }
-
-      // apply constraints
-      for (i=1; i+1<getsize();)
-         if (!get(i).start)
-            {
-            double dt=get(i).gettime()-get(i-1).gettime();
-
-            miniv3d p1=get(i-1).getpos();
-            miniv3d p2=get(i).getpos();
-
-            double d=(p2-p1).getlength();
-
-            double v1=compute_velocity(i-1);
-            double v2=compute_velocity(i);
-
-            double a1=get(i-1).accuracy;
-            double a2=get(i).accuracy;
-
-            if (isNAN(a1)) a1=0.0;
-            if (isNAN(a2)) a2=0.0;
-
-            if (!check_constraints(d,dt,p1,p2,v1,v2,a1,a2)) dispose(i);
-            else i++;
-            }
-         else i++;
-
-      // check for missing velocity
-      for (i=0; i<getsize(); i++)
-         if (isNAN(get(i).velocity))
-            ref(i).velocity=compute_velocity(i);
+      // validate properties
+      if (getsize()>0) validate_props(0,getsize()-1);
 
       // initialize bbox
       bboxmin=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
       bboxmax=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
 
       // compute bbox
-      for (i=0; i<getsize(); i++)
+      if (getsize()>0) update_bbox(0,getsize()-1);
+      }
+   }
+
+void minicurve::validate_props(unsigned int a,unsigned int b)
+   {
+   unsigned int i;
+
+   // check for maximum time difference and travelled distance
+   for (i=a+1; i<=b; i++)
+      if (!get(i).start)
          {
-         miniv3d p=get(i).vec;
+         double t1=get(i-1).vec.w;
+         double t2=get(i).vec.w;
 
-         if (p.x<bboxmin.x) bboxmin.x=p.x;
-         if (p.x>bboxmax.x) bboxmax.x=p.x;
+         if (t2-t1>max_delta) ref(i).start=TRUE;
 
-         if (p.y<bboxmin.y) bboxmin.y=p.y;
-         if (p.y>bboxmax.y) bboxmax.y=p.y;
+         miniv3d p1=get(i-1).getpos();
+         miniv3d p2=get(i).getpos();
 
-         if (p.z<bboxmin.z) bboxmin.z=p.z;
-         if (p.z>bboxmax.z) bboxmax.z=p.z;
+         double d=(p2-p1).getlength();
+
+         if (d>max_length) ref(i).start=TRUE;
          }
+
+   // apply constraints
+   for (i=a+1; i<b;)
+      if (!get(i).start)
+         {
+         double dt=get(i).gettime()-get(i-1).gettime();
+
+         miniv3d p1=get(i-1).getpos();
+         miniv3d p2=get(i).getpos();
+
+         double d=(p2-p1).getlength();
+
+         double v1=compute_velocity(i-1);
+         double v2=compute_velocity(i);
+
+         double a1=get(i-1).accuracy;
+         double a2=get(i).accuracy;
+
+         if (isNAN(a1)) a1=0.0;
+         if (isNAN(a2)) a2=0.0;
+
+         if (!check_constraints(d,dt,p1,p2,v1,v2,a1,a2))
+            {
+            dispose(i);
+            b--;
+            }
+         else i++;
+         }
+      else i++;
+
+   // check for missing velocity
+   for (i=a; i<=b; i++)
+      if (isNAN(get(i).velocity))
+         ref(i).velocity=compute_velocity(i);
+   }
+
+void minicurve::update_bbox(unsigned int a,unsigned int b)
+   {
+   unsigned int i;
+
+   for (i=a; i<=b; i++)
+      {
+      miniv3d p=get(i).vec;
+
+      if (p.x<bboxmin.x) bboxmin.x=p.x;
+      if (p.x>bboxmax.x) bboxmax.x=p.x;
+
+      if (p.y<bboxmin.y) bboxmin.y=p.y;
+      if (p.y>bboxmax.y) bboxmax.y=p.y;
+
+      if (p.z<bboxmin.z) bboxmin.z=p.z;
+      if (p.z>bboxmax.z) bboxmax.z=p.z;
       }
    }
 
