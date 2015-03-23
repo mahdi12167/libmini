@@ -463,6 +463,25 @@ minipaths::~minipaths()
       delete get(i);
    }
 
+//! assignment operator
+minipaths& minipaths::operator = (const minipaths &paths)
+{
+   paths.get_constraints(max_delta_,max_length_,min_accuracy_);
+   orb_=paths.get_orb();
+
+   for (unsigned int i=0; i<size(); i++)
+      delete get(i);
+
+   clear();
+
+   for (unsigned int i=0; i<paths.size(); i++)
+      append(*paths.get(i));
+
+   sorted_=paths.sorted_;
+
+   return(*this);
+}
+
 // append path
 void minipaths::append(const minipath &path)
    {

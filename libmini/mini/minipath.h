@@ -87,6 +87,9 @@ class minipaths: public minidyna<minipath *>
    //! destructor
    ~minipaths();
 
+   //! assignment operator
+   minipaths& operator = (const minipaths &paths);
+
    //! get constraints
    void get_constraints(double &max_delta,
                         double &max_length,
