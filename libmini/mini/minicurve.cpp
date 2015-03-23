@@ -273,7 +273,7 @@ void minicurve::validate_props(unsigned int a,unsigned int b)
 
    // check for missing velocity
    for (i=a; i<=b; i++)
-      if (isNAN(get(i).velocity))
+      if (isNAN(get(i).velocity) || get(i).velocity==0.0f)
          ref(i).velocity=compute_velocity(i);
    }
 
