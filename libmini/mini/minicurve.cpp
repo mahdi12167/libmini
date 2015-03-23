@@ -118,7 +118,7 @@ void minicurve::validate()
       valid=TRUE;
 
       // check for missing time step
-      if (get_time_step_max()==0.0)
+      if (getsize()>1 && get_time_step_max()==0.0)
          for (i=0; i<getsize(); i++)
             {
             t=(double)i/(getsize()-1);
