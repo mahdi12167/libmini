@@ -7,7 +7,7 @@ miniCLOD::miniCLOD()
    {
    EYE_=EYE0_=vec3(NAN,NAN,NAN);
 
-   UPDATED_=FALSE;
+   UPDATED_=RECREATE_=FALSE;
    UPDATE_=0;
    }
 
@@ -189,8 +189,7 @@ void miniCLOD::updateDX()
       calcD2();
 
       UPDATED_=FALSE;
-
-      EYE0_=vec3(NAN,NAN,NAN);
+      RECREATE_=TRUE;
       }
    }
 
@@ -400,7 +399,7 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
          EYE0_=EYE_;
          EYE_=eye;
 
-         if (EYE_!=EYE0_)
+         if (EYE_!=EYE0_ || RECREATE_)
             {
             POINTS_.clear();
 
@@ -412,6 +411,8 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
                STACK_.push_back(start);
                }
             else updated(POINTS_);
+
+            RECREATE_=FALSE;
             }
          }
       else

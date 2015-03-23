@@ -126,6 +126,7 @@ class miniCLOD
    float WEIGHT_;
 
    BOOLINT UPDATED_;
+   BOOLINT RECREATE_;
    int UPDATE_;
 
    std::vector<struct state_struct> STACK_;
