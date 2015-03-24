@@ -701,19 +701,16 @@ double minicurve::compute_velocity(unsigned int i)
 
    // forward difference
    if (i==0 || get(i).start)
-      if (i+1<getsize())
+      if (i+1<getsize() && !get(i+1).start)
          return((get(i+1).getpos()-get(i).getpos()).getlength()/(get(i+1).vec.w-get(i).vec.w));
       else
          return(0.0);
-   // backward difference
-   else if (i==getsize()-1)
-      if (i>0)
-         return((get(i).getpos()-get(i-1).getpos()).getlength()/(get(i).vec.w-get(i-1).vec.w));
-      else
-         return(0.0);
    // central difference
-   else
+   else if (i+1<getsize() && !get(i+1).start)
       return((get(i+1).getpos()-get(i-1).getpos()).getlength()/(get(i+1).vec.w-get(i-1).vec.w));
+   // backward difference
+   else
+      return((get(i).getpos()-get(i-1).getpos()).getlength()/(get(i).vec.w-get(i-1).vec.w));
    }
 
 // check constraints
