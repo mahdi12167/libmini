@@ -218,6 +218,8 @@ void minicurve::validate()
 
       // compute bbox
       if (getsize()>0) update_bbox(0,getsize()-1);
+
+      valid=TRUE;
       }
    }
 
@@ -274,6 +276,8 @@ void minicurve::validate_props(unsigned int a,unsigned int b)
    // check for missing velocity
    for (i=a; i<=b; i++)
       ref(i).velocity=compute_velocity(i);
+
+   valid=TRUE;
    }
 
 void minicurve::update_bbox(unsigned int a,unsigned int b)

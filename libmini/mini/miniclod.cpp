@@ -175,8 +175,8 @@ BOOLINT miniCLOD::updateDX()
          }
       else
          {
+         path0_.validate();
          path_=path0_;
-         path_.validate();
          }
 
       calcDC();
