@@ -228,7 +228,7 @@ float miniCLOD::calcD2(int left,int right,int center)
    else d2=MAXFLOAT;
 
    // compute starting deviation
-   if (c.start) d2=fmax(d2,1.0f);
+   if (c.start) d2=fmax(d2,fmax(WEIGHT_,1.0f));
 
    // compute constant deviation
    dc=fabs(dc_[center]-0.5*(dc_[left]+dc_[right]));
