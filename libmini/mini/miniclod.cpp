@@ -364,9 +364,15 @@ void miniCLOD::calcpath()
 
    if (!path_.empty())
       {
-      addpoint(path_.front());
-      calcpath(0,path_.size()-1);
-      addpoint(path_.back());
+      int last=path_.size()-1;
+      while (last>0 && path_.get(last).start) last--;
+
+      if (last>0)
+         {
+         addpoint(path_.get(0));
+         calcpath(0,last);
+         addpoint(path_.get(last));
+         }
       }
 
    updated(POINTS_);
@@ -391,6 +397,8 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
    {
    int i;
 
+   static int last;
+
    if (update>0)
       {
       if (STACK_.empty())
@@ -404,10 +412,17 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
 
             if (!path_.empty())
                {
-               addpoint(path_.front());
+               last=path_.size()-1;
+               while (last>0 && path_.get(last).start) last--;
 
-               struct state_struct start={0,(int)path_.size()-1,FALSE};
-               STACK_.push_back(start);
+               if (last>0)
+                  {
+                  addpoint(path_.get(0));
+
+                  struct state_struct start={0,last,FALSE};
+                  STACK_.push_back(start);
+                  }
+               else updated(POINTS_);
                }
             else updated(POINTS_);
             }
@@ -422,7 +437,7 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
 
          if (STACK_.empty())
             {
-            addpoint(path_.back());
+            addpoint(path_.get(last));
 
             updated(POINTS_);
             }
