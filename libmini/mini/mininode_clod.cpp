@@ -48,14 +48,14 @@ void mininode_geometry_clod::load(ministring filename,
 void mininode_geometry_clod::create(double maxdev,double atdist,
                                     double maxwidth,
                                     double minv,double maxv,double sat,double val,
-                                    double weight,
+                                    double weight,double start,
                                     int update)
    {
    miniCLOD::create(mininode_culling::peek_view(),
                     maxdev,atdist,
                     maxwidth,
                     minv,maxv,sat,val,
-                    weight,
+                    weight,start,
                     update);
    }
 

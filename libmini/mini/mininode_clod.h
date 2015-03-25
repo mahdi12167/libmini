@@ -40,6 +40,7 @@ class mininode_geometry_clod: public mininode_geometry, public miniCLOD
                double maxwidth=1, // maximum width at specific distance
                double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0, // velocity color mapping
                double weight=1.0, // weight of color mapping
+               double start=1.0, // weight of start points
                int update=100); // vertices per update
 
    //! set zscale

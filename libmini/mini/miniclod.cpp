@@ -136,7 +136,7 @@ void miniCLOD::create(vec3 eye,
                       double maxdev,double atdist,
                       double maxwidth,
                       double minv,double maxv,double sat,double val,
-                      double weight,
+                      double weight,double start,
                       int update)
    {
    EYE0_=EYE_;
@@ -152,6 +152,7 @@ void miniCLOD::create(vec3 eye,
    VAL_=val;
 
    WEIGHT_=weight;
+   START_=start;
 
    UPDATE_=update;
 
@@ -228,7 +229,7 @@ float miniCLOD::calcD2(int left,int right,int center)
    else d2=MAXFLOAT;
 
    // compute starting deviation
-   if (c.start) d2=fmax(d2,fmax(WEIGHT_,1.0f));
+   if (c.start) d2=fmax(d2,START_);
 
    // compute constant deviation
    dc=fabs(dc_[center]-0.5*(dc_[left]+dc_[right]));

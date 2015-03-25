@@ -61,6 +61,7 @@ class miniCLOD
                double maxwidth=1, // maximum width at specific distance
                double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0, // velocity color mapping
                double weight=1.0, // weight of color mapping
+               double start=1.0, // weight of start points
                int update=100); // vertices per update
 
    //! create path geometry incrementally
@@ -123,7 +124,7 @@ class miniCLOD
    float C_,D_,W_;
 
    float MINV_,MAXV_,SAT_,VAL_;
-   float WEIGHT_;
+   float WEIGHT_,START_;
 
    BOOLINT UPDATED_;
    int UPDATE_;
