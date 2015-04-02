@@ -401,7 +401,7 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
          EYE0_=EYE_;
          EYE_=eye;
 
-         if (EYE_!=EYE0_ || updateDX())
+         if (updateDX() || EYE_!=EYE0_)
             {
             POINTS_.clear();
 
