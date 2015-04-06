@@ -89,7 +89,7 @@ ministring mininode_geometry_clod::to_string()
    info.append(",");
    info.append_float(zscale);
    info.append(",");
-   info.append(getpath()->to_string());
+   info.append(getpath().to_string());
    info.append(")");
 
    return(info);
@@ -98,6 +98,8 @@ ministring mininode_geometry_clod::to_string()
 // deserialize node from string
 BOOLINT mininode_geometry_clod::from_string(ministring &info)
    {
+   minipath path;
+
    if (info.startswith("mininode_geometry_clod("))
       {
       info=info.tail("mininode_geometry_clod(");
@@ -112,9 +114,11 @@ BOOLINT mininode_geometry_clod::from_string(ministring &info)
       info=info.tail(",");
       zscale=info.prefix(",").value();
       info=info.tail(",");
-      getpath()->from_string(info);
+      path.from_string(info);
 
       info=info.tail(")");
+
+      set(path);
 
       return(TRUE);
       }

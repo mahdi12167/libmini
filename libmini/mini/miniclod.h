@@ -67,13 +67,8 @@ class miniCLOD
    //! create path geometry incrementally
    void create_inc(vec3 eye); // actual eye point
 
-   //! is the path creation idling?
-   BOOLINT idle()
-      {return(STACK_.empty());}
-
    //! get actual path
-   minipath *getpath()
-      {return(&path_);}
+   minipath getpath();
 
    protected:
 
@@ -118,6 +113,9 @@ class miniCLOD
    virtual vec3f point2rgb(const minimeas &m,double v,float hue,float sat,float val);
    virtual void updated(const std::vector<mini3D::joint_struct> &points) = 0;
 
+   virtual void block_on() {}
+   virtual void block_off() {}
+
    private:
 
    vec3 EYE_,EYE0_;
@@ -128,6 +126,7 @@ class miniCLOD
 
    BOOLINT UPDATED_;
    int UPDATE_;
+   BOOLINT UPDATING_;
 
    std::vector<struct state_struct> STACK_;
    std::vector<mini3D::joint_struct> POINTS_;

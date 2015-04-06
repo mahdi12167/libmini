@@ -9,6 +9,7 @@ miniCLOD::miniCLOD()
 
    UPDATED_=FALSE;
    UPDATE_=0;
+   UPDATING_=FALSE;
    }
 
 // destructor
@@ -17,29 +18,41 @@ miniCLOD::~miniCLOD() {}
 // set path
 void miniCLOD::set(const minipath &path)
    {
+   block_on();
+
    if (path!=path0_)
       {
       path0_=path;
       UPDATED_=TRUE;
       }
+
+   block_off();
    }
 
 // set paths
 void miniCLOD::set(const minipaths &paths)
    {
+   block_on();
+
    paths0_=minipaths(paths);
    paths0_.validate();
    path0_.clear();
    UPDATED_=TRUE;
+
+   block_off();
    }
 
 // append to paths
 void miniCLOD::append(const minipath &path)
    {
+   block_on();
+
    paths0_.append(path);
    paths0_.validate();
    path0_.clear();
    UPDATED_=TRUE;
+
+   block_off();
    }
 
 // read path
@@ -56,11 +69,15 @@ void miniCLOD::read(const std::string &csv,
 
    path.from_stdstring(csv);
 
+   block_on();
+
    if (path!=path0_)
       {
       path0_=path;
       UPDATED_=TRUE;
       }
+
+   block_off();
    }
 
 // read paths
@@ -73,10 +90,14 @@ void miniCLOD::read(const std::vector<std::string> &csvs,
    minipaths paths(max_delta,max_length,min_accuracy,orb);
    paths.from_stdstrings(csvs);
 
+   block_on();
+
    paths0_=paths;
    paths0_.validate();
    path0_.clear();
    UPDATED_=TRUE;
+
+   block_off();
    }
 
 // append to paths
@@ -93,10 +114,15 @@ void miniCLOD::append(const std::string &csv)
    path.set_orb(paths0_.get_orb());
 
    path.from_stdstring(csv);
+
+   block_on();
+
    paths0_.append(path);
    paths0_.validate();
    path0_.clear();
    UPDATED_=TRUE;
+
+   block_off();
    }
 
 // load path
@@ -113,22 +139,30 @@ void miniCLOD::load(ministring filename,
 
    path.load(filename);
 
+   block_on();
+
    if (path!=path0_)
       {
       path0_=path;
       UPDATED_=TRUE;
       }
+
+   block_off();
    }
 
 // clear path
 void miniCLOD::clear()
    {
+   block_on();
+
    if (!path0_.empty() || !paths0_.empty())
       {
       path0_.clear();
       paths0_.clear();
       UPDATED_=TRUE;
       }
+
+   block_off();
    }
 
 // recreate geometry from actual view point
@@ -166,6 +200,8 @@ void miniCLOD::create_inc(vec3 eye)
 // update delta values
 BOOLINT miniCLOD::updateDX()
    {
+   block_on();
+
    if (UPDATED_)
       {
       if (paths0_.size()>0)
@@ -180,13 +216,17 @@ BOOLINT miniCLOD::updateDX()
          path_=path0_;
          }
 
+      UPDATED_=FALSE;
+
+      block_off();
+
       calcDC();
       calcD2();
 
-      UPDATED_=FALSE;
-
       return(TRUE);
       }
+   else
+      block_off();
 
    return(FALSE);
    }
@@ -359,20 +399,32 @@ BOOLINT miniCLOD::subdiv(int left,int right)
 // calculate the path
 void miniCLOD::calcpath()
    {
-   updateDX();
+   block_on();
 
-   POINTS_.clear();
-
-   if (!path_.empty())
+   if (!UPDATING_)
       {
-      int last=path_.size()-1;
+      UPDATING_=TRUE;
+      block_off();
 
-      addpoint(path_.get(0));
-      calcpath(0,last);
-      if (!path_.get(last).start) addpoint(path_.get(last));
+      updateDX();
+
+      POINTS_.clear();
+
+      if (!path_.empty())
+         {
+         int last=path_.size()-1;
+
+         addpoint(path_.get(0));
+         calcpath(0,last);
+         if (!path_.get(last).start) addpoint(path_.get(last));
+         }
+
+      updated(POINTS_);
+
+      UPDATING_=FALSE;
       }
-
-   updated(POINTS_);
+   else
+      block_off();
    }
 
 // calculate the path subdivision bottom-up
@@ -394,47 +446,57 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
    {
    int i;
 
-   if (update>0)
+   if (!UPDATING_)
       {
-      if (STACK_.empty())
+      UPDATING_=TRUE;
+      block_off();
+
+      if (update>0)
          {
-         EYE0_=EYE_;
-         EYE_=eye;
-
-         if (updateDX() || EYE_!=EYE0_)
+         if (STACK_.empty())
             {
-            POINTS_.clear();
+            EYE0_=EYE_;
+            EYE_=eye;
 
-            if (!path_.empty())
+            if (updateDX() || EYE_!=EYE0_)
+               {
+               POINTS_.clear();
+
+               if (!path_.empty())
+                  {
+                  int last=path_.size()-1;
+
+                  addpoint(path_.get(0));
+
+                  struct state_struct start={0,last,FALSE};
+                  STACK_.push_back(start);
+                  }
+               else updated(POINTS_);
+               }
+            }
+         else
+            {
+            for (i=0; i<update; i++)
+               {
+               calcpath_inc();
+               if (STACK_.empty()) break;
+               }
+
+            if (STACK_.empty())
                {
                int last=path_.size()-1;
 
-               addpoint(path_.get(0));
+               if (!path_.get(last).start) addpoint(path_.get(last));
 
-               struct state_struct start={0,last,FALSE};
-               STACK_.push_back(start);
+               updated(POINTS_);
                }
-            else updated(POINTS_);
             }
          }
-      else
-         {
-         for (i=0; i<update; i++)
-            {
-            calcpath_inc();
-            if (STACK_.empty()) break;
-            }
 
-         if (STACK_.empty())
-            {
-            int last=path_.size()-1;
-
-            if (!path_.get(last).start) addpoint(path_.get(last));
-
-            updated(POINTS_);
-            }
-         }
+      UPDATING_=FALSE;
       }
+   else
+      block_off();
    }
 
 // calculate the path subdivision incrementally
@@ -463,6 +525,16 @@ void miniCLOD::calcpath_inc()
       struct state_struct lseg={left,center,FALSE};
       STACK_.push_back(lseg);
       }
+   }
+
+// get actual path
+minipath miniCLOD::getpath()
+   {
+   block_on();
+   minipath path=path_;
+   block_off();
+
+   return(path);
    }
 
 // calculate the distance of a point p from a line segment between vectors a and b

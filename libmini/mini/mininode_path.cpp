@@ -3,14 +3,17 @@
 #include "mininode_path.h"
 
 // default constructor
-mininode_geometry_path::mininode_geometry_path()
-   : mininode_geometry(0,3,0)
+mininode_geometry_path::mininode_geometry_path(double width)
+   : mininode_geometry(0,3,0),
+     wdt(width)
    {set_zscale();}
 
 // constructor
 mininode_geometry_path::mininode_geometry_path(ministring filename,double width)
-   : mininode_geometry(0,3,0)
+   : mininode_geometry(0,3,0),
+     wdt(width)
    {
+   set_zscale();
    path.load(filename);
    recreate(width);
    }
@@ -68,6 +71,8 @@ BOOLINT mininode_geometry_path::from_string(ministring &info)
       path.from_string(info);
 
       info=info.tail(")");
+
+      recreate(wdt);
 
       return(TRUE);
       }

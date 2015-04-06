@@ -12,7 +12,7 @@ class mininode_geometry_path: public mininode_geometry
    public:
 
    //! default constructor
-   mininode_geometry_path();
+   mininode_geometry_path(double width=10.0);
 
    //! constructor
    mininode_geometry_path(ministring filename,double width=10.0);
@@ -40,6 +40,7 @@ class mininode_geometry_path: public mininode_geometry
    protected:
 
    minipath path;
+   double wdt;
 
    float zscale;
    };
