@@ -165,6 +165,26 @@ void miniCLOD::clear()
    block_off();
    }
 
+// get actual path
+minipath miniCLOD::getpath()
+   {
+   minipath path;
+
+   if (paths0_.size()>0)
+      {
+      path=paths0_;
+      path0_.validate();
+      path.append(path0_);
+      }
+   else
+      {
+      path0_.validate();
+      path=path0_;
+      }
+
+   return(path);
+   }
+
 // recreate geometry from actual view point
 void miniCLOD::create(vec3 eye,
                       double maxdev,double atdist,
@@ -204,20 +224,9 @@ BOOLINT miniCLOD::updateDX()
 
    if (UPDATED_)
       {
-      if (paths0_.size()>0)
-         {
-         path_=paths0_;
-         path0_.validate();
-         path_.append(path0_);
-         }
-      else
-         {
-         path0_.validate();
-         path_=path0_;
-         }
+      path_=getpath();
 
       UPDATED_=FALSE;
-
       block_off();
 
       calcDC();
@@ -526,16 +535,6 @@ void miniCLOD::calcpath_inc()
       struct state_struct lseg={left,center,FALSE};
       STACK_.push_back(lseg);
       }
-   }
-
-// get actual path
-minipath miniCLOD::getpath()
-   {
-   block_on();
-   minipath path=path_;
-   block_off();
-
-   return(path);
    }
 
 // calculate the distance of a point p from a line segment between vectors a and b

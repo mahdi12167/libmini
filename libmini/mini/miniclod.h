@@ -55,6 +55,9 @@ class miniCLOD
    //! clear path
    void clear();
 
+   //! get actual path
+   minipath getpath();
+
    //! create path geometry
    void create(vec3 eye, // actual eye point
                double maxdev=1,double atdist=100, // maximum deviation at specific distance
@@ -66,9 +69,6 @@ class miniCLOD
 
    //! create path geometry incrementally
    void create_inc(vec3 eye); // actual eye point
-
-   //! get actual path
-   minipath getpath();
 
    protected:
 
