@@ -654,11 +654,13 @@ ministring Object_path::get_info()
 
    if (path_node==NULL) return("");
 
+   minipath path = path_node->getpath();
+
    info = ministring("Path")+
           "\n\nrepo = "+repository+"\n"+
           "file = "+filename+"\n\n"+
-          "length = "+path_node->getpath()->get_length()/1000+"km\n"+
-          "duration = "+path_node->getpath()->get_time_period()/3600+"h";
+          "length = "+path.get_length()/1000+"km\n"+
+          "duration = "+path.get_time_period()/3600+"h";
 
    return(info);
    }
@@ -696,14 +698,16 @@ int Object_path::initGFX()
                         2.0, // weight of start points
                         300); // vertices per update
 
-      if (!path_node->getpath()->empty())
+      minipath path = path_node->getpath();
+
+      if (!path.empty())
          {
          miniv3d center;
          double radius2;
 
          // get bounding sphere
-         path_node->getpath()->getbsphere(center,radius2);
-         set_center(path_node->getpath()->get(0),2.0*sqrt(radius2));
+         path.getbsphere(center,radius2);
+         set_center(path.get(0),2.0*sqrt(radius2));
 
          // link path node
          path_groupnode->append_child(ecef_node)->append_child(noculling_node)->append_child(path_node);
