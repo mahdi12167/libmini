@@ -409,6 +409,7 @@ void miniCLOD::calcpath()
       updateDX();
 
       POINTS_.clear();
+      STACK_.clear();
 
       if (!path_.empty())
          {
