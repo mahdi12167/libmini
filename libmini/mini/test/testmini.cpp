@@ -362,7 +362,7 @@ int main(int argc,char *argv[])
    double llength=t.lineLength();
    double tarea=t.triangleArea();
    if (dabs(length-10410.5)<1E1 && points==4 &&
-       lines==3 && triangles==11 &&
+       lines==3 && triangles==9 &&
        dabs(llength-484.1)<1E1 && dabs(tarea-1850.0)<1E1)
       std::cout << "SUCCESS" << std::endl;
    else

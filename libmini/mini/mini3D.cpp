@@ -296,7 +296,19 @@ void mini3D::clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b)
    bool bb=b->pos_post.z<b->pos_post.w;
 
    if (af && bf && ab && bb)
-      render_line(a->pos_post,b->pos_post,a->col,b->col);
+      {
+      vec4 pointa=a->pos_post;
+      vec4 pointb=b->pos_post;
+      vec4 pointac=a->col;
+      vec4 pointbc=b->col;
+
+      if (pointa.x<-pointa.w && pointb.x<-pointb.w) return;
+      if (pointa.x>pointa.w && pointb.x>pointb.w) return;
+      if (pointa.y<-pointa.w && pointb.y<-pointb.w) return;
+      if (pointa.y>pointa.w && pointb.y>pointb.w) return;
+
+      render_line(pointa,pointb,pointac,pointbc);
+      }
    else if ((af || bf) && (ab || bb))
       {
       vec4 clipa=a->pos_post;
@@ -308,6 +320,11 @@ void mini3D::clip_line(primitive::vertex_struct *a,primitive::vertex_struct *b)
       if (!bf) clip(clipb,clipa,clipbc,clipac,vec4(0,0,1,1));
       if (!ab) clip(clipa,clipb,clipac,clipbc,vec4(0,0,-1,1));
       if (!bb) clip(clipb,clipa,clipbc,clipac,vec4(0,0,-1,1));
+
+      if (clipa.x<-clipa.w && clipb.x<-clipb.w) return;
+      if (clipa.x>clipa.w && clipb.x>clipb.w) return;
+      if (clipa.y<-clipa.w && clipb.y<-clipb.w) return;
+      if (clipa.y>clipa.w && clipb.y>clipb.w) return;
 
       render_line(clipa,clipb,clipac,clipbc);
       }
@@ -442,7 +459,7 @@ inline void mini3D::clip1tri2(vec4 v0,double d0,vec4 c0,
    pc1=c0*(1.0-t1)+c1*t1;
    pc2=c0*(1.0-t2)+c2*t2;
 
-   render_triangle(v0,p1,p2,c0,pc1,pc2);
+   culltri(v0,p1,p2,c0,pc1,pc2);
    }
 
 // clip a triangle (resulting in two remaining triangles)
@@ -466,8 +483,8 @@ inline void mini3D::clip2tri2(vec4 v0,double d0,vec4 c0,
    pc1=c0*(1.0-t1)+c1*t1;
    pc2=c0*(1.0-t2)+c2*t2;
 
-   render_triangle(v1,v2,p2,c1,c2,pc2);
-   render_triangle(p2,p1,v1,pc2,pc1,c1);
+   culltri(v1,v2,p2,c1,c2,pc2);
+   culltri(p2,p1,v1,pc2,pc1,c1);
    }
 
 // clip a triangle in homogeneous clip coordinates so that z<=w
@@ -518,6 +535,22 @@ void mini3D::cliptri2(vec4 v0, // vertex v0
                         v1,d1,c1); break;
 
       // entire triangle
-      case 7: render_triangle(v0,v1,v2,c0,c1,c2); break;
+      case 7: culltri(v0,v1,v2,c0,c1,c2); break;
       }
+   }
+
+// cull a triangle in homogeneous clip coordinates
+void mini3D::culltri(vec4 v0, // vertex v0
+                     vec4 v1, // vertex v1
+                     vec4 v2, // vertex v2
+                     vec4 c0, // color c0
+                     vec4 c1, // color c1
+                     vec4 c2) // color c2
+   {
+   if (v0.x<-v0.w && v1.x<-v1.w && v2.x<-v2.w) return;
+   if (v0.x>v0.w && v1.x>v1.w && v2.x>v2.w) return;
+   if (v0.y<-v0.w && v1.y<-v1.w && v2.y<-v2.w) return;
+   if (v0.y>v0.w && v1.y>v1.w && v2.y>v2.w) return;
+
+   render_triangle(v0,v1,v2,c0,c1,c2);
    }
