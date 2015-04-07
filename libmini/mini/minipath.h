@@ -14,7 +14,7 @@ class minipath: public minicurve
 
    //! default constructor
    minipath(double start=0.0,double stop=1.0,
-            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0,
+            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=100.0,double max_accel=2.0,double max_tol=2.0,
             int orb=minicoord::MINICOORD_ORB_NONE)
       : minicurve(start,stop),
         name("path"), activity("none"), description("created by libmini")
@@ -26,7 +26,7 @@ class minipath: public minicurve
    //! constructor
    minipath(ministring filename,
             double start=0.0,double stop=1.0,
-            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,double max_accel=2.0,double max_tol=2.0,
+            double max_delta=3600.0,double max_length=50000.0,double min_accuracy=100.0,double max_accel=2.0,double max_tol=2.0,
             int orb=minicoord::MINICOORD_ORB_NONE)
       : minicurve(start,stop),
         name("path"), activity("none"), description("created by libmini")
@@ -78,7 +78,7 @@ class minipaths: public minidyna<minipath *>
    public:
 
    //! default constructor
-   minipaths(double max_delta=3600.0,double max_length=50000.0,double min_accuracy=50.0,
+   minipaths(double max_delta=3600.0,double max_length=50000.0,double min_accuracy=100.0,
              int orb=minicoord::MINICOORD_ORB_NONE);
 
    //! copy constructor

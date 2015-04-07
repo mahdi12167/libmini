@@ -245,7 +245,7 @@ void minicurve::validate_props(unsigned int a,unsigned int b)
          }
 
    // apply constraints
-   for (i=a+1; i<b;)
+   for (i=a+1; i<=b;)
       if (!get(i).start)
          {
          double dt=get(i).gettime()-get(i-1).gettime();
