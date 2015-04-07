@@ -199,6 +199,7 @@ class mini3D
    virtual void render_begin() {}
    virtual void render_line(vec3 a,vec3 b,vec4f ac,vec4f bc) = 0;
    virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec4f ac,vec4f bc,vec4f cc) = 0;
+   virtual void render_yield() {}
    virtual void render_end() {}
    };
 

@@ -208,6 +208,8 @@ void mini3D::render()
          clip_line(&vertices_[pl->index1],&vertices_[pl->index2]);
       else if (primitive_triangle *pt=dynamic_cast<primitive_triangle*>(p))
          clip_triangle(&vertices_[pt->index1],&vertices_[pt->index2],&vertices_[pt->index3]);
+
+      render_yield();
       }
    render_end();
    }
