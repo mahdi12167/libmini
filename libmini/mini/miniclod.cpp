@@ -205,10 +205,13 @@ void miniCLOD::create(vec3 eye,
    SAT_=sat;
    VAL_=val;
 
-   WEIGHT_=weight;
-   START_=start;
+   if (UPDATE_==0)
+      {
+      WEIGHT_=weight;
+      START_=start;
 
-   UPDATE_=update;
+      UPDATE_=update;
+      }
 
    calcpath();
    }
