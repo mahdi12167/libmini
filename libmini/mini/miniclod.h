@@ -101,7 +101,7 @@ class miniCLOD
    void addpoint(const minimeas &m,BOOLINT start=FALSE);
    BOOLINT subdiv(int left,int right);
 
-   void calcpath();
+   void calcpath(vec3 eye);
    void calcpath(int left,int right);
 
    void calcpath_inc(vec3 eye,int update=100);
@@ -118,7 +118,7 @@ class miniCLOD
 
    private:
 
-   vec3 EYE_,EYE0_;
+   vec3 EYE_;
    float C_,D_,W_;
 
    float MINV_,MAXV_,SAT_,VAL_;

@@ -5,8 +5,6 @@
 // default constructor
 miniCLOD::miniCLOD()
    {
-   EYE_=EYE0_=vec3(NAN,NAN,NAN);
-
    UPDATED_=FALSE;
    UPDATE_=0;
    UPDATING_=FALSE;
@@ -193,27 +191,25 @@ void miniCLOD::create(vec3 eye,
                       double weight,double start,
                       int update)
    {
-   EYE0_=EYE_;
-   EYE_=eye;
-
-   C_=maxdev/atdist;
-   D_=atdist;
-   W_=maxwidth/atdist;
-
-   MINV_=minv;
-   MAXV_=maxv;
-   SAT_=sat;
-   VAL_=val;
-
    if (UPDATE_==0)
       {
+      C_=maxdev/atdist;
+      D_=atdist;
+      W_=maxwidth/atdist;
+
+      MINV_=minv;
+      MAXV_=maxv;
+      SAT_=sat;
+      VAL_=val;
+
       WEIGHT_=weight;
       START_=start;
-
-      UPDATE_=update;
       }
 
-   calcpath();
+   calcpath(eye);
+
+   if (UPDATE_==0)
+      UPDATE_=update;
    }
 
 // incrementally recreate geometry from actual view point
@@ -409,7 +405,7 @@ BOOLINT miniCLOD::subdiv(int left,int right)
    }
 
 // calculate the path
-void miniCLOD::calcpath()
+void miniCLOD::calcpath(vec3 eye)
    {
    block_on();
 
@@ -419,6 +415,8 @@ void miniCLOD::calcpath()
       block_off();
 
       updateDX();
+
+      EYE_=eye;
 
       POINTS_.clear();
       STACK_.clear();
@@ -468,11 +466,10 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
          {
          if (STACK_.empty())
             {
-            EYE0_=EYE_;
-            EYE_=eye;
-
-            if (updateDX() || EYE_!=EYE0_)
+            if (updateDX() || eye!=EYE_)
                {
+               EYE_=eye;
+
                POINTS_.clear();
 
                if (!path_.empty())
