@@ -191,8 +191,13 @@ void miniCLOD::create(vec3 eye,
                       double weight,double start,
                       int update)
    {
-   if (UPDATE_==0)
+   block_on();
+
+   if (!UPDATING_)
       {
+      UPDATING_=TRUE;
+      block_off();
+
       C_=maxdev/atdist;
       D_=atdist;
       W_=maxwidth/atdist;
@@ -204,17 +209,34 @@ void miniCLOD::create(vec3 eye,
 
       WEIGHT_=weight;
       START_=start;
-      }
 
-   calcpath(eye);
-
-   if (UPDATE_==0)
       UPDATE_=update;
+
+      calcpath(eye);
+
+      UPDATING_=FALSE;
+      }
+   else
+      block_off();
    }
 
 // incrementally recreate geometry from actual view point
 void miniCLOD::create_inc(vec3 eye)
-   {calcpath_inc(eye,UPDATE_);}
+   {
+   block_on();
+
+   if (!UPDATING_)
+      {
+      UPDATING_=TRUE;
+      block_off();
+
+      calcpath_inc(eye,UPDATE_);
+
+      UPDATING_=FALSE;
+      }
+   else
+      block_off();
+   }
 
 // update delta values
 BOOLINT miniCLOD::updateDX()
@@ -407,35 +429,23 @@ BOOLINT miniCLOD::subdiv(int left,int right)
 // calculate the path
 void miniCLOD::calcpath(vec3 eye)
    {
-   block_on();
+   updateDX();
 
-   if (!UPDATING_)
+   EYE_=eye;
+
+   POINTS_.clear();
+   STACK_.clear();
+
+   if (!path_.empty())
       {
-      UPDATING_=TRUE;
-      block_off();
+      int last=path_.size()-1;
 
-      updateDX();
-
-      EYE_=eye;
-
-      POINTS_.clear();
-      STACK_.clear();
-
-      if (!path_.empty())
-         {
-         int last=path_.size()-1;
-
-         addpoint(path_.get(0));
-         calcpath(0,last);
-         if (!path_.get(last).start) addpoint(path_.get(last));
-         }
-
-      updated(POINTS_);
-
-      UPDATING_=FALSE;
+      addpoint(path_.get(0));
+      calcpath(0,last);
+      if (!path_.get(last).start) addpoint(path_.get(last));
       }
-   else
-      block_off();
+
+   updated(POINTS_);
    }
 
 // calculate the path subdivision bottom-up
@@ -457,56 +467,46 @@ void miniCLOD::calcpath_inc(vec3 eye,int update)
    {
    int i;
 
-   if (!UPDATING_)
+   if (update>0)
       {
-      UPDATING_=TRUE;
-      block_off();
-
-      if (update>0)
+      if (STACK_.empty())
          {
-         if (STACK_.empty())
+         if (updateDX() || eye!=EYE_)
             {
-            if (updateDX() || eye!=EYE_)
-               {
-               EYE_=eye;
+            EYE_=eye;
 
-               POINTS_.clear();
+            POINTS_.clear();
 
-               if (!path_.empty())
-                  {
-                  int last=path_.size()-1;
-
-                  addpoint(path_.get(0));
-
-                  struct state_struct start={0,last,FALSE};
-                  STACK_.push_back(start);
-                  }
-               else updated(POINTS_);
-               }
-            }
-         else
-            {
-            for (i=0; i<update; i++)
-               {
-               calcpath_inc();
-               if (STACK_.empty()) break;
-               }
-
-            if (STACK_.empty())
+            if (!path_.empty())
                {
                int last=path_.size()-1;
 
-               if (!path_.get(last).start) addpoint(path_.get(last));
+               addpoint(path_.get(0));
 
-               updated(POINTS_);
+               struct state_struct start={0,last,FALSE};
+               STACK_.push_back(start);
                }
+            else updated(POINTS_);
             }
          }
+      else
+         {
+         for (i=0; i<update; i++)
+            {
+            calcpath_inc();
+            if (STACK_.empty()) break;
+            }
 
-      UPDATING_=FALSE;
+         if (STACK_.empty())
+            {
+            int last=path_.size()-1;
+
+            if (!path_.get(last).start) addpoint(path_.get(last));
+
+            updated(POINTS_);
+            }
+         }
       }
-   else
-      block_off();
    }
 
 // calculate the path subdivision incrementally
