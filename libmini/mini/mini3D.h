@@ -131,6 +131,9 @@ class mini3D
    //! add triangle strip to scene
    void strip(const std::vector<point_struct> &s);
 
+   //! add triangle fan to scene
+   void fan(const std::vector<point_struct> &s);
+
    //! render scene
    void render();
 
