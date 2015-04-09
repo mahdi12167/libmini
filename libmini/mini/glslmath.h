@@ -154,7 +154,7 @@ class vec3
    vec3(const vec2f &v,const double vz=0.0) {x=v.x; y=v.y; z=vz;}
 
    // component-wise constructor
-   vec3(const double vx,const double vy,const double vz) {x=vx; y=vy; z=vz;}
+   vec3(const double vx,const double vy,const double vz=0.0) {x=vx; y=vy; z=vz;}
 
    // cast operator
    operator vec2() const
@@ -279,7 +279,7 @@ class vec3f
    vec3f(const vec2 &v,const float vz=0.0f) {x=v.x; y=v.y; z=vz;}
 
    // component-wise constructor
-   vec3f(const float vx,const float vy,const float vz) {x=vx; y=vy; z=vz;}
+   vec3f(const float vx,const float vy,const float vz=0.0f) {x=vx; y=vy; z=vz;}
 
    // cast operator
    operator vec3() const
@@ -320,7 +320,7 @@ class vec4
    vec4(const vec2f &v,const double vz=0.0,const double vw=1.0) {x=v.x; y=v.y; z=vz; w=vw;}
 
    // component-wise constructor
-   vec4(const double vx,const double vy,const double vz, const double vw=1.0) {x=vx; y=vy; z=vz; w=vw;}
+   vec4(const double vx,const double vy,const double vz=0.0, const double vw=1.0) {x=vx; y=vy; z=vz; w=vw;}
 
    // cast operator with homogenization
    operator vec3() const
@@ -458,7 +458,7 @@ class vec4f
    vec4f(const vec2 &v,const float vz=0.0f,const float vw=1.0f) {x=v.x; y=v.y; z=vz; w=vw;}
 
    // component-wise constructor
-   vec4f(const float vx,const float vy,const float vz,const float vw) {x=vx; y=vy; z=vz; w=vw;}
+   vec4f(const float vx,const float vy,const float vz=0.0f,const float vw=1.0f) {x=vx; y=vy; z=vz; w=vw;}
 
    // cast operator
    operator vec4() const
