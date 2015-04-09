@@ -21,6 +21,32 @@ void mini3D::preMultiply(const mat4 &m)
 void mini3D::postMultiply(const mat4 &m)
    {postMatrix_=m;}
 
+// add triangle to scene
+void mini3D::triangle(point_struct p1,point_struct p2,point_struct p3)
+   {
+   unsigned int idx1,idx2,idx3;
+
+   idx1=addvtx(p1.pos,p1.col);
+   idx2=addvtx(p2.pos,p2.col);
+   idx3=addvtx(p3.pos,p3.col);
+
+   primitives_.push_back(new primitive_triangle(idx1,idx2,idx3,&vertices_));
+   }
+
+// add quadrilateral to scene
+void mini3D::quad(point_struct p1,point_struct p2,point_struct p3,point_struct p4)
+   {
+   unsigned int idx1,idx2,idx3,idx4;
+
+   idx1=addvtx(p1.pos,p1.col);
+   idx2=addvtx(p2.pos,p2.col);
+   idx3=addvtx(p3.pos,p3.col);
+   idx4=addvtx(p4.pos,p4.col);
+
+   primitives_.push_back(new primitive_triangle(idx1,idx2,idx3,&vertices_));
+   primitives_.push_back(new primitive_triangle(idx2,idx3,idx4,&vertices_));
+   }
+
 // add line to scene
 void mini3D::line(const std::vector<point_struct> &l)
    {
@@ -191,6 +217,40 @@ void mini3D::fan(const std::vector<point_struct> &f)
       }
    }
 
+void mini3D::disc(double radius,vec4f col,int n)
+{
+   static const int maxn=1000;
+   static vec2 offset[maxn+1];
+   static int actn=0;
+
+   if (n>maxn) n=maxn;
+   if (n<5) n=5;
+
+   if (n!=actn)
+      {
+      actn=n;
+
+      for (int i=0; i<=actn; i++)
+         {
+         double w=M_PI/180.0*i/actn;
+         offset[i]=vec2(sin(w),cos(w));
+         }
+      }
+
+   std::vector<point_struct> f;
+
+   point_struct p={vec3(0,0),col};
+   f.push_back(p);
+
+   for (int i=0; i<=actn; i++)
+      {
+      point_struct p={vec3(offset[i]*radius),col};
+      f.push_back(p);
+      }
+
+   fan(f);
+}
+
 // compute half direction between two vectors
 vec3 mini3D::halfdir(vec3 dir1,vec3 dir2)
    {
@@ -247,6 +307,9 @@ void mini3D::sort()
 // clear scene
 void mini3D::clear()
    {
+   preMatrix_=postMatrix_=mat4();
+   preMatrixOne_=true;
+
    vertices_.clear();
 
    for (unsigned int i=0; i<primitives_.size(); i++)

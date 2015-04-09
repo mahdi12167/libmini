@@ -116,8 +116,14 @@ class mini3D
    //! pre-multiply vertices by 4x4 matrix
    void preMultiply(const mat4 &m);
 
-   // post-multiply vertices by 4x4 matrix
+   //! post-multiply vertices by 4x4 matrix
    void postMultiply(const mat4 &m);
+
+   //! add triangle to scene
+   void triangle(point_struct p1,point_struct p2,point_struct p3);
+
+   //! add quadrilateral to scene
+   void quad(point_struct p1,point_struct p2,point_struct p3,point_struct p4);
 
    //! add line to scene
    void line(const std::vector<point_struct> &l);
@@ -133,6 +139,9 @@ class mini3D
 
    //! add triangle fan to scene
    void fan(const std::vector<point_struct> &f);
+
+   //! add disc to scene
+   void disc(double radius,vec4f col,int n=10);
 
    //! render scene
    void render();
