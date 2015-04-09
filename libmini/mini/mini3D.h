@@ -217,6 +217,18 @@ class mini3D
    virtual void render_end() {}
    };
 
+inline struct mini3D::point_struct operator + (const struct mini3D::point_struct &a,const struct mini3D::point_struct &b)
+   {
+   struct mini3D::point_struct p={a.pos+b.pos,vec4(a.col)+vec4(b.col)};
+   return(p);
+   }
+
+inline struct mini3D::point_struct operator * (const double a,const struct mini3D::point_struct &b)
+   {
+   struct mini3D::point_struct p={a*b.pos,a*vec4(b.col)};
+   return(p);
+   }
+
 inline struct mini3D::joint_struct operator + (const struct mini3D::joint_struct &a,const struct mini3D::joint_struct &b)
    {
    struct mini3D::joint_struct j={a.pos+b.pos,vec3(a.nrm)+vec3(b.nrm),vec4(a.col)+vec4(b.col),a.wdt+b.wdt};
