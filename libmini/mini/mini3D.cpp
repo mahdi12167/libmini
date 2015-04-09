@@ -232,7 +232,7 @@ void mini3D::disc(double radius,vec4f col,int n)
 
       for (int i=0; i<=actn; i++)
          {
-         double w=M_PI/180.0*i/actn;
+         double w=2*M_PI*i/actn;
          offset[i]=vec2(sin(w),cos(w));
          }
       }
