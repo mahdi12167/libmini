@@ -26,9 +26,9 @@ void mini3D::triangle(point_struct p1,point_struct p2,point_struct p3)
    {
    unsigned int idx1,idx2,idx3;
 
-   idx1=addvtx(p1.pos,p1.col);
-   idx2=addvtx(p2.pos,p2.col);
-   idx3=addvtx(p3.pos,p3.col);
+   idx1=addvtx(p1.pos,p1.col,&vertices_);
+   idx2=addvtx(p2.pos,p2.col,&vertices_);
+   idx3=addvtx(p3.pos,p3.col,&vertices_);
 
    primitives_.push_back(new primitive_triangle(idx1,idx2,idx3,&vertices_));
    }
@@ -38,10 +38,10 @@ void mini3D::quad(point_struct p1,point_struct p2,point_struct p3,point_struct p
    {
    unsigned int idx1,idx2,idx3,idx4;
 
-   idx1=addvtx(p1.pos,p1.col);
-   idx2=addvtx(p2.pos,p2.col);
-   idx3=addvtx(p3.pos,p3.col);
-   idx4=addvtx(p4.pos,p4.col);
+   idx1=addvtx(p1.pos,p1.col,&vertices_);
+   idx2=addvtx(p2.pos,p2.col,&vertices_);
+   idx3=addvtx(p3.pos,p3.col,&vertices_);
+   idx4=addvtx(p4.pos,p4.col,&vertices_);
 
    primitives_.push_back(new primitive_triangle(idx1,idx2,idx3,&vertices_));
    primitives_.push_back(new primitive_triangle(idx2,idx3,idx4,&vertices_));
@@ -54,11 +54,11 @@ void mini3D::line(const std::vector<point_struct> &l)
 
    if (l.size()>1)
       {
-      idx1=addvtx(l[0].pos,l[0].col);
+      idx1=addvtx(l[0].pos,l[0].col,&vertices_);
 
       for (unsigned int i=1; i<l.size(); i++)
          {
-         idx2=addvtx(l[i].pos,l[i].col);
+         idx2=addvtx(l[i].pos,l[i].col,&vertices_);
 
          primitives_.push_back(new primitive_line(idx1,idx2,&vertices_));
 
@@ -74,11 +74,11 @@ void mini3D::line(const std::vector<joint_struct> &l)
 
    if (l.size()>1)
       {
-      idx1=addvtx(l[0].pos,l[0].col);
+      idx1=addvtx(l[0].pos,l[0].col,&vertices_);
 
       for (unsigned int i=1; i<l.size(); i++)
          {
-         idx2=addvtx(l[i].pos,l[i].col);
+         idx2=addvtx(l[i].pos,l[i].col,&vertices_);
 
          primitives_.push_back(new primitive_line(idx1,idx2,&vertices_));
 
@@ -171,12 +171,12 @@ void mini3D::strip(const std::vector<point_struct> &s)
 
    if (s.size()>2)
       {
-      idx1=addvtx(s[0].pos,s[0].col);
-      idx2=addvtx(s[1].pos,s[1].col);
+      idx1=addvtx(s[0].pos,s[0].col,&vertices_);
+      idx2=addvtx(s[1].pos,s[1].col,&vertices_);
 
       for (unsigned int i=2; i<s.size(); i++)
          {
-         idx3=addvtx(s[i].pos,s[i].col);
+         idx3=addvtx(s[i].pos,s[i].col,&vertices_);
 
          vec3 p1=s[idx1].pos;
          vec3 p2=s[idx2].pos;
@@ -198,12 +198,12 @@ void mini3D::fan(const std::vector<point_struct> &f)
 
    if (f.size()>2)
       {
-      idx1=addvtx(f[0].pos,f[0].col);
-      idx2=addvtx(f[1].pos,f[1].col);
+      idx1=addvtx(f[0].pos,f[0].col,&vertices_);
+      idx2=addvtx(f[1].pos,f[1].col,&vertices_);
 
       for (unsigned int i=2; i<f.size(); i++)
          {
-         idx3=addvtx(f[i].pos,f[i].col);
+         idx3=addvtx(f[i].pos,f[i].col,&vertices_);
 
          vec3 p1=f[idx1].pos;
          vec3 p2=f[idx2].pos;
@@ -261,16 +261,17 @@ vec3 mini3D::halfdir(vec3 dir1,vec3 dir2)
    }
 
 // add pre-multiplied vertex
-unsigned int mini3D::addvtx(vec3 v,vec4f c)
+unsigned int mini3D::addvtx(vec3 v,vec4f c,
+                            std::vector<primitive::vertex_struct> *vertices)
    {
    // multiply vertex with pre-matrix
    if (!preMatrixOne_) v=preMatrix_*v;
 
    // append to vertex array
    struct primitive::vertex_struct vtx={v,v,c};
-   vertices_.push_back(vtx);
+   vertices->push_back(vtx);
 
-   return(vertices_.size()-1);
+   return(vertices->size()-1);
    }
 
 // render scene

@@ -58,8 +58,8 @@ class primitive_line: public primitive
    primitive_line() {}
 
    primitive_line(unsigned int idx1,unsigned int idx2,
-                  const std::vector<vertex_struct> *v)
-      : primitive((*v)[idx1].pos,(*v)[idx2].pos),
+                  const std::vector<vertex_struct> *vertices)
+      : primitive((*vertices)[idx1].pos,(*vertices)[idx2].pos),
       index1(idx1),index2(idx2)
       {}
 
@@ -77,8 +77,8 @@ class primitive_triangle: public primitive
    primitive_triangle() {}
 
    primitive_triangle(unsigned int idx1,unsigned int idx2,unsigned int idx3,
-                      const std::vector<vertex_struct> *v)
-      : primitive((*v)[idx1].pos,(*v)[idx2].pos,(*v)[idx3].pos),
+                      const std::vector<vertex_struct> *vertices)
+      : primitive((*vertices)[idx1].pos,(*vertices)[idx2].pos,(*vertices)[idx3].pos),
       index1(idx1),index2(idx2),index3(idx3)
       {}
 
@@ -162,7 +162,9 @@ class mini3D
    std::vector<primitive *> primitives_;
 
    vec3 halfdir(vec3 dir1,vec3 dir2);
-   unsigned int addvtx(vec3 v,vec4f c);
+
+   unsigned int addvtx(vec3 v,vec4f c,
+                       std::vector<primitive::vertex_struct> *vertices);
 
    void sort();
 
