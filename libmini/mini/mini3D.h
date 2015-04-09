@@ -141,7 +141,13 @@ class mini3D
    void fan(const std::vector<point_struct> &f);
 
    //! add disc to scene
-   void disc(double radius,vec4f col,int n=10);
+   void disc(double radius,vec4f col,int n=20);
+
+   //! get number of vertices in the scene
+   unsigned int vertices() const;
+
+   //! get number of primitives in the scene
+   unsigned int primitives() const;
 
    //! render scene
    void render();

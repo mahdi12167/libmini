@@ -178,9 +178,9 @@ void mini3D::strip(const std::vector<point_struct> &s)
          {
          idx3=addvtx(s[i].pos,s[i].col,&vertices_);
 
-         vec3 p1=s[idx1].pos;
-         vec3 p2=s[idx2].pos;
-         vec3 p3=s[idx3].pos;
+         vec3 p1=vertices_[idx1].pos;
+         vec3 p2=vertices_[idx2].pos;
+         vec3 p3=vertices_[idx3].pos;
 
          if (p1!=p2 && p2!=p3 && p3!=p1)
             primitives_.push_back(new primitive_triangle(idx1,idx2,idx3,&vertices_));
@@ -205,9 +205,9 @@ void mini3D::fan(const std::vector<point_struct> &f)
          {
          idx3=addvtx(f[i].pos,f[i].col,&vertices_);
 
-         vec3 p1=f[idx1].pos;
-         vec3 p2=f[idx2].pos;
-         vec3 p3=f[idx3].pos;
+         vec3 p1=vertices_[idx1].pos;
+         vec3 p2=vertices_[idx2].pos;
+         vec3 p3=vertices_[idx3].pos;
 
          if (p1!=p2 && p2!=p3 && p3!=p1)
             primitives_.push_back(new primitive_triangle(idx1,idx2,idx3,&vertices_));
@@ -273,6 +273,18 @@ unsigned int mini3D::addvtx(vec3 v,vec4f c,
 
    return(vertices->size()-1);
    }
+
+// get number of vertices in the scene
+unsigned int mini3D::vertices() const
+{
+   return(vertices_.size());
+}
+
+// get number of primitives in the scene
+unsigned int mini3D::primitives() const
+{
+   return(primitives_.size());
+}
 
 // render scene
 void mini3D::render()
