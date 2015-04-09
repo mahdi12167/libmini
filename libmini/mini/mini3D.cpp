@@ -166,22 +166,22 @@ void mini3D::strip(const std::vector<point_struct> &s)
    }
 
 // add triangle fan to scene
-void mini3D::fan(const std::vector<point_struct> &s)
+void mini3D::fan(const std::vector<point_struct> &f)
    {
    unsigned int idx1,idx2,idx3;
 
-   if (s.size()>2)
+   if (f.size()>2)
       {
-      idx1=addvtx(s[0].pos,s[0].col);
-      idx2=addvtx(s[1].pos,s[1].col);
+      idx1=addvtx(f[0].pos,f[0].col);
+      idx2=addvtx(f[1].pos,f[1].col);
 
-      for (unsigned int i=2; i<s.size(); i++)
+      for (unsigned int i=2; i<f.size(); i++)
          {
-         idx3=addvtx(s[i].pos,s[i].col);
+         idx3=addvtx(f[i].pos,f[i].col);
 
-         vec3 p1=s[idx1].pos;
-         vec3 p2=s[idx2].pos;
-         vec3 p3=s[idx3].pos;
+         vec3 p1=f[idx1].pos;
+         vec3 p2=f[idx2].pos;
+         vec3 p3=f[idx3].pos;
 
          if (p1!=p2 && p2!=p3 && p3!=p1)
             primitives_.push_back(new primitive_triangle(idx1,idx2,idx3,&vertices_));
