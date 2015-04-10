@@ -164,7 +164,7 @@ if ($target == "") then
    endif
 endif
 
-# sqlite autoconf
+# sqlite autoconf (built with r-tree module by default)
 if ($target == "" || $target == "sqlite") then
    if (-e sqlite-autoconf) then
       echo "BUILDING SQLite (autoconf)"
