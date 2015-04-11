@@ -47,14 +47,16 @@ void mininode_geometry_clod::load(ministring filename,
 // create geometry from actual view point
 void mininode_geometry_clod::create(double maxdev,double atdist,
                                     double maxwidth,
-                                    double minv,double maxv,double sat,double val,
+                                    double minv,double maxv,
+                                    double sat,double val,double alpha,
                                     double weight,double start,
                                     int update)
    {
    miniCLOD::create(mininode_culling::peek_view(),
                     maxdev,atdist,
                     maxwidth,
-                    minv,maxv,sat,val,
+                    minv,maxv,
+                    sat,val,alpha,
                     weight,start,
                     update);
    }

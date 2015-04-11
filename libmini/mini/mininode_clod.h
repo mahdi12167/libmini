@@ -38,7 +38,8 @@ class mininode_geometry_clod: public mininode_geometry, public miniCLOD
    //! create geometry from actual view point
    void create(double maxdev=1,double atdist=100, // maximum deviation at specific distance
                double maxwidth=1, // maximum width at specific distance
-               double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0, // velocity color mapping
+               double minv=0.0,double maxv=30.0, // velocity color mapping range
+               double sat=1.0,double val=1.0,double alpha=1.0, // velocity color mapping
                double weight=1.0, // weight of color mapping
                double start=1.0, // weight of start points
                int update=100); // vertices per update

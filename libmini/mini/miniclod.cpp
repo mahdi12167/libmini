@@ -187,7 +187,8 @@ minipath miniCLOD::getpath()
 void miniCLOD::create(vec3 eye,
                       double maxdev,double atdist,
                       double maxwidth,
-                      double minv,double maxv,double sat,double val,
+                      double minv,double maxv,
+                      double sat,double val,double alpha,
                       double weight,double start,
                       int update)
    {
@@ -204,8 +205,10 @@ void miniCLOD::create(vec3 eye,
 
       MINV_=minv;
       MAXV_=maxv;
+
       SAT_=sat;
       VAL_=val;
+      ALPHA_=alpha;
 
       WEIGHT_=weight;
       START_=start;
@@ -387,7 +390,7 @@ void miniCLOD::addpoint(const minimeas &m,BOOLINT start)
    if (hue<0.0f) hue=0.0f;
    else if (hue>240.0f) hue=240.0f;
 
-   rgb=point2rgb(m,v,hue,SAT_,VAL_);
+   rgb=point2rgb(m,v,hue,SAT_,VAL_,ALPHA_);
 
    if (start)
       if (!POINTS_.empty())
@@ -597,6 +600,6 @@ vec3f miniCLOD::hsv2rgb(float hue,float sat,float val)
    }
 
 // map point measurement to rgb color
-vec3f miniCLOD::point2rgb(const minimeas &m,double v,
-                          float hue,float sat,float val)
-   {return(hsv2rgb(hue,sat,val));}
+vec4f miniCLOD::point2rgb(const minimeas &m,double v,
+                          float hue,float sat,float val,float alpha)
+   {return(vec4f(hsv2rgb(hue,sat,val),alpha));}

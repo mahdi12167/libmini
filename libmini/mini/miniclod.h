@@ -62,7 +62,8 @@ class miniCLOD
    void create(vec3 eye, // actual eye point
                double maxdev=1,double atdist=100, // maximum deviation at specific distance
                double maxwidth=1, // maximum width at specific distance
-               double minv=0.0,double maxv=30.0,double sat=1.0,double val=1.0, // velocity color mapping
+               double minv=0.0,double maxv=30.0, // velocity color mapping range
+               double sat=1.0,double val=1.0,double alpha=1.0, // velocity color mapping
                double weight=1.0, // weight of color mapping
                double start=1.0, // weight of start points
                int update=100); // vertices per update
@@ -110,7 +111,7 @@ class miniCLOD
    double distance2line(vec3 p,vec3 a,vec3 b);
    vec3f hsv2rgb(float hue,float sat,float val);
 
-   virtual vec3f point2rgb(const minimeas &m,double v,float hue,float sat,float val);
+   virtual vec4f point2rgb(const minimeas &m,double v,float hue,float sat,float val,float alpha);
    virtual void updated(const std::vector<mini3D::joint_struct> &points) = 0;
 
    virtual void block_on() {}
@@ -121,7 +122,7 @@ class miniCLOD
    vec3 EYE_;
    float C_,D_,W_;
 
-   float MINV_,MAXV_,SAT_,VAL_;
+   float MINV_,MAXV_,SAT_,VAL_,ALPHA_;
    float WEIGHT_,START_;
 
    BOOLINT UPDATED_;
