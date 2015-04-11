@@ -693,7 +693,8 @@ int Object_path::initGFX()
 
       path_node->create(0.25,100, // maximum deviation at specific distance
                         1, // maximum width at specific distance
-                        0.0,30.0,1.0,1.0, // velocity color mapping
+                        0.0,30.0, // velocity color mapping range
+                        1.0,1.0,1.0, // velocity color mapping
                         1.0, // weight of color mapping
                         2.0, // weight of start points
                         300); // vertices per update
