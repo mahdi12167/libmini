@@ -33,7 +33,6 @@ void miniCLOD::set(const minipaths &paths)
    block_on();
 
    paths0_=minipaths(paths);
-   paths0_.validate();
    path0_.clear();
    UPDATED_=TRUE;
 
@@ -41,12 +40,13 @@ void miniCLOD::set(const minipaths &paths)
    }
 
 // append to paths
-void miniCLOD::append(const minipath &path)
+void miniCLOD::append(minipath path)
    {
+   path.validate();
+
    block_on();
 
    paths0_.append(path);
-   paths0_.validate();
    path0_.clear();
    UPDATED_=TRUE;
 
@@ -91,7 +91,6 @@ void miniCLOD::read(const std::vector<std::string> &csvs,
    block_on();
 
    paths0_=paths;
-   paths0_.validate();
    path0_.clear();
    UPDATED_=TRUE;
 
@@ -112,11 +111,11 @@ void miniCLOD::append(const std::string &csv)
    path.set_orb(paths0_.get_orb());
 
    path.from_stdstring(csv);
+   path.validate();
 
    block_on();
 
    paths0_.append(path);
-   paths0_.validate();
    path0_.clear();
    UPDATED_=TRUE;
 
@@ -168,17 +167,15 @@ minipath miniCLOD::getpath()
    {
    minipath path;
 
-   if (paths0_.size()>0)
-      {
-      path=paths0_;
-      path0_.validate();
-      path.append(path0_);
-      }
-   else
-      {
-      path0_.validate();
-      path=path0_;
-      }
+   block_on();
+
+   paths0_.validate();
+   path=paths0_;
+   path0_.validate();
+   path.append(path0_);
+   path.validate();
+
+   block_off();
 
    return(path);
    }
@@ -248,7 +245,11 @@ BOOLINT miniCLOD::updateDX()
 
    if (UPDATED_)
       {
-      path_=getpath();
+      paths0_.validate();
+      path_=paths0_;
+      path0_.validate();
+      path_.append(path0_);
+      path_.validate();
 
       UPDATED_=FALSE;
       block_off();

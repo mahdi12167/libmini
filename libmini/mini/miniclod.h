@@ -26,7 +26,7 @@ class miniCLOD
    void set(const minipaths &paths);
 
    //! append to paths
-   void append(const minipath &path);
+   void append(minipath path);
 
    //! read path
    void read(const std::string &csv,
