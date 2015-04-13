@@ -295,7 +295,7 @@ unsigned int mini3D::primitives() const
 void mini3D::render_setup(const mat4 &m)
 {
    for (unsigned int i=0; i<vertices_.size(); i++)
-      vertices_[i].pos_post=postMatrix_*vertices_[i].pos;
+      vertices_[i].pos_post=m*vertices_[i].pos;
 }
 
 // render scene
