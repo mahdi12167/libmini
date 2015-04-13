@@ -20,19 +20,23 @@ class primitive
       vec4f col;
       };
 
+   typedef std::vector<vertex_struct> vertex_array;
+
    primitive() {}
 
-   primitive(vec3 c,double r)
-      : center(c),radius2(r*r)
+   primitive(vec3 c,double r,vertex_array *v)
+      : center(c),radius2(r*r),array(v)
       {}
 
-   primitive(vec3 a,vec3 b)
+   primitive(vec3 a,vec3 b,vertex_array *v)
+      : array(v)
       {
       center=0.5*(a+b);
       radius2=0.25*(a-b).getlength2();
       }
 
-   primitive(vec3 a,vec3 b,vec3 c)
+   primitive(vec3 a,vec3 b,vec3 c,vertex_array *v)
+      : array(v)
       {
       center=(a+b+c)/3;
       radius2=(a-center).getlength2();
@@ -44,10 +48,10 @@ class primitive
 
    virtual double depth(vec3 p) const = 0;
 
-   protected:
-
    vec3 center;
    double radius2;
+
+   vertex_array *array;
    };
 
 //! line rendering primitive
@@ -55,12 +59,12 @@ class primitive_line: public primitive
    {
    public:
 
-   primitive_line() {}
+   primitive_line() : primitive() {}
 
    primitive_line(unsigned int idx1,unsigned int idx2,
-                  const std::vector<vertex_struct> *vertices)
-      : primitive((*vertices)[idx1].pos,(*vertices)[idx2].pos),
-      index1(idx1),index2(idx2)
+                  primitive::vertex_array *vertices)
+      : primitive((*vertices)[idx1].pos,(*vertices)[idx2].pos,vertices),
+        index1(idx1),index2(idx2)
       {}
 
    virtual double depth(vec3 p) const
@@ -74,12 +78,12 @@ class primitive_triangle: public primitive
    {
    public:
 
-   primitive_triangle() {}
+   primitive_triangle() : primitive() {}
 
    primitive_triangle(unsigned int idx1,unsigned int idx2,unsigned int idx3,
-                      const std::vector<vertex_struct> *vertices)
-      : primitive((*vertices)[idx1].pos,(*vertices)[idx2].pos,(*vertices)[idx3].pos),
-      index1(idx1),index2(idx2),index3(idx3)
+                      primitive::vertex_array *vertices)
+      : primitive((*vertices)[idx1].pos,(*vertices)[idx2].pos,(*vertices)[idx3].pos,vertices),
+        index1(idx1),index2(idx2),index3(idx3)
       {}
 
    virtual double depth(vec3 p) const
@@ -155,6 +159,9 @@ class mini3D
    //! clear scene
    void clear();
 
+   //! attach another renderer
+   mini3D *attach();
+
    protected:
 
    vec3 eye_;
@@ -164,15 +171,17 @@ class mini3D
 
    mat4 postMatrix_;
 
-   std::vector<primitive::vertex_struct> vertices_;
+   primitive::vertex_array vertices_;
    std::vector<primitive *> primitives_;
+
+   std::vector<mini3D *> renderers_;
 
    vec3 halfdir(vec3 dir1,vec3 dir2);
 
    unsigned int addvtx(vec3 v,vec4f c,
-                       std::vector<primitive::vertex_struct> *vertices);
+                       primitive::vertex_array *vertices);
 
-   void sort();
+   void sort(std::vector<primitive *> &primitives);
 
    bool greater(const primitive *a,const primitive *b) const;
 
@@ -216,9 +225,10 @@ class mini3D
    void culltri(vec4 v0,vec4 v1,vec4 v2,
                 vec4 c0,vec4 c1,vec4 c2);
 
+   virtual void render_setup(const mat4 &m);
    virtual void render_begin() {}
-   virtual void render_line(vec3 a,vec3 b,vec4f ac,vec4f bc) = 0;
-   virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec4f ac,vec4f bc,vec4f cc) = 0;
+   virtual void render_line(vec3 a,vec3 b,vec4f ac,vec4f bc) {}
+   virtual void render_triangle(vec3 a,vec3 b,vec3 c,vec4f ac,vec4f bc,vec4f cc) {}
    virtual void render_yield() {}
    virtual void render_end() {}
    };

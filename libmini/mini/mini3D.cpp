@@ -8,7 +8,12 @@ mini3D::mini3D()
 
 // destructor
 mini3D::~mini3D()
-   {clear();}
+   {
+   clear();
+
+   for (unsigned int i=0; i<renderers_.size(); i++)
+      delete renderers_[i];
+   }
 
 // pre-multiply vertices by 4x4 matrix
 void mini3D::preMultiply(const mat4 &m)
@@ -262,7 +267,7 @@ vec3 mini3D::halfdir(vec3 dir1,vec3 dir2)
 
 // add pre-multiplied vertex
 unsigned int mini3D::addvtx(vec3 v,vec4f c,
-                            std::vector<primitive::vertex_struct> *vertices)
+                            primitive::vertex_array *vertices)
    {
    // multiply vertex with pre-matrix
    if (!preMatrixOne_) v=preMatrix_*v;
@@ -286,27 +291,40 @@ unsigned int mini3D::primitives() const
    return(primitives_.size());
 }
 
+// multiply vertices with post-matrix
+void mini3D::render_setup(const mat4 &m)
+{
+   for (unsigned int i=0; i<vertices_.size(); i++)
+      vertices_[i].pos_post=postMatrix_*vertices_[i].pos;
+}
+
 // render scene
 void mini3D::render()
    {
+   // gather all primitives
+   std::vector<primitive *> primitives(primitives_);
+   for (unsigned int i=0; i<renderers_.size(); i++)
+      primitives.insert(primitives.end(),renderers_[i]->primitives_.begin(),renderers_[i]->primitives_.end());
+
    // calculate eye point and sort primitives by depth
    eye_=postMatrix_.invert()*vec4(0,0,0);
-   sort();
+   sort(primitives);
 
    // multiply vertices with post-matrix
-   for (unsigned int i=0; i<vertices_.size(); i++)
-      vertices_[i].pos_post=postMatrix_*vertices_[i].pos;
+   render_setup(postMatrix_);
+   for (unsigned int i=0; i<renderers_.size(); i++)
+      renderers_[i]->render_setup(postMatrix_);
 
    // render each primitive
    render_begin();
-   for (unsigned int i=0; i<primitives_.size(); i++)
+   for (unsigned int i=0; i<primitives.size(); i++)
       {
-      primitive *p=primitives_[i];
+      primitive *p=primitives[i];
 
       if (primitive_line *pl=dynamic_cast<primitive_line*>(p))
-         clip_line(&vertices_[pl->index1],&vertices_[pl->index2]);
+         clip_line(&(*(p->array))[pl->index1],&(*(p->array))[pl->index2]);
       else if (primitive_triangle *pt=dynamic_cast<primitive_triangle*>(p))
-         clip_triangle(&vertices_[pt->index1],&vertices_[pt->index2],&vertices_[pt->index3]);
+         clip_triangle(&(*(p->array))[pt->index1],&(*(p->array))[pt->index2],&(*(p->array))[pt->index3]);
 
       render_yield();
       }
@@ -314,8 +332,8 @@ void mini3D::render()
    }
 
 // depth sort scene
-void mini3D::sort()
-   {mergesort(primitives_);}
+void mini3D::sort(std::vector<primitive *> &primitives)
+   {mergesort(primitives);}
 
 // clear scene
 void mini3D::clear()
@@ -329,6 +347,14 @@ void mini3D::clear()
       delete primitives_[i];
 
    primitives_.clear();
+   }
+
+// attach another renderer
+mini3D *mini3D::attach()
+   {
+   mini3D *r=new mini3D();
+   renderers_.push_back(r);
+   return(r);
    }
 
 // compare object depth
