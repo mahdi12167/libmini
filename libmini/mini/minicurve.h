@@ -113,11 +113,7 @@ class minicurve: public minidyna<minimeas>
       }
 
    void validate();
-   void validate_props(unsigned int a,unsigned int b);
-   void update_bbox(unsigned int a,unsigned int b);
-
-   minimeas interpolate(double t);
-   minimeas interpolate_cubic(double t);
+   BOOLINT is_valid() const {return(valid);}
 
    double get_time_start();
    double get_time_stop();
@@ -128,6 +124,9 @@ class minicurve: public minidyna<minimeas>
    double get_time_step_avg();
 
    double get_length();
+
+   minimeas interpolate(double t);
+   minimeas interpolate_cubic(double t);
 
    void resample(double dt);
 
@@ -169,6 +168,9 @@ class minicurve: public minidyna<minimeas>
 
    void bisect(const minicoord &p1,const minicoord &p2,
                int level,int maxlevel);
+
+   void validate_props(unsigned int a,unsigned int b);
+   void update_bbox(unsigned int a,unsigned int b);
 
    void sort();
 
