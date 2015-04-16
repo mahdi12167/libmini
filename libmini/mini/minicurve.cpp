@@ -229,7 +229,7 @@ void minicurve::validate_props(unsigned int a,unsigned int b)
 
    // check for maximum time difference and travelled distance
    for (i=a+1; i<=b; i++)
-      if (!get(i).start)
+      if (!get(i).start && !get(i-1).start)
          {
          double t1=get(i-1).vec.w;
          double t2=get(i).vec.w;
@@ -246,7 +246,7 @@ void minicurve::validate_props(unsigned int a,unsigned int b)
 
    // apply constraints
    for (i=a+1; i<=b;)
-      if (!get(i).start)
+      if (!get(i).start && !get(i-1).start)
          {
          double dt=get(i).gettime()-get(i-1).gettime();
 
