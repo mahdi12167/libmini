@@ -222,6 +222,37 @@ void mini3D::fan(const std::vector<point_struct> &f)
       }
    }
 
+void mini3D::circle(double radius,vec4f col,int n)
+{
+   static const int maxn=1000;
+   static vec2 offset[maxn+1];
+   static int actn=0;
+
+   if (n>maxn) n=maxn;
+   if (n<5) n=5;
+
+   if (n!=actn)
+      {
+      actn=n;
+
+      for (int i=0; i<=actn; i++)
+         {
+         double w=2*M_PI*i/actn;
+         offset[i]=vec2(sin(w),cos(w));
+         }
+      }
+
+   std::vector<point_struct> f;
+
+   for (int i=0; i<=actn; i++)
+      {
+      point_struct p={vec3(offset[i]*radius),col};
+      f.push_back(p);
+      }
+
+   line(f);
+}
+
 void mini3D::disc(double radius,vec4f col,int n)
 {
    static const int maxn=1000;

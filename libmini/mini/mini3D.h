@@ -144,6 +144,9 @@ class mini3D
    //! add triangle fan to scene
    void fan(const std::vector<point_struct> &f);
 
+   //! add circle to scene
+   void circle(double radius,vec4f col,int n=20);
+
    //! add disc to scene
    void disc(double radius,vec4f col,int n=20);
 
