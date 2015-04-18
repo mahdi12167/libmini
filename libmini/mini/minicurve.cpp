@@ -13,6 +13,45 @@ void minicurve::set_orb(int orb)
    valid=FALSE;
    }
 
+void minicurve::set_constraints(double max_delta,
+                                double max_length,
+                                double min_accuracy,
+                                double max_acceleration,
+                                double max_tolerance)
+      {
+      minicurve::max_delta=max_delta;
+      minicurve::max_length=max_length;
+      minicurve::min_accuracy=min_accuracy;
+      minicurve::max_acceleration=max_acceleration;
+      minicurve::max_tolerance=max_tolerance;
+      valid=FALSE;
+      }
+
+void minicurve::unset_constraints()
+   {set_constraints();}
+
+void minicurve::get_constraints(double &max_delta,
+                                double &max_length,
+                                double &min_accuracy) const
+   {
+   max_delta=minicurve::max_delta;
+   max_length=minicurve::max_length;
+   min_accuracy=minicurve::min_accuracy;
+   }
+
+void minicurve::get_constraints(double &max_delta,
+                                double &max_length,
+                                double &min_accuracy,
+                                double &max_acceleration,
+                                double &max_tolerance) const
+   {
+   max_delta=minicurve::max_delta;
+   max_length=minicurve::max_length;
+   min_accuracy=minicurve::min_accuracy;
+   max_acceleration=minicurve::max_acceleration;
+   max_tolerance=minicurve::max_tolerance;
+   }
+
 void minicurve::append(const minimeas &p)
    {
    minidyna<minimeas>::append(p);
@@ -30,6 +69,12 @@ void minicurve::append(const minicurve &c)
 
    if (s==0)
       {
+      max_delta=c.max_delta;
+      max_length=c.max_length;
+      min_accuracy=c.min_accuracy;
+      max_acceleration=c.max_acceleration;
+      max_tolerance=c.max_tolerance;
+
       bboxmin=c.bboxmin;
       bboxmax=c.bboxmax;
       valid=c.valid;
@@ -227,51 +272,51 @@ void minicurve::validate_props(unsigned int a,unsigned int b)
    {
    unsigned int i;
 
-   // check for maximum time difference and travelled distance
-   for (i=a+1; i<=b; i++)
-      if (!get(i).start && !get(i-1).start)
-         {
-         double t1=get(i-1).vec.w;
-         double t2=get(i).vec.w;
-
-         if (t2-t1>max_delta) ref(i).start=TRUE;
-
-         miniv3d p1=get(i-1).getpos();
-         miniv3d p2=get(i).getpos();
-
-         double d=(p2-p1).getlength();
-
-         if (d>max_length) ref(i).start=TRUE;
-         }
-
    // apply constraints
-   for (i=a+1; i<=b;)
-      if (!get(i).start && !get(i-1).start)
+   for (i=a; i<b;)
+      if (!get(i+1).start)
          {
-         double dt=get(i).gettime()-get(i-1).gettime();
+         double dt=get(i+1).gettime()-get(i).gettime();
 
-         miniv3d p1=get(i-1).getpos();
-         miniv3d p2=get(i).getpos();
+         miniv3d p1=get(i).getpos();
+         miniv3d p2=get(i+1).getpos();
 
          double d=(p2-p1).getlength();
 
-         double v1=compute_velocity(i-1);
-         double v2=compute_velocity(i);
+         double v1=compute_velocity(i);
+         double v2=compute_velocity(i+1);
 
-         double a1=get(i-1).accuracy;
-         double a2=get(i).accuracy;
+         double a1=get(i).accuracy;
+         double a2=get(i+1).accuracy;
 
          if (isNAN(a1)) a1=0.0;
          if (isNAN(a2)) a2=0.0;
 
          if (!check_constraints(d,dt,p1,p2,v1,v2,a1,a2))
             {
-            dispose(i);
+            dispose(i+1);
             b--;
             }
          else i++;
          }
       else i++;
+
+   // check for maximum time difference and travelled distance
+   for (i=a; i<b; i++)
+      if (!get(i+1).start)
+         {
+         double t1=get(i).vec.w;
+         double t2=get(i+1).vec.w;
+
+         if (t2-t1>max_delta) ref(i+1).start=TRUE;
+
+         miniv3d p1=get(i).getpos();
+         miniv3d p2=get(i+1).getpos();
+
+         double d=(p2-p1).getlength();
+
+         if (d>max_length) ref(i+1).start=TRUE;
+         }
 
    // check for missing velocity
    for (i=a; i<=b; i++)

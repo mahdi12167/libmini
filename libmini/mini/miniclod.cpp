@@ -98,17 +98,16 @@ void miniCLOD::read(const std::vector<std::string> &csvs,
    }
 
 // append to paths
-void miniCLOD::append(const std::string &csv)
+void miniCLOD::append(const std::string &csv,
+                      double max_delta,
+                      double max_length,
+                      double min_accuracy,
+                      int orb)
    {
    minipath path;
 
-   double max_delta;
-   double max_length;
-   double min_accuracy;
-
-   paths0_.get_constraints(max_delta,max_length,min_accuracy);
-   path.set_constraints(max_length,max_length,min_accuracy);
-   path.set_orb(paths0_.get_orb());
+   path.set_constraints(max_delta,max_length,min_accuracy);
+   path.set_orb(orb);
 
    path.from_stdstring(csv);
    path.validate();

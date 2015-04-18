@@ -43,7 +43,11 @@ class miniCLOD
              int orb=minicoord::MINICOORD_ORB_NONE); // path orbital
 
    //! append to paths
-   void append(const std::string &csv);
+   void append(const std::string &csv,
+               double max_delta=MAXFLOAT, // maximum continuous point distance
+               double max_length=MAXFLOAT, // maximum continuous time difference
+               double min_accuracy=MAXFLOAT, // minimum required measurement accuracy
+               int orb=minicoord::MINICOORD_ORB_NONE); // path orbital
 
    //! load path
    void load(ministring filename,

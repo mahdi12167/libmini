@@ -21,7 +21,11 @@ class minicurve: public minidyna<minimeas>
       curve_map_start=curve_map_stop=0.0;
       curve_repeat_start=curve_repeat_stop=0.0;
 
-      set_constraints();
+      max_delta=MAXFLOAT;
+      max_length=MAXFLOAT;
+      min_accuracy=MAXFLOAT;
+      max_acceleration=MAXFLOAT;
+      max_tolerance=MAXFLOAT;
 
       bboxmin=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
       bboxmax=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
@@ -40,7 +44,11 @@ class minicurve: public minidyna<minimeas>
       curve_map_start=curve_map_stop=0.0;
       curve_repeat_start=curve_repeat_stop=0.0;
 
-      set_constraints();
+      max_delta=MAXFLOAT;
+      max_length=MAXFLOAT;
+      min_accuracy=MAXFLOAT;
+      max_acceleration=MAXFLOAT;
+      max_tolerance=MAXFLOAT;
 
       bboxmin=miniv3d(MAXFLOAT,MAXFLOAT,MAXFLOAT);
       bboxmax=miniv3d(-MAXFLOAT,-MAXFLOAT,-MAXFLOAT);
@@ -53,11 +61,9 @@ class minicurve: public minidyna<minimeas>
    virtual ~minicurve() {}
 
    void set_orb(int orb);
-
    int get_orb() const {return(crs_orb);}
 
    void append(const minimeas &p);
-
    void append(const minicurve &c);
 
    void append_sector(const minicoord &p1,const minicoord &p2,
@@ -78,39 +84,19 @@ class minicurve: public minidyna<minimeas>
                         double max_length=MAXFLOAT,
                         double min_accuracy=MAXFLOAT,
                         double max_acceleration=MAXFLOAT,
-                        double max_tolerance=MAXFLOAT)
-      {
-      minicurve::max_delta=max_delta;
-      minicurve::max_length=max_length;
-      minicurve::min_accuracy=min_accuracy;
-      minicurve::max_acceleration=max_acceleration;
-      minicurve::max_tolerance=max_tolerance;
-      }
+                        double max_tolerance=MAXFLOAT);
 
-   void unset_constraints()
-      {set_constraints();}
+   void unset_constraints();
 
    void get_constraints(double &max_delta,
                         double &max_length,
-                        double &min_accuracy) const
-      {
-      max_delta=minicurve::max_delta;
-      max_length=minicurve::max_length;
-      min_accuracy=minicurve::min_accuracy;
-      }
+                        double &min_accuracy) const;
 
    void get_constraints(double &max_delta,
                         double &max_length,
                         double &min_accuracy,
                         double &max_acceleration,
-                        double &max_tolerance) const
-      {
-      max_delta=minicurve::max_delta;
-      max_length=minicurve::max_length;
-      min_accuracy=minicurve::min_accuracy;
-      max_acceleration=minicurve::max_acceleration;
-      max_tolerance=minicurve::max_tolerance;
-      }
+                        double &max_tolerance) const;
 
    void validate();
    BOOLINT is_valid() const {return(valid);}
